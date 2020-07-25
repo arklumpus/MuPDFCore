@@ -209,7 +209,6 @@ Furthermore, multiple `MuPDFMultiThreadedPageRenderer`s can be used in parallel,
             {
                 //Create a new ReadOnlySpan that reads the unmanaged memory where the image data is located.
                 imageData = new ReadOnlySpan<byte>((void*)destinations[i][j], tileBounds[i][j].Height * tileBounds[i][j].Width * 3);
-                
             }
 
             //Load the image data in the tile by using the ReadOnlySpan.
@@ -310,7 +309,7 @@ Once you have the required static library files, you should download the MuPDFCo
 
 To compile `MuPDFWrapper` you will need [CMake](https://cmake.org/) and (on Windows) [Ninja](https://ninja-build.org/).
 
-On Windows, the easiest way to get all the required tools is probably to install [Visual Studio](https://visualstudio.microsoft.com/it/). By selecting the "Desktop development with C++" you should get everything you need.
+On Windows, the easiest way to get all the required tools is probably to install [Visual Studio](https://visualstudio.microsoft.com/it/). By selecting the "Desktop development with C++" workload you should get everything you need.
 
 On macOS, you will need to install at least the Command-Line Tools for Xcode (if necessary, you should be prompted to do this while you perform the following steps) and CMake.
 

@@ -240,7 +240,6 @@ MuPDFCore library</h2>
 <div class="line">        {</div>
 <div class="line">            //Create a new ReadOnlySpan that reads the unmanaged memory where the image data is located.</div>
 <div class="line">            imageData = new ReadOnlySpan&lt;byte&gt;((void*)destinations[i][j], tileBounds[i][j].Height * tileBounds[i][j].Width * 3);</div>
-<div class="line">            </div>
 <div class="line">        }</div>
 <div class="line"> </div>
 <div class="line">        //Load the image data in the tile by using the ReadOnlySpan.</div>
@@ -328,7 +327,7 @@ Building from source</h1>
 2. Building MuPDFWrapper</h2>
 <p>Once you have the required static library files, you should download the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> source code: <a href="https://github.com/arklumpus/MuPDFCore/archive/v1.0.0.tar.gz">MuPDFCore-1.0.0.tar.gz</a> (or clone the repository) and place the library files in the appropriate subdirectories in the <code>native/MuPDFWrapper/lib/</code> folder.</p>
 <p>To compile <code>MuPDFWrapper</code> you will need <a href="https://cmake.org/">CMake</a> and (on Windows) <a href="https://ninja-build.org/">Ninja</a>.</p>
-<p>On Windows, the easiest way to get all the required tools is probably to install <a href="https://visualstudio.microsoft.com/it/">Visual Studio</a>. By selecting the "Desktop development with C++" you should get everything you need.</p>
+<p>On Windows, the easiest way to get all the required tools is probably to install <a href="https://visualstudio.microsoft.com/it/">Visual Studio</a>. By selecting the "Desktop development with C++" workload you should get everything you need.</p>
 <p>On macOS, you will need to install at least the Command-Line Tools for Xcode (if necessary, you should be prompted to do this while you perform the following steps) and CMake.</p>
 <p>Once you have everything at the ready, you will have to build MuPDFWrapper on the three platforms.</p>
 <h3><a class="anchor" id="autotoc_md10"></a>
