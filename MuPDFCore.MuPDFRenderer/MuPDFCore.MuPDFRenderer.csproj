@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Giorgio Bianchini</Authors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Company>University of Bristol</Company>
+    <Description>MuPDFCore is a set of multiplatform .NET Core bindings for MuPDF. This package contains a control to display documents in PDF, XPS, EPUB and more formats in an Avalonia application with multithreaded rendering.</Description>
+    <PackageTags>mupdf pdf xps png jpg thread multithreading avalonia</PackageTags>
+    <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/arklumpus/MuPDFCore</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/arklumpus/MuPDFCore</RepositoryUrl>
+    <Version>1.0.0</Version>
+    <PackageIcon>icon.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\icon.png">
+      <Pack>true</Pack>
+      <PackagePath>.</PackagePath>
+    </None>
+  </ItemGroup>
+ 
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.0-preview2" />
+    <PackageReference Include="MuPDFCore" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>

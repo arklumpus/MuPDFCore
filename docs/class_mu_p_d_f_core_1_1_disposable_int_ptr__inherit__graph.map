@@ -1,0 +1,4 @@
+<map id="MuPDFCore.DisposableIntPtr" name="MuPDFCore.DisposableIntPtr">
+<area shape="rect" id="node1" title="An IDisposable wrapper around an IntPtr that frees the allocated memory when it is disposed." alt="" coords="5,80,197,107"/>
+<area shape="rect" id="node2" title=" " alt="" coords="57,5,146,32"/>
+</map>

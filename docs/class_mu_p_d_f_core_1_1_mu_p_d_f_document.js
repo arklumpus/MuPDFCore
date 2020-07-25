@@ -1,0 +1,25 @@
+var class_mu_p_d_f_core_1_1_mu_p_d_f_document =
+[
+    [ "MuPDFDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ac3366ccae6a79335ba7ac73fdf4507d4", null ],
+    [ "MuPDFDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#aac27de3027a4fd44bbae7f5d5ebb44ac", null ],
+    [ "MuPDFDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#aaa26de08c78c1abd6af2593533e92eab", null ],
+    [ "MuPDFDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a55cce640549a58648d592f0f213dd8be", null ],
+    [ "MuPDFDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a5fba213e4b093be6e92b6ca067bd4e40", null ],
+    [ "ClearCache", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a17bcd16383e9f14dfd7124da4fd5861b", null ],
+    [ "CreateDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a29df0c8cef649bbc8fb64927557cdd76", null ],
+    [ "CreateDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a68bb8dbcffb0c5e24c10734b36693326", null ],
+    [ "Dispose", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a45cb952cb57003ec1678cca71930d738", null ],
+    [ "GetMultiThreadedRenderer", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a0bdf7e4d33db85bfc0c42c81e5476b23", null ],
+    [ "GetRenderedSize", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a0cb4925508720a17b373ff69979d07cc", null ],
+    [ "GetRenderedSize", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a0956211d754de68c12a772b6f33cf43b", null ],
+    [ "Render", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#aedd31da37044c2357e54341d3a9b7c6b", null ],
+    [ "Render", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a50e7c6191357918cf4b54dab3c02e2f0", null ],
+    [ "Render", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a06412517d491ce0a244a2b420f514fe8", null ],
+    [ "Render", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a4d253dbef30343bb43362e11901c8be2", null ],
+    [ "SaveImage", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#aa8db8536cca52416e087058656a7cd0a", null ],
+    [ "SaveImage", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a9dfc5a5417d7c8ae8f88ddbb00ea46f8", null ],
+    [ "WriteImage", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a669cfe2112943f42e626ed9f6fb94ca0", null ],
+    [ "WriteImage", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#acbb67678144a4b3cf740652c82129a67", null ],
+    [ "ClipToPageBounds", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a4e7f89e98170b4cb9e88e6bf63f2da57", null ],
+    [ "Pages", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ac691043a7c74ff979a4f80279a8e9f79", null ]
+];
