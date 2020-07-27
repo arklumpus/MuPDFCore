@@ -95,49 +95,48 @@ $(document).ready(function(){initNavTree('_rect_transition_8cs_source.html','');
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">    This program is free software: you can redistribute it and/or modify</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">    it under the terms of the GNU Affero General Public License as</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">    published by the Free Software Foundation, either version 3 of the</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment">    License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">    This program is distributed in the hope that it will be useful,</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">    but WITHOUT ANY WARRANTY; without even the implied warranty of</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment">    GNU Affero General Public License for more details.</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">    You should have received a copy of the GNU Affero General Public License</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">*/</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">using</span> System;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">using</span> System.Reactive.Linq;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="namespace_avalonia_1_1_animation.html">   22</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_avalonia_1_1_animation.html">Avalonia.Animation</a></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{<span class="comment"></span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">    /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">    /// Transition class that handles &lt;see cref=&quot;AvaloniaProperty&quot;/&gt; with &lt;see cref=&quot;Rect&quot;/&gt; types.</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">    /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="class_avalonia_1_1_animation_1_1_rect_transition.html">   27</a></span>&#160;<span class="comment"></span>    <span class="keyword">public</span> <span class="keyword">class </span><a class="code" href="class_avalonia_1_1_animation_1_1_rect_transition.html">RectTransition</a> : Transition&lt;Rect&gt;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    {<span class="comment"></span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">        /// &lt;inheritdocs/&gt;</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="class_avalonia_1_1_animation_1_1_rect_transition.html#acd346b9040e1c70dbc89d0315d18c9d4">   30</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keyword">override</span> IObservable&lt;Rect&gt; <a class="code" href="class_avalonia_1_1_animation_1_1_rect_transition.html#acd346b9040e1c70dbc89d0315d18c9d4">DoTransition</a>(IObservable&lt;double&gt; progress, Rect oldValue, Rect newValue)</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        {</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            <span class="keywordflow">return</span> progress</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                .Select(p =&gt;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                    var f = Easing.Ease(p);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                    <span class="keywordflow">return</span> <span class="keyword">new</span> Rect((newValue.X - oldValue.X) * f + oldValue.X,</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                        (newValue.Y - oldValue.Y) * f + oldValue.Y,</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                        (newValue.Width - oldValue.Width) * f + oldValue.Width,</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                        (newValue.Height - oldValue.Height) * f + oldValue.Height);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                });</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;}</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">    published by the Free Software Foundation, version 3.</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">    This program is distributed in the hope that it will be useful,</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">    but WITHOUT ANY WARRANTY; without even the implied warranty of</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">    GNU Affero General Public License for more details.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">    You should have received a copy of the GNU Affero General Public License</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">*/</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">using</span> System;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">using</span> System.Reactive.Linq;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="namespace_avalonia_1_1_animation.html">   21</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_avalonia_1_1_animation.html">Avalonia.Animation</a></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{<span class="comment"></span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">    /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">    /// Transition class that handles &lt;see cref=&quot;AvaloniaProperty&quot;/&gt; with &lt;see cref=&quot;Rect&quot;/&gt; types.</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">    /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="class_avalonia_1_1_animation_1_1_rect_transition.html">   26</a></span>&#160;<span class="comment"></span>    <span class="keyword">public</span> <span class="keyword">class </span><a class="code" href="class_avalonia_1_1_animation_1_1_rect_transition.html">RectTransition</a> : Transition&lt;Rect&gt;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    {<span class="comment"></span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">        /// &lt;inheritdocs/&gt;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="class_avalonia_1_1_animation_1_1_rect_transition.html#acd346b9040e1c70dbc89d0315d18c9d4">   29</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keyword">override</span> IObservable&lt;Rect&gt; <a class="code" href="class_avalonia_1_1_animation_1_1_rect_transition.html#acd346b9040e1c70dbc89d0315d18c9d4">DoTransition</a>(IObservable&lt;double&gt; progress, Rect oldValue, Rect newValue)</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="keywordflow">return</span> progress</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                .Select(p =&gt;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                    var f = Easing.Ease(p);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                    <span class="keywordflow">return</span> <span class="keyword">new</span> Rect((newValue.X - oldValue.X) * f + oldValue.X,</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                        (newValue.Y - oldValue.Y) * f + oldValue.Y,</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                        (newValue.Width - oldValue.Width) * f + oldValue.Width,</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                        (newValue.Height - oldValue.Height) * f + oldValue.Height);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                });</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="anamespace_avalonia_1_1_animation_html"><div class="ttname"><a href="namespace_avalonia_1_1_animation.html">Avalonia.Animation</a></div><div class="ttdef"><b>Definition:</b> <a href="_rect_transition_8cs_source.html#l00022">RectTransition.cs:23</a></div></div>
-<div class="ttc" id="aclass_avalonia_1_1_animation_1_1_rect_transition_html_acd346b9040e1c70dbc89d0315d18c9d4"><div class="ttname"><a href="class_avalonia_1_1_animation_1_1_rect_transition.html#acd346b9040e1c70dbc89d0315d18c9d4">Avalonia.Animation.RectTransition.DoTransition</a></div><div class="ttdeci">override IObservable&lt; Rect &gt; DoTransition(IObservable&lt; double &gt; progress, Rect oldValue, Rect newValue)</div><div class="ttdoc">&lt;inheritdocs&gt;</div><div class="ttdef"><b>Definition:</b> <a href="_rect_transition_8cs_source.html#l00030">RectTransition.cs:30</a></div></div>
-<div class="ttc" id="aclass_avalonia_1_1_animation_1_1_rect_transition_html"><div class="ttname"><a href="class_avalonia_1_1_animation_1_1_rect_transition.html">Avalonia.Animation.RectTransition</a></div><div class="ttdoc">Transition class that handles AvaloniaProperty with Rect types.</div><div class="ttdef"><b>Definition:</b> <a href="_rect_transition_8cs_source.html#l00027">RectTransition.cs:28</a></div></div>
+<div class="ttc" id="anamespace_avalonia_1_1_animation_html"><div class="ttname"><a href="namespace_avalonia_1_1_animation.html">Avalonia.Animation</a></div><div class="ttdef"><b>Definition:</b> <a href="_rect_transition_8cs_source.html#l00021">RectTransition.cs:22</a></div></div>
+<div class="ttc" id="aclass_avalonia_1_1_animation_1_1_rect_transition_html_acd346b9040e1c70dbc89d0315d18c9d4"><div class="ttname"><a href="class_avalonia_1_1_animation_1_1_rect_transition.html#acd346b9040e1c70dbc89d0315d18c9d4">Avalonia.Animation.RectTransition.DoTransition</a></div><div class="ttdeci">override IObservable&lt; Rect &gt; DoTransition(IObservable&lt; double &gt; progress, Rect oldValue, Rect newValue)</div><div class="ttdoc">&lt;inheritdocs&gt;</div><div class="ttdef"><b>Definition:</b> <a href="_rect_transition_8cs_source.html#l00029">RectTransition.cs:29</a></div></div>
+<div class="ttc" id="aclass_avalonia_1_1_animation_1_1_rect_transition_html"><div class="ttname"><a href="class_avalonia_1_1_animation_1_1_rect_transition.html">Avalonia.Animation.RectTransition</a></div><div class="ttdoc">Transition class that handles AvaloniaProperty with Rect types.</div><div class="ttdef"><b>Definition:</b> <a href="_rect_transition_8cs_source.html#l00026">RectTransition.cs:27</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

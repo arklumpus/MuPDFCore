@@ -95,150 +95,149 @@ $(document).ready(function(){initNavTree('_mu_p_d_f_context_8cs_source.html','')
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">    This program is free software: you can redistribute it and/or modify</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">    it under the terms of the GNU Affero General Public License as</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">    published by the Free Software Foundation, either version 3 of the</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment">    License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">    This program is distributed in the hope that it will be useful,</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">    but WITHOUT ANY WARRANTY; without even the implied warranty of</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment">    GNU Affero General Public License for more details.</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">    You should have received a copy of the GNU Affero General Public License</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">*/</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">using</span> System;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_mu_p_d_f_core.html">MuPDFCore</a></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{<span class="comment"></span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">    /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">    /// A wrapper around a MuPDF context object, which contains the exception stack and the resource cache store.</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">    /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html">   26</a></span>&#160;<span class="comment"></span>    <span class="keyword">public</span> <span class="keyword">class </span><a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html">MuPDFContext</a> : IDisposable</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    {<span class="comment"></span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">        /// A pointer to the native context object.</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"></span>        <span class="keyword">internal</span> readonly IntPtr NativeContext;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">        /// The current size in bytes of the resource cache store. Read-only.</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#ae510f5503a854a0bfb163bc8d4485b21">   36</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keywordtype">long</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#ae510f5503a854a0bfb163bc8d4485b21">StoreSize</a></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        {</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            <span class="keyword">get</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            {</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                <span class="keywordflow">return</span> NativeMethods.GetCurrentStoreSize(this.NativeContext);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            }</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">        /// The maximum size in bytes of the resource cache store. Read-only.</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a91a2d61cdeb597ecb06a720f0b60073b">   47</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keywordtype">long</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a91a2d61cdeb597ecb06a720f0b60073b">StoreMaxSize</a></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        {</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="keyword">get</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                <span class="keywordflow">return</span> NativeMethods.GetMaxStoreSize(this.NativeContext);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            }</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        }</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">        /// Create a new &lt;see cref=&quot;MuPDFContext&quot;/&gt; instance with the specified cache store size.</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">        /// &lt;param name=&quot;storeSize&quot;&gt;The maximum size in bytes of the resource cache store. The default value is 256 MiB.&lt;/param&gt;</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#abb2c826ea0a05ef6e7586c5d2211b810">   59</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#abb2c826ea0a05ef6e7586c5d2211b810">MuPDFContext</a>(<span class="keywordtype">long</span> storeSize = 256 &lt;&lt; 20)</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            <a class="code" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">ExitCodes</a> result = (<a class="code" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">ExitCodes</a>)NativeMethods.CreateContext((ulong)storeSize, ref NativeContext);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keywordflow">switch</span> (result)</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            {</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                <span class="keywordflow">case</span> <a class="code" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">ExitCodes</a>.EXIT_SUCCESS:</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                <span class="keywordflow">case</span> <a class="code" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">ExitCodes</a>.ERR_CANNOT_CREATE_CONTEXT:</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html">MuPDFException</a>(<span class="stringliteral">&quot;Cannot create MuPDF context&quot;</span>, result);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                <span class="keywordflow">case</span> <a class="code" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">ExitCodes</a>.ERR_CANNOT_REGISTER_HANDLERS:</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html">MuPDFException</a>(<span class="stringliteral">&quot;Cannot register document handlers&quot;</span>, result);</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html">MuPDFException</a>(<span class="stringliteral">&quot;Unknown error&quot;</span>, result);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        }</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">        /// Wrap an existing pointer to a native MuPDF context object.</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">        /// &lt;param name=&quot;nativeContext&quot;&gt;The pointer to the native context that should be used.&lt;/param&gt;</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment"></span>        <span class="keyword">internal</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#abb2c826ea0a05ef6e7586c5d2211b810">MuPDFContext</a>(IntPtr nativeContext)</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        {</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            this.NativeContext = nativeContext;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">        /// Evict all items from the resource cache store (freeing the memory where they were held).</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a561806453fd12627503568a80fcdbe65">   88</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keywordtype">void</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a561806453fd12627503568a80fcdbe65">ClearStore</a>()</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        {</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            NativeMethods.EmptyStore(this.NativeContext);</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        }</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">        /// Evict items from the resource cache store (freeing the memory where they were held) until the the size of the store drops to the specified fraction of the current size.</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">        /// &lt;param name=&quot;fraction&quot;&gt;The fraction of the current size that constitutes the target size of the store. If this is &amp;lt;= 0, the cache is cleared. If this is &amp;gt;= 1, nothing happens.&lt;/param&gt;</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a56f6083ac24fc4725d334dab215bfaa6">   97</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keywordtype">void</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a56f6083ac24fc4725d334dab215bfaa6">ShrinkStore</a>(<span class="keywordtype">double</span> fraction)</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        {</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            <span class="keywordflow">if</span> (fraction &lt;= 0)</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a561806453fd12627503568a80fcdbe65">ClearStore</a>();</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            }</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (Math.Round(fraction * 100) &lt; 100)</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            {</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                NativeMethods.ShrinkStore(this.NativeContext, (uint)Math.Round(fraction * 100));</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            }</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        }</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keyword">private</span> <span class="keywordtype">bool</span> disposedValue;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">        ///&lt;inheritdoc/&gt;</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment"></span>        <span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keywordtype">void</span> Dispose(<span class="keywordtype">bool</span> disposing)</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        {</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            <span class="keywordflow">if</span> (!disposedValue)</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            {</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                <span class="keywordflow">if</span> (disposing)</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                {</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                    <span class="comment">// TODO: eliminare lo stato gestito (oggetti gestiti)</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                }</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                NativeMethods.DisposeContext(NativeContext);</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                disposedValue = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            }</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        }</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">        ///&lt;inheritdoc/&gt;</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment"></span>        ~<a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#abb2c826ea0a05ef6e7586c5d2211b810">MuPDFContext</a>()</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        {</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            Dispose(disposing: <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        }</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">        ///&lt;inheritdoc/&gt;</span></div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keywordtype">void</span> Dispose()</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        {</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            Dispose(disposing: <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            GC.SuppressFinalize(<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        }</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    }</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;}</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">    published by the Free Software Foundation, version 3.</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">    This program is distributed in the hope that it will be useful,</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">    but WITHOUT ANY WARRANTY; without even the implied warranty of</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">    GNU Affero General Public License for more details.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">    You should have received a copy of the GNU Affero General Public License</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">*/</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">using</span> System;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_mu_p_d_f_core.html">MuPDFCore</a></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;{<span class="comment"></span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">    /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">    /// A wrapper around a MuPDF context object, which contains the exception stack and the resource cache store.</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">    /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html">   25</a></span>&#160;<span class="comment"></span>    <span class="keyword">public</span> <span class="keyword">class </span><a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html">MuPDFContext</a> : IDisposable</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    {<span class="comment"></span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">        /// A pointer to the native context object.</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"></span>        <span class="keyword">internal</span> readonly IntPtr NativeContext;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">        /// The current size in bytes of the resource cache store. Read-only.</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#ae510f5503a854a0bfb163bc8d4485b21">   35</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keywordtype">long</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#ae510f5503a854a0bfb163bc8d4485b21">StoreSize</a></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            <span class="keyword">get</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            {</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                <span class="keywordflow">return</span> NativeMethods.GetCurrentStoreSize(this.NativeContext);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            }</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">        /// The maximum size in bytes of the resource cache store. Read-only.</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a91a2d61cdeb597ecb06a720f0b60073b">   46</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keywordtype">long</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a91a2d61cdeb597ecb06a720f0b60073b">StoreMaxSize</a></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <span class="keyword">get</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            {</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                <span class="keywordflow">return</span> NativeMethods.GetMaxStoreSize(this.NativeContext);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            }</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">        /// Create a new &lt;see cref=&quot;MuPDFContext&quot;/&gt; instance with the specified cache store size.</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">        /// &lt;param name=&quot;storeSize&quot;&gt;The maximum size in bytes of the resource cache store. The default value is 256 MiB.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#abb2c826ea0a05ef6e7586c5d2211b810">   58</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#abb2c826ea0a05ef6e7586c5d2211b810">MuPDFContext</a>(<span class="keywordtype">long</span> storeSize = 256 &lt;&lt; 20)</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            <a class="code" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">ExitCodes</a> result = (<a class="code" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">ExitCodes</a>)NativeMethods.CreateContext((ulong)storeSize, ref NativeContext);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            <span class="keywordflow">switch</span> (result)</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            {</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                <span class="keywordflow">case</span> <a class="code" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">ExitCodes</a>.EXIT_SUCCESS:</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                <span class="keywordflow">case</span> <a class="code" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">ExitCodes</a>.ERR_CANNOT_CREATE_CONTEXT:</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html">MuPDFException</a>(<span class="stringliteral">&quot;Cannot create MuPDF context&quot;</span>, result);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                <span class="keywordflow">case</span> <a class="code" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">ExitCodes</a>.ERR_CANNOT_REGISTER_HANDLERS:</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html">MuPDFException</a>(<span class="stringliteral">&quot;Cannot register document handlers&quot;</span>, result);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html">MuPDFException</a>(<span class="stringliteral">&quot;Unknown error&quot;</span>, result);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        }</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">        /// Wrap an existing pointer to a native MuPDF context object.</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">        /// &lt;param name=&quot;nativeContext&quot;&gt;The pointer to the native context that should be used.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment"></span>        <span class="keyword">internal</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#abb2c826ea0a05ef6e7586c5d2211b810">MuPDFContext</a>(IntPtr nativeContext)</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        {</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            this.NativeContext = nativeContext;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        }</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">        /// Evict all items from the resource cache store (freeing the memory where they were held).</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a561806453fd12627503568a80fcdbe65">   87</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keywordtype">void</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a561806453fd12627503568a80fcdbe65">ClearStore</a>()</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            NativeMethods.EmptyStore(this.NativeContext);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">        /// Evict items from the resource cache store (freeing the memory where they were held) until the the size of the store drops to the specified fraction of the current size.</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">        /// &lt;param name=&quot;fraction&quot;&gt;The fraction of the current size that constitutes the target size of the store. If this is &amp;lt;= 0, the cache is cleared. If this is &amp;gt;= 1, nothing happens.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a56f6083ac24fc4725d334dab215bfaa6">   96</a></span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keywordtype">void</span> <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a56f6083ac24fc4725d334dab215bfaa6">ShrinkStore</a>(<span class="keywordtype">double</span> fraction)</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <span class="keywordflow">if</span> (fraction &lt;= 0)</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            {</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                <a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a561806453fd12627503568a80fcdbe65">ClearStore</a>();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (Math.Round(fraction * 100) &lt; 100)</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            {</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                NativeMethods.ShrinkStore(this.NativeContext, (uint)Math.Round(fraction * 100));</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            }</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        }</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <span class="keyword">private</span> <span class="keywordtype">bool</span> disposedValue;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">        ///&lt;inheritdoc/&gt;</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment"></span>        <span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keywordtype">void</span> Dispose(<span class="keywordtype">bool</span> disposing)</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        {</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            <span class="keywordflow">if</span> (!disposedValue)</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            {</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                <span class="keywordflow">if</span> (disposing)</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                    <span class="comment">// TODO: eliminare lo stato gestito (oggetti gestiti)</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                }</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                NativeMethods.DisposeContext(NativeContext);</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                disposedValue = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            }</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        }</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">        ///&lt;inheritdoc/&gt;</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment"></span>        ~<a class="code" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#abb2c826ea0a05ef6e7586c5d2211b810">MuPDFContext</a>()</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        {</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            Dispose(disposing: <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        }</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">        ///&lt;inheritdoc/&gt;</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keywordtype">void</span> Dispose()</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        {</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            Dispose(disposing: <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            GC.SuppressFinalize(<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        }</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    }</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html">MuPDFCore.MuPDFContext</a></div><div class="ttdoc">A wrapper around a MuPDF context object, which contains the exception stack and the resource cache st...</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00026">MuPDFContext.cs:27</a></div></div>
-<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html_a56f6083ac24fc4725d334dab215bfaa6"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a56f6083ac24fc4725d334dab215bfaa6">MuPDFCore.MuPDFContext.ShrinkStore</a></div><div class="ttdeci">void ShrinkStore(double fraction)</div><div class="ttdoc">Evict items from the resource cache store (freeing the memory where they were held) until the the siz...</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00097">MuPDFContext.cs:97</a></div></div>
-<div class="ttc" id="anamespace_mu_p_d_f_core_html_aa6919d62a772f0334777d47f9c2d6c59"><div class="ttname"><a href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">MuPDFCore.ExitCodes</a></div><div class="ttdeci">ExitCodes</div><div class="ttdoc">Exit codes returned by native methods describing various errors that can occur.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_8cs_source.html#l00027">MuPDF.cs:28</a></div></div>
-<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html_a561806453fd12627503568a80fcdbe65"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a561806453fd12627503568a80fcdbe65">MuPDFCore.MuPDFContext.ClearStore</a></div><div class="ttdeci">void ClearStore()</div><div class="ttdoc">Evict all items from the resource cache store (freeing the memory where they were held).</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00088">MuPDFContext.cs:88</a></div></div>
-<div class="ttc" id="anamespace_mu_p_d_f_core_html"><div class="ttname"><a href="namespace_mu_p_d_f_core.html">MuPDFCore</a></div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_8cs_source.html#l00022">MuPDF.cs:23</a></div></div>
-<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html_a91a2d61cdeb597ecb06a720f0b60073b"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a91a2d61cdeb597ecb06a720f0b60073b">MuPDFCore.MuPDFContext.StoreMaxSize</a></div><div class="ttdeci">long StoreMaxSize</div><div class="ttdoc">The maximum size in bytes of the resource cache store. Read-only.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00047">MuPDFContext.cs:48</a></div></div>
-<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html_abb2c826ea0a05ef6e7586c5d2211b810"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#abb2c826ea0a05ef6e7586c5d2211b810">MuPDFCore.MuPDFContext.MuPDFContext</a></div><div class="ttdeci">MuPDFContext(long storeSize=256&lt;&lt; 20)</div><div class="ttdoc">Create a new MuPDFContext instance with the specified cache store size.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00059">MuPDFContext.cs:59</a></div></div>
-<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_exception_html"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html">MuPDFCore.MuPDFException</a></div><div class="ttdoc">The exception that is thrown when a MuPDF operation fails.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_8cs_source.html#l00343">MuPDF.cs:344</a></div></div>
-<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html_ae510f5503a854a0bfb163bc8d4485b21"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#ae510f5503a854a0bfb163bc8d4485b21">MuPDFCore.MuPDFContext.StoreSize</a></div><div class="ttdeci">long StoreSize</div><div class="ttdoc">The current size in bytes of the resource cache store. Read-only.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00036">MuPDFContext.cs:37</a></div></div>
+<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html">MuPDFCore.MuPDFContext</a></div><div class="ttdoc">A wrapper around a MuPDF context object, which contains the exception stack and the resource cache st...</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00025">MuPDFContext.cs:26</a></div></div>
+<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html_a56f6083ac24fc4725d334dab215bfaa6"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a56f6083ac24fc4725d334dab215bfaa6">MuPDFCore.MuPDFContext.ShrinkStore</a></div><div class="ttdeci">void ShrinkStore(double fraction)</div><div class="ttdoc">Evict items from the resource cache store (freeing the memory where they were held) until the the siz...</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00096">MuPDFContext.cs:96</a></div></div>
+<div class="ttc" id="anamespace_mu_p_d_f_core_html_aa6919d62a772f0334777d47f9c2d6c59"><div class="ttname"><a href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">MuPDFCore.ExitCodes</a></div><div class="ttdeci">ExitCodes</div><div class="ttdoc">Exit codes returned by native methods describing various errors that can occur.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_8cs_source.html#l00026">MuPDF.cs:27</a></div></div>
+<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html_a561806453fd12627503568a80fcdbe65"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a561806453fd12627503568a80fcdbe65">MuPDFCore.MuPDFContext.ClearStore</a></div><div class="ttdeci">void ClearStore()</div><div class="ttdoc">Evict all items from the resource cache store (freeing the memory where they were held).</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00087">MuPDFContext.cs:87</a></div></div>
+<div class="ttc" id="anamespace_mu_p_d_f_core_html"><div class="ttname"><a href="namespace_mu_p_d_f_core.html">MuPDFCore</a></div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_8cs_source.html#l00021">MuPDF.cs:22</a></div></div>
+<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html_a91a2d61cdeb597ecb06a720f0b60073b"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a91a2d61cdeb597ecb06a720f0b60073b">MuPDFCore.MuPDFContext.StoreMaxSize</a></div><div class="ttdeci">long StoreMaxSize</div><div class="ttdoc">The maximum size in bytes of the resource cache store. Read-only.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00046">MuPDFContext.cs:47</a></div></div>
+<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html_abb2c826ea0a05ef6e7586c5d2211b810"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#abb2c826ea0a05ef6e7586c5d2211b810">MuPDFCore.MuPDFContext.MuPDFContext</a></div><div class="ttdeci">MuPDFContext(long storeSize=256&lt;&lt; 20)</div><div class="ttdoc">Create a new MuPDFContext instance with the specified cache store size.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00058">MuPDFContext.cs:58</a></div></div>
+<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_exception_html"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html">MuPDFCore.MuPDFException</a></div><div class="ttdoc">The exception that is thrown when a MuPDF operation fails.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_8cs_source.html#l00342">MuPDF.cs:343</a></div></div>
+<div class="ttc" id="aclass_mu_p_d_f_core_1_1_mu_p_d_f_context_html_ae510f5503a854a0bfb163bc8d4485b21"><div class="ttname"><a href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#ae510f5503a854a0bfb163bc8d4485b21">MuPDFCore.MuPDFContext.StoreSize</a></div><div class="ttdeci">long StoreSize</div><div class="ttdoc">The current size in bytes of the resource cache store. Read-only.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_context_8cs_source.html#l00035">MuPDFContext.cs:36</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

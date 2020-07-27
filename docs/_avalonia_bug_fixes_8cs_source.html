@@ -95,46 +95,45 @@ $(document).ready(function(){initNavTree('_avalonia_bug_fixes_8cs_source.html','
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">    This program is free software: you can redistribute it and/or modify</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">    it under the terms of the GNU Affero General Public License as</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">    published by the Free Software Foundation, either version 3 of the</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment">    License, or (at your option) any later version.</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">    This program is distributed in the hope that it will be useful,</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">    but WITHOUT ANY WARRANTY; without even the implied warranty of</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment">    GNU Affero General Public License for more details.</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">    You should have received a copy of the GNU Affero General Public License</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">*/</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="namespace_mu_p_d_f_core_1_1_mu_p_d_f_renderer.html">   19</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_mu_p_d_f_core_1_1_mu_p_d_f_renderer.html">MuPDFCore.MuPDFRenderer</a></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{<span class="comment"></span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">    /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">    /// Contains temporary hacks to work around bugs in the Avalonia library.</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">    /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"></span>    <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">class </span>AvaloniaBugFixes</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    {<span class="comment"></span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">        /// Get the the appropriate pixel format for the current platform. See also https://github.com/AvaloniaUI/Avalonia/issues/4354 .</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">        /// &lt;returns&gt;&lt;see cref=&quot;PixelFormats.BGRA&quot;/&gt; on Linux, &lt;see cref=&quot;PixelFormats.RGBA&quot;/&gt; on other platforms.&lt;/returns&gt;</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keyword">static</span> <a class="code" href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">PixelFormats</a> GetPlatformRGBA()</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        {</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            <span class="keywordflow">if</span> (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            {</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">PixelFormats</a>.BGRA;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            }</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            {</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">PixelFormats</a>.RGBA;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            }</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        }</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    }</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;}</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">    published by the Free Software Foundation, version 3.</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">    This program is distributed in the hope that it will be useful,</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">    but WITHOUT ANY WARRANTY; without even the implied warranty of</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">    GNU Affero General Public License for more details.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">    You should have received a copy of the GNU Affero General Public License</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">*/</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="namespace_mu_p_d_f_core_1_1_mu_p_d_f_renderer.html">   18</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_mu_p_d_f_core_1_1_mu_p_d_f_renderer.html">MuPDFCore.MuPDFRenderer</a></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;{<span class="comment"></span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">    /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">    /// Contains temporary hacks to work around bugs in the Avalonia library.</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">    /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"></span>    <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">class </span>AvaloniaBugFixes</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    {<span class="comment"></span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">        /// Get the the appropriate pixel format for the current platform. See also https://github.com/AvaloniaUI/Avalonia/issues/4354 .</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">        /// &lt;returns&gt;&lt;see cref=&quot;PixelFormats.BGRA&quot;/&gt; on Linux, &lt;see cref=&quot;PixelFormats.RGBA&quot;/&gt; on other platforms.&lt;/returns&gt;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"></span>        <span class="keyword">public</span> <span class="keyword">static</span> <a class="code" href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">PixelFormats</a> GetPlatformRGBA()</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="keywordflow">if</span> (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            {</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">PixelFormats</a>.BGRA;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            }</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">PixelFormats</a>.RGBA;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            }</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        }</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    }</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="anamespace_mu_p_d_f_core_1_1_mu_p_d_f_renderer_html"><div class="ttname"><a href="namespace_mu_p_d_f_core_1_1_mu_p_d_f_renderer.html">MuPDFCore.MuPDFRenderer</a></div><div class="ttdef"><b>Definition:</b> <a href="_avalonia_bug_fixes_8cs_source.html#l00019">AvaloniaBugFixes.cs:20</a></div></div>
-<div class="ttc" id="anamespace_mu_p_d_f_core_html_ade1eb4d4f9c9c8a66bde9152ea9e41bb"><div class="ttname"><a href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">MuPDFCore.PixelFormats</a></div><div class="ttdeci">PixelFormats</div><div class="ttdoc">Pixel formats supported by the library.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_8cs_source.html#l00221">MuPDF.cs:222</a></div></div>
+<div class="ttc" id="anamespace_mu_p_d_f_core_1_1_mu_p_d_f_renderer_html"><div class="ttname"><a href="namespace_mu_p_d_f_core_1_1_mu_p_d_f_renderer.html">MuPDFCore.MuPDFRenderer</a></div><div class="ttdef"><b>Definition:</b> <a href="_avalonia_bug_fixes_8cs_source.html#l00018">AvaloniaBugFixes.cs:19</a></div></div>
+<div class="ttc" id="anamespace_mu_p_d_f_core_html_ade1eb4d4f9c9c8a66bde9152ea9e41bb"><div class="ttname"><a href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">MuPDFCore.PixelFormats</a></div><div class="ttdeci">PixelFormats</div><div class="ttdoc">Pixel formats supported by the library.</div><div class="ttdef"><b>Definition:</b> <a href="_mu_p_d_f_8cs_source.html#l00220">MuPDF.cs:221</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
