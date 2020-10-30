@@ -13,6 +13,6 @@
     <PackageReference Include="Avalonia" Version="0.10.0-preview2" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview2" />
     <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.0.0" />
-    <PackageReference Include="VectSharp.PDF" Version="2.0.1" />
+    <PackageReference Include="VectSharp.PDF" Version="2.1.3" />
   </ItemGroup>
 </Project>

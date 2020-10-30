@@ -511,13 +511,13 @@ namespace MuPDFCore.MuPDFRenderer
             RoundedSize targetSize = new RoundedSize(roundedOrigin.Width, roundedOrigin.Height);
             if (FixedCanvasBitmap == null)
             {
-                FixedCanvasBitmap = new WriteableBitmap(new PixelSize(targetSize.Width, targetSize.Height), new Vector(72, 72), Avalonia.Platform.PixelFormat.Rgba8888);
+                FixedCanvasBitmap = new WriteableBitmap(new PixelSize(targetSize.Width, targetSize.Height), new Vector(72, 72), Avalonia.Platform.PixelFormat.Rgba8888, AlphaFormat.Unpremul);
             }
             else
             {
                 if (FixedCanvasBitmap.PixelSize.Width != targetSize.Width || FixedCanvasBitmap.PixelSize.Height != targetSize.Height)
                 {
-                    FixedCanvasBitmap = new WriteableBitmap(new PixelSize(targetSize.Width, targetSize.Height), new Vector(72, 72), Avalonia.Platform.PixelFormat.Rgba8888);
+                    FixedCanvasBitmap = new WriteableBitmap(new PixelSize(targetSize.Width, targetSize.Height), new Vector(72, 72), Avalonia.Platform.PixelFormat.Rgba8888, AlphaFormat.Unpremul);
                 }
             }
 
@@ -550,7 +550,7 @@ namespace MuPDFCore.MuPDFRenderer
                 DynamicBitmaps = new WriteableBitmap[RenderThreadCount];
                 for (int i = 0; i < splitSizes.Length; i++)
                 {
-                    DynamicBitmaps[i] = new WriteableBitmap(new PixelSize(splitSizes[i].Width, splitSizes[i].Height), new Vector(72, 72), Avalonia.Platform.PixelFormat.Rgba8888);
+                    DynamicBitmaps[i] = new WriteableBitmap(new PixelSize(splitSizes[i].Width, splitSizes[i].Height), new Vector(72, 72), Avalonia.Platform.PixelFormat.Rgba8888, AlphaFormat.Unpremul);
                 }
             }
             else
@@ -559,7 +559,7 @@ namespace MuPDFCore.MuPDFRenderer
                 {
                     if (DynamicBitmaps[i].PixelSize.Width != splitSizes[i].Width || DynamicBitmaps[i].PixelSize.Height != splitSizes[i].Height)
                     {
-                        DynamicBitmaps[i] = new WriteableBitmap(new PixelSize(splitSizes[i].Width, splitSizes[i].Height), new Vector(72, 72), Avalonia.Platform.PixelFormat.Rgba8888);
+                        DynamicBitmaps[i] = new WriteableBitmap(new PixelSize(splitSizes[i].Width, splitSizes[i].Height), new Vector(72, 72), Avalonia.Platform.PixelFormat.Rgba8888, AlphaFormat.Unpremul);
                     }
                 }
             }
