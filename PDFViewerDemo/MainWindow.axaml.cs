@@ -240,31 +240,15 @@ namespace PDFViewerDemo
             RoundedRectangle roundedBounds = bounds.Round(zoom);
 
             //Initialize the image
-            WriteableBitmap bmp = new WriteableBitmap(new PixelSize(roundedBounds.Width, roundedBounds.Height), new Vector(96, 96), Avalonia.Platform.PixelFormat.Rgba8888);
+            WriteableBitmap bmp = new WriteableBitmap(new PixelSize(roundedBounds.Width, roundedBounds.Height), new Vector(96, 96), Avalonia.Platform.PixelFormat.Rgba8888, AlphaFormat.Unpremul);
 
             //Render the page to the bitmap, without marshaling.
             using (ILockedFramebuffer fb = bmp.Lock())
             {
-                Document.Render(this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber, bounds, zoom, GetPlatformRGBA(), fb.Address);
+                Document.Render(this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber, bounds, zoom, PixelFormats.RGBA, fb.Address);
             }
 
             return bmp;
-        }
-
-        /// <summary>
-        /// Get the the appropriate pixel format for the current platform. See also https://github.com/AvaloniaUI/Avalonia/issues/4354 .
-        /// </summary>
-        /// <returns><see cref="PixelFormats.BGRA"/> on Linux, <see cref="PixelFormats.RGBA"/> on other platforms.</returns>
-        public static PixelFormats GetPlatformRGBA()
-        {
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-            {
-                return PixelFormats.BGRA;
-            }
-            else
-            {
-                return PixelFormats.RGBA;
-            }
         }
 
         /// <summary>
