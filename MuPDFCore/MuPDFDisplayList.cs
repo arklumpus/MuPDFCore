@@ -44,7 +44,8 @@ namespace MuPDFCore
         /// </summary>
         /// <param name="context">The context that owns the document from which the page was taken.</param>
         /// <param name="page">The page from which the display list should be generated.</param>
-        public MuPDFDisplayList(MuPDFContext context, MuPDFPage page)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public MuPDFDisplayList(MuPDFContext context, MuPDFPage page, bool includeAnnotations = true)
         {
             this.OwnerContext = context;
 
@@ -53,7 +54,7 @@ namespace MuPDFCore
             float x1 = 0;
             float y1 = 0;
 
-            ExitCodes result = (ExitCodes)NativeMethods.GetDisplayList(context.NativeContext, page.NativePage, ref NativeDisplayList, ref x0, ref y0, ref x1, ref y1);
+            ExitCodes result = (ExitCodes)NativeMethods.GetDisplayList(context.NativeContext, page.NativePage, includeAnnotations ? 1 : 0, ref NativeDisplayList, ref x0, ref y0, ref x1, ref y1);
 
             switch (result)
             {

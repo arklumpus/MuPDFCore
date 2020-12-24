@@ -229,13 +229,14 @@ extern "C"
 	/// </summary>
 	/// <param name="ctx">A pointer to the context used to create the document.</param>
 	/// <param name="page">A pointer to the page that should be used to create the display list.</param>
+	/// <param name="annotations">An integer indicating whether annotations should be included in the display list (1) or not (any other value).</param>
 	/// <param name="out_display_list">A pointer to the newly-created display list.</param>
 	/// <param name="out_x0">The left coordinate of the display list's bounds.</param>
 	/// <param name="out_y0">The top coordinate of the display list's bounds.</param>
 	/// <param name="out_x1">The right coordinate of the display list's bounds.</param>
 	/// <param name="out_y1">The bottom coordinate of the display list's bounds.</param>
 	/// <returns>An integer detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetDisplayList(fz_context* ctx, fz_page* page, fz_display_list** out_display_list, float* out_x0, float* out_y0, float* out_x1, float* out_y1);
+	DLL_PUBLIC int GetDisplayList(fz_context* ctx, fz_page* page, int annotations, fz_display_list** out_display_list, float* out_x0, float* out_y0, float* out_x1, float* out_y1);
 	
 	/// <summary>
 	/// Free a display list.

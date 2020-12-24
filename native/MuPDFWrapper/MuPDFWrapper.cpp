@@ -495,7 +495,7 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int GetDisplayList(fz_context* ctx, fz_page* page, fz_display_list** out_display_list, float* out_x0, float* out_y0, float* out_x1, float* out_y1)
+	DLL_PUBLIC int GetDisplayList(fz_context* ctx, fz_page* page, int annotations, fz_display_list** out_display_list, float* out_x0, float* out_y0, float* out_x1, float* out_y1)
 	{
 		fz_display_list* list;
 		fz_rect bounds;
@@ -503,7 +503,14 @@ extern "C"
 
 		fz_try(ctx)
 		{
-			list = fz_new_display_list_from_page_contents(ctx, page);
+			if (annotations == 1)
+			{
+				list = fz_new_display_list_from_page(ctx, page);
+			}
+			else
+			{
+				list = fz_new_display_list_from_page_contents(ctx, page);
+			}
 		}
 		fz_catch(ctx)
 		{

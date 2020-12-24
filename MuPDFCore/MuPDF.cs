@@ -412,6 +412,7 @@ namespace MuPDFCore
         /// </summary>
         /// <param name="ctx">A pointer to the context used to create the document.</param>
         /// <param name="page">A pointer to the page that should be used to create the display list.</param>
+        /// <param name="annotations">An integer indicating whether annotations should be included in the display list (1) or not (any other value).</param>
         /// <param name="out_display_list">A pointer to the newly-created display list.</param>
         /// <param name="out_x0">The left coordinate of the display list's bounds.</param>
         /// <param name="out_y0">The top coordinate of the display list's bounds.</param>
@@ -419,7 +420,7 @@ namespace MuPDFCore
         /// <param name="out_y1">The bottom coordinate of the display list's bounds.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetDisplayList(IntPtr ctx, IntPtr page, ref IntPtr out_display_list, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1);
+        internal static extern int GetDisplayList(IntPtr ctx, IntPtr page, int annotations, ref IntPtr out_display_list, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1);
 
         /// <summary>
         /// Free a display list.

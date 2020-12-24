@@ -259,8 +259,9 @@ namespace MuPDFCore
         /// <param name="region">The region of the page to render in page units.</param>
         /// <param name="zoom">The scale at which the page will be rendered. This will determine the size in pixel of the image.</param>
         /// <param name="pixelFormat">The format of the pixel data.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         /// <returns>A byte array containing the raw values for the pixels of the rendered image.</returns>
-        public byte[] Render(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat)
+        public byte[] Render(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, bool includeAnnotations = true)
         {
             int bufferSize = MuPDFDocument.GetRenderedSize(region, zoom, pixelFormat);
 
@@ -271,7 +272,7 @@ namespace MuPDFCore
 
             try
             {
-                Render(pageNumber, region, zoom, pixelFormat, bufferPointer);
+                Render(pageNumber, region, zoom, pixelFormat, bufferPointer, includeAnnotations);
             }
             finally
             {
@@ -287,11 +288,12 @@ namespace MuPDFCore
         /// <param name="pageNumber">The number of the page to render (starting at 0).</param>
         /// <param name="zoom">The scale at which the page will be rendered. This will determine the size in pixel of the image.</param>
         /// <param name="pixelFormat">The format of the pixel data.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         /// <returns>A byte array containing the raw values for the pixels of the rendered image.</returns>
-        public byte[] Render(int pageNumber, double zoom, PixelFormats pixelFormat)
+        public byte[] Render(int pageNumber, double zoom, PixelFormats pixelFormat, bool includeAnnotations = true)
         {
             Rectangle region = this.Pages[pageNumber].Bounds;
-            return Render(pageNumber, region, zoom, pixelFormat);
+            return Render(pageNumber, region, zoom, pixelFormat, includeAnnotations);
         }
 
         /// <summary>
@@ -302,11 +304,12 @@ namespace MuPDFCore
         /// <param name="zoom">The scale at which the page will be rendered. This will determine the size in pixel of the image.</param>
         /// <param name="pixelFormat">The format of the pixel data.</param>
         /// <param name="destination">The address of the buffer where the pixel data will be written. There must be enough space available to write the values for all the pixels, otherwise this will fail catastrophically!</param>
-        public void Render(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, IntPtr destination)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public void Render(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, IntPtr destination, bool includeAnnotations = true)
         {
             if (DisplayLists[pageNumber] == null)
             {
-                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber]);
+                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
             }
 
             if (zoom < 0.000001 | zoom * region.Width <= 0.001 || zoom * region.Height <= 0.001)
@@ -342,10 +345,11 @@ namespace MuPDFCore
         /// <param name="zoom">The scale at which the page will be rendered. This will determine the size in pixel of the image.</param>
         /// <param name="pixelFormat">The format of the pixel data.</param>
         /// <param name="destination">The address of the buffer where the pixel data will be written. There must be enough space available to write the values for all the pixels, otherwise this will fail catastrophically!</param>
-        public void Render(int pageNumber, double zoom, PixelFormats pixelFormat, IntPtr destination)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public void Render(int pageNumber, double zoom, PixelFormats pixelFormat, IntPtr destination, bool includeAnnotations = true)
         {
             Rectangle region = this.Pages[pageNumber].Bounds;
-            Render(pageNumber, region, zoom, pixelFormat, destination);
+            Render(pageNumber, region, zoom, pixelFormat, destination, includeAnnotations);
         }
 
         /// <summary>
@@ -354,11 +358,12 @@ namespace MuPDFCore
         /// <param name="pageNumber">The number of the page to render (starting at 0).</param>
         /// <param name="threadCount">The number of threads to use. This must be factorisable using only powers of 2, 3, 5 or 7. Otherwise, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
         /// <returns>A <see cref="MuPDFMultiThreadedPageRenderer"/> that can be used to render the specified page with the specified number of threads.</returns>
-        public MuPDFMultiThreadedPageRenderer GetMultiThreadedRenderer(int pageNumber, int threadCount)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public MuPDFMultiThreadedPageRenderer GetMultiThreadedRenderer(int pageNumber, int threadCount, bool includeAnnotations = true)
         {
             if (DisplayLists[pageNumber] == null)
             {
-                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber]);
+                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
             }
 
             return new MuPDFMultiThreadedPageRenderer(OwnerContext, DisplayLists[pageNumber], threadCount, Pages[pageNumber].Bounds, this.ClipToPageBounds);
@@ -420,7 +425,8 @@ namespace MuPDFCore
         /// <param name="pixelFormat">The format of the pixel data.</param>
         /// <param name="fileName">The path to the output file.</param>
         /// <param name="fileType">The output format of the file.</param>
-        public void SaveImage(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, string fileName, RasterOutputFileTypes fileType)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public void SaveImage(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, string fileName, RasterOutputFileTypes fileType, bool includeAnnotations = true)
         {
             if (pixelFormat == PixelFormats.RGBA && fileType == RasterOutputFileTypes.PNM)
             {
@@ -429,7 +435,7 @@ namespace MuPDFCore
 
             if (DisplayLists[pageNumber] == null)
             {
-                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber]);
+                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
             }
 
             if (zoom < 0.000001 | zoom * region.Width <= 0.001 || zoom * region.Height <= 0.001)
@@ -462,10 +468,11 @@ namespace MuPDFCore
         /// <param name="pixelFormat">The format of the pixel data.</param>
         /// <param name="fileName">The path to the output file.</param>
         /// <param name="fileType">The output format of the file.</param>
-        public void SaveImage(int pageNumber, double zoom, PixelFormats pixelFormat, string fileName, RasterOutputFileTypes fileType)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public void SaveImage(int pageNumber, double zoom, PixelFormats pixelFormat, string fileName, RasterOutputFileTypes fileType, bool includeAnnotations = true)
         {
             Rectangle region = this.Pages[pageNumber].Bounds;
-            SaveImage(pageNumber, region, zoom, pixelFormat, fileName, fileType);
+            SaveImage(pageNumber, region, zoom, pixelFormat, fileName, fileType, includeAnnotations);
         }
 
         /// <summary>
@@ -477,7 +484,8 @@ namespace MuPDFCore
         /// <param name="pixelFormat">The format of the pixel data.</param>
         /// <param name="outputStream">The stream to which the image data will be written.</param>
         /// <param name="fileType">The output format of the image.</param>
-        public void WriteImage(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public void WriteImage(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations = true)
         {
             if (pixelFormat == PixelFormats.RGBA && fileType == RasterOutputFileTypes.PNM)
             {
@@ -486,7 +494,7 @@ namespace MuPDFCore
 
             if (DisplayLists[pageNumber] == null)
             {
-                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber]);
+                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
             }
 
             if (zoom < 0.000001 | zoom * region.Width <= 0.001 || zoom * region.Height <= 0.001)
@@ -536,10 +544,11 @@ namespace MuPDFCore
         /// <param name="pixelFormat">The format of the pixel data.</param>
         /// <param name="outputStream">The stream to which the image data will be written.</param>
         /// <param name="fileType">The output format of the image.</param>
-        public void WriteImage(int pageNumber, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public void WriteImage(int pageNumber, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations = true)
         {
             Rectangle region = this.Pages[pageNumber].Bounds;
-            WriteImage(pageNumber, region, zoom, pixelFormat, outputStream, fileType);
+            WriteImage(pageNumber, region, zoom, pixelFormat, outputStream, fileType, includeAnnotations);
         }
 
         /// <summary>
@@ -548,8 +557,9 @@ namespace MuPDFCore
         /// <param name="context">The context that was used to open the documents.</param>
         /// <param name="fileName">The output file name.</param>
         /// <param name="fileType">The output file format.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         /// <param name="pages">The pages to include in the document. The "page" element specifies the page, the "region" element the area of the page that should be included in the document, and the "zoom" element how much the region should be scaled.</param>
-        public static void CreateDocument(MuPDFContext context, string fileName, DocumentOutputFileTypes fileType, params (MuPDFPage page, Rectangle region, float zoom)[] pages)
+        public static void CreateDocument(MuPDFContext context, string fileName, DocumentOutputFileTypes fileType, bool includeAnnotations = true, params (MuPDFPage page, Rectangle region, float zoom)[] pages)
         {
             if (fileType == DocumentOutputFileTypes.SVG && pages.Length > 1)
             {
@@ -589,7 +599,7 @@ namespace MuPDFCore
 
                 if (doc.DisplayLists[pageNum] == null)
                 {
-                    doc.DisplayLists[pageNum] = new MuPDFDisplayList(doc.OwnerContext, doc.Pages[pageNum]);
+                    doc.DisplayLists[pageNum] = new MuPDFDisplayList(doc.OwnerContext, doc.Pages[pageNum], includeAnnotations);
                 }
 
                 result = (ExitCodes)NativeMethods.WriteSubDisplayListAsPage(context.NativeContext, doc.DisplayLists[pageNum].NativeDisplayList, pages[i].region.X0, pages[i].region.Y0, pages[i].region.X1, pages[i].region.Y1, pages[i].zoom, documentWriter);
@@ -641,7 +651,8 @@ namespace MuPDFCore
         /// <param name="fileName">The output file name.</param>
         /// <param name="fileType">The output file format.</param>
         /// <param name="pages">The pages to include in the document.</param>
-        public static void CreateDocument(MuPDFContext context, string fileName, DocumentOutputFileTypes fileType, params MuPDFPage[] pages)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public static void CreateDocument(MuPDFContext context, string fileName, DocumentOutputFileTypes fileType, bool includeAnnotations = true, params MuPDFPage[] pages)
         {
             (MuPDFPage, Rectangle, float)[] boundedPages = new (MuPDFPage, Rectangle, float)[pages.Length];
 
@@ -650,7 +661,7 @@ namespace MuPDFCore
                 boundedPages[i] = (pages[i], pages[i].Bounds, 1);
             }
 
-            CreateDocument(context, fileName, fileType, boundedPages);
+            CreateDocument(context, fileName, fileType, includeAnnotations, boundedPages);
         }
 
         private bool disposedValue;
