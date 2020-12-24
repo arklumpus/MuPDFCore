@@ -214,7 +214,8 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="threadCount">The number of threads to use in the rendering. If this is 0, an appropriate number of threads based on the number of processors in the computer will be used. Otherwise, this must be factorisable using only powers of 2, 3, 5 or 7. If this is not the case, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
         /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
-        public void Initialize(MuPDFDocument document, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
+        public void Initialize(MuPDFDocument document, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true)
         {
             if (IsViewerInitialized)
             {
@@ -226,7 +227,7 @@ namespace MuPDFCore.MuPDFRenderer
             Document = document;
             Context = null;
 
-            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier);
+            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier, includeAnnotations);
         }
 
         /// <summary>
@@ -236,7 +237,8 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="threadCount">The number of threads to use in the rendering. If this is 0, an appropriate number of threads based on the number of processors in the computer will be used. Otherwise, this must be factorisable using only powers of 2, 3, 5 or 7. If this is not the case, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
         /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
-        public void Initialize(string fileName, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
+        public void Initialize(string fileName, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true)
         {
             if (IsViewerInitialized)
             {
@@ -248,7 +250,7 @@ namespace MuPDFCore.MuPDFRenderer
             Context = new MuPDFContext();
             Document = new MuPDFDocument(Context, fileName);
 
-            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier);
+            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier, includeAnnotations);
         }
 
         /// <summary>
@@ -259,14 +261,15 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="threadCount">The number of threads to use in the rendering. If this is 0, an appropriate number of threads based on the number of processors in the computer will be used. Otherwise, this must be factorisable using only powers of 2, 3, 5 or 7. If this is not the case, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
         /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
-        public void Initialize(MemoryStream ms, InputFileTypes fileType, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
+        public void Initialize(MemoryStream ms, InputFileTypes fileType, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true)
         {
             //Get the byte array that underlies the MemoryStream.
             int origin = (int)ms.Seek(0, SeekOrigin.Begin);
             long dataLength = ms.Length;
             byte[] dataBytes = ms.GetBuffer();
 
-            Initialize(dataBytes, fileType, origin, (int)dataLength, threadCount, pageNumber, resolutionMultiplier);
+            Initialize(dataBytes, fileType, origin, (int)dataLength, threadCount, pageNumber, resolutionMultiplier, includeAnnotations);
         }
 
         /// <summary>
@@ -279,7 +282,8 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="threadCount">The number of threads to use in the rendering. If this is 0, an appropriate number of threads based on the number of processors in the computer will be used. Otherwise, this must be factorisable using only powers of 2, 3, 5 or 7. If this is not the case, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
         /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
-        public void Initialize(byte[] dataBytes, InputFileTypes fileType, int offset = 0, int length = -1, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
+        public void Initialize(byte[] dataBytes, InputFileTypes fileType, int offset = 0, int length = -1, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true)
         {
             if (IsViewerInitialized)
             {
@@ -305,7 +309,7 @@ namespace MuPDFCore.MuPDFRenderer
             //Create a new document, passing the wrapped pointer so that it can be released when the Document is disposed.
             Document = new MuPDFDocument(Context, pointer, length, fileType, ref disposer);
 
-            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier);
+            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier, includeAnnotations);
         }
 
         /// <summary>
@@ -314,7 +318,8 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="threadCount">The number of threads to use in the rendering. If this is 0, an appropriate number of threads based on the number of processors in the computer will be used. Otherwise, this must be factorisable using only powers of 2, 3, 5 or 7. If this is not the case, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
         /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
-        private void ContinueInitialization(int threadCount, int pageNumber, double resolutionMultiplier)
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
+        private void ContinueInitialization(int threadCount, int pageNumber, double resolutionMultiplier, bool includeAnnotations)
         {
             //Initialise threads and locking mechanics.
             if (RenderMutex == null)
@@ -342,7 +347,7 @@ namespace MuPDFCore.MuPDFRenderer
             }
 
             //Create the multithreaded renderer.
-            Renderer = Document.GetMultiThreadedRenderer(pageNumber, threadCount);
+            Renderer = Document.GetMultiThreadedRenderer(pageNumber, threadCount, includeAnnotations);
 
             //Set up the properties of this control.
             RenderThreadCount = Renderer.ThreadCount;
@@ -524,7 +529,7 @@ namespace MuPDFCore.MuPDFRenderer
             //Render the page to the FixedCanvasBitmap (without marshaling).
             using (ILockedFramebuffer fb = FixedCanvasBitmap.Lock())
             {
-                Document.Render(PageNumber, origin, zoom, AvaloniaBugFixes.GetPlatformRGBA(), fb.Address);                
+                Document.Render(PageNumber, origin, zoom, PixelFormats.RGBA, fb.Address);                
             }
         }
 
@@ -672,7 +677,7 @@ namespace MuPDFCore.MuPDFRenderer
                     }
 
                     //Start the multithreaded rendering and wait until it finishes.
-                    Renderer.Render(new RoundedSize(width, height), target, destinations, AvaloniaBugFixes.GetPlatformRGBA());
+                    Renderer.Render(new RoundedSize(width, height), target, destinations, PixelFormats.RGBA);
 
                     //Free the pointers.
                     for (int i = 0; i < RenderThreadCount; i++)
