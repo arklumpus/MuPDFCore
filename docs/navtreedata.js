@@ -68,7 +68,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_avalonia_bug_fixes_8cs_source.html"
+"_mu_p_d_f_8cs_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
