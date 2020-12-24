@@ -23,7 +23,7 @@ namespace Demo
             doc2.SaveImage(0, new Rectangle(87, 360, 517, 790), 2, PixelFormats.RGBA, "Raster2.png", RasterOutputFileTypes.PNG);
 
             //Merge the two documents into a single document.
-            MuPDFDocument.CreateDocument(ctx, "Merged.pdf", DocumentOutputFileTypes.PDF,
+            MuPDFDocument.CreateDocument(ctx, "Merged.pdf", DocumentOutputFileTypes.PDF, true,
 
                 //We take the full page from the first document
                 (doc1.Pages[0], doc1.Pages[0].Bounds, 1),
