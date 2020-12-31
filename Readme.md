@@ -10,7 +10,7 @@ The library is released under the [AGPLv3](https://www.gnu.org/licenses/agpl-3.0
 
 ## Getting started
 
-The MuPDFCore library targets .NET Standard 2.0, thus it can be used in projects that target .NET Standard 2.0+, .NET Core 2.0+, .NET Framework 4.6.1 and possibly others. MuPDFCore includes a pre-compiled native library, thus projects using it can only run on Windows, macOS and Linux x64 operating systems.
+The MuPDFCore library targets .NET Standard 2.0, thus it can be used in projects that target .NET Standard 2.0+, .NET Core 2.0+, .NET Framework 4.6.1 ([note](#netFrameworkNote)) and possibly others. MuPDFCore includes a pre-compiled native library, thus projects using it can only run on Windows, macOS and Linux x64 operating systems.
 
 To use the library in your project, you should install the [MuPDFCore NuGet package](https://www.nuget.org/packages/MuPDFCore/) and/or the [MuPDFCore.PDFRenderer NuGet package](https://www.nuget.org/packages/MuPDFCore.MuPDFRenderer/).
 
@@ -151,7 +151,7 @@ Furthermore, multiple `MuPDFMultiThreadedPageRenderer`s can be used in parallel,
     using MuPDFDocument document = new MuPDFDocument(context, "path/to/file.pdf");
 
     //Create arrays to hold the objects for the various pages
-    
+
     //Renderers: one per page
     MuPDFMultiThreadedPageRenderer[] renderers = new MuPDFMultiThreadedPageRenderer[document.Pages.Count];
 
@@ -193,44 +193,25 @@ Furthermore, multiple `MuPDFMultiThreadedPageRenderer`s can be used in parallel,
     });
 
 
-    //The code in this for-loop is not really part of MuPDFCore - it just shows an example of using SixLabors.ImageSharp to "stitch" the tiles up and produce the full image.
+    //The code in this for-loop is not really part of MuPDFCore - it just shows an example of using VectSharp to "stitch" the tiles up and produce the full image.
     for (int i = 0; i < document.Pages.Count; i++)
     {
         //Create a new (empty) image to hold the whole page.
-        SixLabors.ImageSharp.Image renderedPage = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgb24>(renderedPageSizes[i].Width, renderedPageSizes[i].Height);
+        VectSharp.Page renderedPage = new VectSharp.Page(renderedPageSizes[i].Width, renderedPageSizes[i].Height);
 
         //Draw each tile onto the image.
         for (int j = 0; j < renderers[i].ThreadCount; j++)
         {
-            ReadOnlySpan<byte> imageData;
-
-            //By using unsafe code, we can avoid having to marshal the image data around.
-            unsafe
-            {
-                //Create a new ReadOnlySpan that reads the unmanaged memory where the image data is located.
-                imageData = new ReadOnlySpan<byte>((void*)destinations[i][j], tileBounds[i][j].Height * tileBounds[i][j].Width * 3);
-            }
-
-            //Load the image data in the tile by using the ReadOnlySpan.
-            SixLabors.ImageSharp.Image tile = SixLabors.ImageSharp.Image.LoadPixelData<SixLabors.ImageSharp.PixelFormats.Rgb24>(imageData, tileBounds[i][j].Width, tileBounds[i][j].Height);
+            //Create a raster image object containing the pixel data. Yay, we do not need to copy/marshal anything!
+            VectSharp.RasterImage tile = new VectSharp.RasterImage(destinations[i][j], tileBounds[i][j].Width, tileBounds[i][j].Height, false, false);
 
             //Draw the tile on the main image page.
-            renderedPage.Mutate(x => x.DrawImage(tile, new SixLabors.ImageSharp.Point(tileBounds[i][j].X0, tileBounds[i][j].Y0), 1));
-
-            //Release the resources held by the tile.
-            tile.Dispose();
+            renderedPage.Graphics.DrawRasterImage(tileBounds[i][j].X0, tileBounds[i][j].Y0, tile);
         }
 
-        //Save the full page as a JPG image.
-        using (FileStream fs = new FileStream("page" + i.ToString() + ".jpg", FileMode.Create))
-        {
-            renderedPage.SaveAsJpeg(fs);
-        }
-
-        //Release the resources held by the image.
-        renderedPage.Dispose();
+        //Save the full page as a PNG image.
+        renderedPage.SaveAsPNG("page" + i.ToString() + ".png");
     }
-
 
     //Clean-up code.
     for (int i = 0; i < document.Pages.Count; i++)
@@ -345,3 +326,16 @@ dotnet pack -c Release
 ```
 
 This will create a NuGet package in `MuPDFCore/bin/Release`. You can install this package on your projects by adding a local NuGet source.
+
+## <a name="netFrameworkNote"></a> Note about MuPDFCore and .NET Framework
+
+If you wish to use MuPDFCore in a .NET Framework project, you will need to manually copy the native MuPDFWrapper library for the platform you are using to the executable directory (this is done automatically if you target .NET core).
+
+One way to obtain the appropriate library files is:
+
+1. Manually download the NuGet package for [MuPFDCore](https://www.nuget.org/packages/MuPDFCore/) (click on the "Download package" link on the right).
+2. Rename the `.nupkg` file so that it has a `.zip` extension.
+3. Extract the zip file.
+4. Within the extracted folder, the library files are in the `runtimes/xxx/native/` folder, where `xxx` is either `linux-x64`, `osx-x64` or `win-x64`, depending on the platform you are using.
+
+Make sure you copy the appropriate file to the same folder as the executable!
