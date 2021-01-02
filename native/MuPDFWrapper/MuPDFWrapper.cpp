@@ -146,6 +146,191 @@ void unlock_mutex(void* user, int lock)
 
 extern "C"
 {
+	DLL_PUBLIC int GetStructuredTextChar(fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y)
+	{
+		*out_c = character->c;
+
+		*out_color = character->color;
+
+		*out_origin_x = character->origin.x;
+		*out_origin_y = character->origin.y;
+
+		*out_size = character->size;
+
+		*out_ll_x = character->quad.ll.x;
+		*out_ll_y = character->quad.ll.y;
+
+		*out_ul_x = character->quad.ul.x;
+		*out_ul_y = character->quad.ul.y;
+
+		*out_ur_x = character->quad.ur.x;
+		*out_ur_y = character->quad.ur.y;
+
+		*out_lr_x = character->quad.lr.x;
+		*out_lr_y = character->quad.lr.y;
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetStructuredTextChars(fz_stext_line* line, fz_stext_char** out_chars)
+	{
+		int count = 0;
+
+		fz_stext_char* curr_char = line->first_char;
+
+		while (curr_char != nullptr)
+		{
+			out_chars[count] = curr_char;
+			count++;
+			curr_char = curr_char->next;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetStructuredTextLine(fz_stext_line* line, int* out_wmode, float* out_x0, float* out_y0, float* out_x1, float* out_y1, float* out_x, float* out_y, int* out_char_count)
+	{
+		*out_wmode = line->wmode;
+
+		*out_x0 = line->bbox.x0;
+		*out_y0 = line->bbox.y0;
+		*out_x1 = line->bbox.x1;
+		*out_y1 = line->bbox.y1;
+
+		*out_x = line->dir.x;
+		*out_y = line->dir.y;
+
+		int count = 0;
+
+		fz_stext_char* curr_char = line->first_char;
+
+		while (curr_char != nullptr)
+		{
+			count++;
+			curr_char = curr_char->next;
+		}
+
+		*out_char_count = count;
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetStructuredTextLines(fz_stext_block* block, fz_stext_line** out_lines)
+	{
+		int count = 0;
+
+		fz_stext_line* curr_line = block->u.t.first_line;
+
+		while (curr_line != nullptr)
+		{
+			out_lines[count] = curr_line;
+			count++;
+			curr_line = curr_line->next;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetStructuredTextBlock(fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count)
+	{
+		*out_type = block->type;
+
+		*out_x0 = block->bbox.x0;
+		*out_y0 = block->bbox.y0;
+		*out_x1 = block->bbox.x1;
+		*out_y1 = block->bbox.y1;
+
+		if (block->type == FZ_STEXT_BLOCK_IMAGE)
+		{
+			*out_line_count = 0;
+		}
+		else if (block->type == FZ_STEXT_BLOCK_TEXT)
+		{
+			int count = 0;
+
+			fz_stext_line* curr_line = block->u.t.first_line;
+
+			while (curr_line != nullptr)
+			{
+				count++;
+				curr_line = curr_line->next;
+			}
+
+			*out_line_count = count;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetStructuredTextBlocks(fz_stext_page* page, fz_stext_block** out_blocks)
+	{
+		fz_stext_block* curr_block = page->first_block;
+
+		int count = 0;
+
+		while (curr_block != nullptr)
+		{
+			out_blocks[count] = curr_block;
+			count++;
+			curr_block = curr_block->next;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetStructuredTextPage(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count)
+	{
+		fz_stext_page* page;
+		fz_stext_options options;
+		fz_device* device;
+
+		fz_try(ctx)
+		{
+			page = fz_new_stext_page(ctx, fz_infinite_rect);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_CANNOT_CREATE_PAGE;
+		}
+
+		fz_try(ctx)
+		{
+			device = fz_new_stext_device(ctx, page, &options);
+			fz_run_display_list(ctx, list, device, fz_identity, fz_infinite_rect, NULL);
+			fz_close_device(ctx, device);
+		}
+		fz_always(ctx)
+		{
+			fz_drop_device(ctx, device);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_CANNOT_POPULATE_PAGE;
+		}
+
+		*out_page = page;
+
+		int count = 0;
+
+		fz_stext_block* curr_block = page->first_block;
+
+		while (curr_block != nullptr)
+		{
+			count++;
+			curr_block = curr_block->next;
+		}
+
+		*out_stext_block_count = count;
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int DisposeStructuredTextPage(fz_context* ctx, fz_stext_page* page)
+	{
+		fz_drop_stext_page(ctx, page);
+		return EXIT_SUCCESS;
+	}
+
 
 	DLL_PUBLIC int FinalizeDocumentWriter(fz_context* ctx, fz_document_writer* writ)
 	{

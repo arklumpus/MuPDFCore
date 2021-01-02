@@ -96,6 +96,16 @@ namespace MuPDFCore
         ERR_CANNOT_CLOSE_DOCUMENT = 143,
 
         /// <summary>
+        /// An error occurred while creating an empty structured text page.
+        /// </summary>
+        ERR_CANNOT_CREATE_PAGE = 144,
+
+        /// <summary>
+        /// An error occurred while populating the structured text page
+        /// </summary>
+        ERR_CANNOT_POPULATE_PAGE = 145,
+
+        /// <summary>
         /// No error occurred. All is well.
         /// </summary>
         EXIT_SUCCESS = 0
@@ -518,7 +528,7 @@ namespace MuPDFCore
         /// <summary>
         /// Create cloned contexts that can be used in multithreaded rendering.
         /// </summary>
-        /// <param name="ctx">The original context to clone</param>
+        /// <param name="ctx">The original context to clone.</param>
         /// <param name="count">The number of cloned contexts to create.</param>
         /// <param name="out_contexts">An array of pointers to the cloned contexts.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
@@ -604,5 +614,103 @@ namespace MuPDFCore
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int FinalizeDocumentWriter(IntPtr ctx, IntPtr writ);
+
+        /// <summary>
+        /// Get the contents of a structured text character.
+        /// </summary>
+        /// <param name="character">The address of the character.</param>
+        /// <param name="out_c">Unicode code point of the character.</param>
+        /// <param name="out_color">An sRGB hex representation of the colour of the character.</param>
+        /// <param name="out_origin_x">The x coordinate of the baseline origin of the character.</param>
+        /// <param name="out_origin_y">The y coordinate of the baseline origin of the character.</param>
+        /// <param name="out_size">The size in points of the character.</param>
+        /// <param name="out_ll_x">The x coordinate of the lower left corner of the bounding quad.</param>
+        /// <param name="out_ll_y">The y coordinate of the lower left corner of the bounding quad.</param>
+        /// <param name="out_ul_x">The x coordinate of the upper left corner of the bounding quad.</param>
+        /// <param name="out_ul_y">The y coordinate of the upper left corner of the bounding quad.</param>
+        /// <param name="out_ur_x">The x coordinate of the upper right corner of the bounding quad.</param>
+        /// <param name="out_ur_y">The y coordinate of the upper right corner of the bounding quad.</param>
+        /// <param name="out_lr_x">The x coordinate of the lower right corner of the bounding quad.</param>
+        /// <param name="out_lr_y">The y coordinate of the lower right corner of the bounding quad.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetStructuredTextChar(IntPtr character, ref int out_c, ref int out_color, ref float out_origin_x, ref float out_origin_y, ref float out_size, ref float out_ll_x, ref float out_ll_y, ref float out_ul_x, ref float out_ul_y, ref float out_ur_x, ref float out_ur_y, ref float out_lr_x, ref float out_lr_y);
+
+        /// <summary>
+        /// Get an array of structured text characters from a structured text line.
+        /// </summary>
+        /// <param name="line">The structured text line from which the characters should be extracted.</param>
+        /// <param name="out_chars">An array of pointers to the structured text characters.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetStructuredTextChars(IntPtr line, IntPtr out_chars);
+
+        /// <summary>
+        /// Get the contents of a structured text line.
+        /// </summary>
+        /// <param name="line">The address of the line.</param>
+        /// <param name="out_wmode">An integer equivalent to <see cref="MuPDFStructuredTextLine"/> representing the writing mode of the line.</param>
+        /// <param name="out_x0">The left coordinate in page units of the bounding box of the line.</param>
+        /// <param name="out_y0">The top coordinate in page units of the bounding box of the line.</param>
+        /// <param name="out_x1">The right coordinate in page units of the bounding box of the line.</param>
+        /// <param name="out_y1">The bottom coordinate in page units of the bounding box of the line.</param>
+        /// <param name="out_x">The x component of the normalised direction of the baseline.</param>
+        /// <param name="out_y">The y component of the normalised direction of the baseline.</param>
+        /// <param name="out_char_count">The number of characters in the line.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetStructuredTextLine(IntPtr line, ref int out_wmode, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1, ref float out_x, ref float out_y, ref int out_char_count);
+
+        /// <summary>
+        /// Get an array of structured text lines from a structured text block.
+        /// </summary>
+        /// <param name="block">The structured text block from which the lines should be extracted.</param>
+        /// <param name="out_lines">An array of pointers to the structured text lines.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetStructuredTextLines(IntPtr block, IntPtr out_lines);
+
+        /// <summary>
+        /// Get the contents of a structured text block.
+        /// </summary>
+        /// <param name="block">The address of the block.</param>
+        /// <param name="out_type">An integer equivalent to <see cref="MuPDFStructuredTextBlock.Types"/> representing the type of the block.</param>
+        /// <param name="out_x0">The left coordinate in page units of the bounding box of the block.</param>
+        /// <param name="out_y0">The top coordinate in page units of the bounding box of the block.</param>
+        /// <param name="out_x1">The right coordinate in page units of the bounding box of the block.</param>
+        /// <param name="out_y1">The bottom coordinate in page units of the bounding box of the block.</param>
+        /// <param name="out_line_count">The number of lines in the block.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetStructuredTextBlock(IntPtr block, ref int out_type, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1, ref int out_line_count);
+
+        /// <summary>
+        /// Get an array of structured text blocks from a structured text page.
+        /// </summary>
+        /// <param name="page">The structured text page from which the blocks should be extracted.</param>
+        /// <param name="out_blocks">An array of pointers to the structured text blocks.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetStructuredTextBlocks(IntPtr page, IntPtr out_blocks);
+
+        /// <summary>
+        /// Get a structured text representation of a display list.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="list">The display list whose structured text representation is sought.</param>
+        /// <param name="out_page">The address of the structured text page.</param>
+        /// <param name="out_stext_block_count">The number of structured text blocks in the page.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetStructuredTextPage(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref int out_stext_block_count);
+
+        /// <summary>
+        /// Free a native structured text page and its associated resources.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="page"></param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int DisposeStructuredTextPage(IntPtr ctx, IntPtr page);
     }
 }

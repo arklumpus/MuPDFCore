@@ -467,6 +467,25 @@ namespace MuPDFCore
         {
             return other.X0 >= this.X0 && other.X1 <= this.X1 && other.Y0 >= this.Y0 && other.Y1 <= this.Y1;
         }
+
+        /// <summary>
+        /// Checks whether this <see cref="Rectangle"/> contains a <see cref="PointF"/>.
+        /// </summary>
+        /// <param name="point">The <see cref="PointF"/> to check.</param>
+        /// <returns>A boolean value indicating whether this <see cref="Rectangle"/> contains the <paramref name="point"/>.</returns>
+        public bool Contains(PointF point)
+        {
+            return point.X >= this.X0 && point.X <= this.X1 && point.Y >= this.Y0 && point.Y <= this.Y1;
+        }
+
+        /// <summary>
+        /// Converts the <see cref="Rectangle"/> to a <see cref="Quad"/>.
+        /// </summary>
+        /// <returns>A <see cref="Quad"/> corresponding to the current <see cref="Rectangle"/>.</returns>
+        public Quad ToQuad()
+        {
+            return new Quad(new PointF(X0, Y1), new PointF(X0, Y0), new PointF(X1, Y0), new PointF(X1, Y1));
+        }
     }
 
     /// <summary>
@@ -541,4 +560,98 @@ namespace MuPDFCore
         }
     }
 
+    /// <summary>
+    /// Represents a point.
+    /// </summary>
+    public struct PointF
+    {
+        /// <summary>
+        /// The horizontal coordinate of the point.
+        /// </summary>
+        public float X;
+
+        /// <summary>
+        /// The vertical coordinate of the point.
+        /// </summary>
+        public float Y;
+
+        /// <summary>
+        /// Create a new <see cref="PointF"/> from the specified coordinates.
+        /// </summary>
+        /// <param name="x">The horizontal coordinate of the point.</param>
+        /// <param name="y">The vertical coordinate of the point.</param>
+        public PointF(float x, float y)
+        {
+            X = x;
+            Y = y;
+        }
+    }
+
+    /// <summary>
+    /// Represents a quadrilater (not necessarily a rectangle).
+    /// </summary>
+    public struct Quad
+    {
+        /// <summary>
+        /// The lower left point of the quadrilater.
+        /// </summary>
+        public PointF LowerLeft;
+
+        /// <summary>
+        /// The upper left point of the quadrilater.
+        /// </summary>
+        public PointF UpperLeft;
+
+        /// <summary>
+        /// The upper right point of the quadrilater.
+        /// </summary>
+        public PointF UpperRight;
+
+        /// <summary>
+        /// The lower right point of the quadrilater.
+        /// </summary>
+        public PointF LowerRight;
+
+        /// <summary>
+        /// Creates a new <see cref="Quad"/> from the specified points.
+        /// </summary>
+        /// <param name="lowerLeft">The lower left point of the quadrilater.</param>
+        /// <param name="upperLeft">The upper left point of the quadrilater.</param>
+        /// <param name="upperRight">The upper right point of the quadrilater.</param>
+        /// <param name="lowerRight">The lower right point of the quadrilater.</param>
+        public Quad(PointF lowerLeft, PointF upperLeft, PointF upperRight, PointF lowerRight)
+        {
+            this.LowerLeft = lowerLeft;
+            this.UpperLeft = upperLeft;
+            this.UpperRight = upperRight;
+            this.LowerRight = lowerRight;
+        }
+
+        /// <summary>
+        /// Checks whether this <see cref="Quad"/> contains a <see cref="PointF"/>.
+        /// </summary>
+        /// <param name="point">The <see cref="PointF"/> to check.</param>
+        /// <returns>A boolean value indicating whether this <see cref="Quad"/> contains the <paramref name="point"/>.</returns>
+        public bool Contains(PointF point)
+        {
+            return PointInTriangle(point, this.LowerLeft, this.UpperLeft, this.UpperRight) || PointInTriangle(point, this.LowerLeft, this.UpperRight, this.LowerRight);
+        }
+
+        /// <summary>
+        /// Checks whether a point is contained in a triangle.
+        /// </summary>
+        /// <param name="pt">The point to test.</param>
+        /// <param name="A">The first vertex of the triangle.</param>
+        /// <param name="B">The second vertex of the triangle.</param>
+        /// <param name="C">The third vertex of the triangle.</param>
+        /// <returns>A boolean value indicating whether the point is contained in the triangle.</returns>
+        private static bool PointInTriangle(PointF pt, PointF A, PointF B, PointF C)
+        {
+            double signAB = (pt.X - B.X) * (A.Y - B.Y) - (A.X - B.X) * (pt.Y - B.Y);
+            double signBC = (pt.X - C.X) * (B.Y - C.Y) - (B.X - C.X) * (pt.Y - C.Y);
+            double signCA = (pt.X - A.X) * (C.Y - A.Y) - (C.X - A.X) * (pt.Y - A.Y);
+
+            return !((signAB < 0 || signBC < 0 || signCA < 0) && (signAB > 0 || signBC > 0 || signCA > 0));
+        }
+    }
 }

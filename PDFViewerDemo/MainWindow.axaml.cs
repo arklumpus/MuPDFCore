@@ -20,6 +20,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using VectSharp.PDF;
+using System.Text.RegularExpressions;
 
 namespace PDFViewerDemo
 {
@@ -153,9 +154,10 @@ namespace PDFViewerDemo
 
             gpr.Restore();
 
-            gpr.FillText(400, 120, "Move the mouse with", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
-            gpr.FillText(400, 176, "the left button pressed", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
-            gpr.FillText(400, 232, "to pan around", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
+            gpr.FillText(400, 92, "Move the mouse with", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
+            gpr.FillText(400, 148, "the left button pressed", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
+            gpr.FillText(400, 204, "to pan around or to", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
+            gpr.FillText(400, 260, "select text", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
 
             gpr.FillText(400, 530, "Use the mouse wheel", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
             gpr.FillText(400, 586, "to zoom in/out", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
@@ -514,6 +516,59 @@ namespace PDFViewerDemo
         {
             //Clear the asset cache store.
             Context?.ClearStore();
+        }
+
+        /// <summary>
+        /// Invoked when the "Copy selected text..." button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void CopyClicked(object sender, RoutedEventArgs e)
+        {
+            string selection = this.FindControl<PDFRenderer>("MuPDFRenderer").GetSelectedText() ?? "";
+            await Application.Current.Clipboard.SetTextAsync(selection);
+        }
+
+        /// <summary>
+        /// Invoked when a key is pressed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void WindowKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.C)
+            {
+                string selection = this.FindControl<PDFRenderer>("MuPDFRenderer").GetSelectedText() ?? "";
+                await Application.Current.Clipboard.SetTextAsync(selection);
+            }
+            else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.A)
+            {
+                this.FindControl<PDFRenderer>("MuPDFRenderer").SelectAll();
+            }
+        }
+
+        /// <summary>
+        /// Invoked when the "Search" button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SearchClicked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                this.FindControl<PDFRenderer>("MuPDFRenderer").Search(new Regex(this.FindControl<TextBox>("SearchBox").Text));
+            }
+            catch (ArgumentException) { }
+        }
+
+        /// <summary>
+        /// Invoked when the "Clear" button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ClearClicked(object sender, RoutedEventArgs e)
+        {
+            this.FindControl<PDFRenderer>("MuPDFRenderer").HighlightedRegions = null;
         }
     }
 

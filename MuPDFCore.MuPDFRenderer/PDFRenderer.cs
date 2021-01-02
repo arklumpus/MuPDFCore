@@ -26,8 +26,11 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace MuPDFCore.MuPDFRenderer
@@ -45,12 +48,12 @@ namespace MuPDFCore.MuPDFRenderer
         /// <summary>
         /// The <see cref="MuPDFContext"/> using which the <see cref="Document"/> was created.
         /// </summary>
-        private MuPDFContext Context;
+        protected MuPDFContext Context;
 
         /// <summary>
         /// The <see cref="MuPDFDocument"/> from which the <see cref="Renderer"/> was created.
         /// </summary>
-        private MuPDFDocument Document;
+        protected MuPDFDocument Document;
 
         /// <summary>
         /// The <see cref="MuPDFMultiThreadedPageRenderer"/> that renders the dynamic tiles.
@@ -157,6 +160,41 @@ namespace MuPDFCore.MuPDFRenderer
         /// </summary>
         private Rect MouseDownDisplayArea;
 
+        /// <summary>
+        /// A structured text representation of the current page, used for selection and search highlight.
+        /// </summary>
+        protected MuPDFStructuredTextPage StructuredTextPage;
+
+        /// <summary>
+        /// A list of <see cref="Quad"/>s that cover the selected text region.
+        /// </summary>
+        protected List<Quad> SelectionQuads;
+
+        /// <summary>
+        /// A list of <see cref="Quad"/>s that cover the highlighted regions.
+        /// </summary>
+        protected List<Quad> HighlightQuads;
+
+        /// <summary>
+        /// Defines the current mouse operation.
+        /// </summary>
+        private enum CurrentMouseOperations
+        {
+            /// <summary>
+            /// The mouse is being used to pan around the page.
+            /// </summary>
+            Pan,
+
+            /// <summary>
+            /// The mouse is being used to highlight text
+            /// </summary>
+            Highlight
+        }
+
+        /// <summary>
+        /// The current mouse operation.
+        /// </summary>
+        private CurrentMouseOperations CurrentMouseOperation;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PDFRenderer"/> class.
@@ -346,6 +384,9 @@ namespace MuPDFCore.MuPDFRenderer
                 threadCount = Math.Max(1, Math.Min(8, Environment.ProcessorCount - 2));
             }
 
+            //Create the structured text representation.
+            this.StructuredTextPage = Document.GetStructuredTextPage(pageNumber, includeAnnotations);
+
             //Create the multithreaded renderer.
             Renderer = Document.GetMultiThreadedRenderer(pageNumber, threadCount, includeAnnotations);
 
@@ -384,6 +425,9 @@ namespace MuPDFCore.MuPDFRenderer
         {
             IsViewerInitialized = false;
             this.Renderer?.Dispose();
+            this.StructuredTextPage = null;
+            this.Selection = null;
+            this.HighlightedRegions = null;
 
             if (OwnsContextAndDocument)
             {
@@ -491,6 +535,45 @@ namespace MuPDFCore.MuPDFRenderer
             return Renderer.GetProgress();
         }
 
+        /// <summary>
+        /// Get the currently selected text.
+        /// </summary>
+        /// <returns>The currently selected text.</returns>
+        public string GetSelectedText()
+        {
+            return this.StructuredTextPage.GetText(this.Selection);
+        }
+
+        /// <summary>
+        /// Selects all the text in the document.
+        /// </summary>
+        public void SelectAll()
+        {
+            if (this.StructuredTextPage.Count > 0)
+            {
+                int maxBlock = this.StructuredTextPage.Count - 1;
+                int maxLine = this.StructuredTextPage[maxBlock].Count - 1;
+                int maxCharacter = this.StructuredTextPage[maxBlock][maxLine].Count - 1;
+
+                this.Selection = new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(0, 0, 0), new MuPDFStructuredTextAddress(maxBlock, maxLine, maxCharacter));
+            }
+            else
+            {
+                this.Selection = null;
+            }
+        }
+
+        /// <summary>
+        /// Highlights all matches of the specified <see cref="Regex"/> in the text and returns the number of matches found. Matches cannot span multiple lines.
+        /// </summary>
+        /// <param name="needle">The <see cref="Regex"/> to search for.</param>
+        /// <returns>The number of matches that have been found.</returns>
+        public int Search(Regex needle)
+        {
+            List<MuPDFStructuredTextAddressSpan> spans = this.StructuredTextPage.Search(needle).ToList();
+            this.HighlightedRegions = spans;
+            return spans.Count;
+        }
 
         /// <summary>
         /// Render the <see cref="FixedCanvasBitmap"/>. 
@@ -529,7 +612,7 @@ namespace MuPDFCore.MuPDFRenderer
             //Render the page to the FixedCanvasBitmap (without marshaling).
             using (ILockedFramebuffer fb = FixedCanvasBitmap.Lock())
             {
-                Document.Render(PageNumber, origin, zoom, PixelFormats.RGBA, fb.Address);                
+                Document.Render(PageNumber, origin, zoom, PixelFormats.RGBA, fb.Address);
             }
         }
 
@@ -782,6 +865,27 @@ namespace MuPDFCore.MuPDFRenderer
                     RenderDynamicCanvas();
                 }
             }
+            else if (e.Property == PDFRenderer.SelectionProperty)
+            {
+                //Update the selection quads to reflect the new selection
+                this.SelectionQuads = this.StructuredTextPage.GetHighlightQuads(this.Selection, false).ToList();
+                this.InvalidateVisual();
+            }
+            else if (e.Property == PDFRenderer.HighlightedRegionsProperty)
+            {
+                //Update the highlight quads to reflect the new highlighted regions
+                this.HighlightQuads = new List<Quad>();
+
+                if (this.HighlightedRegions != null)
+                {
+                    foreach (MuPDFStructuredTextAddressSpan span in this.HighlightedRegions)
+                    {
+                        this.HighlightQuads.AddRange(this.StructuredTextPage.GetHighlightQuads(span, false));
+                    }
+                }
+
+                this.InvalidateVisual();
+            }
         }
 
         /// <summary>
@@ -791,13 +895,68 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="e"></param>
         private void ControlPointerPressed(object sender, PointerPressedEventArgs e)
         {
-            if (PanEnabled)
+            if (PointerEventHandlersType == PointerEventHandlers.Pan)
             {
                 if (e.GetCurrentPoint(this).Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed)
                 {
                     IsMouseDown = true;
                     MouseDownPoint = e.GetPosition(this);
                     MouseDownDisplayArea = DisplayArea;
+                    this.Cursor = new Cursor(StandardCursorType.SizeAll);
+                }
+            }
+            else if (PointerEventHandlersType == PointerEventHandlers.Highlight)
+            {
+                if (e.GetCurrentPoint(this).Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed)
+                {
+                    Point point = e.GetPosition(this);
+
+                    IsMouseDown = true;
+                    MouseDownPoint = point;
+                    MouseDownDisplayArea = DisplayArea;
+
+                    PointF pagePoint = new PointF((float)(point.X / this.Bounds.Width * DisplayArea.Width + DisplayArea.Left), (float)(point.Y / this.Bounds.Height * DisplayArea.Height + DisplayArea.Top));
+
+                    MuPDFStructuredTextAddress? address = StructuredTextPage.GetHitAddress(pagePoint, false);
+
+                    if (address != null)
+                    {
+                        this.Selection = new MuPDFStructuredTextAddressSpan(address.Value, null);
+                    }
+                    else
+                    {
+                        this.Selection = null;
+                    }
+                }
+            }
+            else if (PointerEventHandlersType == PointerEventHandlers.PanHighlight)
+            {
+                Point point = e.GetPosition(this);
+                PointF pagePoint = new PointF((float)(point.X / this.Bounds.Width * DisplayArea.Width + DisplayArea.Left), (float)(point.Y / this.Bounds.Height * DisplayArea.Height + DisplayArea.Top));
+                MuPDFStructuredTextAddress? address = StructuredTextPage.GetHitAddress(pagePoint, false);
+
+                if (address == null)
+                {
+                    if (e.GetCurrentPoint(this).Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed)
+                    {
+                        IsMouseDown = true;
+                        MouseDownPoint = e.GetPosition(this);
+                        MouseDownDisplayArea = DisplayArea;
+                        this.Cursor = new Cursor(StandardCursorType.SizeAll);
+                        CurrentMouseOperation = CurrentMouseOperations.Pan;
+                    }
+                }
+                else
+                {
+                    if (e.GetCurrentPoint(this).Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed)
+                    {
+                        IsMouseDown = true;
+                        MouseDownPoint = point;
+                        MouseDownDisplayArea = DisplayArea;
+
+                        this.Selection = new MuPDFStructuredTextAddressSpan(address.Value, null);
+                        CurrentMouseOperation = CurrentMouseOperations.Highlight;
+                    }
                 }
             }
         }
@@ -809,11 +968,38 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="e"></param>
         private void ControlPointerReleased(object sender, PointerReleasedEventArgs e)
         {
-            if (PanEnabled)
+            if (PointerEventHandlersType == PointerEventHandlers.Pan)
             {
                 if (e.InitialPressMouseButton == MouseButton.Left)
                 {
                     IsMouseDown = false;
+                    this.Cursor = new Cursor(StandardCursorType.Arrow);
+                }
+            }
+            else if (PointerEventHandlersType == PointerEventHandlers.Highlight)
+            {
+                if (e.InitialPressMouseButton == MouseButton.Left)
+                {
+                    IsMouseDown = false;
+                    if (e.GetPosition(this).Equals(MouseDownPoint))
+                    {
+                        this.Selection = null;
+                    }
+                }
+            }
+            else if (PointerEventHandlersType == PointerEventHandlers.PanHighlight)
+            {
+                if (e.InitialPressMouseButton == MouseButton.Left)
+                {
+                    IsMouseDown = false;
+                    if (CurrentMouseOperation == CurrentMouseOperations.Pan)
+                    {
+                        this.Cursor = new Cursor(StandardCursorType.Arrow);
+                    }
+                    if (e.GetPosition(this).Equals(MouseDownPoint))
+                    {
+                        this.Selection = null;
+                    }
                 }
             }
         }
@@ -825,10 +1011,11 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="e"></param>
         private void ControlPointerMoved(object sender, PointerEventArgs e)
         {
-            if (PanEnabled)
+            if (IsMouseDown)
             {
-                if (IsMouseDown)
+                if (PointerEventHandlersType == PointerEventHandlers.Pan || (PointerEventHandlersType == PointerEventHandlers.PanHighlight && CurrentMouseOperation == CurrentMouseOperations.Pan))
                 {
+
                     Point point = e.GetPosition(this);
 
                     double deltaX = (-point.X + MouseDownPoint.X) / this.Bounds.Width * DisplayArea.Width;
@@ -837,6 +1024,52 @@ namespace MuPDFCore.MuPDFRenderer
                     Rect target = new Rect(new Point(this.MouseDownDisplayArea.X + deltaX, this.MouseDownDisplayArea.Y + deltaY), new Point(this.MouseDownDisplayArea.Right + deltaX, this.MouseDownDisplayArea.Bottom + deltaY));
 
                     SetDisplayAreaNowInternal(target);
+                    this.Cursor = new Cursor(StandardCursorType.SizeAll);
+
+                }
+                else if (PointerEventHandlersType == PointerEventHandlers.Highlight || (PointerEventHandlersType == PointerEventHandlers.PanHighlight && CurrentMouseOperation == CurrentMouseOperations.Highlight))
+                {
+
+                    Point point = e.GetPosition(this);
+
+                    PointF pagePoint = new PointF((float)(point.X / this.Bounds.Width * DisplayArea.Width + DisplayArea.Left), (float)(point.Y / this.Bounds.Height * DisplayArea.Height + DisplayArea.Top));
+
+                    MuPDFStructuredTextAddress? address = StructuredTextPage.GetClosestHitAddress(pagePoint, false);
+
+                    this.Selection = new MuPDFStructuredTextAddressSpan(this.Selection.Start, address);
+
+                    if (address != null)
+                    {
+                        this.Cursor = new Cursor(StandardCursorType.Ibeam);
+                    }
+                    else
+                    {
+                        this.Cursor = new Cursor(StandardCursorType.Arrow);
+                    }
+                }
+            }
+            else
+            {
+                if (PointerEventHandlersType == PointerEventHandlers.Highlight || PointerEventHandlersType == PointerEventHandlers.PanHighlight)
+                {
+                    Point point = e.GetPosition(this);
+
+                    PointF pagePoint = new PointF((float)(point.X / this.Bounds.Width * DisplayArea.Width + DisplayArea.Left), (float)(point.Y / this.Bounds.Height * DisplayArea.Height + DisplayArea.Top));
+
+                    MuPDFStructuredTextAddress? address = StructuredTextPage.GetHitAddress(pagePoint, false);
+
+                    if (address != null)
+                    {
+                        this.Cursor = new Cursor(StandardCursorType.Ibeam);
+                    }
+                    else
+                    {
+                        this.Cursor = new Cursor(StandardCursorType.Arrow);
+                    }
+                }
+                else
+                {
+                    this.Cursor = new Cursor(StandardCursorType.Arrow);
                 }
             }
         }
@@ -894,7 +1127,7 @@ namespace MuPDFCore.MuPDFRenderer
                     {
                         //Page background
                         context.FillRectangle(PageBackground, new Rect(new Point((minX - DisplayArea.Left) / DisplayArea.Width * this.Bounds.Width, (minY - DisplayArea.Top) / DisplayArea.Height * this.Bounds.Height), new Point((maxX - DisplayArea.Left) / DisplayArea.Width * this.Bounds.Width, (maxY - DisplayArea.Top) / DisplayArea.Height * this.Bounds.Height)));
-                        
+
                         //Draw the DynamicBitmaps.
                         for (int i = 0; i < DynamicImagesBounds.Length; i++)
                         {
@@ -914,10 +1147,10 @@ namespace MuPDFCore.MuPDFRenderer
                 {
                     //Page background
                     context.FillRectangle(PageBackground, new Rect(new Point((minX - DisplayArea.Left) / DisplayArea.Width * this.Bounds.Width, (minY - DisplayArea.Top) / DisplayArea.Height * this.Bounds.Height), new Point((maxX - DisplayArea.Left) / DisplayArea.Width * this.Bounds.Width, (maxY - DisplayArea.Top) / DisplayArea.Height * this.Bounds.Height)));
-                    
+
                     //Top left corner of the DisplayArea in FixedCanvasBitmap coordinates.
                     Point topLeft = new Point((DisplayArea.X - FixedArea.X0) / FixedArea.Width * FixedCanvasBitmap.PixelSize.Width, (DisplayArea.Y - FixedArea.Y0) / FixedArea.Height * FixedCanvasBitmap.PixelSize.Height);
-                    
+
                     //Size of the DisplayArea in FixedCanvasBitmap coordinates.
                     Avalonia.Size size = new Avalonia.Size(DisplayArea.Width / FixedArea.Width * FixedCanvasBitmap.PixelSize.Width, DisplayArea.Height / FixedArea.Height * FixedCanvasBitmap.PixelSize.Height);
 
@@ -927,6 +1160,52 @@ namespace MuPDFCore.MuPDFRenderer
                     //Draw the icon signaling that the DynamicBitmaps are still being rendered.
                     RefreshingGeometry.Transform = new TranslateTransform(this.Bounds.Width - 38, 32);
                     context.DrawGeometry(new SolidColorBrush(Color.FromRgb(119, 170, 221)), null, RefreshingGeometry);
+                }
+
+                //Draw the highlight quads
+                if (this.HighlightQuads != null && this.HighlightQuads.Count > 0)
+                {
+                    PathGeometry highlightGeometry = new PathGeometry() { FillRule = FillRule.NonZero };
+
+                    for (int i = 0; i < this.HighlightQuads.Count; i++)
+                    {
+                        Point ll = new Point((this.HighlightQuads[i].LowerLeft.X - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (this.HighlightQuads[i].LowerLeft.Y - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+                        Point ul = new Point((this.HighlightQuads[i].UpperLeft.X - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (this.HighlightQuads[i].UpperLeft.Y - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+                        Point ur = new Point((this.HighlightQuads[i].UpperRight.X - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (this.HighlightQuads[i].UpperRight.Y - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+                        Point lr = new Point((this.HighlightQuads[i].LowerRight.X - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (this.HighlightQuads[i].LowerRight.Y - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+
+                        PathFigure quad = new PathFigure() { StartPoint = ll, IsClosed = true, IsFilled = true };
+                        quad.Segments.Add(new LineSegment() { Point = ul });
+                        quad.Segments.Add(new LineSegment() { Point = ur });
+                        quad.Segments.Add(new LineSegment() { Point = lr });
+
+                        highlightGeometry.Figures.Add(quad);
+                    }
+
+                    context.DrawGeometry(this.HighlightBrush, null, highlightGeometry);
+                }
+
+                //Draw the selection quads
+                if (this.SelectionQuads != null && this.SelectionQuads.Count > 0)
+                {
+                    PathGeometry selectionGeometry = new PathGeometry() { FillRule = FillRule.NonZero };
+
+                    for (int i = 0; i < this.SelectionQuads.Count; i++)
+                    {
+                        Point ll = new Point((this.SelectionQuads[i].LowerLeft.X - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (this.SelectionQuads[i].LowerLeft.Y - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+                        Point ul = new Point((this.SelectionQuads[i].UpperLeft.X - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (this.SelectionQuads[i].UpperLeft.Y - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+                        Point ur = new Point((this.SelectionQuads[i].UpperRight.X - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (this.SelectionQuads[i].UpperRight.Y - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+                        Point lr = new Point((this.SelectionQuads[i].LowerRight.X - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (this.SelectionQuads[i].LowerRight.Y - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+
+                        PathFigure quad = new PathFigure() { StartPoint = ll, IsClosed = true, IsFilled = true };
+                        quad.Segments.Add(new LineSegment() { Point = ul });
+                        quad.Segments.Add(new LineSegment() { Point = ur });
+                        quad.Segments.Add(new LineSegment() { Point = lr });
+
+                        selectionGeometry.Figures.Add(quad);
+                    }
+
+                    context.DrawGeometry(this.SelectionBrush, null, selectionGeometry);
                 }
             }
         }

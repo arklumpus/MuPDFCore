@@ -20,6 +20,7 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using System;
+using System.Collections.Generic;
 
 namespace MuPDFCore.MuPDFRenderer
 {
@@ -220,8 +221,7 @@ namespace MuPDFCore.MuPDFRenderer
             }
 
             set
-            {
-                double scale = (VisualRoot as ILayoutRoot)?.LayoutScaling ?? 1;
+            {                
                 double actualZoom = value / _Zoom;
 
                 double currZoomX = FixedArea.Width / DisplayArea.Width * actualZoom;
@@ -241,16 +241,42 @@ namespace MuPDFCore.MuPDFRenderer
         }
 
         /// <summary>
-        /// Defines the <see cref="PanEnabled"/> property.
+        /// Identifies the action to perform on pointer events.
         /// </summary>
-        public static readonly StyledProperty<bool> PanEnabledProperty = AvaloniaProperty.Register<PDFRenderer, bool>(nameof(PanEnabled), true);
+        public enum PointerEventHandlers
+        {
+            /// <summary>
+            /// Pointer events will be used to pan around the page.
+            /// </summary>
+            Pan,
+
+            /// <summary>
+            /// Pointer events will be used to highlight text.
+            /// </summary>
+            Highlight,
+
+            /// <summary>
+            /// Pointer events will be used to pan around the page or to highlight text, depending on where they start.
+            /// </summary>
+            PanHighlight,
+
+            /// <summary>
+            /// Pointer events will be ignored. If you use this value, you will have to implement your own way to pan around the document by changing the <see cref="DisplayArea"/> or to select text.
+            /// </summary>
+            Custom
+        }
+
+        /// <summary>
+        /// Defines the <see cref="PointerEventHandlersType"/> property.
+        /// </summary>
+        public static readonly StyledProperty<PointerEventHandlers> PointerEventHandlerTypeProperty = AvaloniaProperty.Register<PDFRenderer, PointerEventHandlers>(nameof(PointerEventHandlersType), PointerEventHandlers.PanHighlight);
         /// <summary>
         /// Whether the default handlers for pointer events (which are used for panning around the page) should be enabled. If this is false, you will have to implement your own way to pan around the document by changing the <see cref="DisplayArea"/>.
         /// </summary>
-        public bool PanEnabled
+        public PointerEventHandlers PointerEventHandlersType
         {
-            get { return GetValue(PanEnabledProperty); }
-            set { SetValue(PanEnabledProperty, value); }
+            get { return GetValue(PointerEventHandlerTypeProperty); }
+            set { SetValue(PointerEventHandlerTypeProperty, value); }
         }
 
         /// <summary>
@@ -264,6 +290,58 @@ namespace MuPDFCore.MuPDFRenderer
         {
             get { return GetValue(ZoomEnabledProperty); }
             set { SetValue(ZoomEnabledProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the <see cref="Selection"/> property.
+        /// </summary>
+        public static readonly StyledProperty<MuPDFStructuredTextAddressSpan> SelectionProperty = AvaloniaProperty.Register<PDFRenderer, MuPDFStructuredTextAddressSpan>(nameof(Selection), null);
+        /// <summary>
+        /// The start and end of the currently selected text.
+        /// </summary>
+        public MuPDFStructuredTextAddressSpan Selection
+        {
+            get { return GetValue(SelectionProperty); }
+            set { SetValue(SelectionProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the <see cref="SelectionBrush"/> property.
+        /// </summary>
+        public static readonly StyledProperty<IBrush> SelectionBrushProperty = AvaloniaProperty.Register<PDFRenderer, IBrush>(nameof(SelectionBrush), new SolidColorBrush(Color.FromArgb(96, 86, 180, 233)));
+        /// <summary>
+        /// The colour used to highlight the <see cref="Selection"/>.
+        /// </summary>
+        public IBrush SelectionBrush
+        {
+            get { return GetValue(SelectionBrushProperty); }
+            set { SetValue(SelectionBrushProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the <see cref="HighlightedRegions"/> property.
+        /// </summary>
+        public static readonly StyledProperty<IEnumerable<MuPDFStructuredTextAddressSpan>> HighlightedRegionsProperty = AvaloniaProperty.Register<PDFRenderer, IEnumerable<MuPDFStructuredTextAddressSpan>>(nameof(HighlightedRegions), null);
+        /// <summary>
+        /// A collection of highlighted regions, e.g. as a result of a text search.
+        /// </summary>
+        public IEnumerable<MuPDFStructuredTextAddressSpan> HighlightedRegions
+        {
+            get { return GetValue(HighlightedRegionsProperty); }
+            set { SetValue(HighlightedRegionsProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the <see cref="HighlightBrush"/> property.
+        /// </summary>
+        public static readonly StyledProperty<IBrush> HighlightBrushProperty = AvaloniaProperty.Register<PDFRenderer, IBrush>(nameof(HighlightBrush), new SolidColorBrush(Color.FromArgb(96, 230, 159, 0)));
+        /// <summary>
+        /// The colour used to highlight the <see cref="HighlightedRegions"/>.
+        /// </summary>
+        public IBrush HighlightBrush
+        {
+            get { return GetValue(HighlightBrushProperty); }
+            set { SetValue(HighlightBrushProperty, value); }
         }
     }
 }

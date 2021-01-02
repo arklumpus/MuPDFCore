@@ -5,11 +5,11 @@
         xmlns:mupdf="clr-namespace:MuPDFCore.MuPDFRenderer;assembly=MuPDFCore.MuPDFRenderer"
         xmlns:local="clr-namespace:PDFViewerDemo;assembly=PDFViewerDemo"
         xmlns:anim="clr-namespace:Avalonia.Animation;assembly=MuPDFCore.MuPDFRenderer"
-        mc:Ignorable="d" Width="800" Height="600"
+        mc:Ignorable="d" Width="800" Height="650"
         MinWidth="300" MinHeight="100"
         x:Class="PDFViewerDemo.MainWindow"
         Title="PDF Viewer" Opened="WindowOpened" FontSize="16" Name="MainWindow"
-        Closed="WindowClosed">
+        Closed="WindowClosed" KeyDown="WindowKeyDown">
   <Window.Resources>
     <!--Used when converting page numbers: the page numbers are 0-based, but most people would expect the first page to be page number 1.-->
     <local:IncreaseByOne x:Key="increaseByOne"/>
@@ -25,7 +25,7 @@
     </Grid.ColumnDefinitions>
 
     <!--The PDF renderer.-->
-    <mupdf:PDFRenderer Name="MuPDFRenderer" Background="#F0F0F0" PageBackground="White" PropertyChanged="RendererPropertyChanged" ZoomIncrement="1.75">
+    <mupdf:PDFRenderer Name="MuPDFRenderer" Background="#F0F0F0" PageBackground="White" PropertyChanged="RendererPropertyChanged" ZoomIncrement="1.75" ClipToBounds="True">
       <!--Fancy transition so that we can zoom or pan around smoothly. Disabling this would result in better performance, though.-->
       <mupdf:PDFRenderer.Transitions>
         <Transitions>
@@ -38,6 +38,9 @@
     <ScrollViewer Grid.Column="1" Margin="10, 0, 0, 0" Padding="0,0,10,0" VerticalScrollBarVisibility="Visible">
       <Grid Name="ControlsGrid">
         <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
@@ -97,14 +100,30 @@
           <Button Click="ContainClicked" Grid.Column="1" Margin="10, 0, 0, 0">Contain</Button>
         </Grid>
 
+        <Button Grid.Row="5" Margin="0, 5, 0, 5" Click="CopyClicked">Copy selected text...</Button>
+
+        <TextBox Grid.Row="6" Margin="0, 5, 0, 5" Watermark="Search regex..." Name="SearchBox"></TextBox>
+
+        <Grid Grid.Row="7" Margin="0, 5, 0, 5">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+          </Grid.ColumnDefinitions>
+          <!--Highlight all matches of the search regex.-->
+          <Button Click="SearchClicked" Margin="0, 0, 10, 0">Search</Button>
+
+          <!--Clear highlighted regions.-->
+          <Button Click="ClearClicked" Grid.Column="1" Margin="10, 0, 0, 0">Clear</Button>
+        </Grid>
+
         <!--Show the number of rendering threads used by the renderer.-->
-        <StackPanel Orientation="Horizontal" Margin="0, 5, 0, 5" Grid.Row="6">
+        <StackPanel Orientation="Horizontal" Margin="0, 5, 0, 5" Grid.Row="9">
           <TextBlock FontWeight="Bold">Rendering threads:</TextBlock>
           <TextBlock Margin="10, 0, 0, 0" Text="{Binding #MuPDFRenderer.RenderThreadCount}"></TextBlock>
         </StackPanel>
 
         <!--Show the amount of memory used for cached assets (e.g. images, fonts...).-->
-        <Grid Grid.Row="7">
+        <Grid Grid.Row="10">
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

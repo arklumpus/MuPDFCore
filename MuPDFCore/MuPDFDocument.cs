@@ -664,6 +664,25 @@ namespace MuPDFCore
             CreateDocument(context, fileName, fileType, includeAnnotations, boundedPages);
         }
 
+
+        /// <summary>
+        /// Creates a new <see cref="MuPDFStructuredTextPage"/> from the specified page. This contains information about the text layout that can be used for highlighting and searching. The reading order is taken from the order the text is drawn in the source file, so may not be accurate.
+        /// </summary>
+        /// <param name="pageNumber">The number of the page (starting at 0)</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
+        public MuPDFStructuredTextPage GetStructuredTextPage(int pageNumber, bool includeAnnotations = true)
+        {
+            if (DisplayLists[pageNumber] == null)
+            {
+                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
+            }
+
+            return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber]);
+        }
+
+
+
         private bool disposedValue;
 
         ///<inheritdoc/>
