@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.1.0</span>
+   &#160;<span id="projectnumber">1.2.0</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -113,7 +113,12 @@ $(document).ready(function(){initNavTree('hierarchy.html',''); initResizable(); 
 <area shape="rect" href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html" title="A class that holds the necessary resources to render a page of a MuPDF document using multiple thread..." alt="" coords="159,158,381,199"/>
 <area shape="rect" href="class_mu_p_d_f_core_1_1_mu_p_d_f_page.html" title="A wrapper over a MuPDF page object, which contains information about the page&#39;s boundaries." alt="" coords="185,224,355,251"/>
 <area shape="rect" href="class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html" title="A lazy collection of MuPDFPages. Each page is loaded from the document as it is requested for the fir..." alt="" coords="156,275,384,301"/>
-<area shape="rect" title=" " alt="" coords="5,275,108,301"/>
+<area shape="rect" title=" " alt="" coords="5,365,108,392"/>
+<area shape="rect" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_block.html" title="Represents a structured text block containing text or an image." alt="" coords="169,326,371,367"/>
+<area shape="rect" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html" title="Represents a single line of text (i.e. characters that share a common baseline)." alt="" coords="169,391,371,433"/>
+<area shape="rect" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html" title="Represents a structured representation of the text contained in a page." alt="" coords="169,457,371,498"/>
+<area shape="rect" href="class_mu_p_d_f_core_1_1_mu_p_d_f_image_structured_text_block.html" title="Represents a block containing a single image. The block contains a single line with a single characte..." alt="" coords="432,294,668,335"/>
+<area shape="rect" href="class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html" title="Represents a block containing multiple lines of text (typically a paragraph)." alt="" coords="437,359,663,401"/>
 </map>
 </td></tr>
 <tr><td><img src="inherit_graph_3.png" border="0" usemap="#_mu_p_d_f_core_8_mu_p_d_f_renderer_8_p_d_f_renderer" alt=""/>
@@ -122,32 +127,59 @@ $(document).ready(function(){initNavTree('hierarchy.html',''); initResizable(); 
 <area shape="rect" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads." alt="" coords="116,5,313,47"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_4.png" border="0" usemap="#_mu_p_d_f_core_8_rectangle" alt=""/>
+<tr><td><img src="inherit_graph_4.png" border="0" usemap="#_mu_p_d_f_core_8_mu_p_d_f_structured_text_address" alt=""/>
+<map name="_mu_p_d_f_core_8_mu_p_d_f_structured_text_address" id="_mu_p_d_f_core_8_mu_p_d_f_structured_text_address">
+<area shape="rect" title=" " alt="" coords="5,5,100,32"/>
+<area shape="rect" href="struct_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address.html" title="Represents the address of a particular character in a MuPDFStructuredTextPage, in terms of block inde..." alt="" coords="148,23,349,65"/>
+<area shape="rect" title=" " alt="" coords="11,56,94,83"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_5.png" border="0" usemap="#_mu_p_d_f_core_8_mu_p_d_f_structured_text_address_span" alt=""/>
+<map name="_mu_p_d_f_core_8_mu_p_d_f_structured_text_address_span" id="_mu_p_d_f_core_8_mu_p_d_f_structured_text_address_span">
+<area shape="rect" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address_span.html" title="Represents a range of characters in a MuPDFStructuredTextPage." alt="" coords="5,5,207,47"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_6.png" border="0" usemap="#_mu_p_d_f_core_8_mu_p_d_f_structured_text_character" alt=""/>
+<map name="_mu_p_d_f_core_8_mu_p_d_f_structured_text_character" id="_mu_p_d_f_core_8_mu_p_d_f_structured_text_character">
+<area shape="rect" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html" title="Represents a single text character." alt="" coords="5,5,207,47"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_7.png" border="0" usemap="#_mu_p_d_f_core_8_point_f" alt=""/>
+<map name="_mu_p_d_f_core_8_point_f" id="_mu_p_d_f_core_8_point_f">
+<area shape="rect" href="struct_mu_p_d_f_core_1_1_point_f.html" title="Represents a point." alt="" coords="5,5,140,32"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_8.png" border="0" usemap="#_mu_p_d_f_core_8_quad" alt=""/>
+<map name="_mu_p_d_f_core_8_quad" id="_mu_p_d_f_core_8_quad">
+<area shape="rect" href="struct_mu_p_d_f_core_1_1_quad.html" title="Represents a quadrilater (not necessarily a rectangle)." alt="" coords="5,5,133,32"/>
+</map>
+</td></tr>
+<tr><td><img src="inherit_graph_9.png" border="0" usemap="#_mu_p_d_f_core_8_rectangle" alt=""/>
 <map name="_mu_p_d_f_core_8_rectangle" id="_mu_p_d_f_core_8_rectangle">
 <area shape="rect" href="struct_mu_p_d_f_core_1_1_rectangle.html" title="Represents a rectangle." alt="" coords="5,5,160,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_5.png" border="0" usemap="#_mu_p_d_f_core_8_render_progress" alt=""/>
+<tr><td><img src="inherit_graph_10.png" border="0" usemap="#_mu_p_d_f_core_8_render_progress" alt=""/>
 <map name="_mu_p_d_f_core_8_render_progress" id="_mu_p_d_f_core_8_render_progress">
 <area shape="rect" href="class_mu_p_d_f_core_1_1_render_progress.html" title="Holds a summery of the progress of the current rendering operation." alt="" coords="5,5,196,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_6.png" border="0" usemap="#_mu_p_d_f_core_8_render_progress_8_thread_render_progress" alt=""/>
+<tr><td><img src="inherit_graph_11.png" border="0" usemap="#_mu_p_d_f_core_8_render_progress_8_thread_render_progress" alt=""/>
 <map name="_mu_p_d_f_core_8_render_progress_8_thread_render_progress" id="_mu_p_d_f_core_8_render_progress_8_thread_render_progress">
 <area shape="rect" href="struct_mu_p_d_f_core_1_1_render_progress_1_1_thread_render_progress.html" title="Holds the progress of a single thread." alt="" coords="5,5,200,47"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_7.png" border="0" usemap="#_mu_p_d_f_core_8_rounded_rectangle" alt=""/>
+<tr><td><img src="inherit_graph_12.png" border="0" usemap="#_mu_p_d_f_core_8_rounded_rectangle" alt=""/>
 <map name="_mu_p_d_f_core_8_rounded_rectangle" id="_mu_p_d_f_core_8_rounded_rectangle">
 <area shape="rect" href="struct_mu_p_d_f_core_1_1_rounded_rectangle.html" title="Represents a rectangle using only integer numbers." alt="" coords="5,5,212,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_8.png" border="0" usemap="#_mu_p_d_f_core_8_rounded_size" alt=""/>
+<tr><td><img src="inherit_graph_13.png" border="0" usemap="#_mu_p_d_f_core_8_rounded_size" alt=""/>
 <map name="_mu_p_d_f_core_8_rounded_size" id="_mu_p_d_f_core_8_rounded_size">
 <area shape="rect" href="struct_mu_p_d_f_core_1_1_rounded_size.html" title="Represents the size of a rectangle using only integer numbers." alt="" coords="5,5,180,32"/>
 </map>
 </td></tr>
-<tr><td><img src="inherit_graph_9.png" border="0" usemap="#_mu_p_d_f_core_8_size" alt=""/>
+<tr><td><img src="inherit_graph_14.png" border="0" usemap="#_mu_p_d_f_core_8_size" alt=""/>
 <map name="_mu_p_d_f_core_8_size" id="_mu_p_d_f_core_8_size">
 <area shape="rect" href="struct_mu_p_d_f_core_1_1_size.html" title="Represents the size of a rectangle." alt="" coords="5,5,128,32"/>
 </map>

@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.1.0</span>
+   &#160;<span id="projectnumber">1.2.0</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -120,6 +120,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a97842838a1c0ae3857c6b64594e87e8f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html#a97842838a1c0ae3857c6b64594e87e8f">Contains</a> (<a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html">Rectangle</a> other)</td></tr>
 <tr class="memdesc:a97842838a1c0ae3857c6b64594e87e8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether this <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html" title="Represents a rectangle.">Rectangle</a> contains another <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html" title="Represents a rectangle.">Rectangle</a>.  <a href="struct_mu_p_d_f_core_1_1_rectangle.html#a97842838a1c0ae3857c6b64594e87e8f">More...</a><br /></td></tr>
 <tr class="separator:a97842838a1c0ae3857c6b64594e87e8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a366b19d137eb03af16171774d19fc569"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html#a366b19d137eb03af16171774d19fc569">Contains</a> (<a class="el" href="struct_mu_p_d_f_core_1_1_point_f.html">PointF</a> point)</td></tr>
+<tr class="memdesc:a366b19d137eb03af16171774d19fc569"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether this <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html" title="Represents a rectangle.">Rectangle</a> contains a <a class="el" href="struct_mu_p_d_f_core_1_1_point_f.html" title="Represents a point.">PointF</a>.  <a href="struct_mu_p_d_f_core_1_1_rectangle.html#a366b19d137eb03af16171774d19fc569">More...</a><br /></td></tr>
+<tr class="separator:a366b19d137eb03af16171774d19fc569"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2cca22619e463c55bc8ecc9062b8e569"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_mu_p_d_f_core_1_1_quad.html">Quad</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html#a2cca22619e463c55bc8ecc9062b8e569">ToQuad</a> ()</td></tr>
+<tr class="memdesc:a2cca22619e463c55bc8ecc9062b8e569"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html" title="Represents a rectangle.">Rectangle</a> to a <a class="el" href="struct_mu_p_d_f_core_1_1_quad.html" title="Represents a quadrilater (not necessarily a rectangle).">Quad</a>.  <a href="struct_mu_p_d_f_core_1_1_rectangle.html#a2cca22619e463c55bc8ecc9062b8e569">More...</a><br /></td></tr>
+<tr class="separator:a2cca22619e463c55bc8ecc9062b8e569"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -254,8 +260,37 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a366b19d137eb03af16171774d19fc569"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a366b19d137eb03af16171774d19fc569">&#9670;&nbsp;</a></span>Contains() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool MuPDFCore.Rectangle.Contains </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_mu_p_d_f_core_1_1_point_f.html">PointF</a>&#160;</td>
+          <td class="paramname"><em>point</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Checks whether this <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html" title="Represents a rectangle.">Rectangle</a> contains a <a class="el" href="struct_mu_p_d_f_core_1_1_point_f.html" title="Represents a point.">PointF</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">point</td><td>The <a class="el" href="struct_mu_p_d_f_core_1_1_point_f.html" title="Represents a point.">PointF</a> to check.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A boolean value indicating whether this <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html" title="Represents a rectangle.">Rectangle</a> contains the <em>point</em> .</dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_rectangles_8cs_source.html#l00476">476</a> of file <a class="el" href="_rectangles_8cs_source.html">Rectangles.cs</a>.</p>
+
+</div>
+</div>
 <a id="a97842838a1c0ae3857c6b64594e87e8f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a97842838a1c0ae3857c6b64594e87e8f">&#9670;&nbsp;</a></span>Contains()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a97842838a1c0ae3857c6b64594e87e8f">&#9670;&nbsp;</a></span>Contains() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -389,6 +424,28 @@ Public Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>An array of <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html" title="Represents a rectangle.">Rectangle</a>s that when positioned properly cover the same area as this object.</dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="_rectangles_8cs_source.html#l00422">422</a> of file <a class="el" href="_rectangles_8cs_source.html">Rectangles.cs</a>.</p>
+
+</div>
+</div>
+<a id="a2cca22619e463c55bc8ecc9062b8e569"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cca22619e463c55bc8ecc9062b8e569">&#9670;&nbsp;</a></span>ToQuad()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_mu_p_d_f_core_1_1_quad.html">Quad</a> MuPDFCore.Rectangle.ToQuad </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Converts the <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html" title="Represents a rectangle.">Rectangle</a> to a <a class="el" href="struct_mu_p_d_f_core_1_1_quad.html" title="Represents a quadrilater (not necessarily a rectangle).">Quad</a>. </p>
+<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="struct_mu_p_d_f_core_1_1_quad.html" title="Represents a quadrilater (not necessarily a rectangle).">Quad</a> corresponding to the current <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html" title="Represents a rectangle.">Rectangle</a>.</dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_rectangles_8cs_source.html#l00485">485</a> of file <a class="el" href="_rectangles_8cs_source.html">Rectangles.cs</a>.</p>
 
 </div>
 </div>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['writeimage_170',['WriteImage',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ac0264349fe3b2ccc319f0978c448ff11',1,'MuPDFCore.MuPDFDocument.WriteImage(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations=true)'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ab42e60e523a9a3fefc665c6b800cb3ec',1,'MuPDFCore.MuPDFDocument.WriteImage(int pageNumber, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations=true)']]]
+  ['quad_263',['Quad',['../struct_mu_p_d_f_core_1_1_quad.html#a2ba59c085152f69f09fdc1d1a070946b',1,'MuPDFCore::Quad']]]
 ];

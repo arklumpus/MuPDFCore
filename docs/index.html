@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.1.0</span>
+   &#160;<span id="projectnumber">1.2.0</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <p>The library is released under the <a href="https://www.gnu.org/licenses/agpl-3.0.html">AGPLv3</a> licence.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Getting started</h1>
-<p>The <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> library targets .NET Standard 2.0, thus it can be used in projects that target .NET Standard 2.0+, .NET Core 2.0+, .NET Framework 4.6.1 and possibly others. <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> includes a pre-compiled native library, thus projects using it can only run on Windows, macOS and Linux x64 operating systems.</p>
+<p>The <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> library targets .NET Standard 2.0, thus it can be used in projects that target .NET Standard 2.0+, .NET Core 2.0+, .NET Framework 4.6.1 (<a href="#netFrameworkNote">note</a>) and possibly others. <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> includes a pre-compiled native library, thus projects using it can only run on Windows, macOS and Linux x64 operating systems.</p>
 <p>To use the library in your project, you should install the <a href="https://www.nuget.org/packages/MuPDFCore/">MuPDFCore NuGet package</a> and/or the <a href="https://www.nuget.org/packages/MuPDFCore.MuPDFRenderer/">MuPDFCore.PDFRenderer NuGet package</a>.</p>
 <h1><a class="anchor" id="autotoc_md2"></a>
 Usage</h1>
@@ -224,44 +224,25 @@ MuPDFCore library</h2>
 <div class="line">});</div>
 <div class="line"> </div>
 <div class="line"> </div>
-<div class="line">//The code in this for-loop is not really part of MuPDFCore - it just shows an example of using SixLabors.ImageSharp to &quot;stitch&quot; the tiles up and produce the full image.</div>
+<div class="line">//The code in this for-loop is not really part of MuPDFCore - it just shows an example of using VectSharp to &quot;stitch&quot; the tiles up and produce the full image.</div>
 <div class="line">for (int i = 0; i &lt; document.Pages.Count; i++)</div>
 <div class="line">{</div>
 <div class="line">    //Create a new (empty) image to hold the whole page.</div>
-<div class="line">    SixLabors.ImageSharp.Image renderedPage = new SixLabors.ImageSharp.Image&lt;SixLabors.ImageSharp.PixelFormats.Rgb24&gt;(renderedPageSizes[i].Width, renderedPageSizes[i].Height);</div>
+<div class="line">    VectSharp.Page renderedPage = new VectSharp.Page(renderedPageSizes[i].Width, renderedPageSizes[i].Height);</div>
 <div class="line"> </div>
 <div class="line">    //Draw each tile onto the image.</div>
 <div class="line">    for (int j = 0; j &lt; renderers[i].ThreadCount; j++)</div>
 <div class="line">    {</div>
-<div class="line">        ReadOnlySpan&lt;byte&gt; imageData;</div>
-<div class="line"> </div>
-<div class="line">        //By using unsafe code, we can avoid having to marshal the image data around.</div>
-<div class="line">        unsafe</div>
-<div class="line">        {</div>
-<div class="line">            //Create a new ReadOnlySpan that reads the unmanaged memory where the image data is located.</div>
-<div class="line">            imageData = new ReadOnlySpan&lt;byte&gt;((void*)destinations[i][j], tileBounds[i][j].Height * tileBounds[i][j].Width * 3);</div>
-<div class="line">        }</div>
-<div class="line"> </div>
-<div class="line">        //Load the image data in the tile by using the ReadOnlySpan.</div>
-<div class="line">        SixLabors.ImageSharp.Image tile = SixLabors.ImageSharp.Image.LoadPixelData&lt;SixLabors.ImageSharp.PixelFormats.Rgb24&gt;(imageData, tileBounds[i][j].Width, tileBounds[i][j].Height);</div>
+<div class="line">        //Create a raster image object containing the pixel data. Yay, we do not need to copy/marshal anything!</div>
+<div class="line">        VectSharp.RasterImage tile = new VectSharp.RasterImage(destinations[i][j], tileBounds[i][j].Width, tileBounds[i][j].Height, false, false);</div>
 <div class="line"> </div>
 <div class="line">        //Draw the tile on the main image page.</div>
-<div class="line">        renderedPage.Mutate(x =&gt; x.DrawImage(tile, new SixLabors.ImageSharp.Point(tileBounds[i][j].X0, tileBounds[i][j].Y0), 1));</div>
-<div class="line"> </div>
-<div class="line">        //Release the resources held by the tile.</div>
-<div class="line">        tile.Dispose();</div>
+<div class="line">        renderedPage.Graphics.DrawRasterImage(tileBounds[i][j].X0, tileBounds[i][j].Y0, tile);</div>
 <div class="line">    }</div>
 <div class="line"> </div>
-<div class="line">    //Save the full page as a JPG image.</div>
-<div class="line">    using (FileStream fs = new FileStream(&quot;page&quot; + i.ToString() + &quot;.jpg&quot;, FileMode.Create))</div>
-<div class="line">    {</div>
-<div class="line">        renderedPage.SaveAsJpeg(fs);</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    //Release the resources held by the image.</div>
-<div class="line">    renderedPage.Dispose();</div>
+<div class="line">    //Save the full page as a PNG image.</div>
+<div class="line">    renderedPage.SaveAsPNG(&quot;page&quot; + i.ToString() + &quot;.png&quot;);</div>
 <div class="line">}</div>
-<div class="line"> </div>
 <div class="line"> </div>
 <div class="line">//Clean-up code.</div>
 <div class="line">for (int i = 0; i &lt; document.Pages.Count; i++)</div>
@@ -276,6 +257,13 @@ MuPDFCore library</h2>
 <div class="line">    renderers[i].Dispose();</div>
 <div class="line">}</div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md6"></a>
+Structured text representation</h2>
+<p>The <code>GetStructuredTextPage</code> method of the <code>MuPDFDocument</code> class makes it possible to obtain a "structured text" representation of each page of the document. This consists of a <code>MuPDFStructuredTextPage</code> object, which is a collection of 0 or more <code>MuPDFStructuredTextBlock</code>s.</p>
+<p>Each <code>MuPDFStructuredTextBlock</code> either represents an image or a block of text, typically a paragraph (though there is no guarantee that this is the case). <code>MuPDFStructuredTextBlock</code>s are themselves collections of <code>MuPDFStructuredTextLine</code>s, and each line is a collection of <code>MuPDFStructuredTextCharacter</code>s (in the case of a block representing an image, it will contain a single line with a single character).</p>
+<p><code>MuPDFStructuredTextBlock</code>s and <code>MuPDFStructuredTextLine</code>s have a <code>BoundingBox</code> property that defines a rectangle (in page units) that bounds the contents of the block/line in the page. Similarly, <code>MuPDFStructuredTextCharacter</code>s have a <code>BoundingQuad</code> (rather than being a <code>Rectangle</code>, this is a <code>Quad</code>, i.e. a quadrilater defined by its four vertices, which may or may not be a rectangle). These can be used e.g. to highlight regions of text in the page.</p>
+<p>The <code>MuPDFStructuredTextPage</code> also has methods to determine which character contains or is closest to a specified point (useful, for example, to determine on which character the user clicked), to obtain a list of shapes that encompass a specified range of text, and to perform text searches using regular expressions.</p>
+<p>The order of the blocks in the page (which affects the definition of a "range" of text and search operations) is the same as returned by the underlying MuPDF library, which is taken from the order the text is drawn in the source file, so may not be accurate. They can be reordered using the <code>Array.Sort</code> method on the <code>StructuredTextBlocks</code> array contained in the <code>MuPDFStructuredTextPage</code> (lines within blocks and characters within lines can be likewise reordered).</p>
+<h2><a class="anchor" id="autotoc_md7"></a>
 MuPDFCore.MuPDFRenderer control</h2>
 <p>To use the <code>PDFRenderer</code> control in an <a class="el" href="namespace_avalonia.html">Avalonia</a> application, first of all you need to add it to you <a class="el" href="namespace_avalonia.html">Avalonia</a> <code>Window</code>, e.g. in the XAML:</p>
 <div class="fragment"><div class="line">&lt;<span class="keywordtype">Window</span> <span class="keyword">xmlns</span>=<span class="stringliteral">&quot;https://github.com/avaloniaui&quot;</span></div>
@@ -291,7 +279,7 @@ MuPDFCore.MuPDFRenderer control</h2>
 <div class="line">    this.FindControl&lt;PDFRenderer&gt;(&quot;MuPDFRenderer&quot;).Initialize(&quot;path/to/file.pdf&quot;);</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>This way, the renderer will start showing the first page of the specified document, using a number of rendering threads that is decided based on the number of processors in the computer. There are many other ways to initialise a PDFRenderer, so make sure to look at the <a href="https://arklumpus.github.io/MuPDFCore/">documentation</a> to see the other possibilities!</p>
-<h1><a class="anchor" id="autotoc_md7"></a>
+<h1><a class="anchor" id="autotoc_md8"></a>
 Building from source</h1>
 <p>Building the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> library from source requires the following steps:</p>
 <ol type="1">
@@ -300,7 +288,7 @@ Building from source</h1>
 <li>Creating the <code><a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a></code> library NuGet package</li>
 </ol>
 <p>Steps 1 and 2 need to be performed on all of Windows, macOS and Linux (no cross-compiling)! Otherwise, some native assets will be missing and it will not be possible to build the NuGet package.</p>
-<h2><a class="anchor" id="autotoc_md8"></a>
+<h2><a class="anchor" id="autotoc_md9"></a>
 1. Building libmupdf</h2>
 <p>You can download the open-source (GNU AGPL) MuPDF source code from <a href="https://mupdf.com/downloads/index.html">here</a>. You will need to uncompress the source file and compile the library on Windows, macOS and Linux. You need the following files:</p>
 <ul>
@@ -323,14 +311,14 @@ Building from source</h1>
 <p>Note that the files from macOS and Linux are different, despite sharing the same name.</p>
 <p>Depending on your system, on Linux and/or macOS you may need to enable the <code>-fPIC</code> compiler option to generate library files that can be included in the MuPDFWrapper shared library, otherwise a later step may fail. You can do this in multiple ways, e.g. by opening the <code>Makefile</code> included in the MuPDF source and adding <code>-fPIC</code> at the end of the line specifying <code>CFLAGS</code> (line 23 in the MuPDF 1.17.0 source).</p>
 <p>For convenience, these compiled files for MuPDF 1.17.0 are included in the <a href="https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib"><code>native/MuPDFWrapper/lib</code> folder</a> of this repository.</p>
-<h2><a class="anchor" id="autotoc_md9"></a>
+<h2><a class="anchor" id="autotoc_md10"></a>
 2. Building MuPDFWrapper</h2>
-<p>Once you have the required static library files, you should download the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> source code: <a href="https://github.com/arklumpus/MuPDFCore/archive/v1.0.0.tar.gz">MuPDFCore-1.0.0.tar.gz</a> (or clone the repository) and place the library files in the appropriate subdirectories in the <code>native/MuPDFWrapper/lib/</code> folder.</p>
+<p>Once you have the required static library files, you should download the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> source code: <a href="https://github.com/arklumpus/MuPDFCore/archive/v1.2.0.tar.gz">MuPDFCore-1.2.0.tar.gz</a> (or clone the repository) and place the library files in the appropriate subdirectories in the <code>native/MuPDFWrapper/lib/</code> folder.</p>
 <p>To compile <code>MuPDFWrapper</code> you will need <a href="https://cmake.org/">CMake</a> and (on Windows) <a href="https://ninja-build.org/">Ninja</a>.</p>
 <p>On Windows, the easiest way to get all the required tools is probably to install <a href="https://visualstudio.microsoft.com/it/">Visual Studio</a>. By selecting the "Desktop development with C++" workload you should get everything you need.</p>
 <p>On macOS, you will need to install at least the Command-Line Tools for Xcode (if necessary, you should be prompted to do this while you perform the following steps) and CMake.</p>
 <p>Once you have everything at the ready, you will have to build MuPDFWrapper on the three platforms.</p>
-<h3><a class="anchor" id="autotoc_md10"></a>
+<h3><a class="anchor" id="autotoc_md11"></a>
 Windows</h3>
 <ol type="1">
 <li>Assuming you have installed Visual Studio, you should open the "__x64__ Native Tools Command Prompt for VS" (you should be able to find this in the Start menu). Take care to open the x64 version, otherwise you will not be able to compile the library. A normal command propmpt will not work, either.</li>
@@ -339,7 +327,7 @@ Windows</h3>
 <li>Type <code>build</code>. This will start the <code>build.cmd</code> batch script that will delete any previous build and compile the library.</li>
 </ol>
 <p>After this finishes, you should find a file named <code>MuPDFWrapper.dll</code> in the <code>native/out/build/win-x64/MuPDFWrapper/</code> directory. Leave it there.</p>
-<h3><a class="anchor" id="autotoc_md11"></a>
+<h3><a class="anchor" id="autotoc_md12"></a>
 macOS and Linux</h3>
 <ol type="1">
 <li>Assuming you have everything ready, open a terminal in the folder where you have downloaded the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> source code.</li>
@@ -348,13 +336,24 @@ macOS and Linux</h3>
 <li>Type <code>./build.sh</code>. This will delete any previous build and compile the library.</li>
 </ol>
 <p>After this finishes, you should find a file named <code>libMuPDFWrapper.dylib</code> in the <code>native/out/build/mac-x64/MuPDFWrapper/</code> directory (on macOS) and a file named <code>libMuPDFWrapper.so</code> in the <code>native/out/build/linux-x64/MuPDFWrapper/</code> directory (on Linux). Leave it there.</p>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="autotoc_md13"></a>
 3. Creating the MuPDFCore NuGet package</h2>
 <p>Once you have the <code>MuPDFWrapper.dll</code>, <code>libMuPDFWrapper.dylib</code> and <code>libMuPDFWrapper.so</code> files, make sure they are in the correct folders (<code>native/out/build/xxx-x64/MuPDFWrapper/</code>), <b>all on the same machine</b>.</p>
 <p>To create the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> NuGet package, you will need the <a href="https://dotnet.microsoft.com/download/dotnet/current">.NET Core 2.0 SDK or higher</a> for your platform. Once you have installed it and have everything ready, open a terminal in the folder where you have downloaded the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> source code and type:</p>
 <div class="fragment"><div class="line">cd MuPDFCore</div>
 <div class="line">dotnet pack -c Release</div>
-</div><!-- fragment --><p>This will create a NuGet package in <code>MuPDFCore/bin/Release</code>. You can install this package on your projects by adding a local NuGet source. </p>
+</div><!-- fragment --><p>This will create a NuGet package in <code>MuPDFCore/bin/Release</code>. You can install this package on your projects by adding a local NuGet source.</p>
+<h1><a class="anchor" id="netFrameworkNote"></a>
+Note about MuPDFCore and .NET Framework</h1>
+<p>If you wish to use <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> in a .NET Framework project, you will need to manually copy the native MuPDFWrapper library for the platform you are using to the executable directory (this is done automatically if you target .NET core).</p>
+<p>One way to obtain the appropriate library files is:</p>
+<ol type="1">
+<li>Manually download the NuGet package for <a href="https://www.nuget.org/packages/MuPDFCore/">MuPDFCore</a> (click on the "Download package" link on the right).</li>
+<li>Rename the <code>.nupkg</code> file so that it has a <code>.zip</code> extension.</li>
+<li>Extract the zip file.</li>
+<li>Within the extracted folder, the library files are in the <code>runtimes/xxx/native/</code> folder, where <code>xxx</code> is either <code>linux-x64</code>, <code>osx-x64</code> or <code>win-x64</code>, depending on the platform you are using.</li>
+</ol>
+<p>Make sure you copy the appropriate file to the same folder as the executable! </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->

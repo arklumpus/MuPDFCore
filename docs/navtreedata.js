@@ -31,16 +31,18 @@ var NAVTREE =
         [ "Documentation", "index.html#autotoc_md3", null ],
         [ "Examples", "index.html#autotoc_md4", null ],
         [ "MuPDFCore library", "index.html#autotoc_md5", null ],
-        [ "MuPDFCore.MuPDFRenderer control", "index.html#autotoc_md6", null ]
+        [ "Structured text representation", "index.html#autotoc_md6", null ],
+        [ "MuPDFCore.MuPDFRenderer control", "index.html#autotoc_md7", null ]
       ] ],
-      [ "Building from source", "index.html#autotoc_md7", [
-        [ "1. Building libmupdf", "index.html#autotoc_md8", null ],
-        [ "2. Building MuPDFWrapper", "index.html#autotoc_md9", [
-          [ "Windows", "index.html#autotoc_md10", null ],
-          [ "macOS and Linux", "index.html#autotoc_md11", null ]
+      [ "Building from source", "index.html#autotoc_md8", [
+        [ "1. Building libmupdf", "index.html#autotoc_md9", null ],
+        [ "2. Building MuPDFWrapper", "index.html#autotoc_md10", [
+          [ "Windows", "index.html#autotoc_md11", null ],
+          [ "macOS and Linux", "index.html#autotoc_md12", null ]
         ] ],
-        [ "3. Creating the MuPDFCore NuGet package", "index.html#autotoc_md12", null ]
-      ] ]
+        [ "3. Creating the MuPDFCore NuGet package", "index.html#autotoc_md13", null ]
+      ] ],
+      [ "Note about MuPDFCore and .NET Framework", "index.html#netFrameworkNote", null ]
     ] ],
     [ "Packages", "namespaces.html", [
       [ "Packages", "namespaces.html", "namespaces_dup" ],
@@ -57,6 +59,7 @@ var NAVTREE =
         [ "All", "functions.html", null ],
         [ "Functions", "functions_func.html", null ],
         [ "Variables", "functions_vars.html", null ],
+        [ "Enumerations", "functions_enum.html", null ],
         [ "Properties", "functions_prop.html", null ]
       ] ]
     ] ],
@@ -68,7 +71,8 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_mu_p_d_f_8cs_source.html"
+"_mu_p_d_f_8cs_source.html",
+"struct_mu_p_d_f_core_1_1_rectangle.html#a5a19da84939597bccb8a9aea6a3f6a3a"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

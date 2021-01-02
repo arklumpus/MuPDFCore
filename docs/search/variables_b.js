@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['zoomenabledproperty_189',['ZoomEnabledProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a9058818acd9f085c35f672c79262162b',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomincrementproperty_190',['ZoomIncrementProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a7cef637c2ca16aba3ffae0be352ae002',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomproperty_191',['ZoomProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#aa80851bc316f16e126c48da9edd18ef0',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]]
+  ['this_5bint_20index_5d_305',['this[int index]',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html#ae175f1e87f199ae001575d5e05873044',1,'MuPDFCore.MuPDFStructuredTextPage.this[int index]()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html#aba2eb37ec0c13e7385167e68a4510de0',1,'MuPDFCore.MuPDFTextStructuredTextBlock.this[int index]()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a7415826f89d19e07f1f0a61f22873860',1,'MuPDFCore.MuPDFStructuredTextLine.this[int index]()']]],
+  ['type_306',['Type',['../class_mu_p_d_f_core_1_1_mu_p_d_f_image_structured_text_block.html#ae20f1a7c43eafd5dadd0317ebc9daa0f',1,'MuPDFCore.MuPDFImageStructuredTextBlock.Type()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html#a6ecaa1f1e2a49a1f7d96bdee7b0fc4c5',1,'MuPDFCore.MuPDFTextStructuredTextBlock.Type()']]]
 ];

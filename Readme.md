@@ -227,6 +227,18 @@ Furthermore, multiple `MuPDFMultiThreadedPageRenderer`s can be used in parallel,
     }
 ```
 
+### Structured text representation
+
+The `GetStructuredTextPage` method of the `MuPDFDocument` class makes it possible to obtain a "structured text" representation of each page of the document. This consists of a `MuPDFStructuredTextPage` object, which is a collection of 0 or more `MuPDFStructuredTextBlock`s.
+
+Each `MuPDFStructuredTextBlock` either represents an image or a block of text, typically a paragraph (though there is no guarantee that this is the case). `MuPDFStructuredTextBlock`s are themselves collections of `MuPDFStructuredTextLine`s, and each line is a collection of `MuPDFStructuredTextCharacter`s (in the case of a block representing an image, it will contain a single line with a single character).
+
+`MuPDFStructuredTextBlock`s and `MuPDFStructuredTextLine`s have a `BoundingBox` property that defines a rectangle (in page units) that bounds the contents of the block/line in the page. Similarly, `MuPDFStructuredTextCharacter`s have a `BoundingQuad` (rather than being a `Rectangle`, this is a `Quad`, i.e. a quadrilater defined by its four vertices, which may or may not be a rectangle). These can be used e.g. to highlight regions of text in the page.
+
+The `MuPDFStructuredTextPage` also has methods to determine which character contains or is closest to a specified point (useful, for example, to determine on which character the user clicked), to obtain a list of shapes that encompass a specified range of text, and to perform text searches using regular expressions.
+
+The order of the blocks in the page (which affects the definition of a "range" of text and search operations) is the same as returned by the underlying MuPDF library, which is taken from the order the text is drawn in the source file, so may not be accurate. They can be reordered using the `Array.Sort` method on the `StructuredTextBlocks` array contained in the `MuPDFStructuredTextPage` (lines within blocks and characters within lines can be likewise reordered).
+
 ### MuPDFCore.MuPDFRenderer control
 
 To use the `PDFRenderer` control in an Avalonia application, first of all you need to add it to you Avalonia `Window`, e.g. in the XAML:
@@ -286,7 +298,7 @@ For convenience, these compiled files for MuPDF 1.17.0 are included in the [`nat
 
 ### 2. Building MuPDFWrapper
 
-Once you have the required static library files, you should download the MuPDFCore source code: [MuPDFCore-1.1.0.tar.gz](https://github.com/arklumpus/MuPDFCore/archive/v1.1.0.tar.gz) (or clone the repository) and place the library files in the appropriate subdirectories in the `native/MuPDFWrapper/lib/` folder.
+Once you have the required static library files, you should download the MuPDFCore source code: [MuPDFCore-1.2.0.tar.gz](https://github.com/arklumpus/MuPDFCore/archive/v1.2.0.tar.gz) (or clone the repository) and place the library files in the appropriate subdirectories in the `native/MuPDFWrapper/lib/` folder.
 
 To compile `MuPDFWrapper` you will need [CMake](https://cmake.org/) and (on Windows) [Ninja](https://ninja-build.org/).
 
@@ -327,13 +339,13 @@ dotnet pack -c Release
 
 This will create a NuGet package in `MuPDFCore/bin/Release`. You can install this package on your projects by adding a local NuGet source.
 
-## <a name="netFrameworkNote"></a> Note about MuPDFCore and .NET Framework
+## Note about MuPDFCore and .NET Framework {#netFrameworkNote}
 
 If you wish to use MuPDFCore in a .NET Framework project, you will need to manually copy the native MuPDFWrapper library for the platform you are using to the executable directory (this is done automatically if you target .NET core).
 
 One way to obtain the appropriate library files is:
 
-1. Manually download the NuGet package for [MuPFDCore](https://www.nuget.org/packages/MuPDFCore/) (click on the "Download package" link on the right).
+1. Manually download the NuGet package for [MuPDFCore](https://www.nuget.org/packages/MuPDFCore/) (click on the "Download package" link on the right).
 2. Rename the `.nupkg` file so that it has a `.zip` extension.
 3. Extract the zip file.
 4. Within the extracted folder, the library files are in the `runtimes/xxx/native/` folder, where `xxx` is either `linux-x64`, `osx-x64` or `win-x64`, depending on the platform you are using.

@@ -1,10 +1,4 @@
 var searchData=
 [
-  ['zoom_115',['Zoom',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#ad682fb11b985e63faf86326f3289b7fb',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomenabled_116',['ZoomEnabled',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a2ff0f7ce05dac392726917aa52d7f3e0',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomenabledproperty_117',['ZoomEnabledProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a9058818acd9f085c35f672c79262162b',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomincrement_118',['ZoomIncrement',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a5a2fdaa31f4bf7ae8b3912d620a83759',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomincrementproperty_119',['ZoomIncrementProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a7cef637c2ca16aba3ffae0be352ae002',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomproperty_120',['ZoomProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#aa80851bc316f16e126c48da9edd18ef0',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomstep_121',['ZoomStep',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a831d88219b6638d7d2192d32b9119270',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]]
+  ['vertical_178',['Vertical',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a7c1d4154530c9ec4e6e1189d9f2a58bda06ce2a25e5d12c166a36f654dbea6012',1,'MuPDFCore::MuPDFStructuredTextLine']]]
 ];

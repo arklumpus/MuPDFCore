@@ -12,6 +12,7 @@ var class_mu_p_d_f_core_1_1_mu_p_d_f_document =
     [ "GetMultiThreadedRenderer", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a5ea3701940cdfa3ca26676516a70bede", null ],
     [ "GetRenderedSize", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a0cb4925508720a17b373ff69979d07cc", null ],
     [ "GetRenderedSize", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a0956211d754de68c12a772b6f33cf43b", null ],
+    [ "GetStructuredTextPage", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a6a55fe2639c8e092f26fb2139e878754", null ],
     [ "Render", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#adcb599e44834dfe9531e90ea66eb3228", null ],
     [ "Render", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#adb5535ea11620c818469bc7d03512d1c", null ],
     [ "Render", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a1675fcb094e9a8f36e6d5c495eae39da", null ],

@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.1.0</span>
+   &#160;<span id="projectnumber">1.2.0</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -108,6 +108,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html">MuPDFException</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The exception that is thrown when a MuPDF operation fails.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_image_structured_text_block.html">MuPDFImageStructuredTextBlock</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a block containing a single image. The block contains a single line with a single character.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_image_structured_text_block.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html">MuPDFMultiThreadedPageRenderer</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class that holds the necessary resources to render a page of a MuPDF document using multiple threads.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -116,6 +119,33 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html">MuPDFPageCollection</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A lazy collection of <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_page.html" title="A wrapper over a MuPDF page object, which contains information about the page&#39;s boundaries.">MuPDFPage</a>s. Each page is loaded from the document as it is requested for the first time.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address.html">MuPDFStructuredTextAddress</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the address of a particular character in a <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html" title="Represents a structured representation of the text contained in a page.">MuPDFStructuredTextPage</a>, in terms of block index, line index and character index.  <a href="struct_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address_span.html">MuPDFStructuredTextAddressSpan</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a range of characters in a <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html" title="Represents a structured representation of the text contained in a page.">MuPDFStructuredTextPage</a>.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address_span.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_block.html">MuPDFStructuredTextBlock</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a structured text block containing text or an image.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_block.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html">MuPDFStructuredTextCharacter</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a single text character.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html">MuPDFStructuredTextLine</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a single line of text (i.e. characters that share a common baseline).  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html">MuPDFStructuredTextPage</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a structured representation of the text contained in a page.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html">MuPDFTextStructuredTextBlock</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a block containing multiple lines of text (typically a paragraph).  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_mu_p_d_f_core_1_1_point_f.html">PointF</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a point.  <a href="struct_mu_p_d_f_core_1_1_point_f.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_mu_p_d_f_core_1_1_quad.html">Quad</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a quadrilater (not necessarily a rectangle).  <a href="struct_mu_p_d_f_core_1_1_quad.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html">Rectangle</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a rectangle.  <a href="struct_mu_p_d_f_core_1_1_rectangle.html#details">More...</a><br /></td></tr>
@@ -153,7 +183,10 @@ Enumerations</h2></td></tr>
 <br />
 &#160;&#160;<a class="el" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59ab0e97dc320dccbe7ba125b739a0e907a">ExitCodes.ERR_CANNOT_CREATE_WRITER</a> = 142, 
 <a class="el" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59afc8882584a964901c4ff7664a4149ad1">ExitCodes.ERR_CANNOT_CLOSE_DOCUMENT</a> = 143, 
-<a class="el" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59a28b393e44874f1d095f7c1281de0ffc2">ExitCodes.EXIT_SUCCESS</a> = 0
+<a class="el" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59a996e6a66df495bef599119bd710ff138">ExitCodes.ERR_CANNOT_CREATE_PAGE</a> = 144, 
+<a class="el" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59a7458e0b67daac2900065e77fdc8c9845">ExitCodes.ERR_CANNOT_POPULATE_PAGE</a> = 145, 
+<br />
+&#160;&#160;<a class="el" href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59a28b393e44874f1d095f7c1281de0ffc2">ExitCodes.EXIT_SUCCESS</a> = 0
 <br />
  }</td></tr>
 <tr class="memdesc:aa6919d62a772f0334777d47f9c2d6c59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exit codes returned by native methods describing various errors that can occur.  <a href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59">More...</a><br /></td></tr>
@@ -229,7 +262,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00199">199</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00209">209</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
 
 </div>
 </div>
@@ -282,6 +315,10 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="aa6919d62a772f0334777d47f9c2d6c59ab0e97dc320dccbe7ba125b739a0e907a"></a>ERR_CANNOT_CREATE_WRITER&#160;</td><td class="fielddoc"><p>An error occurred while creating the document writer. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="aa6919d62a772f0334777d47f9c2d6c59afc8882584a964901c4ff7664a4149ad1"></a>ERR_CANNOT_CLOSE_DOCUMENT&#160;</td><td class="fielddoc"><p>An error occurred while finalising the document file. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aa6919d62a772f0334777d47f9c2d6c59a996e6a66df495bef599119bd710ff138"></a>ERR_CANNOT_CREATE_PAGE&#160;</td><td class="fielddoc"><p>An error occurred while creating an empty structured text page. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aa6919d62a772f0334777d47f9c2d6c59a7458e0b67daac2900065e77fdc8c9845"></a>ERR_CANNOT_POPULATE_PAGE&#160;</td><td class="fielddoc"><p>An error occurred while populating the structured text page </p>
 </td></tr>
 <tr><td class="fieldname"><a id="aa6919d62a772f0334777d47f9c2d6c59a28b393e44874f1d095f7c1281de0ffc2"></a>EXIT_SUCCESS&#160;</td><td class="fielddoc"><p>No error occurred. All is well. </p>
 </td></tr>
@@ -339,7 +376,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00107">107</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00117">117</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
 
 </div>
 </div>
@@ -375,7 +412,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00220">220</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00230">230</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
 
 </div>
 </div>
@@ -411,7 +448,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00173">173</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00183">183</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
 
 </div>
 </div>

@@ -25,7 +25,7 @@ namespace Avalonia.Animation
     /// </summary>
     public class RectTransition : Transition<Rect>
     {
-        /// <inheritdocs/>
+        /// <inheritdoc/>
         public override IObservable<Rect> DoTransition(IObservable<double> progress, Rect oldValue, Rect newValue)
         {
             return progress

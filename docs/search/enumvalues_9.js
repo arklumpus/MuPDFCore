@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['tiff_228',['TIFF',['../namespace_mu_p_d_f_core.html#a6f956802ff33af39b555fc95caf5486face0dbe5045edda1a0e9686ce899798ea',1,'MuPDFCore']]]
+  ['rgb_363',['RGB',['../namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bba889574aebacda6bfd3e534e2b49b8028',1,'MuPDFCore']]],
+  ['rgba_364',['RGBA',['../namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bbaea3495a278957dc58165e48a8945469f',1,'MuPDFCore']]]
 ];

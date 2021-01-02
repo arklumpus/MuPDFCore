@@ -6,5 +6,10 @@
 <area shape="rect" id="node5" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html" title="A class that holds the necessary resources to render a page of a MuPDF document using multiple thread..." alt="" coords="159,158,381,199"/>
 <area shape="rect" id="node6" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_page.html" title="A wrapper over a MuPDF page object, which contains information about the page&#39;s boundaries." alt="" coords="185,224,355,251"/>
 <area shape="rect" id="node7" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html" title="A lazy collection of MuPDFPages. Each page is loaded from the document as it is requested for the fir..." alt="" coords="156,275,384,301"/>
-<area shape="rect" id="node8" title=" " alt="" coords="5,275,108,301"/>
+<area shape="rect" id="node8" title=" " alt="" coords="5,365,108,392"/>
+<area shape="rect" id="node9" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_block.html" title="Represents a structured text block containing text or an image." alt="" coords="169,326,371,367"/>
+<area shape="rect" id="node12" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html" title="Represents a single line of text (i.e. characters that share a common baseline)." alt="" coords="169,391,371,433"/>
+<area shape="rect" id="node13" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html" title="Represents a structured representation of the text contained in a page." alt="" coords="169,457,371,498"/>
+<area shape="rect" id="node10" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_image_structured_text_block.html" title="Represents a block containing a single image. The block contains a single line with a single characte..." alt="" coords="432,294,668,335"/>
+<area shape="rect" id="node11" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html" title="Represents a block containing multiple lines of text (typically a paragraph)." alt="" coords="437,359,663,401"/>
 </map>

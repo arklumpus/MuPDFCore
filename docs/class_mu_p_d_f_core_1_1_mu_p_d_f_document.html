@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.1.0</span>
+   &#160;<span id="projectnumber">1.2.0</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -157,6 +157,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab42e60e523a9a3fefc665c6b800cb3ec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ab42e60e523a9a3fefc665c6b800cb3ec">WriteImage</a> (int pageNumber, double zoom, <a class="el" href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">PixelFormats</a> pixelFormat, Stream outputStream, <a class="el" href="namespace_mu_p_d_f_core.html#afb84d65324afe9d4edaf5b15c128bc7e">RasterOutputFileTypes</a> fileType, bool includeAnnotations=true)</td></tr>
 <tr class="memdesc:ab42e60e523a9a3fefc665c6b800cb3ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a page to an image stream in the specified format.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ab42e60e523a9a3fefc665c6b800cb3ec">More...</a><br /></td></tr>
 <tr class="separator:ab42e60e523a9a3fefc665c6b800cb3ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a55fe2639c8e092f26fb2139e878754"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html">MuPDFStructuredTextPage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a6a55fe2639c8e092f26fb2139e878754">GetStructuredTextPage</a> (int pageNumber, bool includeAnnotations=true)</td></tr>
+<tr class="memdesc:a6a55fe2639c8e092f26fb2139e878754"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html" title="Represents a structured representation of the text contained in a page.">MuPDFStructuredTextPage</a> from the specified page. This contains information about the text layout that can be used for highlighting and searching. The reading order is taken from the order the text is drawn in the source file, so may not be accurate.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a6a55fe2639c8e092f26fb2139e878754">More...</a><br /></td></tr>
+<tr class="separator:a6a55fe2639c8e092f26fb2139e878754"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45cb952cb57003ec1678cca71930d738"><td class="memItemLeft" align="right" valign="top"><a id="a45cb952cb57003ec1678cca71930d738"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Dispose</b> ()</td></tr>
 <tr class="separator:a45cb952cb57003ec1678cca71930d738"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -740,6 +743,46 @@ Properties</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>An integer representing the number of bytes that will be necessary to store the pixel data of the rendered image.</dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="_mu_p_d_f_document_8cs_source.html#l00391">391</a> of file <a class="el" href="_mu_p_d_f_document_8cs_source.html">MuPDFDocument.cs</a>.</p>
+
+</div>
+</div>
+<a id="a6a55fe2639c8e092f26fb2139e878754"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a55fe2639c8e092f26fb2139e878754">&#9670;&nbsp;</a></span>GetStructuredTextPage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html">MuPDFStructuredTextPage</a> MuPDFCore.MuPDFDocument.GetStructuredTextPage </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>pageNumber</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>includeAnnotations</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a new <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html" title="Represents a structured representation of the text contained in a page.">MuPDFStructuredTextPage</a> from the specified page. This contains information about the text layout that can be used for highlighting and searching. The reading order is taken from the order the text is drawn in the source file, so may not be accurate. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pageNumber</td><td>The number of the page (starting at 0)</td></tr>
+    <tr><td class="paramname">includeAnnotations</td><td>If this is <code>true</code>, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html" title="Represents a structured representation of the text contained in a page.">MuPDFStructuredTextPage</a> containing a structured text representation of the page.</dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_document_8cs_source.html#l00674">674</a> of file <a class="el" href="_mu_p_d_f_document_8cs_source.html">MuPDFDocument.cs</a>.</p>
 
 </div>
 </div>

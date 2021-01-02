@@ -6,6 +6,9 @@ var hierarchy =
     [ "Exception", null, [
       [ "MuPDFCore.MuPDFException", "class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html", null ]
     ] ],
+    [ "IComparable", null, [
+      [ "MuPDFCore.MuPDFStructuredTextAddress", "struct_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address.html", null ]
+    ] ],
     [ "IDisposable", null, [
       [ "MuPDFCore.DisposableIntPtr", "class_mu_p_d_f_core_1_1_disposable_int_ptr.html", null ],
       [ "MuPDFCore.MuPDFContext", "class_mu_p_d_f_core_1_1_mu_p_d_f_context.html", null ],
@@ -14,9 +17,22 @@ var hierarchy =
       [ "MuPDFCore.MuPDFPage", "class_mu_p_d_f_core_1_1_mu_p_d_f_page.html", null ],
       [ "MuPDFCore.MuPDFPageCollection", "class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html", null ]
     ] ],
-    [ "IReadOnlyList", null, [
-      [ "MuPDFCore.MuPDFPageCollection", "class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html", null ]
+    [ "IEquatable", null, [
+      [ "MuPDFCore.MuPDFStructuredTextAddress", "struct_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address.html", null ]
     ] ],
+    [ "IReadOnlyList", null, [
+      [ "MuPDFCore.MuPDFPageCollection", "class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html", null ],
+      [ "MuPDFCore.MuPDFStructuredTextBlock", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_block.html", [
+        [ "MuPDFCore.MuPDFImageStructuredTextBlock", "class_mu_p_d_f_core_1_1_mu_p_d_f_image_structured_text_block.html", null ],
+        [ "MuPDFCore.MuPDFTextStructuredTextBlock", "class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html", null ]
+      ] ],
+      [ "MuPDFCore.MuPDFStructuredTextLine", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html", null ],
+      [ "MuPDFCore.MuPDFStructuredTextPage", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html", null ]
+    ] ],
+    [ "MuPDFCore.MuPDFStructuredTextAddressSpan", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address_span.html", null ],
+    [ "MuPDFCore.MuPDFStructuredTextCharacter", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html", null ],
+    [ "MuPDFCore.PointF", "struct_mu_p_d_f_core_1_1_point_f.html", null ],
+    [ "MuPDFCore.Quad", "struct_mu_p_d_f_core_1_1_quad.html", null ],
     [ "MuPDFCore.Rectangle", "struct_mu_p_d_f_core_1_1_rectangle.html", null ],
     [ "MuPDFCore.RenderProgress", "class_mu_p_d_f_core_1_1_render_progress.html", null ],
     [ "MuPDFCore.RoundedRectangle", "struct_mu_p_d_f_core_1_1_rounded_rectangle.html", null ],
