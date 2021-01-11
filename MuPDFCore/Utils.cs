@@ -57,7 +57,7 @@ namespace MuPDFCore
             if (n == 0)
             {
                 return false;
-            } 
+            }
             else if (n == 1)
             {
                 return true;
@@ -154,6 +154,34 @@ namespace MuPDFCore
                                     imageData[y * stride + x * pixelSize + i] = clearValue;
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Converts an image with premultiplied alpha values into an image with unpremultiplied alpha values.
+        /// </summary>
+        /// <param name="image">A pointer to the address where the pixel data is stored.</param>
+        /// <param name="imageSize">The size in pixels of the image.</param>
+        public static void UnpremultiplyAlpha(IntPtr image, RoundedSize imageSize)
+        {
+            int stride = imageSize.Width * 4;
+
+            unsafe
+            {
+                byte* imageData = (byte*)image;
+
+                for (int y = 0; y < imageSize.Height; y++)
+                {
+                    for (int x = 0; x < imageSize.Width; x++)
+                    {
+                        if (imageData[y * stride + x * 4 + 3] > 0)
+                        {
+                            imageData[y * stride + x * 4] = (byte)(imageData[y * stride + x * 4] * 255 / imageData[y * stride + x * 4 + 3]);
+                            imageData[y * stride + x * 4 + 1] = (byte)(imageData[y * stride + x * 4 + 1] * 255 / imageData[y * stride + x * 4 + 3]);
+                            imageData[y * stride + x * 4 + 2] = (byte)(imageData[y * stride + x * 4 + 2] * 255 / imageData[y * stride + x * 4 + 3]);
                         }
                     }
                 }

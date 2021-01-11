@@ -94,10 +94,18 @@ namespace MuPDFCore
                     throw new MuPDFException("Unknown error", result);
             }
 
+            RoundedRectangle roundedRegion = this.CurrentRenderData.Region.Round(this.CurrentRenderData.Zoom);
+            RoundedSize roundedSize = new RoundedSize(roundedRegion.Width, roundedRegion.Height);
+
+            if (this.CurrentRenderData.PixelFormat == PixelFormats.RGBA || this.CurrentRenderData.PixelFormat == PixelFormats.BGRA)
+            {
+                Utils.UnpremultiplyAlpha(this.CurrentRenderData.PixelStorage, roundedSize);
+            }
+
             if (this.CurrentRenderData.ClipToPageBounds && !this.CurrentRenderData.PageBounds.Contains(this.CurrentRenderData.DisplayList.Bounds.Intersect(this.CurrentRenderData.Region)))
             {
-                RoundedRectangle roundedRegion = this.CurrentRenderData.Region.Round(this.CurrentRenderData.Zoom);
-                Utils.ClipImage(this.CurrentRenderData.PixelStorage, new RoundedSize(roundedRegion.Width, roundedRegion.Height), this.CurrentRenderData.Region, this.CurrentRenderData.PageBounds, this.CurrentRenderData.PixelFormat);
+                
+                Utils.ClipImage(this.CurrentRenderData.PixelStorage, roundedSize, this.CurrentRenderData.Region, this.CurrentRenderData.PageBounds, this.CurrentRenderData.PixelFormat);
             }
         }
 

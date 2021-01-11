@@ -331,15 +331,22 @@ namespace MuPDFCore
                     throw new MuPDFException("Unknown error", result);
             }
 
+            RoundedRectangle roundedRegion = region.Round(fzoom);
+            RoundedSize roundedSize = new RoundedSize(roundedRegion.Width, roundedRegion.Height);
+
+            if (pixelFormat == PixelFormats.RGBA || pixelFormat == PixelFormats.BGRA)
+            {
+                Utils.UnpremultiplyAlpha(destination, roundedSize);
+            }
+
             if (this.ClipToPageBounds && !Pages[pageNumber].Bounds.Contains(DisplayLists[pageNumber].Bounds.Intersect(region)))
             {
-                RoundedRectangle roundedRegion = region.Round(fzoom);
-                Utils.ClipImage(destination, new RoundedSize(roundedRegion.Width, roundedRegion.Height), region, Pages[pageNumber].Bounds, pixelFormat);
+                Utils.ClipImage(destination, roundedSize, region, Pages[pageNumber].Bounds, pixelFormat);
             }
         }
 
         /// <summary>
-        /// Render a page the specified destination.
+        /// Render a page to the specified destination.
         /// </summary>
         /// <param name="pageNumber">The number of the page to render (starting at 0).</param>
         /// <param name="zoom">The scale at which the page will be rendered. This will determine the size in pixel of the image.</param>
