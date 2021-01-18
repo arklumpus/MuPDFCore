@@ -298,7 +298,7 @@ For convenience, these compiled files for MuPDF 1.17.0 are included in the [`nat
 
 ### 2. Building MuPDFWrapper
 
-Once you have the required static library files, you should download the MuPDFCore source code: [MuPDFCore-1.2.1.tar.gz](https://github.com/arklumpus/MuPDFCore/archive/v1.2.1.tar.gz) (or clone the repository) and place the library files in the appropriate subdirectories in the `native/MuPDFWrapper/lib/` folder.
+Once you have the required static library files, you should download the MuPDFCore source code: [MuPDFCore-1.2.2.tar.gz](https://github.com/arklumpus/MuPDFCore/archive/v1.2.2.tar.gz) (or clone the repository) and place the library files in the appropriate subdirectories in the `native/MuPDFWrapper/lib/` folder.
 
 To compile `MuPDFWrapper` you will need [CMake](https://cmake.org/) and (on Windows) [Ninja](https://ninja-build.org/).
 
