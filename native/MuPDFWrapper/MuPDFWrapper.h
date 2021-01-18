@@ -365,10 +365,13 @@ extern "C"
 	/// </summary>
 	/// <param name="ctx">The context to which the document will belong.</param>
 	/// <param name="file_name">The path of the file to open.</param>
-	/// <param name="out_doc">The newly created document.</param>
+	/// <param name="file_name">The path of the file to open.</param>
+	/// <param name="get_image_resolution">If this is not 0, try opening the file as an image and return the actual resolution (in DPI) of the image. Otherwise (or if trying to open the file as an image fails), the returned resolution will be -1.</param>
 	/// <param name="out_page_count">The number of pages in the document.</param>
+	/// <param name="out_image_xres">If the document is an image file, the horizontal resolution of the image.</param>
+	/// <param name="out_image_yres">If the document is an image file, the vertical resolution of the image.</param>
 	/// <returns>An integer detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int CreateDocumentFromFile(fz_context* ctx, const char* file_name, const fz_document** out_doc, int* out_page_count);
+	DLL_PUBLIC int CreateDocumentFromFile(fz_context* ctx, const char* file_name, int get_image_resolution, const fz_document** out_doc, int* out_page_count, float* out_image_xres, float* out_image_yres);
 
 	/// <summary>
 	/// Create a new document from a stream.
@@ -377,11 +380,14 @@ extern "C"
 	/// <param name="data">A pointer to a byte array containing the data that makes up the document.</param>
 	/// <param name="data_length">The length in bytes of the data that makes up the document.</param>
 	/// <param name="file_type">The type (extension) of the document.</param>
+	/// <param name="get_image_resolution">If this is not 0, try opening the stream as an image and return the actual resolution (in DPI) of the image. Otherwise (or if trying to open the stream as an image fails), the returned resolution will be -1.</param>
 	/// <param name="out_doc">The newly created document.</param>
 	/// <param name="out_str">The newly created stream (so that it can be disposed later).</param>
 	/// <param name="out_page_count">The number of pages in the document.</param>
+	/// <param name="out_image_xres">If the document is an image file, the horizontal resolution of the image.</param>
+	/// <param name="out_image_yres">If the document is an image file, the vertical resolution of the image.</param>
 	/// <returns>An integer detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int CreateDocumentFromStream(fz_context* ctx, const unsigned char* data, const size_t data_length, const char* file_type, const fz_document** out_doc, const fz_stream** out_str, int* out_page_count);
+	DLL_PUBLIC int CreateDocumentFromStream(fz_context* ctx, const unsigned char* data, const size_t data_length, const char* file_type, int get_image_resolution, const fz_document** out_doc, const fz_stream** out_str, int* out_page_count, float* out_image_xres, float* out_image_yres);
 
 	/// <summary>
 	/// Free a stream and its associated resources.

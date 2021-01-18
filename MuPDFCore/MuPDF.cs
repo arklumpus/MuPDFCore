@@ -448,23 +448,29 @@ namespace MuPDFCore
         /// <param name="data">A pointer to a byte array containing the data that makes up the document.</param>
         /// <param name="data_length">The length in bytes of the data that makes up the document.</param>
         /// <param name="file_type">The type (extension) of the document.</param>
+        /// <param name="get_image_resolution">If this is not 0, try opening the stream as an image and return the actual resolution (in DPI) of the image. Otherwise (or if trying to open the stream as an image fails), the returned resolution will be -1.</param>
         /// <param name="out_doc">The newly created document.</param>
         /// <param name="out_str">The newly created stream (so that it can be disposed later).</param>
         /// <param name="out_page_count">The number of pages in the document.</param>
+        /// <param name="out_image_xres">If the document is an image file, the horizontal resolution of the image.</param>
+        /// <param name="out_image_yres">If the document is an image file, the vertical resolution of the image.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int CreateDocumentFromStream(IntPtr ctx, IntPtr data, ulong data_length, string file_type, ref IntPtr out_doc, ref IntPtr out_str, ref int out_page_count);
+        internal static extern int CreateDocumentFromStream(IntPtr ctx, IntPtr data, ulong data_length, string file_type, int get_image_resolution, ref IntPtr out_doc, ref IntPtr out_str, ref int out_page_count, ref float out_image_xres, ref float out_image_yres);
 
         /// <summary>
         /// Create a new document from a file name.
         /// </summary>
         /// <param name="ctx">The context to which the document will belong.</param>
         /// <param name="file_name">The path of the file to open.</param>
+        /// <param name="get_image_resolution">If this is not 0, try opening the file as an image and return the actual resolution (in DPI) of the image. Otherwise (or if trying to open the file as an image fails), the returned resolution will be -1.</param>
         /// <param name="out_doc">The newly created document.</param>
         /// <param name="out_page_count">The number of pages in the document.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        /// <param name="out_image_xres">If the document is an image file, the horizontal resolution of the image.</param>
+        /// <param name="out_image_yres">If the document is an image file, the vertical resolution of the image.</param>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int CreateDocumentFromFile(IntPtr ctx, string file_name, ref IntPtr out_doc, ref int out_page_count);
+        internal static extern int CreateDocumentFromFile(IntPtr ctx, string file_name, int get_image_resolution, ref IntPtr out_doc, ref int out_page_count, ref float out_image_xres, ref float out_image_yres);
 
         /// <summary>
         /// Free a stream and its associated resources.

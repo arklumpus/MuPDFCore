@@ -7,6 +7,7 @@
 #include <mutex>
 
 #include "MuPDFWrapper.h"
+#include <iostream>
 
 fz_pixmap*
 new_pixmap_with_data(fz_context* ctx, fz_colorspace* colorspace, int w, int h, fz_separations* seps, int alpha, unsigned char* pixel_storage)
@@ -775,8 +776,41 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int CreateDocumentFromFile(fz_context* ctx, const char* file_name, const fz_document** out_doc, int* out_page_count)
+	DLL_PUBLIC int CreateDocumentFromFile(fz_context* ctx, const char* file_name, int get_image_resolution, const fz_document** out_doc, int* out_page_count, float* out_image_xres, float* out_image_yres)
 	{
+		if (get_image_resolution != 0)
+		{
+			fz_image* img;
+
+			fz_try(ctx)
+			{
+				img = fz_new_image_from_file(ctx, file_name);
+
+				if (img != nullptr)
+				{
+					*out_image_xres = img->xres;
+					*out_image_yres = img->yres;
+				}
+				else
+				{
+					*out_image_xres = -1;
+					*out_image_yres = -1;
+				}
+
+				fz_drop_image(ctx, img);
+			}
+			fz_catch(ctx)
+			{
+				*out_image_xres = -1;
+				*out_image_yres = -1;
+			}
+		}
+		else
+		{
+			*out_image_xres = -1;
+			*out_image_yres = -1;
+		}
+
 		fz_document* doc;
 
 		//Open the document.
@@ -805,8 +839,9 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int CreateDocumentFromStream(fz_context* ctx, const unsigned char* data, const size_t data_length, const char* file_type, const fz_document** out_doc, const fz_stream** out_str, int* out_page_count)
+	DLL_PUBLIC int CreateDocumentFromStream(fz_context* ctx, const unsigned char* data, const size_t data_length, const char* file_type, int get_image_resolution, const fz_document** out_doc, const fz_stream** out_str, int* out_page_count, float* out_image_xres, float* out_image_yres)
 	{
+		
 		fz_stream* str;
 		fz_document* doc;
 
@@ -816,8 +851,63 @@ extern "C"
 		}
 		fz_catch(ctx)
 		{
-
 			return ERR_CANNOT_OPEN_STREAM;
+		}
+
+		if (get_image_resolution != 0)
+		{
+			fz_image* img;
+			fz_buffer* img_buf;
+
+			int bufferCreated = 0;
+
+			fz_try(ctx)
+			{
+				img_buf = fz_new_buffer_from_shared_data(ctx, data, data_length);
+				bufferCreated = 1;
+			}
+			fz_catch(ctx)
+			{
+				bufferCreated = 0;
+			}
+
+			if (bufferCreated == 1)
+			{
+				fz_try(ctx)
+				{
+					img = fz_new_image_from_buffer(ctx, img_buf);
+
+					if (img != nullptr)
+					{
+						*out_image_xres = img->xres;
+						*out_image_yres = img->yres;
+					}
+					else
+					{
+						*out_image_xres = -1;
+						*out_image_yres = -1;
+					}
+
+					fz_drop_image(ctx, img);
+				}
+				fz_catch(ctx)
+				{
+					*out_image_xres = -1;
+					*out_image_yres = -1;
+				}
+
+				fz_drop_buffer(ctx, img_buf);
+			}
+			else
+			{
+				*out_image_xres = -1;
+				*out_image_yres = -1;
+			}
+		}
+		else
+		{
+			*out_image_xres = -1;
+			*out_image_yres = -1;
 		}
 
 		//Open the document.

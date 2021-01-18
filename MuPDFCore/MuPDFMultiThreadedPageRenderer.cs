@@ -104,7 +104,6 @@ namespace MuPDFCore
 
             if (this.CurrentRenderData.ClipToPageBounds && !this.CurrentRenderData.PageBounds.Contains(this.CurrentRenderData.DisplayList.Bounds.Intersect(this.CurrentRenderData.Region)))
             {
-                
                 Utils.ClipImage(this.CurrentRenderData.PixelStorage, roundedSize, this.CurrentRenderData.Region, this.CurrentRenderData.PageBounds, this.CurrentRenderData.PixelFormat);
             }
         }
@@ -283,7 +282,7 @@ namespace MuPDFCore
         /// <summary>
         /// The cloned contexts that are used by the <see cref="RenderingThreads"/> to render the display list.
         /// </summary>
-        private readonly MuPDFContext[] Contexts;        
+        private readonly MuPDFContext[] Contexts;
 
         /// <summary>
         /// The <see cref="RenderingThreads"/> that are in charge of the actual rendering.
@@ -306,6 +305,16 @@ namespace MuPDFCore
         public int ThreadCount { get; }
 
         /// <summary>
+        /// If the document is an image, the horizontal resolution of the image. Otherwise, 72.
+        /// </summary>
+        internal double ImageXRes = double.NaN;
+
+        /// <summary>
+        /// If the document is an image, the vertical resolution of the image. Otherwise, 72.
+        /// </summary>
+        internal double ImageYRes = double.NaN;
+
+        /// <summary>
         /// Create a new <see cref="MuPDFMultiThreadedPageRenderer"/> from a specified display list using the specified number of threads.
         /// </summary>
         /// <param name="context">The context that owns the document from which the display list was extracted.</param>
@@ -313,7 +322,9 @@ namespace MuPDFCore
         /// <param name="threadCount">The number of threads to use in the rendering. This must be factorisable using only powers of 2, 3, 5 or 7. Otherwise, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
         /// <param name="pageBounds">The bounds of the page being rendererd.</param>
         /// <param name="clipToPageBounds">A boolean value indicating whether the rendered image should be clipped to the original page's bounds. This can be relevant if the page has been "cropped" by altering its mediabox, but otherwise leaving the contents untouched.</param>
-        internal MuPDFMultiThreadedPageRenderer(MuPDFContext context, MuPDFDisplayList displayList, int threadCount, Rectangle pageBounds, bool clipToPageBounds)
+        /// <param name="imageXRes">If the document is an image, the horizontal resolution of the image. Otherwise, 72.</param>
+        /// <param name="imageYRes">If the document is an image, the vertical resolution of the image. Otherwise, 72.</param>
+        internal MuPDFMultiThreadedPageRenderer(MuPDFContext context, MuPDFDisplayList displayList, int threadCount, Rectangle pageBounds, bool clipToPageBounds, double imageXRes, double imageYRes)
         {
             threadCount = Utils.GetAcceptableNumber(threadCount);
 
@@ -321,6 +332,9 @@ namespace MuPDFCore
             this.DisplayList = displayList;
             this.PageBounds = pageBounds;
             this.ClipToPageBounds = clipToPageBounds;
+
+            this.ImageXRes = imageXRes;
+            this.ImageYRes = imageYRes;
 
             IntPtr[] contexts = new IntPtr[threadCount];
             GCHandle contextsHandle = GCHandle.Alloc(contexts, GCHandleType.Pinned);
@@ -457,7 +471,15 @@ namespace MuPDFCore
             //Start each rendering thread.
             for (int i = 0; i < destinations.Length; i++)
             {
-                RenderingThreads[i].Render(Contexts[i].NativeContext, DisplayList, origins[i], zoom, destinations[i], pixelFormat, this.PageBounds, ClipToPageBounds);
+                double dzoom = zoom;
+                Rectangle origin = origins[i];
+                if (this.ImageXRes != 72 || this.ImageYRes != 72)
+                {
+                    dzoom *= Math.Sqrt(this.ImageXRes * this.ImageYRes) / 72;
+                    origin = new Rectangle(origin.X0 * 72 / this.ImageXRes, origin.Y0 * 72 / this.ImageYRes, origin.X1 * 72 / this.ImageXRes, origin.Y1 * 72 / this.ImageYRes);
+                }
+
+                RenderingThreads[i].Render(Contexts[i].NativeContext, DisplayList, origin, (float)dzoom, destinations[i], pixelFormat, this.PageBounds, ClipToPageBounds);
             }
 
             //Wait until all the rendering threads have finished.

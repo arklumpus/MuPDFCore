@@ -66,7 +66,7 @@ namespace MuPDFCore
                     throw new MuPDFException("Unknown error", result);
             }
 
-            this.Bounds = new Rectangle(x0, y0, x1, y1);
+            this.Bounds = new Rectangle(Math.Round(x0 * page.OwnerDocument.ImageXRes / 72.0 * 1000) / 1000, Math.Round(y0 * page.OwnerDocument.ImageYRes / 72.0 * 1000) / 1000, Math.Round(x1 * page.OwnerDocument.ImageXRes / 72.0 * 1000) / 1000, Math.Round(y1 * page.OwnerDocument.ImageYRes / 72.0 * 1000) / 1000);
         }
 
         private bool disposedValue;

@@ -12,7 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0-rc1" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.0-rc1" />
-    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.2.0-rc1" />
-    <PackageReference Include="VectSharp.PDF" Version="2.1.4" />
+    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.2.2-rc1" />
+    <PackageReference Include="VectSharp.PDF" Version="2.2.1" />
   </ItemGroup>
 </Project>

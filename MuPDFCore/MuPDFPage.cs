@@ -27,7 +27,7 @@ namespace MuPDFCore
     public class MuPDFPage : IDisposable
     {
         /// <summary>
-        /// The page's bounds in page units. Read-only.
+        /// The page's bounds at 72 DPI. Read-only.
         /// </summary>
         public Rectangle Bounds { get; }
 
@@ -51,7 +51,10 @@ namespace MuPDFCore
         /// </summary>
         internal readonly MuPDFDocument OwnerDocument;
 
-        
+        /// <summary>
+        /// The page's original bounds. Read-only.
+        /// </summary>
+        internal Rectangle OriginalBounds { get; }
 
         /// <summary>
         /// Create a new <see cref="MuPDFPage"/> object from the specified document.
@@ -72,7 +75,8 @@ namespace MuPDFCore
 
             ExitCodes result = (ExitCodes)NativeMethods.LoadPage(context.NativeContext, document.NativeDocument, number, ref NativePage, ref x, ref y, ref w, ref h);
 
-            this.Bounds = new Rectangle(x, y, w, h);
+            this.Bounds = new Rectangle(Math.Round(x * document.ImageXRes / 72.0 * 1000) / 1000, Math.Round(y * document.ImageYRes / 72.0 * 1000) / 1000, Math.Round(w * document.ImageXRes / 72.0 * 1000) / 1000, Math.Round(h * document.ImageYRes / 72.0 * 1000) / 1000);
+            this.OriginalBounds = new Rectangle(x, y, w, h);
 
             switch (result)
             {

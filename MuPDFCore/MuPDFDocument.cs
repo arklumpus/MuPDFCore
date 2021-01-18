@@ -27,6 +27,16 @@ namespace MuPDFCore
     public class MuPDFDocument : IDisposable
     {
         /// <summary>
+        /// If the document is an image, the horizontal resolution of the image. Otherwise, 72.
+        /// </summary>
+        internal double ImageXRes = double.NaN;
+
+        /// <summary>
+        /// If the document is an image, the vertical resolution of the image. Otherwise, 72.
+        /// </summary>
+        internal double ImageYRes = double.NaN;
+
+        /// <summary>
         /// File extensions corresponding to the supported input formats.
         /// </summary>
         private static readonly string[] FileTypeMagics = new[]
@@ -114,9 +124,32 @@ namespace MuPDFCore
         /// <param name="dataHolder">An <see cref="IDisposable"/> that will be disposed when the <see cref="MuPDFDocument"/> is disposed.</param>
         public MuPDFDocument(MuPDFContext context, IntPtr dataAddress, long dataLength, InputFileTypes fileType, ref IDisposable dataHolder)
         {
+            bool isImage = fileType == InputFileTypes.BMP || fileType == InputFileTypes.GIF || fileType == InputFileTypes.JPEG || fileType == InputFileTypes.PAM || fileType == InputFileTypes.PNG || fileType == InputFileTypes.PNM || fileType == InputFileTypes.TIFF;
+
             this.OwnerContext = context;
 
-            ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromStream(context.NativeContext, dataAddress, (ulong)dataLength, FileTypeMagics[(int)fileType], ref NativeDocument, ref NativeStream, ref PageCount);
+            float xRes = 0;
+            float yRes = 0;
+
+            ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromStream(context.NativeContext, dataAddress, (ulong)dataLength, FileTypeMagics[(int)fileType], isImage ? 1 : 0, ref NativeDocument, ref NativeStream, ref PageCount, ref xRes, ref yRes);
+
+            if (xRes > 0)
+            {
+                this.ImageXRes = xRes;
+            }
+            else
+            {
+                this.ImageXRes = 72;
+            }
+
+            if (yRes > 0)
+            {
+                this.ImageYRes = yRes;
+            }
+            else
+            {
+                this.ImageYRes = 72;
+            }
 
             this.DataHolder = dataHolder;
 
@@ -147,13 +180,36 @@ namespace MuPDFCore
         /// <param name="fileType">The type of the document to read.</param>
         public MuPDFDocument(MuPDFContext context, byte[] data, InputFileTypes fileType)
         {
+            bool isImage = fileType == InputFileTypes.BMP || fileType == InputFileTypes.GIF || fileType == InputFileTypes.JPEG || fileType == InputFileTypes.PAM || fileType == InputFileTypes.PNG || fileType == InputFileTypes.PNM || fileType == InputFileTypes.TIFF;
+
             this.OwnerContext = context;
 
             DataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
             IntPtr dataAddress = DataHandle.Value.AddrOfPinnedObject();
             ulong dataLength = (ulong)data.Length;
 
-            ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromStream(context.NativeContext, dataAddress, dataLength, FileTypeMagics[(int)fileType], ref NativeDocument, ref NativeStream, ref PageCount);
+            float xRes = 0;
+            float yRes = 0;
+
+            ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromStream(context.NativeContext, dataAddress, dataLength, FileTypeMagics[(int)fileType], isImage ? 1 : 0, ref NativeDocument, ref NativeStream, ref PageCount, ref xRes, ref yRes);
+
+            if (xRes > 0)
+            {
+                this.ImageXRes = xRes;
+            }
+            else
+            {
+                this.ImageXRes = 72;
+            }
+
+            if (yRes > 0)
+            {
+                this.ImageYRes = yRes;
+            }
+            else
+            {
+                this.ImageYRes = 72;
+            }
 
             switch (result)
             {
@@ -182,6 +238,8 @@ namespace MuPDFCore
         /// <param name="fileType">The type of the document to read.</param>
         public MuPDFDocument(MuPDFContext context, ref MemoryStream data, InputFileTypes fileType)
         {
+            bool isImage = fileType == InputFileTypes.BMP || fileType == InputFileTypes.GIF || fileType == InputFileTypes.JPEG || fileType == InputFileTypes.PAM || fileType == InputFileTypes.PNG || fileType == InputFileTypes.PNM || fileType == InputFileTypes.TIFF;
+
             this.OwnerContext = context;
 
             int origin = (int)data.Seek(0, SeekOrigin.Begin);
@@ -193,7 +251,29 @@ namespace MuPDFCore
 
             DataHolder = data;
 
-            ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromStream(context.NativeContext, dataAddress, dataLength, FileTypeMagics[(int)fileType], ref NativeDocument, ref NativeStream, ref PageCount);
+            float xRes = 0;
+            float yRes = 0;
+
+            ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromStream(context.NativeContext, dataAddress, dataLength, FileTypeMagics[(int)fileType], isImage ? 1 : 0, ref NativeDocument, ref NativeStream, ref PageCount, ref xRes, ref yRes);
+
+            if (xRes > 0)
+            {
+                this.ImageXRes = xRes;
+            }
+            else
+            {
+                this.ImageXRes = 72;
+            }
+
+            if (yRes > 0)
+            {
+                this.ImageYRes = yRes;
+            }
+            else
+            {
+                this.ImageYRes = 72;
+            }
+
 
             switch (result)
             {
@@ -220,9 +300,66 @@ namespace MuPDFCore
         /// <param name="fileName">The path to the file to open.</param>
         public MuPDFDocument(MuPDFContext context, string fileName)
         {
+            bool isImage;
+
+            string extension = Path.GetExtension(fileName).ToLowerInvariant();
+
+            switch (extension)
+            {
+                case ".bmp":
+                case ".dib":
+
+                case ".gif":
+
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                case ".jif":
+                case ".jfif":
+                case ".jfi":
+
+                case ".pam":
+                case ".pbm":
+                case ".pgm":
+                case ".ppm":
+                case ".pnm":
+
+                case ".png":
+
+                case ".tif":
+                case ".tiff":
+                    isImage = true;
+                    break;
+                default:
+                    isImage = false;
+                    break;
+            }
+
+
             this.OwnerContext = context;
 
-            ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromFile(context.NativeContext, fileName, ref NativeDocument, ref PageCount);
+            float xRes = 0;
+            float yRes = 0;
+
+            ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromFile(context.NativeContext, fileName, isImage ? 1 : 0, ref NativeDocument, ref PageCount, ref xRes, ref yRes);
+
+            if (xRes > 0)
+            {
+                this.ImageXRes = xRes;
+            }
+            else
+            {
+                this.ImageXRes = 72;
+            }
+
+            if (yRes > 0)
+            {
+                this.ImageYRes = yRes;
+            }
+            else
+            {
+                this.ImageYRes = 72;
+            }
 
             switch (result)
             {
@@ -317,6 +454,12 @@ namespace MuPDFCore
                 throw new ArgumentOutOfRangeException(nameof(zoom), zoom, "The zoom factor is too small!");
             }
 
+            if (this.ImageXRes != 72 || this.ImageYRes != 72)
+            {
+                zoom *= Math.Sqrt(this.ImageXRes * this.ImageYRes) / 72;
+                region = new Rectangle(region.X0 * 72 / this.ImageXRes, region.Y0 * 72 / this.ImageYRes, region.X1 * 72 / this.ImageXRes, region.Y1 * 72 / this.ImageYRes);
+            }
+
             float fzoom = (float)zoom;
 
             ExitCodes result = (ExitCodes)NativeMethods.RenderSubDisplayList(OwnerContext.NativeContext, DisplayLists[pageNumber].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, fzoom, (int)pixelFormat, destination, IntPtr.Zero);
@@ -373,7 +516,7 @@ namespace MuPDFCore
                 DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
             }
 
-            return new MuPDFMultiThreadedPageRenderer(OwnerContext, DisplayLists[pageNumber], threadCount, Pages[pageNumber].Bounds, this.ClipToPageBounds);
+            return new MuPDFMultiThreadedPageRenderer(OwnerContext, DisplayLists[pageNumber], threadCount, Pages[pageNumber].Bounds, this.ClipToPageBounds, this.ImageXRes, this.ImageYRes);
         }
 
         /// <summary>
@@ -450,6 +593,12 @@ namespace MuPDFCore
                 throw new ArgumentOutOfRangeException(nameof(zoom), zoom, "The zoom factor is too small!");
             }
 
+            if (this.ImageXRes != 72 || this.ImageYRes != 72)
+            {
+                zoom *= Math.Sqrt(this.ImageXRes * this.ImageYRes) / 72;
+                region = new Rectangle(region.X0 * 72 / this.ImageXRes, region.Y0 * 72 / this.ImageYRes, region.X1 * 72 / this.ImageXRes, region.Y1 * 72 / this.ImageYRes);
+            }
+
             float fzoom = (float)zoom;
 
             ExitCodes result = (ExitCodes)NativeMethods.SaveImage(OwnerContext.NativeContext, DisplayLists[pageNumber].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, fzoom, (int)pixelFormat, fileName, (int)fileType);
@@ -507,6 +656,12 @@ namespace MuPDFCore
             if (zoom < 0.000001 | zoom * region.Width <= 0.001 || zoom * region.Height <= 0.001)
             {
                 throw new ArgumentOutOfRangeException(nameof(zoom), zoom, "The zoom factor is too small!");
+            }
+
+            if (this.ImageXRes != 72 || this.ImageYRes != 72)
+            {
+                zoom *= Math.Sqrt(this.ImageXRes * this.ImageYRes) / 72;
+                region = new Rectangle(region.X0 * 72 / this.ImageXRes, region.Y0 * 72 / this.ImageYRes, region.X1 * 72 / this.ImageXRes, region.Y1 * 72 / this.ImageYRes);
             }
 
             float fzoom = (float)zoom;
@@ -609,7 +764,16 @@ namespace MuPDFCore
                     doc.DisplayLists[pageNum] = new MuPDFDisplayList(doc.OwnerContext, doc.Pages[pageNum], includeAnnotations);
                 }
 
-                result = (ExitCodes)NativeMethods.WriteSubDisplayListAsPage(context.NativeContext, doc.DisplayLists[pageNum].NativeDisplayList, pages[i].region.X0, pages[i].region.Y0, pages[i].region.X1, pages[i].region.Y1, pages[i].zoom, documentWriter);
+                Rectangle region = pages[i].region;
+                double zoom = pages[i].zoom;
+
+                if (pages[i].page.OwnerDocument.ImageXRes != 72 || pages[i].page.OwnerDocument.ImageYRes != 72)
+                {
+                    zoom *= Math.Sqrt(pages[i].page.OwnerDocument.ImageXRes * pages[i].page.OwnerDocument.ImageYRes) / 72;
+                    region = new Rectangle(region.X0 * 72 / pages[i].page.OwnerDocument.ImageXRes, region.Y0 * 72 / pages[i].page.OwnerDocument.ImageYRes, region.X1 * 72 / pages[i].page.OwnerDocument.ImageXRes, region.Y1 * 72 / pages[i].page.OwnerDocument.ImageYRes);
+                }
+
+                result = (ExitCodes)NativeMethods.WriteSubDisplayListAsPage(context.NativeContext, doc.DisplayLists[pageNum].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, (float)zoom, documentWriter);
 
                 switch (result)
                 {
