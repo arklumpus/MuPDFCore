@@ -10,9 +10,9 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.0-rc1" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0-rc1" />
-    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.2.2-rc1" />
-    <PackageReference Include="VectSharp.PDF" Version="2.2.1" />
+    <PackageReference Include="Avalonia" Version="0.10.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
+    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.2.2" />
+    <PackageReference Include="VectSharp.PDF" Version="2.2.2" />
   </ItemGroup>
 </Project>
