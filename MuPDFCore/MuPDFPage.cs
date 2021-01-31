@@ -194,21 +194,13 @@ namespace MuPDFCore
                 }
             }
 
-            return (IEnumerator<MuPDFPage>)Pages.GetEnumerator();
+            return ((IEnumerable<MuPDFPage>)Pages).GetEnumerator();
         }
 
         ///<inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            for (int i = 0; i < Pages.Length; i++)
-            {
-                if (Pages[i] == null)
-                {
-                    Pages[i] = new MuPDFPage(OwnerContext, OwnerDocument, i);
-                }
-            }
-
-            return Pages.GetEnumerator();
+            return GetEnumerator();
         }
 
         private bool disposedValue;
