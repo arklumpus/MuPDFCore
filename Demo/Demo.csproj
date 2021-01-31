@@ -5,8 +5,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="MuPDFCore" Version="1.2.2" />
+    <PackageReference Include="MuPDFCore" Version="1.2.3" />
   </ItemGroup>
 
   <ItemGroup>

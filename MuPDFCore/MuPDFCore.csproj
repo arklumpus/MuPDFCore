@@ -6,7 +6,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Description>MuPDFCore is a set of multiplatform .NET Core bindings for MuPDF. It can render PDF, XPS, EPUB and other formats to raster images returned either as raw bytes, or as image files in multiple formats (including PNG and PSD). It also supports multithreading.</Description>
-    <Version>1.2.2</Version>
+    <Version>1.2.3</Version>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Giorgio Bianchini</Authors>
     <Company>University of Bristol</Company>

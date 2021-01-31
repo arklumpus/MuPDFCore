@@ -133,7 +133,7 @@ namespace MuPDFCore
 
             ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromStream(context.NativeContext, dataAddress, (ulong)dataLength, FileTypeMagics[(int)fileType], isImage ? 1 : 0, ref NativeDocument, ref NativeStream, ref PageCount, ref xRes, ref yRes);
 
-            if (xRes > 0)
+            if (xRes > 72)
             {
                 this.ImageXRes = xRes;
             }
@@ -142,7 +142,7 @@ namespace MuPDFCore
                 this.ImageXRes = 72;
             }
 
-            if (yRes > 0)
+            if (yRes > 72)
             {
                 this.ImageYRes = yRes;
             }
@@ -193,7 +193,7 @@ namespace MuPDFCore
 
             ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromStream(context.NativeContext, dataAddress, dataLength, FileTypeMagics[(int)fileType], isImage ? 1 : 0, ref NativeDocument, ref NativeStream, ref PageCount, ref xRes, ref yRes);
 
-            if (xRes > 0)
+            if (xRes > 72)
             {
                 this.ImageXRes = xRes;
             }
@@ -202,7 +202,7 @@ namespace MuPDFCore
                 this.ImageXRes = 72;
             }
 
-            if (yRes > 0)
+            if (yRes > 72)
             {
                 this.ImageYRes = yRes;
             }
@@ -256,7 +256,7 @@ namespace MuPDFCore
 
             ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromStream(context.NativeContext, dataAddress, dataLength, FileTypeMagics[(int)fileType], isImage ? 1 : 0, ref NativeDocument, ref NativeStream, ref PageCount, ref xRes, ref yRes);
 
-            if (xRes > 0)
+            if (xRes > 72)
             {
                 this.ImageXRes = xRes;
             }
@@ -265,7 +265,7 @@ namespace MuPDFCore
                 this.ImageXRes = 72;
             }
 
-            if (yRes > 0)
+            if (yRes > 72)
             {
                 this.ImageYRes = yRes;
             }
@@ -343,7 +343,8 @@ namespace MuPDFCore
 
             ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromFile(context.NativeContext, fileName, isImage ? 1 : 0, ref NativeDocument, ref PageCount, ref xRes, ref yRes);
 
-            if (xRes > 0)
+
+            if (xRes > 72)
             {
                 this.ImageXRes = xRes;
             }
@@ -352,7 +353,7 @@ namespace MuPDFCore
                 this.ImageXRes = 72;
             }
 
-            if (yRes > 0)
+            if (yRes > 72)
             {
                 this.ImageYRes = yRes;
             }
