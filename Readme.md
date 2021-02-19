@@ -14,6 +14,8 @@ The MuPDFCore library targets .NET Standard 2.0, thus it can be used in projects
 
 To use the library in your project, you should install the [MuPDFCore NuGet package](https://www.nuget.org/packages/MuPDFCore/) and/or the [MuPDFCore.PDFRenderer NuGet package](https://www.nuget.org/packages/MuPDFCore.MuPDFRenderer/).
 
+**Note**: you should make sure that end users on Windows install the [Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019](https://aka.ms/vs/16/release/vc_redist.x64.exe), otherwise they will get an error message stating that `MuPDFWrapper.dll` could not be loaded because a module was not found.
+
 ## Usage
 
 ### Documentation
