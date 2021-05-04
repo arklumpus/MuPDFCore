@@ -341,7 +341,7 @@ dotnet pack -c Release
 
 This will create a NuGet package in `MuPDFCore/bin/Release`. You can install this package on your projects by adding a local NuGet source.
 
-## Note about MuPDFCore and .NET Framework {#netFrameworkNote}
+## Note about MuPDFCore and .NET Framework <a name="netFrameworkNote"></a>
 
 If you wish to use MuPDFCore in a .NET Framework project, you will need to manually copy the native MuPDFWrapper library for the platform you are using to the executable directory (this is done automatically if you target .NET core).
 
