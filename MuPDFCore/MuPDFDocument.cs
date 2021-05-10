@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MuPDFCore
 {
@@ -853,6 +854,34 @@ namespace MuPDFCore
             return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber]);
         }
 
+
+        /// <summary>
+        /// Extracts the text and returns it as an UTF-8 string
+        /// </summary>
+        /// <returns></returns>
+        public string ExtractText()
+        {
+            var text = new StringBuilder(); 
+
+            for (int i = 0; i < this.Pages.Count; i++)
+            {
+                MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, true);
+                foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
+                {
+                    var numLines = textBlock.Count;
+                    for (var j = 0; j < numLines; j++)
+                    {
+                        if (!string.IsNullOrWhiteSpace(textBlock[j].Text))
+                        {
+                            text.Append(" ");
+                            text.Append(textBlock[j].Text);
+                        }
+                    }
+                }
+            }
+
+            return text.ToString();
+        }
 
 
         private bool disposedValue;
