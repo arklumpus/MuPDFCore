@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MuPDFCore
 {
@@ -853,6 +854,46 @@ namespace MuPDFCore
             return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber]);
         }
 
+        /// <summary>
+        /// Extracts all the text from the document and returns it as a <see cref="string"/>. The reading order is taken from the order the text is drawn in the source file, so may not be accurate.
+        /// </summary>
+        /// <param name="separator">The character(s) used to separate the text lines obtained from the document. If this is <see langword="null" />, <see cref="Environment.NewLine"/> is used as a default separator.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <returns>A <see cref="string"/> containing all the text in the document. Characters are converted from the UTF-8 representation used in the document to equivalent UTF-16 <see cref="string"/>s.</returns>
+        public string ExtractText(string separator = null, bool includeAnnotations = true)
+        {
+            separator = separator ?? Environment.NewLine;
+
+            var text = new StringBuilder();
+            bool started = false;
+
+            for (int i = 0; i < this.Pages.Count; i++)
+            {
+                MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, includeAnnotations);
+                foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
+                {
+                    var numLines = textBlock.Count;
+                    for (var j = 0; j < numLines; j++)
+                    {
+                        if (!string.IsNullOrWhiteSpace(textBlock[j].Text))
+                        {
+                            if (started)
+                            {
+                                text.Append(separator);
+                            }
+                            else
+                            {
+                                started = true;
+                            }
+
+                            text.Append(textBlock[j].Text);
+                        }
+                    }
+                }
+            }
+
+            return text.ToString();
+        }
 
 
         private bool disposedValue;
