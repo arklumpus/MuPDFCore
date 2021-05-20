@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.2.1</span>
+   &#160;<span id="projectnumber">1.2.8</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -157,7 +157,7 @@ $(document).ready(function(){initNavTree('_mu_p_d_f_display_list_8cs_source.html
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">new</span> MuPDFException(<span class="stringliteral">&quot;Unknown error&quot;</span>, result);</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            }</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            this.Bounds = <span class="keyword">new</span> Rectangle(x0, y0, x1, y1);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            this.Bounds = <span class="keyword">new</span> Rectangle(Math.Round(x0 * page.OwnerDocument.ImageXRes / 72.0 * 1000) / 1000, Math.Round(y0 * page.OwnerDocument.ImageYRes / 72.0 * 1000) / 1000, Math.Round(x1 * page.OwnerDocument.ImageXRes / 72.0 * 1000) / 1000, Math.Round(y1 * page.OwnerDocument.ImageYRes / 72.0 * 1000) / 1000);</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        }</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keyword">private</span> <span class="keywordtype">bool</span> disposedValue;</div>

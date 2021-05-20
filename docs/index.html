@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.2.1</span>
+   &#160;<span id="projectnumber">1.2.8</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -97,6 +97,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 Getting started</h1>
 <p>The <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> library targets .NET Standard 2.0, thus it can be used in projects that target .NET Standard 2.0+, .NET Core 2.0+, .NET Framework 4.6.1 (<a href="#netFrameworkNote">note</a>) and possibly others. <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> includes a pre-compiled native library, thus projects using it can only run on Windows, macOS and Linux x64 operating systems.</p>
 <p>To use the library in your project, you should install the <a href="https://www.nuget.org/packages/MuPDFCore/">MuPDFCore NuGet package</a> and/or the <a href="https://www.nuget.org/packages/MuPDFCore.MuPDFRenderer/">MuPDFCore.PDFRenderer NuGet package</a>.</p>
+<p><b>Note</b>: you should make sure that end users on Windows install the <a href="https://aka.ms/vs/16/release/vc_redist.x64.exe">Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019</a>, otherwise they will get an error message stating that <code>MuPDFWrapper.dll</code> could not be loaded because a module was not found.</p>
 <h1><a class="anchor" id="autotoc_md2"></a>
 Usage</h1>
 <h2><a class="anchor" id="autotoc_md3"></a>
@@ -313,7 +314,7 @@ Building from source</h1>
 <p>For convenience, these compiled files for MuPDF 1.17.0 are included in the <a href="https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib"><code>native/MuPDFWrapper/lib</code> folder</a> of this repository.</p>
 <h2><a class="anchor" id="autotoc_md10"></a>
 2. Building MuPDFWrapper</h2>
-<p>Once you have the required static library files, you should download the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> source code: <a href="https://github.com/arklumpus/MuPDFCore/archive/v1.2.1.tar.gz">MuPDFCore-1.2.1.tar.gz</a> (or clone the repository) and place the library files in the appropriate subdirectories in the <code>native/MuPDFWrapper/lib/</code> folder.</p>
+<p>Once you have the required static library files, you should download the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> source code: <a href="https://github.com/arklumpus/MuPDFCore/archive/v1.2.2.tar.gz">MuPDFCore-1.2.2.tar.gz</a> (or clone the repository) and place the library files in the appropriate subdirectories in the <code>native/MuPDFWrapper/lib/</code> folder.</p>
 <p>To compile <code>MuPDFWrapper</code> you will need <a href="https://cmake.org/">CMake</a> and (on Windows) <a href="https://ninja-build.org/">Ninja</a>.</p>
 <p>On Windows, the easiest way to get all the required tools is probably to install <a href="https://visualstudio.microsoft.com/it/">Visual Studio</a>. By selecting the "Desktop development with C++" workload you should get everything you need.</p>
 <p>On macOS, you will need to install at least the Command-Line Tools for Xcode (if necessary, you should be prompted to do this while you perform the following steps) and CMake.</p>
@@ -343,8 +344,8 @@ macOS and Linux</h3>
 <div class="fragment"><div class="line">cd MuPDFCore</div>
 <div class="line">dotnet pack -c Release</div>
 </div><!-- fragment --><p>This will create a NuGet package in <code>MuPDFCore/bin/Release</code>. You can install this package on your projects by adding a local NuGet source.</p>
-<h1><a class="anchor" id="netFrameworkNote"></a>
-Note about MuPDFCore and .NET Framework</h1>
+<h1><a class="anchor" id="autotoc_md14"></a>
+Note about MuPDFCore and .NET Framework &lt;a name="netFrameworkNote"&gt;&lt;/a&gt;</h1>
 <p>If you wish to use <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> in a .NET Framework project, you will need to manually copy the native MuPDFWrapper library for the platform you are using to the executable directory (this is done automatically if you target .NET core).</p>
 <p>One way to obtain the appropriate library files is:</p>
 <ol type="1">

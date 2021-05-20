@@ -21,5 +21,6 @@ var searchData=
   ['err_5fcannot_5fsave_52',['ERR_CANNOT_SAVE',['../namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59a29a0556711fd1d509ffaf28d4e310bf9',1,'MuPDFCore']]],
   ['errorcode_53',['ErrorCode',['../class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html#afcff57d78e7e1ebdb246c7cda6488054',1,'MuPDFCore::MuPDFException']]],
   ['exit_5fsuccess_54',['EXIT_SUCCESS',['../namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59a28b393e44874f1d095f7c1281de0ffc2',1,'MuPDFCore']]],
-  ['exitcodes_55',['ExitCodes',['../namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59',1,'MuPDFCore']]]
+  ['exitcodes_55',['ExitCodes',['../namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59',1,'MuPDFCore']]],
+  ['extracttext_56',['ExtractText',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a70387793b8634c7cdda9d4c9f6c23de2',1,'MuPDFCore::MuPDFDocument']]]
 ];

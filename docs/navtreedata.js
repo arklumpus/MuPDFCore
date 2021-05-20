@@ -42,7 +42,7 @@ var NAVTREE =
         ] ],
         [ "3. Creating the MuPDFCore NuGet package", "index.html#autotoc_md13", null ]
       ] ],
-      [ "Note about MuPDFCore and .NET Framework", "index.html#netFrameworkNote", null ]
+      [ "Note about MuPDFCore and .NET Framework <a name=\"netFrameworkNote\"></a>", "index.html#autotoc_md14", null ]
     ] ],
     [ "Packages", "namespaces.html", [
       [ "Packages", "namespaces.html", "namespaces_dup" ],
@@ -72,7 +72,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_mu_p_d_f_8cs_source.html",
-"struct_mu_p_d_f_core_1_1_rectangle.html#a5a19da84939597bccb8a9aea6a3f6a3a"
+"struct_mu_p_d_f_core_1_1_rectangle.html#a579ccfbef0ff2313a7201eedc9b6a929"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

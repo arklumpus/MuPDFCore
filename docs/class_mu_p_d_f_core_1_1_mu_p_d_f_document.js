@@ -9,6 +9,7 @@ var class_mu_p_d_f_core_1_1_mu_p_d_f_document =
     [ "CreateDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ae82f87c8f0e98b2b6b3186b1ed7bba93", null ],
     [ "CreateDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a69aa759f9a0458612fece2851310d76e", null ],
     [ "Dispose", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a45cb952cb57003ec1678cca71930d738", null ],
+    [ "ExtractText", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a70387793b8634c7cdda9d4c9f6c23de2", null ],
     [ "GetMultiThreadedRenderer", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a5ea3701940cdfa3ca26676516a70bede", null ],
     [ "GetRenderedSize", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a0cb4925508720a17b373ff69979d07cc", null ],
     [ "GetRenderedSize", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a0956211d754de68c12a772b6f33cf43b", null ],
