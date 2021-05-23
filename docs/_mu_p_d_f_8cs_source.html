@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.2.8</span>
+   &#160;<span id="projectnumber">1.3.1</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -802,15 +802,33 @@ $(document).ready(function(){initNavTree('_mu_p_d_f_8cs_source.html',''); initRe
 <div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;        <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keywordtype">int</span> GetStructuredTextPage(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref <span class="keywordtype">int</span> out_stext_block_count);</div>
 <div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
-<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;<span class="comment">        /// Free a native structured text page and its associated resources.</span></div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;<span class="comment">        /// Get a structured text representation of a display list, using the Tesseract OCR engine.</span></div>
 <div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;<span class="comment">        /// &lt;param name=&quot;ctx&quot;&gt;&lt;/param&gt;</span></div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;<span class="comment">        /// &lt;param name=&quot;page&quot;&gt;&lt;/param&gt;</span></div>
-<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;<span class="comment">        /// &lt;returns&gt;An integer equivalent to &lt;see cref=&quot;ExitCodes&quot;/&gt; detailing whether any errors occurred.&lt;/returns&gt;</span></div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;<span class="comment"></span>        [DllImport(<span class="stringliteral">&quot;MuPDFWrapper&quot;</span>, CallingConvention = CallingConvention.Cdecl)]</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;        <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keywordtype">int</span> DisposeStructuredTextPage(IntPtr ctx, IntPtr page);</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;    }</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;}</div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;<span class="comment">        /// &lt;param name=&quot;ctx&quot;&gt;A context to hold the exception stack and the cached resources.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;<span class="comment">        /// &lt;param name=&quot;list&quot;&gt;The display list whose structured text representation is sought.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;<span class="comment">        /// &lt;param name=&quot;out_page&quot;&gt;The address of the structured text page.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;<span class="comment">        /// &lt;param name=&quot;out_stext_block_count&quot;&gt;The number of structured text blocks in the page.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;<span class="comment">        /// &lt;param name=&quot;zoom&quot;&gt;How much the specified region should be scaled when rendering. This determines the size in pixels of the image that is passed to Tesseract.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;<span class="comment">        /// &lt;param name=&quot;x0&quot;&gt;The left coordinate in page units of the region of the display list that should be analysed.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;<span class="comment">        /// &lt;param name=&quot;y0&quot;&gt;The top coordinate in page units of the region of the display list that should be analysed.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;<span class="comment">        /// &lt;param name=&quot;x1&quot;&gt;The right coordinate in page units of the region of the display list that should be analysed.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;<span class="comment">        /// &lt;param name=&quot;y1&quot;&gt;The bottom coordinate in page units of the region of the display list that should be analysed.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;<span class="comment">        /// &lt;param name=&quot;prefix&quot;&gt;A string value that will be used as an argument for the &lt;c&gt;putenv&lt;/c&gt; function. If this is &lt;see langword=&quot;null&quot;/&gt;, the &lt;c&gt;putenv&lt;/c&gt; function is not invoked. Usually used to set the value of the &lt;c&gt;TESSDATA_PREFIX&lt;/c&gt; environment variable.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;<span class="comment">        /// &lt;param name=&quot;language&quot;&gt;The name of the language model file to use for the OCR.&lt;/param&gt;</span></div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;<span class="comment">        /// &lt;returns&gt;An integer equivalent to &lt;see cref=&quot;ExitCodes&quot;/&gt; detailing whether any errors occurred.&lt;/returns&gt;</span></div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;<span class="comment"></span>        [DllImport(<span class="stringliteral">&quot;MuPDFWrapper&quot;</span>, CallingConvention = CallingConvention.Cdecl)]</div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;        <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keywordtype">int</span> GetStructuredTextPageWithOCR(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref <span class="keywordtype">int</span> out_stext_block_count, <span class="keywordtype">float</span> zoom, <span class="keywordtype">float</span> x0, <span class="keywordtype">float</span> y0, <span class="keywordtype">float</span> x1, <span class="keywordtype">float</span> y1, <span class="keywordtype">string</span> prefix, <span class="keywordtype">string</span> language);</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;<span class="comment">        /// &lt;summary&gt;</span></div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;<span class="comment">        /// Free a native structured text page and its associated resources.</span></div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;<span class="comment">        /// &lt;/summary&gt;</span></div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;<span class="comment">        /// &lt;param name=&quot;ctx&quot;&gt;&lt;/param&gt;</span></div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;<span class="comment">        /// &lt;param name=&quot;page&quot;&gt;&lt;/param&gt;</span></div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;<span class="comment">        /// &lt;returns&gt;An integer equivalent to &lt;see cref=&quot;ExitCodes&quot;/&gt; detailing whether any errors occurred.&lt;/returns&gt;</span></div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;<span class="comment"></span>        [DllImport(<span class="stringliteral">&quot;MuPDFWrapper&quot;</span>, CallingConvention = CallingConvention.Cdecl)]</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;        <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keywordtype">int</span> DisposeStructuredTextPage(IntPtr ctx, IntPtr page);</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;    }</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="anamespace_mu_p_d_f_core_html_aa6919d62a772f0334777d47f9c2d6c59a29a0556711fd1d509ffaf28d4e310bf9"><div class="ttname"><a href="namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59a29a0556711fd1d509ffaf28d4e310bf9">MuPDFCore.ExitCodes.ERR_CANNOT_SAVE</a></div><div class="ttdeci">@ ERR_CANNOT_SAVE</div><div class="ttdoc">An error occurred while saving the page to a raster image file.</div></div>

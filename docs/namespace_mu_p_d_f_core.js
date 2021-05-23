@@ -22,5 +22,6 @@ var namespace_mu_p_d_f_core =
     [ "RenderProgress", "class_mu_p_d_f_core_1_1_render_progress.html", "class_mu_p_d_f_core_1_1_render_progress" ],
     [ "RoundedRectangle", "struct_mu_p_d_f_core_1_1_rounded_rectangle.html", "struct_mu_p_d_f_core_1_1_rounded_rectangle" ],
     [ "RoundedSize", "struct_mu_p_d_f_core_1_1_rounded_size.html", "struct_mu_p_d_f_core_1_1_rounded_size" ],
-    [ "Size", "struct_mu_p_d_f_core_1_1_size.html", "struct_mu_p_d_f_core_1_1_size" ]
+    [ "Size", "struct_mu_p_d_f_core_1_1_size.html", "struct_mu_p_d_f_core_1_1_size" ],
+    [ "TesseractLanguage", "class_mu_p_d_f_core_1_1_tesseract_language.html", "class_mu_p_d_f_core_1_1_tesseract_language" ]
 ];

@@ -1,10 +1,7 @@
 var searchData=
 [
-  ['zoom_191',['Zoom',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#ad2964abec1ae1dde10f1145c851adbf1',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomenabled_192',['ZoomEnabled',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a2ff0f7ce05dac392726917aa52d7f3e0',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomenabledproperty_193',['ZoomEnabledProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a9058818acd9f085c35f672c79262162b',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomincrement_194',['ZoomIncrement',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a5a2fdaa31f4bf7ae8b3912d620a83759',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomincrementproperty_195',['ZoomIncrementProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a7cef637c2ca16aba3ffae0be352ae002',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomproperty_196',['ZoomProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#aa80851bc316f16e126c48da9edd18ef0',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomstep_197',['ZoomStep',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a831d88219b6638d7d2192d32b9119270',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]]
+  ['x_352',['X',['../struct_mu_p_d_f_core_1_1_point_f.html#a1991414ea516bfc4f4737a3bc45835ec',1,'MuPDFCore::PointF']]],
+  ['x0_353',['X0',['../struct_mu_p_d_f_core_1_1_rectangle.html#a7cc750e4547b99f89a6427ab86b99fb3',1,'MuPDFCore.Rectangle.X0()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#afdc6e63ec2785581fce806d24d73b63e',1,'MuPDFCore.RoundedRectangle.X0()']]],
+  ['x1_354',['X1',['../struct_mu_p_d_f_core_1_1_rectangle.html#a69c99f6aaf6cfa3ca52a9aab45fb06a0',1,'MuPDFCore.Rectangle.X1()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#a5041fe26b99b942d3aaa95d7d207f8f0',1,'MuPDFCore.RoundedRectangle.X1()']]],
+  ['xps_355',['XPS',['../namespace_mu_p_d_f_core.html#a6f956802ff33af39b555fc95caf5486fa9b1f26de4b8088056d8998a85a576464',1,'MuPDFCore']]]
 ];

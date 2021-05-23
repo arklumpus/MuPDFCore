@@ -10,7 +10,7 @@ The library is released under the [AGPLv3](https://www.gnu.org/licenses/agpl-3.0
 
 ## Getting started
 
-The MuPDFCore library targets .NET Standard 2.0, thus it can be used in projects that target .NET Standard 2.0+, .NET Core 2.0+, .NET Framework 4.6.1 ([note](#netFrameworkNote)) and possibly others. MuPDFCore includes a pre-compiled native library, thus projects using it can only run on Windows, macOS and Linux x64 operating systems.
+The MuPDFCore library targets .NET Standard 2.0, thus it can be used in projects that target .NET Standard 2.0+, .NET Core 2.0+, .NET 5.0, .NET Framework 4.6.1 ([note](#netFrameworkNote)) and possibly others. MuPDFCore includes a pre-compiled native library, thus projects using it can only run on Windows, macOS and Linux x64 operating systems.
 
 To use the library in your project, you should install the [MuPDFCore NuGet package](https://www.nuget.org/packages/MuPDFCore/) and/or the [MuPDFCore.PDFRenderer NuGet package](https://www.nuget.org/packages/MuPDFCore.MuPDFRenderer/).
 
@@ -241,6 +241,41 @@ The `MuPDFStructuredTextPage` also has methods to determine which character cont
 
 The order of the blocks in the page (which affects the definition of a "range" of text and search operations) is the same as returned by the underlying MuPDF library, which is taken from the order the text is drawn in the source file, so may not be accurate. They can be reordered using the `Array.Sort` method on the `StructuredTextBlocks` array contained in the `MuPDFStructuredTextPage` (lines within blocks and characters within lines can be likewise reordered).
 
+### Optical Character Recognition (OCR) using Tesseract
+
+MuPDF 1.18 (embedded in MuPDFCore 1.3.0+) adds support for OCR using the [Tesseract](https://github.com/tesseract-ocr/tesseract) library. To access this feature in MuPDFCore, you can use one of the overloads of `GetStructuredTextPage` that takes a `TesseractLanguage` argument specifying the language to use for the OCR. This will run the OCR and return a `MuPDFStructuredTextPage` containing the character information obtained by Tesseract, which can be used normally. Depending on the model being used, the OCR step can take a relatively long time; therefore, the `MuPDFDocument` class also implements a `GetStructuredTextPageAsync` method, which does the same thing in an asynchronous way.
+
+Objects of the `TesseractLanguage` class contain information used to locate the trained language model file that is used by Tesseract. Normally, when using Tesseract, you would have to ensure that the trained language model files are available on the user's computer; however, this class implements some "clever" logic to download the necessary files on demand.
+
+In general, MuPDF provides Tesseract with a "language name" (e.g. `"eng"`). Tesseract then looks for a file called `eng.traineddata` either in the folder specified by the `TESSDATA_PREFIX` environment variable, or, if the variable is not defined, in a subfolder of the current working directory called `tessdata`. MuPDFCore manipulates the value of `TESSDATA_PREFIX` (at the process level) and the language name in order to specify the language file.
+
+The `TesseractLanguage` class has multiple constructors:
+
+* `TesseractLanguage(string prefix, string language)`: this constructor is used to directly specify the value of `TESSDATA_PREFIX` and the language name. The library does not process these in any way. If `prefix` is `null`, the value of `TESSDATA_PREFIX` is not changed, and Tesseract uses the system value.
+
+* `TesseractLanguage(string fileName)`: with this constructor, you can directly specify the path to a trained language model file. You can obtain such a file from [the tessdata_fast repository](https://github.com/tesseract-ocr/tessdata_fast) or from [the tessdata_best repository](https://github.com/tesseract-ocr/tessdata_best). If the file does not have a `.traineddata` extension, it will be copied in a temporary location.
+
+* `TesseractLanguage(Fast language, bool useAnyCached = false)` \
+    `TesseractLanguage(FastScript language, bool useAnyCached = false)` \
+    `TesseractLanguage(Best language, bool useAnyCached = false)` \
+    `TesseractLanguage(BestScript language, bool useAnyCached = false)`
+    
+    With these constructors, you can specify a language from the list of available languages defined in the `TesseractLanguage.Fast`, `TesseractLanguage.FastScript`, `TesseractLanguage.Best`, and `TesseractLanguage.BestScript` enums.
+    
+    MuPDFCore will then look for the trained model file corresponding to the selected language, relative to the _path of the executable_, in a folder called `tessdata/fast` and then in a folder called `fast` (or `best`, depending on the overload; for the overloads taking a script name, it looks in `tessdata/fast/script` or `fast/script` instead).
+    
+    If the language file is not found in either of these folders, it then looks for it in a subfolder called `tessdata/fast` in `Environment.SpecialFolder.LocalApplicationData`. If the optional argument `useAnyCached` is `true`, it also looks for the language file in the same folder as the executable, and then in the `best` (or `fast`) subfolders. In this case, for example, if the language file for `TesseractLanguage.Fast.Eng` is not available, but the file for `TesseractLanguage.Best.Eng` is available, the latter will be used.
+
+    Finally, if the language file could not be found in any of the possible paths, MuPDFCore will download it from the appropriate repository and place it in the appropriate subfolder of the `tessdata` folder in `Environment.SpecialFolder.LocalApplicationData`. The file will then be reused as necessary.
+
+    The `TESSDATA_PREFIX` and language name will then be set accordingly to where the file was located.
+    
+    This means that if you use one of these constructors you do not have to worry about the language files being installed in the right place; as long as the user has an Internet connection, the library will download the language files as necessary.
+
+
+    
+    
+
 ### MuPDFCore.MuPDFRenderer control
 
 To use the `PDFRenderer` control in an Avalonia application, first of all you need to add it to you Avalonia `Window`, e.g. in the XAML:
@@ -282,7 +317,6 @@ You can download the open-source (GNU AGPL) MuPDF source code from [here](https:
 
 * From Windows:
     * libmupdf.lib
-    * libthirdparty.lib
 
 * From macOS:
     * libmupdf.a
@@ -294,13 +328,32 @@ You can download the open-source (GNU AGPL) MuPDF source code from [here](https:
 
 Note that the files from macOS and Linux are different, despite sharing the same name.
 
-Depending on your system, on Linux and/or macOS you may need to enable the `-fPIC` compiler option to generate library files that can be included in the MuPDFWrapper shared library, otherwise a later step may fail. You can do this in multiple ways, e.g. by opening the `Makefile` included in the MuPDF source and adding `-fPIC` at the end of the line specifying `CFLAGS` (line 23 in the MuPDF 1.17.0 source).
+For convenience, these compiled files for MuPDF 1.18.0 are included in the [`native/MuPDFWrapper/lib` folder](https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib) of this repository.
 
-For convenience, these compiled files for MuPDF 1.17.0 are included in the [`native/MuPDFWrapper/lib` folder](https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib) of this repository.
+#### Tips for compiling MuPDF 1.18.0:
+
+* On all platforms:
+    * When following the instructions in `thirdparty/tesseract.txt`, checkout to the `master` branch in the `tesseract` and `leptonica` repository, instead of the `artifex` branch as suggested in the instructions.
+    * Apply [this change](http://git.ghostscript.com/?p=mupdf.git;a=commitdiff;h=7995d12fdcddcf4d5bcfa92dfc9425acdf93869e;hp=9ae0f26d81f2185ba538eba517736834b4658a85) to `source/fitz/ocr-device.c` to prevent a runtime error.
+    * Delete or comment line 1051 in `source/fitz/ocr-device.c` (the one reading `fz_save_pixmap_as_png(ctx, ocr->pixmap, "ass.png");`). This line creates a file called `ass.png` when running the OCR process. This may be useful for debugging, but may have the unintended consequence of overwriting a file with same name, or cause a runtime error if the user does not have write permissions.
+
+* On Windows:
+    * Open the `mupdf.sln` solution in Visual Studio and select the `ReleaseTesseract` configuration. Right-click on each project, to open its properties, then go to `C/C++` > `Code Generation` and set the `Runtime Library` to `Multi-threaded DLL (/MD)` (ignore any project for which this option is not available). Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
+    * Now, open the `x64 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it using `msbuild mupdf.sln`
+    * Then, build again using `msbuild mupdf.sln /p:Configuration=Release`. Ignore the compilation errors.
+    * Finally, build again using `msbuild mupdf.sln /p:Configuration=ReleaseTesseract`.
+    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `x64/ReleaseTesseract` folder (the file should be ~300MB in size).
+
+* On Linux:
+    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 27 (which specifies the `CFLAGS`).
+    * Make sure that you are using a recent enough version of GCC (version 7.3.1 seems to be enough).
+
+* On macOS:
+    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 27 (which specifies the `CFLAGS`). Also add the `-std=c++11` option at the end of line 59 (which specifies the CXX_CMD).
 
 ### 2. Building MuPDFWrapper
 
-Once you have the required static library files, you should download the MuPDFCore source code: [MuPDFCore-1.2.2.tar.gz](https://github.com/arklumpus/MuPDFCore/archive/v1.2.2.tar.gz) (or clone the repository) and place the library files in the appropriate subdirectories in the `native/MuPDFWrapper/lib/` folder.
+Once you have the required static library files, you should download the MuPDFCore source code: [MuPDFCore-1.3.0.tar.gz](https://github.com/arklumpus/MuPDFCore/archive/v1.3.0.tar.gz) (or clone the repository) and place the library files in the appropriate subdirectories in the `native/MuPDFWrapper/lib/` folder.
 
 To compile `MuPDFWrapper` you will need [CMake](https://cmake.org/) and (on Windows) [Ninja](https://ninja-build.org/).
 

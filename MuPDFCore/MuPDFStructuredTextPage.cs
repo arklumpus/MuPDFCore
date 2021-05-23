@@ -42,13 +42,23 @@ namespace MuPDFCore
             }
         }
 
-        internal MuPDFStructuredTextPage(MuPDFContext context, MuPDFDisplayList list)
+        internal MuPDFStructuredTextPage(MuPDFContext context, MuPDFDisplayList list, TesseractLanguage ocrLanguage, double zoom, Rectangle pageBounds)
         {
             int blockCount = -1;
 
             IntPtr nativeStructuredPage = IntPtr.Zero;
 
-            ExitCodes result = (ExitCodes)NativeMethods.GetStructuredTextPage(context.NativeContext, list.NativeDisplayList, ref nativeStructuredPage, ref blockCount);
+            ExitCodes result;
+
+            if (ocrLanguage != null)
+            {
+                result = (ExitCodes)NativeMethods.GetStructuredTextPageWithOCR(context.NativeContext, list.NativeDisplayList, ref nativeStructuredPage, ref blockCount, (float)zoom, pageBounds.X0, pageBounds.Y0, pageBounds.X1, pageBounds.Y1, "TESSDATA_PREFIX=" + ocrLanguage.Prefix, ocrLanguage.Language);
+            }
+            else
+            {
+                result = (ExitCodes)NativeMethods.GetStructuredTextPage(context.NativeContext, list.NativeDisplayList, ref nativeStructuredPage, ref blockCount);
+            }
+
 
             switch (result)
             {

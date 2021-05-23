@@ -15,11 +15,14 @@ typedef struct fz_xml fz_xml;
 	Parse the contents of buffer into a tree of xml nodes.
 
 	preserve_white: whether to keep or delete all-whitespace nodes.
-
-	for_html: enable special html tweaks (auto closing of tags,
-	workarounds for less-than-perfect nesting etc).
 */
-fz_xml_doc *fz_parse_xml(fz_context *ctx, fz_buffer *buf, int preserve_white, int for_html);
+fz_xml_doc *fz_parse_xml(fz_context *ctx, fz_buffer *buf, int preserve_white);
+
+/**
+	Parse the contents of a buffer into a tree of XML nodes,
+	using the HTML5 parsing algorithm.
+*/
+fz_xml_doc *fz_parse_xml_from_html5(fz_context *ctx, fz_buffer *buf);
 
 /**
 	Free the XML node and all its children and siblings.
@@ -72,6 +75,13 @@ char *fz_xml_tag(fz_xml *item);
 	NULL if the attribute doesn't exist.
 */
 char *fz_xml_att(fz_xml *item, const char *att);
+
+/**
+	Return the value of an attribute of an XML node.
+	If the first attribute doesn't exist, try the second.
+	NULL if neither attribute exists.
+*/
+char *fz_xml_att_alt(fz_xml *item, const char *one, const char *two);
 
 /**
 	Check for a matching attribute on an XML node.

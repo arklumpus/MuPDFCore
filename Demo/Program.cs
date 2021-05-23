@@ -31,6 +31,21 @@ namespace Demo
                 //We only take a region of the page from the second document
                 (doc2.Pages[0], new Rectangle(87, 360, 517, 790), 1)
             );
+
+            //Open the rasterised page so that we can try using the OCR.
+            using MuPDFDocument doc3 = new MuPDFDocument(ctx, "Raster1.png");
+
+            //Get a structured text representation of the page using OCR.
+            MuPDFStructuredTextPage page = doc3.GetStructuredTextPage(0, new TesseractLanguage(TesseractLanguage.Fast.Eng));
+
+            //Print all the text lines.
+            foreach (MuPDFStructuredTextBlock blk in page)
+            {
+                foreach (MuPDFStructuredTextLine line in blk)
+                {
+                    System.Console.WriteLine(line.Text);
+                }
+            }
         }
     }
 }

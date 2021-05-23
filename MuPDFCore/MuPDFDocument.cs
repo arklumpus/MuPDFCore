@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MuPDFCore
 {
@@ -851,7 +852,59 @@ namespace MuPDFCore
                 DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
             }
 
-            return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber]);
+            return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], null, 1, new Rectangle());
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="MuPDFStructuredTextPage"/> from the specified page, using optical character recognition (OCR) to determine what text is written on the image. This contains information about the text layout that can be used for highlighting and searching.
+        /// </summary>
+        /// <param name="pageNumber">The number of the page (starting at 0)</param>
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
+        public MuPDFStructuredTextPage GetStructuredTextPage(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true)
+        {
+            if (DisplayLists[pageNumber] == null)
+            {
+                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
+            }
+
+            double zoom = 1;
+            Rectangle region = this.Pages[pageNumber].Bounds;
+
+            if (this.ImageXRes != 72 || this.ImageYRes != 72)
+            {
+                zoom *= Math.Sqrt(this.ImageXRes * this.ImageYRes) / 72;
+                region = new Rectangle(region.X0 * 72 / this.ImageXRes, region.Y0 * 72 / this.ImageYRes, region.X1 * 72 / this.ImageXRes, region.Y1 * 72 / this.ImageYRes);
+            }
+
+            return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], ocrLanguage, zoom, region);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="MuPDFStructuredTextPage"/> from the specified page, using optical character recognition (OCR) to determine what text is written on the image. This contains information about the text layout that can be used for highlighting and searching. The OCR step is run asynchronously, e.g. to avoid blocking the UI thread.
+        /// </summary>
+        /// <param name="pageNumber">The number of the page (starting at 0)</param>
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
+        public async Task<MuPDFStructuredTextPage> GetStructuredTextPageAsync(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true)
+        {
+            if (DisplayLists[pageNumber] == null)
+            {
+                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
+            }
+
+            double zoom = 1;
+            Rectangle region = this.Pages[pageNumber].Bounds;
+
+            if (this.ImageXRes != 72 || this.ImageYRes != 72)
+            {
+                zoom *= Math.Sqrt(this.ImageXRes * this.ImageYRes) / 72;
+                region = new Rectangle(region.X0 * 72 / this.ImageXRes, region.Y0 * 72 / this.ImageYRes, region.X1 * 72 / this.ImageXRes, region.Y1 * 72 / this.ImageYRes);
+            }
+
+            return await Task.Run(() => new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], ocrLanguage, zoom, region));
         }
 
         /// <summary>
@@ -870,6 +923,90 @@ namespace MuPDFCore
             for (int i = 0; i < this.Pages.Count; i++)
             {
                 MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, includeAnnotations);
+                foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
+                {
+                    var numLines = textBlock.Count;
+                    for (var j = 0; j < numLines; j++)
+                    {
+                        if (!string.IsNullOrWhiteSpace(textBlock[j].Text))
+                        {
+                            if (started)
+                            {
+                                text.Append(separator);
+                            }
+                            else
+                            {
+                                started = true;
+                            }
+
+                            text.Append(textBlock[j].Text);
+                        }
+                    }
+                }
+            }
+
+            return text.ToString();
+        }
+
+        /// <summary>
+        /// Extracts all the text from the document and returns it as a <see cref="string"/>, using optical character recognition (OCR) to determine what text is written on the image.
+        /// </summary>
+        /// <param name="separator">The character(s) used to separate the text lines obtained from the document. If this is <see langword="null" />, <see cref="Environment.NewLine"/> is used as a default separator.</param>
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <returns>A <see cref="string"/> containing all the text in the document. Characters are converted from the UTF-8 representation used in the document to equivalent UTF-16 <see cref="string"/>s.</returns>
+        public string ExtractText(TesseractLanguage ocrLanguage, string separator = null, bool includeAnnotations = true)
+        {
+            separator = separator ?? Environment.NewLine;
+
+            var text = new StringBuilder();
+            bool started = false;
+
+            for (int i = 0; i < this.Pages.Count; i++)
+            {
+                MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, ocrLanguage, includeAnnotations);
+                foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
+                {
+                    var numLines = textBlock.Count;
+                    for (var j = 0; j < numLines; j++)
+                    {
+                        if (!string.IsNullOrWhiteSpace(textBlock[j].Text))
+                        {
+                            if (started)
+                            {
+                                text.Append(separator);
+                            }
+                            else
+                            {
+                                started = true;
+                            }
+
+                            text.Append(textBlock[j].Text);
+                        }
+                    }
+                }
+            }
+
+            return text.ToString();
+        }
+
+        /// <summary>
+        /// Extracts all the text from the document and returns it as a <see cref="string"/>, using optical character recognition (OCR) to determine what text is written on the image. The OCR step is run asynchronously, e.g. to avoid blocking the UI thread.
+        /// </summary>
+        /// <param name="separator">The character(s) used to separate the text lines obtained from the document. If this is <see langword="null" />, <see cref="Environment.NewLine"/> is used as a default separator.</param>
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <returns>A <see cref="string"/> containing all the text in the document. Characters are converted from the UTF-8 representation used in the document to equivalent UTF-16 <see cref="string"/>s.</returns>
+        public async Task<string> ExtractTextAsync(TesseractLanguage ocrLanguage, string separator = null, bool includeAnnotations = true)
+        {
+            separator = separator ?? Environment.NewLine;
+
+            var text = new StringBuilder();
+            bool started = false;
+
+            for (int i = 0; i < this.Pages.Count; i++)
+            {
+                MuPDFStructuredTextPage structuredTextPage = await this.GetStructuredTextPageAsync(i, ocrLanguage, includeAnnotations);
                 foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
                 {
                     var numLines = textBlock.Count;

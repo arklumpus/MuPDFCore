@@ -704,9 +704,9 @@ int fz_has_permission(fz_context *ctx, fz_document *doc, fz_permission p);
 
 	size: Size of 'buf'.
 
-	Returns the size of the output string (may be larger than 'size'
-	if the output was truncated), or -1 if the key is not recognized
-	or found.
+	Returns the number of bytes need to store the string plus terminator
+	(will be larger than 'size' if the output was truncated), or -1 if the
+	key is not recognized or found.
 */
 int fz_lookup_metadata(fz_context *ctx, fz_document *doc, const char *key, char *buf, int size);
 
@@ -715,10 +715,15 @@ int fz_lookup_metadata(fz_context *ctx, fz_document *doc, const char *key, char 
 
 #define FZ_META_INFO_AUTHOR "info:Author"
 #define FZ_META_INFO_TITLE "info:Title"
+#define FZ_META_INFO_CREATOR "info:Creator"
+#define FZ_META_INFO_PRODUCER "info:Producer"
 
 /**
 	Find the output intent colorspace if the document has defined
 	one.
+
+	Returns a borrowed reference that should not be dropped, unless
+	it is kept first.
 */
 fz_colorspace *fz_document_output_intent(fz_context *ctx, fz_document *doc);
 

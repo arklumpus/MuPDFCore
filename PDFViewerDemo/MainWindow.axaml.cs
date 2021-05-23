@@ -21,6 +21,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using VectSharp.PDF;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace PDFViewerDemo
 {
@@ -91,12 +92,59 @@ namespace PDFViewerDemo
         public MainWindow()
         {
             InitializeComponent();
+
+            // Populate the ComboBox with the OCR languages.
+            ComboBox ocrLanguageBox = this.FindControl<ComboBox>("OCRLanguageBox");
+
+            // Enumerate the "fast" languages.
+            TesseractLanguage.Fast[] fastLanguages = (TesseractLanguage.Fast[])Enum.GetValues(typeof(TesseractLanguage.Fast));
+
+            // Enumerate the "fast" scripts.
+            TesseractLanguage.FastScripts[] fastScripts = (TesseractLanguage.FastScripts[])Enum.GetValues(typeof(TesseractLanguage.FastScripts));
+
+            // Store the language names in a list.
+            List<string> ocrLanguageItems = new List<string>(fastLanguages.Length + fastScripts.Length + 1) { "None" };
+            ocrLanguageItems.AddRange(from el in fastLanguages select el.ToString());
+            ocrLanguageItems.AddRange(from el in fastScripts select el.ToString());
+
+            ocrLanguageBox.Items = ocrLanguageItems;
+            ocrLanguageBox.SelectedIndex = 0;
+
             Watcher.Changed += FileChanged;
         }
 
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        /// <summary>
+        /// Obtains a <see cref="TesseractLanguage"/> corresponding to the selected OCR language.
+        /// </summary>
+        /// <param name="index">The index of the language selected in the OCR language box.</param>
+        /// <returns>A <see cref="TesseractLanguage"/> corresponding to the selected OCR language.</returns>
+        private TesseractLanguage GetCurrentLanguage(int index)
+        {
+            if (index == 0)
+            {
+                return null;
+            }
+            else
+            {
+                // Enumerate the "fast" languages.
+                TesseractLanguage.Fast[] fastLanguages = (TesseractLanguage.Fast[])Enum.GetValues(typeof(TesseractLanguage.Fast));
+
+                if (index - 1 < fastLanguages.Length)
+                {
+                    return new TesseractLanguage(fastLanguages[index - 1]);
+                }
+                else
+                {
+                    // Enumerate the "fast" scripts.
+                    TesseractLanguage.FastScripts[] fastScripts = (TesseractLanguage.FastScripts[])Enum.GetValues(typeof(TesseractLanguage.FastScripts));
+                    return new TesseractLanguage(fastScripts[index - fastLanguages.Length - 1]);
+                }
+            }
         }
 
         /// <summary>
@@ -208,7 +256,7 @@ namespace PDFViewerDemo
                                 cacheFillCanvas.Background = new SolidColorBrush(Color.FromRgb(238, 136, 102));
                             }
 
-                        //The update does not need to have a high priority.
+                            //The update does not need to have a high priority.
                         }, DispatcherPriority.MinValue);
                     }
                     else
@@ -266,7 +314,7 @@ namespace PDFViewerDemo
             Document = new MuPDFDocument(Context, ref ms, InputFileTypes.PDF);
 
             MaxPageNumber = 1;
-            this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document);
+            this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document, ocrLanguage: GetCurrentLanguage(this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex));
             this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
 
             //Start the UI updater thread.
@@ -305,7 +353,7 @@ namespace PDFViewerDemo
                 Document?.Dispose();
                 Document = new MuPDFDocument(Context, e.FullPath);
                 MaxPageNumber = Document.Pages.Count;
-                this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document);
+                this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document, ocrLanguage: GetCurrentLanguage(this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex));
                 this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
 
                 //Restore the DisplayArea.
@@ -341,7 +389,7 @@ namespace PDFViewerDemo
                 Document = new MuPDFDocument(Context, result[0]);
 
                 MaxPageNumber = Document.Pages.Count;
-                this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document);
+                this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document, ocrLanguage: GetCurrentLanguage(this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex));
                 this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
 
                 //Set up the FileWatcher to keep track of any changes to the file.
@@ -363,7 +411,22 @@ namespace PDFViewerDemo
             if ((int)e.NewValue - 1 != this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber)
             {
                 //We need to re-initialise the renderer. No need to ask it to release resources here because it will do it on its own (and we don't need to dispose the Document).
-                this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document, pageNumber: (int)e.NewValue - 1);
+                this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document, pageNumber: (int)e.NewValue - 1, ocrLanguage: GetCurrentLanguage(this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex));
+                this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
+            }
+        }
+
+        /// <summary>
+        /// Invoked when the value of the ComboBox containing the OCR language is changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OCRLanguageChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Document != null)
+            {
+                //We need to re-initialise the renderer. No need to ask it to release resources here because it will do it on its own (and we don't need to dispose the Document).
+                await this.FindControl<PDFRenderer>("MuPDFRenderer").InitializeAsync(Document, pageNumber: this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber, ocrLanguage: GetCurrentLanguage(this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex));
                 this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
             }
         }

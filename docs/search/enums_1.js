@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['exitcodes_322',['ExitCodes',['../namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59',1,'MuPDFCore']]]
+  ['documentoutputfiletypes_498',['DocumentOutputFileTypes',['../namespace_mu_p_d_f_core.html#a4cb9694810eeb8c98f699eac7bebeca6',1,'MuPDFCore']]]
 ];

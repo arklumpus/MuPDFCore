@@ -7,7 +7,8 @@ target_include_directories(MuPDFWrapper PRIVATE ".")
 
 if (WIN32)
 	target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/win-x64/libmupdf.lib")
-	target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/win-x64/libthirdparty.lib")
+	#target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/win-x64/libthirdparty.lib")
+	#target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/win-x64/libtesseract.lib")
 endif()
 
 if(UNIX AND NOT APPLE)

@@ -5,7 +5,7 @@
         xmlns:mupdf="clr-namespace:MuPDFCore.MuPDFRenderer;assembly=MuPDFCore.MuPDFRenderer"
         xmlns:local="clr-namespace:PDFViewerDemo;assembly=PDFViewerDemo"
         xmlns:anim="clr-namespace:Avalonia.Animation;assembly=MuPDFCore.MuPDFRenderer"
-        mc:Ignorable="d" Width="800" Height="650"
+        mc:Ignorable="d" Width="800" Height="700"
         MinWidth="300" MinHeight="100"
         x:Class="PDFViewerDemo.MainWindow"
         Title="PDF Viewer" Opened="WindowOpened" FontSize="16" Name="MainWindow"
@@ -38,6 +38,7 @@
     <ScrollViewer Grid.Column="1" Margin="10, 0, 0, 0" Padding="0,0,10,0" VerticalScrollBarVisibility="Visible">
       <Grid Name="ControlsGrid">
         <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
@@ -116,14 +117,26 @@
           <Button Click="ClearClicked" Grid.Column="1" Margin="10, 0, 0, 0">Clear</Button>
         </Grid>
 
+        <!--Set the language for the OCR engine using Tesseract. Set to "None" to disable OCR.-->
+        <Grid Grid.Row="8" Margin="0, 5, 0, 5">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+          </Grid.ColumnDefinitions>
+          <TextBlock VerticalAlignment="Center" FontWeight="Bold">OCR language:</TextBlock>
+          <ComboBox Grid.Column="1" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" Name="OCRLanguageBox" SelectionChanged="OCRLanguageChanged"></ComboBox>
+        </Grid>
+
         <!--Show the number of rendering threads used by the renderer.-->
-        <StackPanel Orientation="Horizontal" Margin="0, 5, 0, 5" Grid.Row="9">
+        <StackPanel Orientation="Horizontal" Margin="0, 5, 0, 5" Grid.Row="10">
           <TextBlock FontWeight="Bold">Rendering threads:</TextBlock>
           <TextBlock Margin="10, 0, 0, 0" Text="{Binding #MuPDFRenderer.RenderThreadCount}"></TextBlock>
         </StackPanel>
 
         <!--Show the amount of memory used for cached assets (e.g. images, fonts...).-->
-        <Grid Grid.Row="10">
+        <Grid Grid.Row="11">
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

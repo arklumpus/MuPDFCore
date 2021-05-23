@@ -279,6 +279,82 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
+	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language)
+	{
+		if (prefix != NULL)
+		{
+			putenv(prefix);
+		}
+
+		fz_stext_page* page;
+		fz_stext_options options;
+		fz_device* device;
+		fz_device* ocr_device;
+		fz_rect bounds;
+		fz_matrix ctm;
+
+		ctm = fz_scale(zoom, zoom);
+
+		bounds.x0 = x0;
+		bounds.y0 = y0;
+		bounds.x1 = x1;
+		bounds.y1 = y1;
+
+		fz_var(page);
+		fz_var(device);
+
+		fz_try(ctx)
+		{
+			page = fz_new_stext_page(ctx, fz_infinite_rect);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_CANNOT_CREATE_PAGE;
+		}
+
+		fz_try(ctx)
+		{
+			device = fz_new_stext_device(ctx, page, &options);
+
+			ocr_device = fz_new_ocr_device(ctx, device, ctm, bounds, true, language);
+
+			fz_run_display_list(ctx, list, ocr_device, ctm, fz_infinite_rect, NULL);
+
+			fz_close_device(ctx, ocr_device);
+			fz_drop_device(ctx, ocr_device);
+			ocr_device = NULL;
+
+			fz_close_device(ctx, device);
+			fz_drop_device(ctx, device);
+			device = NULL;
+		}
+		fz_always(ctx)
+		{
+			fz_drop_device(ctx, ocr_device);
+			fz_drop_device(ctx, device);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_CANNOT_POPULATE_PAGE;
+		}
+
+		*out_page = page;
+
+		int count = 0;
+
+		fz_stext_block* curr_block = page->first_block;
+
+		while (curr_block != nullptr)
+		{
+			count++;
+			curr_block = curr_block->next;
+		}
+
+		*out_stext_block_count = count;
+
+		return EXIT_SUCCESS;
+	}
+
 	DLL_PUBLIC int GetStructuredTextPage(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count)
 	{
 		fz_stext_page* page;

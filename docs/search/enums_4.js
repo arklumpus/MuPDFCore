@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['rasteroutputfiletypes_326',['RasterOutputFileTypes',['../namespace_mu_p_d_f_core.html#afb84d65324afe9d4edaf5b15c128bc7e',1,'MuPDFCore']]]
+  ['inputfiletypes_502',['InputFileTypes',['../namespace_mu_p_d_f_core.html#a6f956802ff33af39b555fc95caf5486f',1,'MuPDFCore']]]
 ];

@@ -32,17 +32,20 @@ var NAVTREE =
         [ "Examples", "index.html#autotoc_md4", null ],
         [ "MuPDFCore library", "index.html#autotoc_md5", null ],
         [ "Structured text representation", "index.html#autotoc_md6", null ],
-        [ "MuPDFCore.MuPDFRenderer control", "index.html#autotoc_md7", null ]
+        [ "Optical Character Recognition (OCR) using Tesseract", "index.html#autotoc_md7", null ],
+        [ "MuPDFCore.MuPDFRenderer control", "index.html#autotoc_md8", null ]
       ] ],
-      [ "Building from source", "index.html#autotoc_md8", [
-        [ "1. Building libmupdf", "index.html#autotoc_md9", null ],
-        [ "2. Building MuPDFWrapper", "index.html#autotoc_md10", [
-          [ "Windows", "index.html#autotoc_md11", null ],
-          [ "macOS and Linux", "index.html#autotoc_md12", null ]
+      [ "Building from source", "index.html#autotoc_md9", [
+        [ "1. Building libmupdf", "index.html#autotoc_md10", [
+          [ "Tips for compiling MuPDF 1.18.0:", "index.html#autotoc_md11", null ]
         ] ],
-        [ "3. Creating the MuPDFCore NuGet package", "index.html#autotoc_md13", null ]
+        [ "2. Building MuPDFWrapper", "index.html#autotoc_md12", [
+          [ "Windows", "index.html#autotoc_md13", null ],
+          [ "macOS and Linux", "index.html#autotoc_md14", null ]
+        ] ],
+        [ "3. Creating the MuPDFCore NuGet package", "index.html#autotoc_md15", null ]
       ] ],
-      [ "Note about MuPDFCore and .NET Framework <a name=\"netFrameworkNote\"></a>", "index.html#autotoc_md14", null ]
+      [ "Note about MuPDFCore and .NET Framework <a name=\"netFrameworkNote\"></a>", "index.html#autotoc_md16", null ]
     ] ],
     [ "Packages", "namespaces.html", [
       [ "Packages", "namespaces.html", "namespaces_dup" ],
@@ -56,7 +59,7 @@ var NAVTREE =
       [ "Class Index", "classes.html", null ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
-        [ "All", "functions.html", null ],
+        [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", null ],
         [ "Variables", "functions_vars.html", null ],
         [ "Enumerations", "functions_enum.html", null ],
@@ -72,7 +75,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_mu_p_d_f_8cs_source.html",
-"struct_mu_p_d_f_core_1_1_rectangle.html#a579ccfbef0ff2313a7201eedc9b6a929"
+"class_mu_p_d_f_core_1_1_tesseract_language.html#a15b11b8626d4dbb7f01dd45ee4ad3176a8fd93a2400d9612d1773381b49e37d63",
+"class_mu_p_d_f_core_1_1_tesseract_language.html#af64dce4052f4a0df58df7e8051a416cda4721faeeb72c7d5c19acb9d37b961fb0"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

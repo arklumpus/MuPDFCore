@@ -711,6 +711,24 @@ namespace MuPDFCore
         internal static extern int GetStructuredTextPage(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref int out_stext_block_count);
 
         /// <summary>
+        /// Get a structured text representation of a display list, using the Tesseract OCR engine.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="list">The display list whose structured text representation is sought.</param>
+        /// <param name="out_page">The address of the structured text page.</param>
+        /// <param name="out_stext_block_count">The number of structured text blocks in the page.</param>
+        /// <param name="zoom">How much the specified region should be scaled when rendering. This determines the size in pixels of the image that is passed to Tesseract.</param>
+        /// <param name="x0">The left coordinate in page units of the region of the display list that should be analysed.</param>
+        /// <param name="y0">The top coordinate in page units of the region of the display list that should be analysed.</param>
+        /// <param name="x1">The right coordinate in page units of the region of the display list that should be analysed.</param>
+        /// <param name="y1">The bottom coordinate in page units of the region of the display list that should be analysed.</param>
+        /// <param name="prefix">A string value that will be used as an argument for the <c>putenv</c> function. If this is <see langword="null"/>, the <c>putenv</c> function is not invoked. Usually used to set the value of the <c>TESSDATA_PREFIX</c> environment variable.</param>
+        /// <param name="language">The name of the language model file to use for the OCR.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetStructuredTextPageWithOCR(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref int out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, string prefix, string language);
+
+        /// <summary>
         /// Free a native structured text page and its associated resources.
         /// </summary>
         /// <param name="ctx"></param>

@@ -32,6 +32,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MuPDFCore.MuPDFRenderer
 {
@@ -253,7 +254,8 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
-        public void Initialize(MuPDFDocument document, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true)
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        public void Initialize(MuPDFDocument document, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
         {
             if (IsViewerInitialized)
             {
@@ -265,7 +267,31 @@ namespace MuPDFCore.MuPDFRenderer
             Document = document;
             Context = null;
 
-            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier, includeAnnotations);
+            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
+        }
+
+        /// <summary>
+        /// Set up the <see cref="PDFRenderer"/> to display a page of a <see cref="MuPDFDocument"/>. The OCR step is run asynchronously, in order not to block the UI thread.
+        /// </summary>
+        /// <param name="document">The <see cref="MuPDFDocument"/> to render.</param>
+        /// <param name="threadCount">The number of threads to use in the rendering. If this is 0, an appropriate number of threads based on the number of processors in the computer will be used. Otherwise, this must be factorisable using only powers of 2, 3, 5 or 7. If this is not the case, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
+        /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
+        /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        public async Task InitializeAsync(MuPDFDocument document, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
+        {
+            if (IsViewerInitialized)
+            {
+                ReleaseResources();
+            }
+
+            OwnsContextAndDocument = false;
+
+            Document = document;
+            Context = null;
+
+            await ContinueInitializationAsync(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
         }
 
         /// <summary>
@@ -276,7 +302,8 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
-        public void Initialize(string fileName, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true)
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        public void Initialize(string fileName, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
         {
             if (IsViewerInitialized)
             {
@@ -288,7 +315,31 @@ namespace MuPDFCore.MuPDFRenderer
             Context = new MuPDFContext();
             Document = new MuPDFDocument(Context, fileName);
 
-            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier, includeAnnotations);
+            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
+        }
+
+        /// <summary>
+        /// Set up the <see cref="PDFRenderer"/> to display a page of a document that will be loaded from disk. The OCR step is run asynchronously, in order not to block the UI thread.
+        /// </summary>
+        /// <param name="fileName">The path to the document that should be opened.</param>
+        /// <param name="threadCount">The number of threads to use in the rendering. If this is 0, an appropriate number of threads based on the number of processors in the computer will be used. Otherwise, this must be factorisable using only powers of 2, 3, 5 or 7. If this is not the case, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
+        /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
+        /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        public async Task InitializeAsync(string fileName, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
+        {
+            if (IsViewerInitialized)
+            {
+                ReleaseResources();
+            }
+
+            OwnsContextAndDocument = true;
+
+            Context = new MuPDFContext();
+            Document = new MuPDFDocument(Context, fileName);
+
+            await ContinueInitializationAsync(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
         }
 
         /// <summary>
@@ -300,14 +351,35 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
-        public void Initialize(MemoryStream ms, InputFileTypes fileType, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true)
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        public void Initialize(MemoryStream ms, InputFileTypes fileType, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
         {
             //Get the byte array that underlies the MemoryStream.
             int origin = (int)ms.Seek(0, SeekOrigin.Begin);
             long dataLength = ms.Length;
             byte[] dataBytes = ms.GetBuffer();
 
-            Initialize(dataBytes, fileType, origin, (int)dataLength, threadCount, pageNumber, resolutionMultiplier, includeAnnotations);
+            Initialize(dataBytes, fileType, origin, (int)dataLength, threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
+        }
+
+        /// <summary>
+        /// Set up the <see cref="PDFRenderer"/> to display a page of a document that will be loaded from a <see cref="MemoryStream"/>. The OCR step is run asynchronously, in order not to block the UI thread.
+        /// </summary>
+        /// <param name="ms">The <see cref="MemoryStream"/> containing the document that should be opened. This can be safely disposed after this method returns.</param>
+        /// <param name="fileType">The format of the document.</param>
+        /// <param name="threadCount">The number of threads to use in the rendering. If this is 0, an appropriate number of threads based on the number of processors in the computer will be used. Otherwise, this must be factorisable using only powers of 2, 3, 5 or 7. If this is not the case, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
+        /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
+        /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        public async Task InitializeAsync(MemoryStream ms, InputFileTypes fileType, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
+        {
+            //Get the byte array that underlies the MemoryStream.
+            int origin = (int)ms.Seek(0, SeekOrigin.Begin);
+            long dataLength = ms.Length;
+            byte[] dataBytes = ms.GetBuffer();
+
+            await InitializeAsync(dataBytes, fileType, origin, (int)dataLength, threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
         }
 
         /// <summary>
@@ -321,7 +393,8 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
-        public void Initialize(byte[] dataBytes, InputFileTypes fileType, int offset = 0, int length = -1, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true)
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        public void Initialize(byte[] dataBytes, InputFileTypes fileType, int offset = 0, int length = -1, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
         {
             if (IsViewerInitialized)
             {
@@ -347,7 +420,48 @@ namespace MuPDFCore.MuPDFRenderer
             //Create a new document, passing the wrapped pointer so that it can be released when the Document is disposed.
             Document = new MuPDFDocument(Context, pointer, length, fileType, ref disposer);
 
-            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier, includeAnnotations);
+            ContinueInitialization(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
+        }
+
+        /// <summary>
+        /// Set up the <see cref="PDFRenderer"/> to display a page of a document that will be loaded from an array of <see cref="byte"/>s. The OCR step is run asynchronously, in order not to block the UI thread.
+        /// </summary>
+        /// <param name="dataBytes">The bytes of the document that should be opened. The array will be copied and can be safely discarded/altered after this method returns.</param>
+        /// <param name="fileType">The format of the document.</param>
+        /// <param name="offset">The offset in the byte array at which the document starts.</param>
+        /// <param name="length">The length of the document in bytes. If this is &lt; 0, the whole array is used.</param>
+        /// <param name="threadCount">The number of threads to use in the rendering. If this is 0, an appropriate number of threads based on the number of processors in the computer will be used. Otherwise, this must be factorisable using only powers of 2, 3, 5 or 7. If this is not the case, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
+        /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
+        /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        public async Task InitializeAsync(byte[] dataBytes, InputFileTypes fileType, int offset = 0, int length = -1, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
+        {
+            if (IsViewerInitialized)
+            {
+                ReleaseResources();
+            }
+
+            if (length < 0)
+            {
+                length = dataBytes.Length - offset;
+            }
+
+            //Copy the bytes to unmanaged memory, so that we don't depend on the original array.
+            IntPtr pointer = Marshal.AllocHGlobal(length);
+            Marshal.Copy(dataBytes, offset, pointer, length);
+
+            //Wrap the pointer into a disposable container.
+            IDisposable disposer = new DisposableIntPtr(pointer);
+
+            OwnsContextAndDocument = true;
+
+            Context = new MuPDFContext();
+
+            //Create a new document, passing the wrapped pointer so that it can be released when the Document is disposed.
+            Document = new MuPDFDocument(Context, pointer, length, fileType, ref disposer);
+
+            await ContinueInitializationAsync(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
         }
 
         /// <summary>
@@ -357,7 +471,8 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
-        private void ContinueInitialization(int threadCount, int pageNumber, double resolutionMultiplier, bool includeAnnotations)
+        /// /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        private void ContinueInitialization(int threadCount, int pageNumber, double resolutionMultiplier, bool includeAnnotations, TesseractLanguage ocrLanguage = null)
         {
             //Initialise threads and locking mechanics.
             if (RenderMutex == null)
@@ -385,7 +500,77 @@ namespace MuPDFCore.MuPDFRenderer
             }
 
             //Create the structured text representation.
-            this.StructuredTextPage = Document.GetStructuredTextPage(pageNumber, includeAnnotations);
+            this.StructuredTextPage = Document.GetStructuredTextPage(pageNumber, ocrLanguage, includeAnnotations);
+
+            //Create the multithreaded renderer.
+            Renderer = Document.GetMultiThreadedRenderer(pageNumber, threadCount, includeAnnotations);
+
+            //Set up the properties of this control.
+            RenderThreadCount = Renderer.ThreadCount;
+            Rectangle bounds = Document.Pages[pageNumber].Bounds;
+            PageSize = new Rect(new Point(bounds.X0, bounds.Y0), new Point(bounds.X1, bounds.Y1));
+            PageNumber = pageNumber;
+
+            //Render the static canvas (which is used when the DynamicBitmaps are not available).
+            RenderFixedCanvas(resolutionMultiplier);
+
+            //Initialize the dynamic canvas.
+            InitializeDynamicCanvas();
+
+            //Set initial display area to include the whole page.
+            double widthRatio = PageSize.Width / (this.Bounds.Width * resolutionMultiplier);
+            double heightRatio = PageSize.Height / (this.Bounds.Height * resolutionMultiplier);
+
+            double containingWidth = Math.Max(widthRatio, heightRatio) * this.Bounds.Width * resolutionMultiplier;
+            double containingHeight = Math.Max(widthRatio, heightRatio) * this.Bounds.Height * resolutionMultiplier;
+
+            SetDisplayAreaNowInternal(new Rect(new Point(-(containingWidth - FixedArea.Width) * 0.5, -(containingHeight - FixedArea.Height) * 0.5), new Avalonia.Size(containingWidth, containingHeight)));
+
+            //We are ready!
+            IsViewerInitialized = true;
+
+            //Queue a render of the DynamicBitmaps (on another thread).
+            RenderDynamicCanvas();
+        }
+
+
+        /// <summary>
+        /// Common steps in the initialization process that will be performed regardless of how the <see cref="Document"/> was obtained. The OCR step is run asynchronously, in order not to block the UI thread.
+        /// </summary>
+        /// <param name="threadCount">The number of threads to use in the rendering. If this is 0, an appropriate number of threads based on the number of processors in the computer will be used. Otherwise, this must be factorisable using only powers of 2, 3, 5 or 7. If this is not the case, the biggest number smaller than <paramref name="threadCount"/> that satisfies this condition is used.</param>
+        /// <param name="pageNumber">The index of the page that should be rendered. The first page has index 0.</param>
+        /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
+        /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
+        private async Task ContinueInitializationAsync(int threadCount, int pageNumber, double resolutionMultiplier, bool includeAnnotations, TesseractLanguage ocrLanguage = null)
+        {
+            //Initialise threads and locking mechanics.
+            if (RenderMutex == null)
+            {
+                RenderMutex = new Mutex(false);
+
+                this.RenderDynamicCanvasOuterThread = new Thread(() =>
+                {
+                    RenderDynamicCanvasOuterAction();
+                });
+
+                this.RenderDynamicCanvasInnerThread = new Thread(() =>
+                {
+                    RenderDynamicCanvasInnerAction();
+                });
+
+                RenderDynamicCanvasOuterThread.Start();
+                RenderDynamicCanvasInnerThread.Start();
+            }
+
+            //Choose an appropriate number of threads based on the number of processors in the computer. We have an upper limit of 8 threads because more threads apparently caused reduced performance due to the synchronisation overhead.
+            if (threadCount <= 0)
+            {
+                threadCount = Math.Max(1, Math.Min(8, Environment.ProcessorCount - 2));
+            }
+
+            //Create the structured text representation.
+            this.StructuredTextPage = await Document.GetStructuredTextPageAsync(pageNumber, ocrLanguage, includeAnnotations);
 
             //Create the multithreaded renderer.
             Renderer = Document.GetMultiThreadedRenderer(pageNumber, threadCount, includeAnnotations);
@@ -865,13 +1050,13 @@ namespace MuPDFCore.MuPDFRenderer
                     RenderDynamicCanvas();
                 }
             }
-            else if (e.Property == PDFRenderer.SelectionProperty)
+            else if (e.Property == PDFRenderer.SelectionProperty && this.StructuredTextPage != null)
             {
                 //Update the selection quads to reflect the new selection
                 this.SelectionQuads = this.StructuredTextPage.GetHighlightQuads(this.Selection, false).ToList();
                 this.InvalidateVisual();
             }
-            else if (e.Property == PDFRenderer.HighlightedRegionsProperty)
+            else if (e.Property == PDFRenderer.HighlightedRegionsProperty && this.StructuredTextPage != null)
             {
                 //Update the highlight quads to reflect the new highlighted regions
                 this.HighlightQuads = new List<Quad>();
@@ -917,7 +1102,7 @@ namespace MuPDFCore.MuPDFRenderer
 
                     PointF pagePoint = new PointF((float)(point.X / this.Bounds.Width * DisplayArea.Width + DisplayArea.Left), (float)(point.Y / this.Bounds.Height * DisplayArea.Height + DisplayArea.Top));
 
-                    MuPDFStructuredTextAddress? address = StructuredTextPage.GetHitAddress(pagePoint, false);
+                    MuPDFStructuredTextAddress? address = StructuredTextPage?.GetHitAddress(pagePoint, false);
 
                     if (address != null)
                     {
@@ -933,7 +1118,7 @@ namespace MuPDFCore.MuPDFRenderer
             {
                 Point point = e.GetPosition(this);
                 PointF pagePoint = new PointF((float)(point.X / this.Bounds.Width * DisplayArea.Width + DisplayArea.Left), (float)(point.Y / this.Bounds.Height * DisplayArea.Height + DisplayArea.Top));
-                MuPDFStructuredTextAddress? address = StructuredTextPage.GetHitAddress(pagePoint, false);
+                MuPDFStructuredTextAddress? address = StructuredTextPage?.GetHitAddress(pagePoint, false);
 
                 if (address == null)
                 {
@@ -1034,7 +1219,7 @@ namespace MuPDFCore.MuPDFRenderer
 
                     PointF pagePoint = new PointF((float)(point.X / this.Bounds.Width * DisplayArea.Width + DisplayArea.Left), (float)(point.Y / this.Bounds.Height * DisplayArea.Height + DisplayArea.Top));
 
-                    MuPDFStructuredTextAddress? address = StructuredTextPage.GetClosestHitAddress(pagePoint, false);
+                    MuPDFStructuredTextAddress? address = StructuredTextPage?.GetClosestHitAddress(pagePoint, false);
 
                     this.Selection = new MuPDFStructuredTextAddressSpan(this.Selection.Start, address);
 
@@ -1056,7 +1241,7 @@ namespace MuPDFCore.MuPDFRenderer
 
                     PointF pagePoint = new PointF((float)(point.X / this.Bounds.Width * DisplayArea.Width + DisplayArea.Left), (float)(point.Y / this.Bounds.Height * DisplayArea.Height + DisplayArea.Top));
 
-                    MuPDFStructuredTextAddress? address = StructuredTextPage.GetHitAddress(pagePoint, false);
+                    MuPDFStructuredTextAddress? address = StructuredTextPage?.GetHitAddress(pagePoint, false);
 
                     if (address != null)
                     {

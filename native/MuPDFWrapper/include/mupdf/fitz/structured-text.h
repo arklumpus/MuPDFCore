@@ -89,6 +89,13 @@ typedef struct fz_stext_block fz_stext_block;
 	FZ_STEXT_INHIBIT_SPACES: If this option is set, we will not try
 	to add missing space characters where there are large gaps
 	between characters.
+
+	FZ_STEXT_DEHYPHENATE: If this option is set, hyphens at the
+	end of a line will be removed and the lines will be merged.
+
+	FZ_STEXT_PRESERVE_SPANS: If this option is set, spans on the same line
+	will not be merged. Each line will thus be a span of text with the same
+	font, colour, and size.
 */
 enum
 {
@@ -96,6 +103,8 @@ enum
 	FZ_STEXT_PRESERVE_WHITESPACE = 2,
 	FZ_STEXT_PRESERVE_IMAGES = 4,
 	FZ_STEXT_INHIBIT_SPACES = 8,
+	FZ_STEXT_DEHYPHENATE = 16,
+	FZ_STEXT_PRESERVE_SPANS = 32,
 };
 
 /**
@@ -171,26 +180,31 @@ fz_stext_page *fz_new_stext_page(fz_context *ctx, fz_rect mediabox);
 void fz_drop_stext_page(fz_context *ctx, fz_stext_page *page);
 
 /**
-	Output a page to a file in HTML (visual) format.
+	Output structured text to a file in HTML (visual) format.
 */
 void fz_print_stext_page_as_html(fz_context *ctx, fz_output *out, fz_stext_page *page, int id);
 void fz_print_stext_header_as_html(fz_context *ctx, fz_output *out);
 void fz_print_stext_trailer_as_html(fz_context *ctx, fz_output *out);
 
 /**
-	Output a page to a file in XHTML (semantic) format.
+	Output structured text to a file in XHTML (semantic) format.
 */
 void fz_print_stext_page_as_xhtml(fz_context *ctx, fz_output *out, fz_stext_page *page, int id);
 void fz_print_stext_header_as_xhtml(fz_context *ctx, fz_output *out);
 void fz_print_stext_trailer_as_xhtml(fz_context *ctx, fz_output *out);
 
 /**
-	Output a page to a file in XML format.
+	Output structured text to a file in XML format.
 */
 void fz_print_stext_page_as_xml(fz_context *ctx, fz_output *out, fz_stext_page *page, int id);
 
 /**
-	Output a page to a file in UTF-8 format.
+	Output structured text to a file in JSON format.
+*/
+void fz_print_stext_page_as_json(fz_context *ctx, fz_output *out, fz_stext_page *page, float scale);
+
+/**
+	Output structured text to a file in plain-text UTF-8 format.
 */
 void fz_print_stext_page_as_text(fz_context *ctx, fz_output *out, fz_stext_page *page);
 
@@ -268,5 +282,38 @@ fz_stext_options *fz_parse_stext_options(fz_context *ctx, fz_stext_options *opts
 	options: Options to configure the stext device.
 */
 fz_device *fz_new_stext_device(fz_context *ctx, fz_stext_page *page, const fz_stext_options *options);
+
+/**
+	Create a device to OCR the text on the page.
+
+	Renders the page internally to a bitmap that is then OCRd. Text
+	is then forwarded onto the target device.
+
+	target: The target device to receive the OCRd text.
+
+	ctm: The transform to apply to the mediabox to get the size for
+	the rendered page image. Also used to calculate the resolution
+	for the page image. In general, this will be the same as the CTM
+	that you pass to fz_run_page (or fz_run_display_list) to feed
+	this device.
+
+	mediabox: The mediabox (in points). Combined with the CTM to get
+	the bounds of the pixmap used internally for the rendered page
+	image.
+
+	with_list: If with_list is false, then all non-text operations
+	are forwarded instantly to the target device. This results in
+	the target device seeing all NON-text operations, followed by
+	all the text operations (derived from OCR).
+
+	If with_list is true, then all the marking operations are
+	collated into a display list which is then replayed to the
+	target device at the end.
+
+	language: NULL (for "eng"), or a pointer to a string to describe
+	the languages/scripts that should be used for OCR (e.g.
+	"eng,ara").
+*/
+fz_device *fz_new_ocr_device(fz_context *ctx, fz_device *target, fz_matrix ctm, fz_rect mediabox, int with_list, const char *language);
 
 #endif

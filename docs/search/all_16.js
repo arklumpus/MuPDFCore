@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['y_188',['Y',['../struct_mu_p_d_f_core_1_1_point_f.html#aebce5c221345cf92d72876e66fda8255',1,'MuPDFCore::PointF']]],
-  ['y0_189',['Y0',['../struct_mu_p_d_f_core_1_1_rectangle.html#a5e3466975ea3adbd9ab7a6920247170b',1,'MuPDFCore.Rectangle.Y0()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#af2a366728b46c908496c2cccac6788a4',1,'MuPDFCore.RoundedRectangle.Y0()']]],
-  ['y1_190',['Y1',['../struct_mu_p_d_f_core_1_1_rectangle.html#aca202ae10d09cc9307a57e3c8f206bed',1,'MuPDFCore.Rectangle.Y1()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#a0028471434c2a335eb07bfa623a603e3',1,'MuPDFCore.RoundedRectangle.Y1()']]]
+  ['width_348',['Width',['../struct_mu_p_d_f_core_1_1_size.html#a48e452c3dd0663d71508b7b2bee69a51',1,'MuPDFCore.Size.Width()'],['../struct_mu_p_d_f_core_1_1_rounded_size.html#a5e5954ae76c12cb8a36572be2354aa4b',1,'MuPDFCore.RoundedSize.Width()'],['../struct_mu_p_d_f_core_1_1_rectangle.html#a4ea4052094e051b974b7ca1bc9346655',1,'MuPDFCore.Rectangle.Width()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#a29904ab0820872c48e43631ece9f1fff',1,'MuPDFCore.RoundedRectangle.Width()']]],
+  ['writeimage_349',['WriteImage',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ac0264349fe3b2ccc319f0978c448ff11',1,'MuPDFCore.MuPDFDocument.WriteImage(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations=true)'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ab42e60e523a9a3fefc665c6b800cb3ec',1,'MuPDFCore.MuPDFDocument.WriteImage(int pageNumber, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations=true)']]],
+  ['writingmode_350',['WritingMode',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a2f3bc0d1d174cf148916593ad8ec0efe',1,'MuPDFCore::MuPDFStructuredTextLine']]],
+  ['writingmodes_351',['WritingModes',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a7c1d4154530c9ec4e6e1189d9f2a58bd',1,'MuPDFCore::MuPDFStructuredTextLine']]]
 ];

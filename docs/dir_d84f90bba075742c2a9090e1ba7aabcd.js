@@ -8,5 +8,6 @@ var dir_d84f90bba075742c2a9090e1ba7aabcd =
     [ "MuPDFPage.cs", "_mu_p_d_f_page_8cs_source.html", null ],
     [ "MuPDFStructuredTextPage.cs", "_mu_p_d_f_structured_text_page_8cs_source.html", null ],
     [ "Rectangles.cs", "_rectangles_8cs_source.html", null ],
+    [ "TesseractLanguage.cs", "_tesseract_language_8cs_source.html", null ],
     [ "Utils.cs", "_utils_8cs_source.html", null ]
 ];

@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['x_184',['X',['../struct_mu_p_d_f_core_1_1_point_f.html#a1991414ea516bfc4f4737a3bc45835ec',1,'MuPDFCore::PointF']]],
-  ['x0_185',['X0',['../struct_mu_p_d_f_core_1_1_rectangle.html#a7cc750e4547b99f89a6427ab86b99fb3',1,'MuPDFCore.Rectangle.X0()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#afdc6e63ec2785581fce806d24d73b63e',1,'MuPDFCore.RoundedRectangle.X0()']]],
-  ['x1_186',['X1',['../struct_mu_p_d_f_core_1_1_rectangle.html#a69c99f6aaf6cfa3ca52a9aab45fb06a0',1,'MuPDFCore.Rectangle.X1()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#a5041fe26b99b942d3aaa95d7d207f8f0',1,'MuPDFCore.RoundedRectangle.X1()']]],
-  ['xps_187',['XPS',['../namespace_mu_p_d_f_core.html#a6f956802ff33af39b555fc95caf5486fa9b1f26de4b8088056d8998a85a576464',1,'MuPDFCore']]]
+  ['vertical_345',['Vertical',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a7c1d4154530c9ec4e6e1189d9f2a58bda06ce2a25e5d12c166a36f654dbea6012',1,'MuPDFCore::MuPDFStructuredTextLine']]],
+  ['vie_346',['Vie',['../class_mu_p_d_f_core_1_1_tesseract_language.html#a15b11b8626d4dbb7f01dd45ee4ad3176a76047c05df5247fd2768a31484513fcf',1,'MuPDFCore.TesseractLanguage.Vie()'],['../class_mu_p_d_f_core_1_1_tesseract_language.html#a68f1943167a4334387d42e8aa1bd9da3a76047c05df5247fd2768a31484513fcf',1,'MuPDFCore.TesseractLanguage.Vie()']]],
+  ['vietnamese_347',['Vietnamese',['../class_mu_p_d_f_core_1_1_tesseract_language.html#af64dce4052f4a0df58df7e8051a416cda7b80fae85640c16cdb0261bef0c27636',1,'MuPDFCore.TesseractLanguage.Vietnamese()'],['../class_mu_p_d_f_core_1_1_tesseract_language.html#a286b1495613fce2a6ca69f68628db742a7b80fae85640c16cdb0261bef0c27636',1,'MuPDFCore.TesseractLanguage.Vietnamese()']]]
 ];
