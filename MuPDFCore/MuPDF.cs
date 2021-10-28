@@ -399,7 +399,7 @@ namespace MuPDFCore
         /// <param name="ctx">The context whose store should be emptied.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int EmptyStore(IntPtr ctx);
+        internal static extern void EmptyStore(IntPtr ctx);
 
         /// <summary>
         /// Get the current size of the store.
