@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Tests")]
 namespace MuPDFCore
 {
     /// <summary>
@@ -264,7 +265,7 @@ namespace MuPDFCore
     }
 
     /// <summary>
-    /// Holds a summery of the progress of the current rendering operation.
+    /// Holds a summary of the progress of the current rendering operation.
     /// </summary>
     public class RenderProgress
     {
