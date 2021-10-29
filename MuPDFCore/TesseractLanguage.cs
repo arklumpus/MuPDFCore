@@ -1424,7 +1424,7 @@ namespace MuPDFCore
 
             if (prefix == null)
             {
-                string remotePath = "https://github.com/tesseract-ocr/tessdata_fast/raw/master/" + languageName + ".traineddata";
+                string remotePath = "https://github.com/tesseract-ocr/tessdata_fast/raw/main/" + languageName + ".traineddata";
 
                 string localDirectory = Path.Combine(LocalCachePath, "tessdata", "fast");
 
@@ -1490,7 +1490,7 @@ namespace MuPDFCore
 
             if (prefix == null)
             {
-                string remotePath = "https://github.com/tesseract-ocr/tessdata_best/raw/master/" + languageName + ".traineddata";
+                string remotePath = "https://github.com/tesseract-ocr/tessdata_best/raw/main/" + languageName + ".traineddata";
 
                 string localDirectory = Path.Combine(LocalCachePath, "tessdata", "best");
 
@@ -1560,7 +1560,7 @@ namespace MuPDFCore
 
             if (prefix == null)
             {
-                string remotePath = "https://github.com/tesseract-ocr/tessdata_fast/raw/master/script/" + languageName + ".traineddata";
+                string remotePath = "https://github.com/tesseract-ocr/tessdata_fast/raw/main/script/" + languageName + ".traineddata";
 
                 string localDirectory = Path.Combine(LocalCachePath, "tessdata", "fast", "script");
 
@@ -1630,7 +1630,7 @@ namespace MuPDFCore
 
             if (prefix == null)
             {
-                string remotePath = "https://github.com/tesseract-ocr/tessdata_best/raw/master/script/" + languageName + ".traineddata";
+                string remotePath = "https://github.com/tesseract-ocr/tessdata_best/raw/main/script/" + languageName + ".traineddata";
 
                 string localDirectory = Path.Combine(LocalCachePath, "tessdata", "best", "script");
 
