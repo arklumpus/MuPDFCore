@@ -36,7 +36,7 @@ namespace MuPDFCore
         /// <returns>A number that is &lt;= <paramref name="n"/> and is factorisable using only the <see cref="AcceptableDivisors"/>.</returns>
         public static int GetAcceptableNumber(int n)
         {
-            for (int i = n; n >= 1; n--)
+            for (int i = n; i >= 1; i--)
             {
                 if (IsAcceptableNumber(i))
                 {
