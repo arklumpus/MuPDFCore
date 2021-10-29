@@ -1364,7 +1364,7 @@ namespace MuPDFCore
                 fileName = Path.GetFullPath(fileName);
 
                 this.Prefix = Path.GetDirectoryName(fileName);
-                this.Language = Path.GetFileName(fileName).Substring(0, fileName.Length - 12);
+                this.Language = Path.GetFileName(fileName).Substring(0, Path.GetFileName(fileName).Length - 12);
             }
             else
             {
