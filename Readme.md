@@ -396,6 +396,40 @@ dotnet pack -c Release
 
 This will create a NuGet package in `MuPDFCore/bin/Release`. You can install this package on your projects by adding a local NuGet source.
 
+### 4. Running tests
+
+To verify that everything is working correctly, you should build the MuPDFCore test suite and run it on all platforms. To build the test suite, you will need the [.NET 6 SDK or higher](https://dotnet.microsoft.com/download/dotnet/current).
+
+To build the test suite:
+
+1. Make sure that you have changed the version of the MuPDFCore NuGet package so that it is higher than the latest version of MuPDFCore in the NuGet repository (you should use a pre-release suffix, e.g. `1.4.0-a1` to avoid future headaches with new versions of MuPDFCore). This is set in line 9 of the `MuPDFCore/MuPDFCore.csproj` file.
+2. Add the `MuPDFCore/bin/Release` folder to your local NuGet repositories (you can do this e.g. in Visual Studio).
+3. If you have not done so already, create the MuPDFCore NuGet package following step 3 above.
+4. Update line 50 of the `Tests/Tests.csproj` project file so that it refers to the version of the MuPDFCore package you have just created.
+
+These steps ensure that you are testing the right version of MuPDFCore (i.e. your freshly built copy) and not something else that may have been cached.
+
+Now, open a windows command line in the folder where you have downloaded the MuPDFCore source code, type `BuildTests` and press `Enter`. This will create a number of files in the `Release\MuPDFCoreTests` folder, where each file is an archive containing the tests for a certain platform and architecture:
+
+* `MuPDFCoreTests-linux-x64.tar.gz` contains the tests for Linux environments on x64 processors.
+* `MuPDFCoreTests-mac-x64.tar.gz` contains the tests for macOS environments on Intel processors.
+* `MuPDFCoreTests-win-x64.tar.gz` contains the tests for Windows environments on x64 processors.
+
+To run the tests, copy each archive to a machine running the corresponding operating system, and extract it. Then:
+
+#### Windows
+* Open a command prompt and `CD` into the folder where you have extracted the contents of the test archive.
+* Enter the command `MuPDFCoreTestHost` (this will run the test program).
+
+#### macOS and Linux
+* Open a terminal and `cd` into the folder where you have extracted the contents of the test archive.
+* Enter the command `chmod +x MuPDFCoreTestHost` (this will add the executable flag to the test program).
+* Enter the command `./MuPDFCoreTestHost` (this will run the test program).
+
+The test suite will start; it will print the name of each test, followed by a green `  Succeeded  ` or a red `  Failed  ` depending on the test result. If everything went correctly, all tests should succeed.
+
+When all the tests have been run, the program will print a summary showing how many tests have succeeded (if any) and how many have failed (if any). If any tests have failed, a list of these will be printed, and then they will be run again one at a time, waiting for a key press before running each test (this makes it easier to follow what is going on). If you wish to kill the test process early, you can do so with `CTRL+C`.
+
 ## Note about MuPDFCore and .NET Framework <a name="netFrameworkNote"></a>
 
 If you wish to use MuPDFCore in a .NET Framework project, you will need to manually copy the native MuPDFWrapper library for the platform you are using to the executable directory (this is done automatically if you target .NET core).

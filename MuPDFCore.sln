@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PDFViewerDemo", "PDFViewerD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuPDFCore.MuPDFRenderer", "MuPDFCore.MuPDFRenderer\MuPDFCore.MuPDFRenderer.csproj", "{C48C4EFE-4975-42F5-8C79-2AF37F1074E2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{0E2B1587-F281-4603-8D36-38455B429848}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MuPDFCoreTestHost", "MuPDFCoreTestHost\MuPDFCoreTestHost.csproj", "{F87041CD-BB1B-46F1-B53E-C40D19EE98AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{C48C4EFE-4975-42F5-8C79-2AF37F1074E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C48C4EFE-4975-42F5-8C79-2AF37F1074E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C48C4EFE-4975-42F5-8C79-2AF37F1074E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E2B1587-F281-4603-8D36-38455B429848}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E2B1587-F281-4603-8D36-38455B429848}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E2B1587-F281-4603-8D36-38455B429848}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E2B1587-F281-4603-8D36-38455B429848}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F87041CD-BB1B-46F1-B53E-C40D19EE98AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F87041CD-BB1B-46F1-B53E-C40D19EE98AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F87041CD-BB1B-46F1-B53E-C40D19EE98AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F87041CD-BB1B-46F1-B53E-C40D19EE98AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
