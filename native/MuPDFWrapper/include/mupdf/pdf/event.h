@@ -1,3 +1,25 @@
+// Copyright (C) 2004-2021 Artifex Software, Inc.
+//
+// This file is part of MuPDF.
+//
+// MuPDF is free software: you can redistribute it and/or modify it under the
+// terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option)
+// any later version.
+//
+// MuPDF is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with MuPDF. If not, see <https://www.gnu.org/licenses/agpl-3.0.en.html>
+//
+// Alternative licensing terms are available from the licensor.
+// For commercial licensing, see <https://www.artifex.com/> or contact
+// Artifex Software, Inc., 1305 Grant Avenue - Suite 200, Novato,
+// CA 94945, U.S.A., +1(415)492-9861, for further information.
+
 #ifndef MUPDF_PDF_EVENT_H
 #define MUPDF_PDF_EVENT_H
 
@@ -27,7 +49,7 @@ enum
 	set the function via which to receive
 	document events.
 */
-void pdf_set_doc_event_callback(fz_context *ctx, pdf_document *doc, pdf_doc_event_cb *event_cb, void *data);
+void pdf_set_doc_event_callback(fz_context *ctx, pdf_document *doc, pdf_doc_event_cb *event_cb, pdf_free_doc_event_data_cb *free_event_data_cb, void *data);
 void *pdf_get_doc_event_callback_data(fz_context *ctx, pdf_document *doc);
 
 /*
@@ -90,13 +112,13 @@ enum
 	structure are owned by mupdf and need not be freed by the
 	caller.
 */
-pdf_alert_event *pdf_access_alert_event(fz_context *ctx, pdf_doc_event *event);
+pdf_alert_event *pdf_access_alert_event(fz_context *ctx, pdf_doc_event *evt);
 
 /*
 	access the details of am execMenuItem
 	event, which consists of just the name of the menu item
 */
-const char *pdf_access_exec_menu_item_event(fz_context *ctx, pdf_doc_event *event);
+const char *pdf_access_exec_menu_item_event(fz_context *ctx, pdf_doc_event *evt);
 
 /*
 	details of a launch-url event. The app should
@@ -113,7 +135,7 @@ typedef struct
 	event. The returned pointer and all data referred to by the structure
 	are owned by mupdf and need not be freed by the caller.
 */
-pdf_launch_url_event *pdf_access_launch_url_event(fz_context *ctx, pdf_doc_event *event);
+pdf_launch_url_event *pdf_access_launch_url_event(fz_context *ctx, pdf_doc_event *evt);
 
 /*
 	details of a mail_doc event. The app should save
@@ -130,12 +152,12 @@ typedef struct
 	const char *message;
 } pdf_mail_doc_event;
 
-pdf_mail_doc_event *pdf_access_mail_doc_event(fz_context *ctx, pdf_doc_event *event);
+pdf_mail_doc_event *pdf_access_mail_doc_event(fz_context *ctx, pdf_doc_event *evt);
 
-void pdf_event_issue_alert(fz_context *ctx, pdf_document *doc, pdf_alert_event *event);
+void pdf_event_issue_alert(fz_context *ctx, pdf_document *doc, pdf_alert_event *evt);
 void pdf_event_issue_print(fz_context *ctx, pdf_document *doc);
 void pdf_event_issue_exec_menu_item(fz_context *ctx, pdf_document *doc, const char *item);
 void pdf_event_issue_launch_url(fz_context *ctx, pdf_document *doc, const char *url, int new_frame);
-void pdf_event_issue_mail_doc(fz_context *ctx, pdf_document *doc, pdf_mail_doc_event *event);
+void pdf_event_issue_mail_doc(fz_context *ctx, pdf_document *doc, pdf_mail_doc_event *evt);
 
 #endif

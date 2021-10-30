@@ -316,7 +316,7 @@ extern "C"
 		{
 			device = fz_new_stext_device(ctx, page, &options);
 
-			ocr_device = fz_new_ocr_device(ctx, device, ctm, bounds, true, language);
+			ocr_device = fz_new_ocr_device(ctx, device, ctm, bounds, true, language, NULL, NULL);
 
 			fz_run_display_list(ctx, list, ocr_device, ctm, fz_infinite_rect, NULL);
 

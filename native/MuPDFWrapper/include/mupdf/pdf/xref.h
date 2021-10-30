@@ -1,3 +1,25 @@
+// Copyright (C) 2004-2021 Artifex Software, Inc.
+//
+// This file is part of MuPDF.
+//
+// MuPDF is free software: you can redistribute it and/or modify it under the
+// terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option)
+// any later version.
+//
+// MuPDF is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with MuPDF. If not, see <https://www.gnu.org/licenses/agpl-3.0.en.html>
+//
+// Alternative licensing terms are available from the licensor.
+// For commercial licensing, see <https://www.artifex.com/> or contact
+// Artifex Software, Inc., 1305 Grant Avenue - Suite 200, Novato,
+// CA 94945, U.S.A., +1(415)492-9861, for further information.
+
 #ifndef MUPDF_PDF_XREF_H
 #define MUPDF_PDF_XREF_H
 
@@ -24,6 +46,12 @@ void pdf_update_object(fz_context *ctx, pdf_document *doc, int num, pdf_obj *obj
 	The /Length entry is updated.
 */
 void pdf_update_stream(fz_context *ctx, pdf_document *doc, pdf_obj *ref, fz_buffer *buf, int compressed);
+
+/*
+	Return true if 'obj' is an indirect reference to an object that is held
+	by the "local" xref section.
+*/
+int pdf_is_local_object(fz_context *ctx, pdf_document *doc, pdf_obj *obj);
 
 pdf_obj *pdf_add_object(fz_context *ctx, pdf_document *doc, pdf_obj *obj);
 pdf_obj *pdf_add_object_drop(fz_context *ctx, pdf_document *doc, pdf_obj *obj);
@@ -127,17 +155,21 @@ pdf_xref_entry *pdf_get_populating_xref_entry(fz_context *ctx, pdf_document *doc
 pdf_xref_entry *pdf_get_xref_entry(fz_context *ctx, pdf_document *doc, int i);
 void pdf_replace_xref(fz_context *ctx, pdf_document *doc, pdf_xref_entry *entries, int n);
 void pdf_forget_xref(fz_context *ctx, pdf_document *doc);
+pdf_xref_entry *pdf_get_incremental_xref_entry(fz_context *ctx, pdf_document *doc, int i);
 
 /*
 	Ensure that an object has been cloned into the incremental xref section.
 */
-void pdf_xref_ensure_incremental_object(fz_context *ctx, pdf_document *doc, int num);
+int pdf_xref_ensure_incremental_object(fz_context *ctx, pdf_document *doc, int num);
 int pdf_xref_is_incremental(fz_context *ctx, pdf_document *doc, int num);
 void pdf_xref_store_unsaved_signature(fz_context *ctx, pdf_document *doc, pdf_obj *field, pdf_pkcs7_signer *signer);
+void pdf_xref_remove_unsaved_signature(fz_context *ctx, pdf_document *doc, pdf_obj *field);
 int pdf_xref_obj_is_unsaved_signature(pdf_document *doc, pdf_obj *obj);
+void pdf_xref_ensure_local_object(fz_context *ctx, pdf_document *doc, int num);
 
 void pdf_repair_xref(fz_context *ctx, pdf_document *doc);
 void pdf_repair_obj_stms(fz_context *ctx, pdf_document *doc);
+void pdf_repair_trailer(fz_context *ctx, pdf_document *doc);
 
 /*
 	Ensure that the current populating xref has a single subsection
@@ -199,7 +231,19 @@ int pdf_find_version_for_obj(fz_context *ctx, pdf_document *doc, pdf_obj *obj);
 	  1 => became invalid on the last save
 	  n => became invalid n saves ago
 */
-int pdf_validate_signature(fz_context *ctx, pdf_widget *widget);
+int pdf_validate_signature(fz_context *ctx, pdf_annot *widget);
 int pdf_was_pure_xfa(fz_context *ctx, pdf_document *doc);
+
+/* Local xrefs - designed for holding stuff that shouldn't be written
+ * back into the actual document, such as synthesized appearance
+ * streams. */
+pdf_xref *pdf_new_local_xref(fz_context *ctx, pdf_document *doc);
+
+void pdf_drop_local_xref(fz_context *ctx, pdf_xref *xref);
+void pdf_drop_local_xref_and_resources(fz_context *ctx, pdf_document *doc);
+
+/* Debug call to dump the incremental/local xrefs to the
+ * debug channel. */
+void pdf_debug_doc_changes(fz_context *ctx, pdf_document *doc);
 
 #endif

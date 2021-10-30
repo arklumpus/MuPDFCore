@@ -328,34 +328,36 @@ You can download the open-source (GNU AGPL) MuPDF source code from [here](https:
 
 Note that the files from macOS and Linux are different, despite sharing the same name.
 
-For convenience, these compiled files for MuPDF 1.18.0 are included in the [`native/MuPDFWrapper/lib` folder](https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib) of this repository.
+For convenience, these compiled files for MuPDF 1.19.0 are included in the [`native/MuPDFWrapper/lib` folder](https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib) of this repository.
 
-#### Tips for compiling MuPDF 1.18.0:
+#### Tips for compiling MuPDF 1.19.0:
 
 * On all platforms:
-    * When following the instructions in `thirdparty/tesseract.txt`, checkout to the `master` branch in the `tesseract` and `leptonica` repository, instead of the `artifex` branch as suggested in the instructions.
-    * Apply [this change](http://git.ghostscript.com/?p=mupdf.git;a=commitdiff;h=7995d12fdcddcf4d5bcfa92dfc9425acdf93869e;hp=9ae0f26d81f2185ba538eba517736834b4658a85) to `source/fitz/ocr-device.c` to prevent a runtime error.
-    * Delete or comment line 1051 in `source/fitz/ocr-device.c` (the one reading `fz_save_pixmap_as_png(ctx, ocr->pixmap, "ass.png");`). This line creates a file called `ass.png` when running the OCR process. This may be useful for debugging, but may have the unintended consequence of overwriting a file with same name, or cause a runtime error if the user does not have write permissions.
+    * You do not need to follow the instructions in `thirdparty/tesseract.txt`, as in this version the _leptonica_ and _tesseract_ libraries are already included in the source archive.
+    * Delete or comment line 1082 in `source/fitz/ocr-device.c` (the one reading `fz_save_pixmap_as_png(ctx, ocr->pixmap, "ass.png");`). This line creates a file called `ass.png` when running the OCR process. This may be useful for debugging, but may have the unintended consequence of overwriting a file with same name, or cause a runtime error if the user does not have write permissions.
+	* Delete or comment line 316 in `source/fitz/output.c` (the `fz_throw` invocation within the `buffer_seek` method - this should leave the `buffer_seek` method empty). This line throws an exception when a seek operation on a buffer is attempted. The problem is that this makes it impossible to render a document as a PSD image in memory, because the `fz_write_pixmap_as_psd` method performs a few seek operations. By removing this line, we turn buffer seeks into no-ops; this doesn't seem to have catastrophic side-effects and the PSD documents produced in this way appear to be fine.
 
 * On Windows:
-    * Open the `mupdf.sln` solution in Visual Studio and select the `ReleaseTesseract` configuration. Right-click on each project, to open its properties, then go to `C/C++` > `Code Generation` and set the `Runtime Library` to `Multi-threaded DLL (/MD)` (ignore any project for which this option is not available). Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
+    * Open the `mupdf.sln` solution in Visual Studio and select the `ReleaseTesseract` configuration and `x64` architecture. Right-click on each project, to open its properties, then go to `C/C++` > `Code Generation` and set the `Runtime Library` to `Multi-threaded DLL (/MD)` (ignore any project for which this option is not available). Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
     * Now, open the `x64 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it using `msbuild mupdf.sln`
     * Then, build again using `msbuild mupdf.sln /p:Configuration=Release`. Ignore the compilation errors.
     * Finally, build again using `msbuild mupdf.sln /p:Configuration=ReleaseTesseract`.
-    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `x64/ReleaseTesseract` folder (the file should be ~300MB in size).
+    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `x64/ReleaseTesseract` folder (the file should be ~383MB in size).
 
 * On Linux:
-    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 27 (which specifies the `CFLAGS`).
+    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 24 (which specifies the `CFLAGS`).
     * Make sure that you are using a recent enough version of GCC (version 7.3.1 seems to be enough).
+    * Compile by running `USE_TESSERACT=yes make HAVE_X11=no HAVE_GLUT=no` (this builds just the command-line libraries and tools, and enables OCR through the included Tesseract library).
 
 * On macOS:
-    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 27 (which specifies the `CFLAGS`). Also add the `-std=c++11` option at the end of line 59 (which specifies the CXX_CMD).
+    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 24 (which specifies the `CFLAGS`). Also add the `-std=c++11` option at the end of line 59 (which specifies the CXX_CMD).
+    * Compile by running `USE_TESSERACT=yes make` (this enables OCR through the included Tesseract library).
 
 ### 2. Building MuPDFWrapper
 
 Once you have the required static library files, you should download the MuPDFCore source code: [MuPDFCore-1.3.0.tar.gz](https://github.com/arklumpus/MuPDFCore/archive/v1.3.0.tar.gz) (or clone the repository) and place the library files in the appropriate subdirectories in the `native/MuPDFWrapper/lib/` folder.
 
-To compile `MuPDFWrapper` you will need [CMake](https://cmake.org/) and (on Windows) [Ninja](https://ninja-build.org/).
+To compile `MuPDFWrapper` you will need [CMake](https://cmake.org/) (version 3.8 or higher) and (on Windows) [Ninja](https://ninja-build.org/).
 
 On Windows, the easiest way to get all the required tools is probably to install [Visual Studio](https://visualstudio.microsoft.com/it/). By selecting the "Desktop development with C++" workload you should get everything you need.
 

@@ -1,8 +1,31 @@
+// Copyright (C) 2004-2021 Artifex Software, Inc.
+//
+// This file is part of MuPDF.
+//
+// MuPDF is free software: you can redistribute it and/or modify it under the
+// terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option)
+// any later version.
+//
+// MuPDF is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with MuPDF. If not, see <https://www.gnu.org/licenses/agpl-3.0.en.html>
+//
+// Alternative licensing terms are available from the licensor.
+// For commercial licensing, see <https://www.artifex.com/> or contact
+// Artifex Software, Inc., 1305 Grant Avenue - Suite 200, Novato,
+// CA 94945, U.S.A., +1(415)492-9861, for further information.
+
 #ifndef MUPDF_PDF_OBJECT_H
 #define MUPDF_PDF_OBJECT_H
 
 typedef struct pdf_document pdf_document;
 typedef struct pdf_crypt pdf_crypt;
+typedef struct pdf_journal pdf_journal;
 
 /* Defined in PDF 1.7 according to Acrobat limit. */
 #define PDF_MAX_OBJECT_NUMBER 8388607
@@ -105,6 +128,7 @@ pdf_obj *pdf_dict_geta(fz_context *ctx, pdf_obj *dict, pdf_obj *key, pdf_obj *ab
 pdf_obj *pdf_dict_gets(fz_context *ctx, pdf_obj *dict, const char *key);
 pdf_obj *pdf_dict_getsa(fz_context *ctx, pdf_obj *dict, const char *key, const char *abbrev);
 pdf_obj *pdf_dict_get_inheritable(fz_context *ctx, pdf_obj *dict, pdf_obj *key);
+pdf_obj *pdf_dict_getp_inheritable(fz_context *ctx, pdf_obj *dict, const char *path);
 void pdf_dict_put(fz_context *ctx, pdf_obj *dict, pdf_obj *key, pdf_obj *val);
 void pdf_dict_put_drop(fz_context *ctx, pdf_obj *dict, pdf_obj *key, pdf_obj *val);
 void pdf_dict_get_put_drop(fz_context *ctx, pdf_obj *dict, pdf_obj *key, pdf_obj *val, pdf_obj **old_val);
@@ -228,11 +252,71 @@ enum {
 #define PDF_FALSE ((pdf_obj*)(intptr_t)PDF_ENUM_FALSE)
 #define PDF_LIMIT ((pdf_obj*)(intptr_t)PDF_ENUM_LIMIT)
 
+
 /* Implementation details: subject to change. */
 
 /*
 	for use by pdf_crypt_obj_imp to decrypt AES string in place
 */
 void pdf_set_str_len(fz_context *ctx, pdf_obj *obj, size_t newlen);
+
+
+/* Journalling */
+
+/* Call this to enable journalling on a given document. */
+void pdf_enable_journal(fz_context *ctx, pdf_document *doc);
+
+/* Call this to start an operation. Undo/redo works at 'operation'
+ * granularity. Nested operations are all counted within the outermost
+ * operation. Any modification performed on a journalled PDF without an
+ * operation having been started will throw an error. */
+void pdf_begin_operation(fz_context *ctx, pdf_document *doc, const char *operation);
+
+/* Call this to start an implicit operation. Implicit operations are
+ * operations that happen as a consequence of things like updating
+ * an annotation. They get rolled into the previous operation, because
+ * they generally happen as a result of them. */
+void pdf_begin_implicit_operation(fz_context *ctx, pdf_document *doc);
+
+/* Call this to end an operation. */
+void pdf_end_operation(fz_context *ctx, pdf_document *doc);
+
+/* Call this to find out how many undo/redo steps there are, and the
+ * current position we are within those. 0 = original document,
+ * *steps = final edited version. */
+int pdf_undoredo_state(fz_context *ctx, pdf_document *doc, int *steps);
+
+/* Call this to find the title of the operation within the undo state. */
+const char *pdf_undoredo_step(fz_context *ctx, pdf_document *doc, int step);
+
+/* Helper functions to identify if we are in a state to be able to undo
+ * or redo. */
+int pdf_can_undo(fz_context *ctx, pdf_document *doc);
+int pdf_can_redo(fz_context *ctx, pdf_document *doc);
+
+/* Move backwards in the undo history. Throws an error if we are at the
+ * start. Any edits to the document at this point will discard all
+ * subsequent history. */
+void pdf_undo(fz_context *ctx, pdf_document *doc);
+
+/* Move forwards in the undo history. Throws an error if we are at the
+ * end. */
+void pdf_redo(fz_context *ctx, pdf_document *doc);
+
+/* Called to reset the entire history. This is called implicitly when
+ * a non-undoable change occurs (such as a pdf repair). */
+void pdf_discard_journal(fz_context *ctx, pdf_journal *journal);
+
+/* Internal destructor. */
+void pdf_drop_journal(fz_context *ctx, pdf_journal *journal);
+
+/* Internal call as part of saving a snapshot of a PDF document. */
+void pdf_serialise_journal(fz_context *ctx, pdf_document *doc, fz_output *out);
+
+/* Internal call as part of loading a snapshot of a PDF document. */
+void pdf_deserialise_journal(fz_context *ctx, pdf_document *doc, fz_stream *stm);
+
+/* Internal call as part of creating objects. */
+void pdf_add_journal_fragment(fz_context *ctx, pdf_document *doc, int parent, pdf_obj *copy, fz_buffer *copy_stream, int newobj);
 
 #endif
