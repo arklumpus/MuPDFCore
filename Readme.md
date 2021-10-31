@@ -10,9 +10,15 @@ The library is released under the [AGPLv3](https://www.gnu.org/licenses/agpl-3.0
 
 ## Getting started
 
-The MuPDFCore library targets .NET Standard 2.0, thus it can be used in projects that target .NET Standard 2.0+, .NET Core 2.0+, .NET 5.0, .NET Framework 4.6.1 ([note](#netFrameworkNote)) and possibly others. MuPDFCore includes a pre-compiled native library, thus projects using it can only run on Windows, macOS and Linux x64 operating systems.
+The MuPDFCore library targets .NET Standard 2.0, thus it can be used in projects that target .NET Standard 2.0+, .NET Core 2.0+, .NET 5.0+, .NET Framework 4.6.1 ([note](#netFrameworkNote)) and possibly others. MuPDFCore includes a pre-compiled native library, which currently supports the following platforms:
 
-To use the library in your project, you should install the [MuPDFCore NuGet package](https://www.nuget.org/packages/MuPDFCore/) and/or the [MuPDFCore.PDFRenderer NuGet package](https://www.nuget.org/packages/MuPDFCore.MuPDFRenderer/).
+* Windows x86 (32 bit)
+* Windows x64 (64 bit)
+* Linux x64 (64 bit)
+* macOS Intel x86_64 (64 bit)
+* macOS Apple silicon (ARM 64 bit, without support for the OCR functions)
+
+To use the library in your project, you should install the [MuPDFCore NuGet package](https://www.nuget.org/packages/MuPDFCore/) and/or the [MuPDFCore.PDFRenderer NuGet package](https://www.nuget.org/packages/MuPDFCore.MuPDFRenderer/). When you publish a program that uses MuPDFCore, the correct native library for the target architecture will automatically be copied to the build folder (but see the [note](#netFrameworkNote) for .NET Framework).
 
 **Note**: you should make sure that end users on Windows install the [Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019](https://aka.ms/vs/16/release/vc_redist.x64.exe), otherwise they will get an error message stating that `MuPDFWrapper.dll` could not be loaded because a module was not found.
 
@@ -243,7 +249,7 @@ The order of the blocks in the page (which affects the definition of a "range" o
 
 ### Optical Character Recognition (OCR) using Tesseract
 
-MuPDF 1.18 (embedded in MuPDFCore 1.3.0+) adds support for OCR using the [Tesseract](https://github.com/tesseract-ocr/tesseract) library. To access this feature in MuPDFCore, you can use one of the overloads of `GetStructuredTextPage` that takes a `TesseractLanguage` argument specifying the language to use for the OCR. This will run the OCR and return a `MuPDFStructuredTextPage` containing the character information obtained by Tesseract, which can be used normally. Depending on the model being used, the OCR step can take a relatively long time; therefore, the `MuPDFDocument` class also implements a `GetStructuredTextPageAsync` method, which does the same thing in an asynchronous way.
+MuPDF 1.18+ (embedded in MuPDFCore 1.3.0+) adds support for OCR using the [Tesseract](https://github.com/tesseract-ocr/tesseract) library. To access this feature in MuPDFCore, you can use one of the overloads of `GetStructuredTextPage` that takes a `TesseractLanguage` argument specifying the language to use for the OCR. This will run the OCR and return a `MuPDFStructuredTextPage` containing the character information obtained by Tesseract, which can be used normally. Depending on the model being used, the OCR step can take a relatively long time; therefore, the `MuPDFDocument` class also implements a `GetStructuredTextPageAsync` method, which does the same thing in an asynchronous way.
 
 Objects of the `TesseractLanguage` class contain information used to locate the trained language model file that is used by Tesseract. Normally, when using Tesseract, you would have to ensure that the trained language model files are available on the user's computer; however, this class implements some "clever" logic to download the necessary files on demand.
 
@@ -272,9 +278,7 @@ The `TesseractLanguage` class has multiple constructors:
     
     This means that if you use one of these constructors you do not have to worry about the language files being installed in the right place; as long as the user has an Internet connection, the library will download the language files as necessary.
 
-
-    
-    
+**Note**: the Tesseract OCR is not supported on macOS on Apple silicon, because I could not find a way to compile the native MuPDF library with Tesseract on this platform (can you help?). If you try to use any OCR method in an app published with target `osx-arm64`, you will get an exception (you can catch this and fail gracefully). If you need to use the OCR functions on macOS, you should publish with target `osx-x64` and rely on Rosetta 2 to run your program on Apple silicon Macs.
 
 ### MuPDFCore.MuPDFRenderer control
 
@@ -318,7 +322,7 @@ You can download the open-source (GNU AGPL) MuPDF source code from [here](https:
 * From Windows (x86, x64):
     * libmupdf.lib
 
-* From macOS:
+* From macOS (Intel - x64, Apple silicon - arm64):
     * libmupdf.a
     * libmupdf-third.a
 
@@ -356,9 +360,13 @@ For convenience, these compiled files for MuPDF 1.19.0 are included in the [`nat
     * Make sure that you are using a recent enough version of GCC (version 7.3.1 seems to be enough).
     * Compile by running `USE_TESSERACT=yes make HAVE_X11=no HAVE_GLUT=no` (this builds just the command-line libraries and tools, and enables OCR through the included Tesseract library).
 
-* On macOS:
-    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 24 (which specifies the `CFLAGS`). Also add the `-std=c++11` option at the end of line 59 (which specifies the CXX_CMD).
+* On macOS (Intel - x64):
+    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 24 (which specifies the `CFLAGS`). Also add the `-std=c++11` option at the end of line 58 (which specifies the CXX_CMD).
     * Compile by running `USE_TESSERACT=yes make` (this enables OCR through the included Tesseract library).
+
+* On macOS (Apple silicon - arm64)
+    * Edit the `Makefile`, adding the `-fPIC` compiler options at the end of line 24 (which specifies the `CFLAGS`). Also add the `-std=c++11` option at the end of line 58 (which specifies the CXX_CMD).
+    * Compile by running `make` (this disables OCR, unfortunately - if you find a way to compile MuPDF with OCR support on Apple silicon, let me know).
 
 ### 2. Building MuPDFWrapper
 
@@ -374,7 +382,7 @@ Once you have everything at the ready, you will have to build MuPDFWrapper on th
 
 #### Windows
 
-1. <p>Assuming you have installed Visual Studio, you should open the "<strong>x64</strong> Native Tools Command Prompt for VS" or the "<strong>x86</strong> Native Tools Command Prompt for VS" (you should be able to find these in the Start menu). Take care to open the version corresponding to the architecture you are building for, otherwise you will not be able to compile the library. A normal command propmpt will not work, either.</p>
+1. <p>Assuming you have installed Visual Studio, you should open the "<strong>x64</strong> Native Tools Command Prompt for VS" or the "<strong>x86</strong> Native Tools Command Prompt for VS" (you should be able to find these in the Start menu). Take care to open the version corresponding to the architecture you are building for, otherwise you will not be able to compile the library. A normal command prompt will not work, either.</p>
     <p><strong>Note 1</strong>: you <strong>must</strong> build the library on two separate systems, one running a 32-bit version of Windows and the other running a 64-bit version. If you try to build the x86 library on an x64 system, the system will probably build a 64-bit library and place it in the 32-bit output folder, which will just make things very confusing.</p>
     <p><strong>Note 2 for Windows x86</strong>: for some reason, Visual Studio might install the 64-bit version of CMake and Ninja, even though you are on a 32-bit machine. If this happens, you will have to manually install the 32-bit CMake and compile a 32-bit version of Ninja (which also requires Python to be installed). You will notice if this is an issue because the 64-bit programs will refuse to run.</p>
 2. `CD` to the directory where you have downloaded the MuPDFCore source code.
@@ -390,7 +398,7 @@ After this finishes, you should find a file named `MuPDFWrapper.dll` in the `nat
 3. Type `chmod +x build.sh`.
 4. Type `./build.sh`. This will delete any previous build and compile the library.
 
-After this finishes, you should find a file named `libMuPDFWrapper.dylib` in the `native/out/build/mac-x64/MuPDFWrapper/` directory (on macOS) and a file named `libMuPDFWrapper.so` in the `native/out/build/linux-x64/MuPDFWrapper/` directory (on Linux). Leave it there.
+After this finishes, you should find a file named `libMuPDFWrapper.dylib` in the `native/out/build/mac-x64/MuPDFWrapper/` directory (on macOS running on an Intel x64 processor) or in the `native/out/build/mac-arm64/MuPDFWrapper/` directory (on macOS running on an Apple silicon arm64 processor), and a file named `libMuPDFWrapper.so` in the `native/out/build/linux-x64/MuPDFWrapper/` directory (on Linux). Leave it there.
 
 ### 3. Creating the MuPDFCore NuGet package
 
@@ -422,6 +430,7 @@ Now, open a windows command line in the folder where you have downloaded the MuP
 
 * `MuPDFCoreTests-linux-x64.tar.gz` contains the tests for Linux environments on x64 processors.
 * `MuPDFCoreTests-mac-x64.tar.gz` contains the tests for macOS environments on Intel processors.
+* `MuPDFCoreTests-mac-arm64.tar.gz` contains the tests for macOS environments on Apple silicon processors.
 * `MuPDFCoreTests-win-x64.tar.gz` contains the tests for Windows environments on x64 processors.
 * `MuPDFCoreTests-win-x86.tar.gz` contains the tests for Windows environments on x86 processors.
 
@@ -435,20 +444,21 @@ To run the tests, copy each archive to a machine running the corresponding opera
 * Open a terminal and `cd` into the folder where you have extracted the contents of the test archive.
 * Enter the command `chmod +x MuPDFCoreTestHost` (this will add the executable flag to the test program).
 * Enter the command `./MuPDFCoreTestHost` (this will run the test program).
+* On macOS, depending on your security settings, you may get a message saying `zsh: killed` when you try to run the program. To address this, you need to sign the executable, e.g. by running `codesign --timestamp --sign <certificate> MuPDFCoreTestHost`, where `<certificate>` is the name of a code signing certificate in your keychain (e.g. `Developer ID Application: John Smith`). After this, you can try again to run the test program with `./MuPDFCoreTestHost`.
 
-The test suite will start; it will print the name of each test, followed by a green `  Succeeded  ` or a red `  Failed  ` depending on the test result. If everything went correctly, all tests should succeed.
+The test suite will start; it will print the name of each test, followed by a green `  Succeeded  ` or a red `  Failed  ` depending on the test result. If everything went correctly, all tests should succeed (except for the 5 OCR tests on Apple silicon Macs).
 
 When all the tests have been run, the program will print a summary showing how many tests have succeeded (if any) and how many have failed (if any). If any tests have failed, a list of these will be printed, and then they will be run again one at a time, waiting for a key press before running each test (this makes it easier to follow what is going on). If you wish to kill the test process early, you can do so with `CTRL+C`.
 
 ## Note about MuPDFCore and .NET Framework <a name="netFrameworkNote"></a>
 
-If you wish to use MuPDFCore in a .NET Framework project, you will need to manually copy the native MuPDFWrapper library for the platform you are using to the executable directory (this is done automatically if you target .NET core).
+If you wish to use MuPDFCore in a .NET Framework project, you will need to manually copy the native MuPDFWrapper library for the platform you are using to the executable directory (this is done automatically if you target .NET/.NET core).
 
 One way to obtain the appropriate library files is:
 
 1. Manually download the NuGet package for [MuPDFCore](https://www.nuget.org/packages/MuPDFCore/) (click on the "Download package" link on the right).
 2. Rename the `.nupkg` file so that it has a `.zip` extension.
 3. Extract the zip file.
-4. Within the extracted folder, the library files are in the `runtimes/xxx/native/` folder, where `xxx` is either `linux-x64`, `osx-x64` or `win-x64`, depending on the platform you are using.
+4. Within the extracted folder, the library files are in the `runtimes/xxx/native/` folder, where `xxx` is `linux-x64`, `osx-x64`, `osx-arm64`, `win-x64`, or `win-x86`, depending on the platform you are using.
 
 Make sure you copy the appropriate file to the same folder as the executable!

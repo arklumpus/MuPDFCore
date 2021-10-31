@@ -96,4 +96,25 @@ rmdir MuPDFCoreTests-mac-x64
 cd ..\..
 
 echo.
+echo Building with target [94mmac-arm64[0m
+
+cd MuPDFCoreTestHost
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\mac-arm64.pubxml
+cd ..
+
+echo.
+echo [104;97mCreating ZIP file...[0m
+
+cd Release\MuPDFCoreTests
+
+move mac-arm64 MuPDFCoreTests-mac-arm64
+zip -r MuPDFCoreTests-mac-arm64.zip MuPDFCoreTests-mac-arm64 >nul
+
+for /f %%i in ('dir /a:d /b "MuPDFCoreTests-mac-arm64"\*') do rd /s /q "MuPDFCoreTests-mac-arm64"\%%i
+del MuPDFCoreTests-mac-arm64\* /s /f /q 1>nul
+rmdir MuPDFCoreTests-mac-arm64
+
+cd ..\..
+
+echo.
 echo [94mAll done![0m
