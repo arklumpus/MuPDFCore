@@ -36,7 +36,7 @@ namespace MuPDFCore
         {
             get
             {
-                return NativeMethods.GetCurrentStoreSize(this.NativeContext);
+                return (long)NativeMethods.GetCurrentStoreSize(this.NativeContext);
             }
         }
 
@@ -47,7 +47,7 @@ namespace MuPDFCore
         {
             get
             {
-                return NativeMethods.GetMaxStoreSize(this.NativeContext);
+                return (long)NativeMethods.GetMaxStoreSize(this.NativeContext);
             }
         }
 
@@ -55,7 +55,7 @@ namespace MuPDFCore
         /// Create a new <see cref="MuPDFContext"/> instance with the specified cache store size.
         /// </summary>
         /// <param name="storeSize">The maximum size in bytes of the resource cache store. The default value is 256 MiB.</param>
-        public MuPDFContext(long storeSize = 256 << 20)
+        public MuPDFContext(uint storeSize = 256 << 20)
         {
             ExitCodes result = (ExitCodes)NativeMethods.CreateContext((ulong)storeSize, ref NativeContext);
 

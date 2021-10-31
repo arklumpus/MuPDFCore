@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x64;win-x86;linux-x64;osx-x64</RuntimeIdentifiers>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Description>MuPDFCore is a set of multiplatform .NET Core bindings for MuPDF. It can render PDF, XPS, EPUB and other formats to raster images returned either as raw bytes, or as image files in multiple formats (including PNG and PSD). It also supports multithreading.</Description>
-    <Version>1.4.0-a4</Version>
+    <Version>1.4.0-a7</Version>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Giorgio Bianchini</Authors>
     <Company>University of Bristol</Company>
@@ -14,13 +14,6 @@
     <PackageProjectUrl>https://github.com/arklumpus/MuPDFCore</PackageProjectUrl>
     <PackageTags>mupdf pdf xps png jpg thread multithreading</PackageTags>
     <RepositoryUrl>https://github.com/arklumpus/MuPDFCore</RepositoryUrl>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
@@ -49,6 +42,13 @@
     <Content Include="..\native\out\build\win-x64\MuPDFWrapper\MuPDFWrapper.dll">
       <Pack>true</Pack>
       <PackagePath>runtimes/win-x64/native/</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\native\out\build\win-x86\MuPDFWrapper\MuPDFWrapper.dll">
+      <Pack>true</Pack>
+      <PackagePath>runtimes/win-x86/native/</PackagePath>
     </Content>
   </ItemGroup>
 

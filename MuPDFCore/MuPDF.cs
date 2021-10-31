@@ -408,7 +408,7 @@ namespace MuPDFCore
         /// <param name="ctx">The context whose store's size should be determined.</param>
         /// <returns>The current size in bytes of the store.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern long GetCurrentStoreSize(IntPtr ctx);
+        internal static extern ulong GetCurrentStoreSize(IntPtr ctx);
 
         /// <summary>
         /// Get the maximum size of the store.
@@ -416,7 +416,7 @@ namespace MuPDFCore
         /// <param name="ctx">The context whose store's maximum size should be determined.</param>
         /// <returns>The maximum size in bytes of the store.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern long GetMaxStoreSize(IntPtr ctx);
+        internal static extern ulong GetMaxStoreSize(IntPtr ctx);
 
         /// <summary>
         /// Create a display list from a page.

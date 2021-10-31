@@ -85,9 +85,9 @@ namespace Tests
             IntPtr nativeContext = IntPtr.Zero;
 
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
-            long result = NativeMethods.GetCurrentStoreSize(nativeContext);
+            ulong result = NativeMethods.GetCurrentStoreSize(nativeContext);
 
-            Assert.AreEqual(0, result, "GetCurrentStoreSize returned the wrong store size.");
+            Assert.AreEqual((ulong)0, result, "GetCurrentStoreSize returned the wrong store size.");
 
             try
             {
@@ -102,9 +102,9 @@ namespace Tests
             IntPtr nativeContext = IntPtr.Zero;
 
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
-            long result = NativeMethods.GetMaxStoreSize(nativeContext);
+            ulong result = NativeMethods.GetMaxStoreSize(nativeContext);
 
-            Assert.AreEqual(256 << 20, result, "GetMaxStoreSize returned the wrong store size.");
+            Assert.AreEqual((ulong)(256 << 20), result, "GetMaxStoreSize returned the wrong store size.");
 
             try
             {
@@ -138,9 +138,9 @@ namespace Tests
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
             NativeMethods.EmptyStore(nativeContext);
 
-            long result = NativeMethods.GetCurrentStoreSize(nativeContext);
+            ulong result = NativeMethods.GetCurrentStoreSize(nativeContext);
 
-            Assert.AreEqual(0, result, "The size of the store is not 0.");
+            Assert.AreEqual((ulong)0, result, "The size of the store is not 0.");
 
             try
             {
@@ -651,7 +651,7 @@ namespace Tests
         {
             (GCHandle bufferHandle, GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext) = RenderSampleDisplayList();
 
-            long result = NativeMethods.GetCurrentStoreSize(nativeContext);
+            ulong result = NativeMethods.GetCurrentStoreSize(nativeContext);
 
             Assert.IsTrue(result > 0, "GetCurrentStoreSize returned the wrong store size.");
 
@@ -675,12 +675,12 @@ namespace Tests
         {
             (GCHandle bufferHandle, GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext) = RenderSampleDisplayList();
 
-            long preSize = NativeMethods.GetCurrentStoreSize(nativeContext);
+            ulong preSize = NativeMethods.GetCurrentStoreSize(nativeContext);
 
             int result = NativeMethods.ShrinkStore(nativeContext, (uint)50);
             Assert.AreEqual(1, result, "ShrinkStore returned the wrong exit code.");
 
-            long postSize = NativeMethods.GetCurrentStoreSize(nativeContext);
+            ulong postSize = NativeMethods.GetCurrentStoreSize(nativeContext);
 
             Assert.IsTrue(postSize <= preSize, "The store has not been shrunk.");
             Assert.IsTrue(postSize <= Math.Ceiling(preSize * 0.5), "The store has not been shrunk by the required amount.");
@@ -707,9 +707,9 @@ namespace Tests
 
             NativeMethods.EmptyStore(nativeContext);
 
-            long result = NativeMethods.GetCurrentStoreSize(nativeContext);
+            ulong result = NativeMethods.GetCurrentStoreSize(nativeContext);
 
-            Assert.AreEqual(0, result, "The size of the store is not 0.");
+            Assert.AreEqual((ulong)0, result, "The size of the store is not 0.");
 
             try
             {

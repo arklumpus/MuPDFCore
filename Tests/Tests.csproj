@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MuPDFCore" Version="1.4.0-a4" />
+    <PackageReference Include="MuPDFCore" Version="1.4.0-a7" />
   </ItemGroup>
 
 </Project>

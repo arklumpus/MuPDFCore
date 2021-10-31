@@ -485,7 +485,7 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int WriteImage(fz_context* ctx, fz_display_list* list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, int output_format, const fz_buffer** out_buffer, const unsigned char** out_data, size_t* out_length)
+	DLL_PUBLIC int WriteImage(fz_context* ctx, fz_display_list* list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, int output_format, const fz_buffer** out_buffer, const unsigned char** out_data, uint64_t* out_length)
 	{
 		fz_matrix ctm;
 		fz_pixmap* pix;
@@ -915,7 +915,7 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int CreateDocumentFromStream(fz_context* ctx, const unsigned char* data, const size_t data_length, const char* file_type, int get_image_resolution, const fz_document** out_doc, const fz_stream** out_str, int* out_page_count, float* out_image_xres, float* out_image_yres)
+	DLL_PUBLIC int CreateDocumentFromStream(fz_context* ctx, const unsigned char* data, const uint64_t data_length, const char* file_type, int get_image_resolution, const fz_document** out_doc, const fz_stream** out_str, int* out_page_count, float* out_image_xres, float* out_image_yres)
 	{
 		
 		fz_stream* str;
@@ -1029,12 +1029,12 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC size_t GetCurrentStoreSize(const fz_context* ctx)
+	DLL_PUBLIC uint64_t GetCurrentStoreSize(const fz_context* ctx)
 	{
 		return ctx->store->size;
 	}
 
-	DLL_PUBLIC size_t GetMaxStoreSize(const fz_context* ctx)
+	DLL_PUBLIC uint64_t GetMaxStoreSize(const fz_context* ctx)
 	{
 		return ctx->store->max;
 	}
@@ -1049,7 +1049,7 @@ extern "C"
 		fz_empty_store(ctx);
 	}
 
-	DLL_PUBLIC int CreateContext(long store_size, const fz_context** out_ctx)
+	DLL_PUBLIC int CreateContext(uint64_t store_size, const fz_context** out_ctx)
 	{
 		fz_context* ctx;
 		fz_locks_context locks;

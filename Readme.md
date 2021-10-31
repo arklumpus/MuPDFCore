@@ -309,13 +309,13 @@ Building the MuPDFCore library from source requires the following steps:
 2. Building the `MuPDFWrapper` native library
 3. Creating the `MuPDFCore` library NuGet package
 
-Steps 1 and 2 need to be performed on all of Windows, macOS and Linux (no cross-compiling)! Otherwise, some native assets will be missing and it will not be possible to build the NuGet package.
+Steps 1 and 2 need to be performed on all of Windows, macOS and Linux, and on the various possible architectures (x86, x64 and arm64 for Windows, x64/Intel and arm64/Apple for macOS, and x64 and arm64 for Linux - no cross-compiling)! Otherwise, some native assets will be missing and it will not be possible to build the NuGet package.
 
 ### 1. Building libmupdf
 
 You can download the open-source (GNU AGPL) MuPDF source code from [here](https://mupdf.com/downloads/index.html). You will need to uncompress the source file and compile the library on Windows, macOS and Linux. You need the following files:
 
-* From Windows:
+* From Windows (x86, x64):
     * libmupdf.lib
 
 * From macOS:
@@ -337,12 +337,19 @@ For convenience, these compiled files for MuPDF 1.19.0 are included in the [`nat
     * Delete or comment line 1082 in `source/fitz/ocr-device.c` (the one reading `fz_save_pixmap_as_png(ctx, ocr->pixmap, "ass.png");`). This line creates a file called `ass.png` when running the OCR process. This may be useful for debugging, but may have the unintended consequence of overwriting a file with same name, or cause a runtime error if the user does not have write permissions.
 	* Delete or comment line 316 in `source/fitz/output.c` (the `fz_throw` invocation within the `buffer_seek` method - this should leave the `buffer_seek` method empty). This line throws an exception when a seek operation on a buffer is attempted. The problem is that this makes it impossible to render a document as a PSD image in memory, because the `fz_write_pixmap_as_psd` method performs a few seek operations. By removing this line, we turn buffer seeks into no-ops; this doesn't seem to have catastrophic side-effects and the PSD documents produced in this way appear to be fine.
 
-* On Windows:
+* On Windows (x64):
     * Open the `mupdf.sln` solution in Visual Studio and select the `ReleaseTesseract` configuration and `x64` architecture. Right-click on each project, to open its properties, then go to `C/C++` > `Code Generation` and set the `Runtime Library` to `Multi-threaded DLL (/MD)` (ignore any project for which this option is not available). Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
     * Now, open the `x64 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it using `msbuild mupdf.sln`
     * Then, build again using `msbuild mupdf.sln /p:Configuration=Release`. Ignore the compilation errors.
     * Finally, build again using `msbuild mupdf.sln /p:Configuration=ReleaseTesseract`.
     * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `x64/ReleaseTesseract` folder (the file should be ~383MB in size).
+
+* On Windows (x86):
+    * Open the `mupdf.sln` solution in Visual Studio and select the `ReleaseTesseract` configuration and `Win32` architecture. Right-click on each project, to open its properties, then go to `C/C++` > `Code Generation` and set the `Runtime Library` to `Multi-threaded DLL (/MD)` (ignore any project for which this option is not available). Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
+    * Now, open the `x86 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it using `msbuild mupdf.sln /p:Platform=Win32`
+    * Then, build again using `msbuild mupdf.sln /p:Configuration=Release /p:Platform=Win32`. Ignore the compilation errors.
+    * Finally, build again using `msbuild mupdf.sln /p:Configuration=ReleaseTesseract /p:Platform=Win32`.
+    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `ReleaseTesseract` folder (the file should be ~362MB in size).
 
 * On Linux:
     * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 24 (which specifies the `CFLAGS`).
@@ -367,12 +374,14 @@ Once you have everything at the ready, you will have to build MuPDFWrapper on th
 
 #### Windows
 
-1. Assuming you have installed Visual Studio, you should open the "__x64__ Native Tools Command Prompt for VS" (you should be able to find this in the Start menu). Take care to open the x64 version, otherwise you will not be able to compile the library. A normal command propmpt will not work, either.
+1. <p>Assuming you have installed Visual Studio, you should open the "<strong>x64</strong> Native Tools Command Prompt for VS" or the "<strong>x86</strong> Native Tools Command Prompt for VS" (you should be able to find these in the Start menu). Take care to open the version corresponding to the architecture you are building for, otherwise you will not be able to compile the library. A normal command propmpt will not work, either.</p>
+    <p><strong>Note 1</strong>: you <strong>must</strong> build the library on two separate systems, one running a 32-bit version of Windows and the other running a 64-bit version. If you try to build the x86 library on an x64 system, the system will probably build a 64-bit library and place it in the 32-bit output folder, which will just make things very confusing.</p>
+    <p><strong>Note 2 for Windows x86</strong>: for some reason, Visual Studio might install the 64-bit version of CMake and Ninja, even though you are on a 32-bit machine. If this happens, you will have to manually install the 32-bit CMake and compile a 32-bit version of Ninja (which also requires Python to be installed). You will notice if this is an issue because the 64-bit programs will refuse to run.</p>
 2. `CD` to the directory where you have downloaded the MuPDFCore source code.
 3. `CD` into the `native` directory.
 4. Type `build`. This will start the `build.cmd` batch script that will delete any previous build and compile the library.
 
-After this finishes, you should find a file named `MuPDFWrapper.dll` in the `native/out/build/win-x64/MuPDFWrapper/` directory. Leave it there.
+After this finishes, you should find a file named `MuPDFWrapper.dll` in the `native/out/build/win-x64/MuPDFWrapper/` directory or in the `native/out/build/win-x86/MuPDFWrapper/` directory. Leave it there.
 
 #### macOS and Linux
 
@@ -385,7 +394,7 @@ After this finishes, you should find a file named `libMuPDFWrapper.dylib` in the
 
 ### 3. Creating the MuPDFCore NuGet package
 
-Once you have the `MuPDFWrapper.dll`, `libMuPDFWrapper.dylib` and `libMuPDFWrapper.so` files, make sure they are in the correct folders (`native/out/build/xxx-x64/MuPDFWrapper/`), __all on the same machine__.
+Once you have the `MuPDFWrapper.dll`, `libMuPDFWrapper.dylib` and `libMuPDFWrapper.so` files, make sure they are in the correct folders (`native/out/build/xxx-yyy/MuPDFWrapper/`), __all on the same machine__.
 
 To create the MuPDFCore NuGet package, you will need the [.NET Core 2.0 SDK or higher](https://dotnet.microsoft.com/download/dotnet/current) for your platform. Once you have installed it and have everything ready, open a terminal in the folder where you have downloaded the MuPDFCore source code and type:
 
@@ -398,7 +407,7 @@ This will create a NuGet package in `MuPDFCore/bin/Release`. You can install thi
 
 ### 4. Running tests
 
-To verify that everything is working correctly, you should build the MuPDFCore test suite and run it on all platforms. To build the test suite, you will need the [.NET 6 SDK or higher](https://dotnet.microsoft.com/download/dotnet/current).
+To verify that everything is working correctly, you should build the MuPDFCore test suite and run it on all platforms. To build the test suite, you will need the [.NET 6 SDK or higher](https://dotnet.microsoft.com/download/dotnet/current). You will also need to have enabled the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install).
 
 To build the test suite:
 
@@ -414,6 +423,7 @@ Now, open a windows command line in the folder where you have downloaded the MuP
 * `MuPDFCoreTests-linux-x64.tar.gz` contains the tests for Linux environments on x64 processors.
 * `MuPDFCoreTests-mac-x64.tar.gz` contains the tests for macOS environments on Intel processors.
 * `MuPDFCoreTests-win-x64.tar.gz` contains the tests for Windows environments on x64 processors.
+* `MuPDFCoreTests-win-x86.tar.gz` contains the tests for Windows environments on x86 processors.
 
 To run the tests, copy each archive to a machine running the corresponding operating system, and extract it. Then:
 
