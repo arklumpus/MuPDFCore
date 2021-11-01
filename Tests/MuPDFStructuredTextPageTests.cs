@@ -337,7 +337,7 @@ namespace Tests
             MuPDFStructuredTextCharacter chr = sTextPage[address.Value];
 
             Assert.IsFalse(chr.BoundingQuad.Contains(hitPoint), "The matched character contains the hit point.");
-            Assert.AreEqual("v", chr.Character, "The hit test matched the wrong character.");
+            Assert.IsTrue(chr.Character == "v" || chr.Character == "l", "The hit test matched the wrong character.");
         }
 
         [TestMethod]

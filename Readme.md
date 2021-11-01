@@ -14,13 +14,15 @@ The MuPDFCore library targets .NET Standard 2.0, thus it can be used in projects
 
 * Windows x86 (32 bit)
 * Windows x64 (64 bit)
+* Windows arm64 (ARM 64 bit)
 * Linux x64 (64 bit)
+* Linux arm64/aarch64 (ARM 64 bit)
 * macOS Intel x86_64 (64 bit)
 * macOS Apple silicon (ARM 64 bit, without support for the OCR functions)
 
 To use the library in your project, you should install the [MuPDFCore NuGet package](https://www.nuget.org/packages/MuPDFCore/) and/or the [MuPDFCore.PDFRenderer NuGet package](https://www.nuget.org/packages/MuPDFCore.MuPDFRenderer/). When you publish a program that uses MuPDFCore, the correct native library for the target architecture will automatically be copied to the build folder (but see the [note](#netFrameworkNote) for .NET Framework).
 
-**Note**: you should make sure that end users on Windows install the [Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019](https://aka.ms/vs/16/release/vc_redist.x64.exe), otherwise they will get an error message stating that `MuPDFWrapper.dll` could not be loaded because a module was not found.
+**Note**: you should make sure that end users on Windows install the [Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017, 2019 and 2022](https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-160#visual-studio-2015-2017-2019-and-2022) for their platform, otherwise they will get an error message stating that `MuPDFWrapper.dll` could not be loaded because a module was not found.
 
 ## Usage
 
@@ -319,14 +321,14 @@ Steps 1 and 2 need to be performed on all of Windows, macOS and Linux, and on th
 
 You can download the open-source (GNU AGPL) MuPDF source code from [here](https://mupdf.com/downloads/index.html). You will need to uncompress the source file and compile the library on Windows, macOS and Linux. You need the following files:
 
-* From Windows (x86, x64):
+* From Windows (x86, x64, arm64):
     * libmupdf.lib
 
 * From macOS (Intel - x64, Apple silicon - arm64):
     * libmupdf.a
     * libmupdf-third.a
 
-* From Linux:
+* From Linux (x64, arm64):
     * libmupdf.a
     * libmupdf-third.a
 
@@ -382,8 +384,14 @@ For convenience, these compiled files for MuPDF 1.19.0 are included in the [`nat
     * Open the `Developer Command Prompt for VS`, move to the folder with the solution file (`platform/win32`), and build it using `msbuild mupdf.sln /p:Configuration=ReleaseTesseract`.
     * After a while, this should produce `libmupdf.lib` in the `ARM64/ReleaseTesseract` folder (the file should be ~388MB in size).
 
-* On Linux:
+* On Linux (x64):
     * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 24 (which specifies the `CFLAGS`).
+    * Make sure that you are using a recent enough version of GCC (version 7.3.1 seems to be enough).
+    * Compile by running `USE_TESSERACT=yes make HAVE_X11=no HAVE_GLUT=no` (this builds just the command-line libraries and tools, and enables OCR through the included Tesseract library).
+
+* On Linux (arm64):
+    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 24 (which specifies the `CFLAGS`).
+    * Delete or comment line 218 in `thirdparty/tesseract/src/arch/simddetect.cpp`.
     * Make sure that you are using a recent enough version of GCC (version 7.3.1 seems to be enough).
     * Compile by running `USE_TESSERACT=yes make HAVE_X11=no HAVE_GLUT=no` (this builds just the command-line libraries and tools, and enables OCR through the included Tesseract library).
 
@@ -405,7 +413,7 @@ On Windows, the easiest way to get all the required tools is probably to install
 
 On macOS, you will need to install at least the Command-Line Tools for Xcode (if necessary, you should be prompted to do this while you perform the following steps) and CMake.
 
-Once you have everything at the ready, you will have to build MuPDFWrapper on the three platforms.
+Once you have everything at the ready, you will have to build MuPDFWrapper on the seven platforms.
 
 #### Windows (x86 and x64)
 
@@ -469,6 +477,7 @@ These steps ensure that you are testing the right version of MuPDFCore (i.e. you
 Now, open a windows command line in the folder where you have downloaded the MuPDFCore source code, type `BuildTests` and press `Enter`. This will create a number of files in the `Release\MuPDFCoreTests` folder, where each file is an archive containing the tests for a certain platform and architecture:
 
 * `MuPDFCoreTests-linux-x64.tar.gz` contains the tests for Linux environments on x64 processors.
+* `MuPDFCoreTests-linux-arm64.tar.gz` contains the tests for Linux environments on arm64 processors.
 * `MuPDFCoreTests-mac-x64.tar.gz` contains the tests for macOS environments on Intel processors.
 * `MuPDFCoreTests-mac-arm64.tar.gz` contains the tests for macOS environments on Apple silicon processors.
 * `MuPDFCoreTests-win-x64.tar.gz` contains the tests for Windows environments on x64 processors.
@@ -499,6 +508,6 @@ One way to obtain the appropriate library files is:
 1. Manually download the NuGet package for [MuPDFCore](https://www.nuget.org/packages/MuPDFCore/) (click on the "Download package" link on the right).
 2. Rename the `.nupkg` file so that it has a `.zip` extension.
 3. Extract the zip file.
-4. Within the extracted folder, the library files are in the `runtimes/xxx/native/` folder, where `xxx` is `linux-x64`, `osx-x64`, `osx-arm64`, `win-x64`, or `win-x86`, depending on the platform you are using.
+4. Within the extracted folder, the library files are in the `runtimes/xxx/native/` folder, where `xxx` is `linux-x64`, `linux-arm64`, `osx-x64`, `osx-arm64`, `win-x64`, `win-x86` or `win-arm64`, depending on the platform you are using.
 
 Make sure you copy the appropriate file to the same folder as the executable!
