@@ -54,6 +54,27 @@ rmdir MuPDFCoreTests-win-x86
 cd ..\..
 
 echo.
+echo Building with target [94mwin-arm64[0m
+
+cd MuPDFCoreTestHost
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\win-arm64.pubxml /p:PlatformTarget=arm64
+cd ..
+
+echo.
+echo [104;97mCreating ZIP file...[0m
+
+cd Release\MuPDFCoreTests
+
+move win-arm64 MuPDFCoreTests-win-arm64
+zip -r MuPDFCoreTests-win-arm64.zip MuPDFCoreTests-win-arm64 >nul
+
+for /f %%i in ('dir /a:d /b "MuPDFCoreTests-win-arm64"\*') do rd /s /q "MuPDFCoreTests-win-arm64"\%%i
+del MuPDFCoreTests-win-arm64\* /s /f /q 1>nul
+rmdir MuPDFCoreTests-win-arm64
+
+cd ..\..
+
+echo.
 echo Building with target [94mlinux-x64[0m
 
 cd MuPDFCoreTestHost
