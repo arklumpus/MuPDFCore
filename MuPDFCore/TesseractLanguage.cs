@@ -1390,11 +1390,11 @@ namespace MuPDFCore
 
             string prefix = null;
 
-            if (File.Exists(Path.Combine(ExecutablePath, "tessdata", "fast", languageName + ".traineddata")))
+            if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "tessdata", "fast", languageName + ".traineddata")))
             {
                 prefix = Path.Combine(ExecutablePath, "tessdata", "fast");
             }
-            else if (File.Exists(Path.Combine(ExecutablePath, "fast", languageName + ".traineddata")))
+            else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "fast", languageName + ".traineddata")))
             {
                 prefix = Path.Combine(ExecutablePath, "fast");
             }
@@ -1404,15 +1404,15 @@ namespace MuPDFCore
             }
             else if (useAnyCached)
             {
-                if (File.Exists(Path.Combine(ExecutablePath, languageName + ".traineddata")))
+                if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath);
                 }
-                else if (File.Exists(Path.Combine(ExecutablePath, "tessdata", "best", languageName + ".traineddata")))
+                else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "tessdata", "best", languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath, "tessdata", "best");
                 }
-                else if (File.Exists(Path.Combine(ExecutablePath, "best", languageName + ".traineddata")))
+                else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "best", languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath, "best");
                 }
@@ -1456,11 +1456,11 @@ namespace MuPDFCore
 
             string prefix = null;
 
-            if (File.Exists(Path.Combine(ExecutablePath, "tessdata", "best", languageName + ".traineddata")))
+            if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "tessdata", "best", languageName + ".traineddata")))
             {
                 prefix = Path.Combine(ExecutablePath, "tessdata", "best");
             }
-            else if (File.Exists(Path.Combine(ExecutablePath, "best", languageName + ".traineddata")))
+            else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "best", languageName + ".traineddata")))
             {
                 prefix = Path.Combine(ExecutablePath, "best");
             }
@@ -1470,15 +1470,15 @@ namespace MuPDFCore
             }
             else if (useAnyCached)
             {
-                if (File.Exists(Path.Combine(ExecutablePath, languageName + ".traineddata")))
+                if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath);
                 }
-                else if (File.Exists(Path.Combine(ExecutablePath, "tessdata", "fast", languageName + ".traineddata")))
+                else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "tessdata", "fast", languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath, "tessdata", "fast");
                 }
-                else if (File.Exists(Path.Combine(ExecutablePath, "fast", languageName + ".traineddata")))
+                else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "fast", languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath, "fast");
                 }
@@ -1522,11 +1522,11 @@ namespace MuPDFCore
 
             string prefix = null;
 
-            if (File.Exists(Path.Combine(ExecutablePath, "tessdata", "fast", "script", languageName + ".traineddata")))
+            if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "tessdata", "fast", "script", languageName + ".traineddata")))
             {
                 prefix = Path.Combine(ExecutablePath, "tessdata", "fast", "script");
             }
-            else if (File.Exists(Path.Combine(ExecutablePath, "fast", "script", languageName + ".traineddata")))
+            else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "fast", "script", languageName + ".traineddata")))
             {
                 prefix = Path.Combine(ExecutablePath, "fast", "script");
             }
@@ -1536,19 +1536,19 @@ namespace MuPDFCore
             }
             else if (useAnyCached)
             {
-                if (File.Exists(Path.Combine(ExecutablePath, "script", languageName + ".traineddata")))
+                if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "script", languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath, "script");
                 }
-                else if (File.Exists(Path.Combine(ExecutablePath, languageName + ".traineddata")))
+                else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath);
                 }
-                else if (File.Exists(Path.Combine(ExecutablePath, "tessdata", "best", "script", languageName + ".traineddata")))
+                else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "tessdata", "best", "script", languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath, "tessdata", "best", "script");
                 }
-                else if (File.Exists(Path.Combine(ExecutablePath, "best", "script", languageName + ".traineddata")))
+                else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "best", "script", languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath, "best", "script");
                 }
@@ -1592,11 +1592,11 @@ namespace MuPDFCore
 
             string prefix = null;
 
-            if (File.Exists(Path.Combine(ExecutablePath, "tessdata", "best", "script", languageName + ".traineddata")))
+            if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "tessdata", "best", "script", languageName + ".traineddata")))
             {
                 prefix = Path.Combine(ExecutablePath, "tessdata", "best", "script");
             }
-            else if (File.Exists(Path.Combine(ExecutablePath, "best", "script", languageName + ".traineddata")))
+            else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "best", "script", languageName + ".traineddata")))
             {
                 prefix = Path.Combine(ExecutablePath, "best", "script");
             }
@@ -1606,19 +1606,19 @@ namespace MuPDFCore
             }
             else if (useAnyCached)
             {
-                if (File.Exists(Path.Combine(ExecutablePath, "script", languageName + ".traineddata")))
+                if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "script", languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath, "script");
                 }
-                else if (File.Exists(Path.Combine(ExecutablePath, languageName + ".traineddata")))
+                else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath);
                 }
-                else if (File.Exists(Path.Combine(ExecutablePath, "tessdata", "fast", "script", languageName + ".traineddata")))
+                else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "tessdata", "fast", "script", languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath, "tessdata", "fast", "script");
                 }
-                else if (File.Exists(Path.Combine(ExecutablePath, "fast", "script", languageName + ".traineddata")))
+                else if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(Path.Combine(ExecutablePath, "fast", "script", languageName + ".traineddata")))
                 {
                     prefix = Path.Combine(ExecutablePath, "fast", "script");
                 }
