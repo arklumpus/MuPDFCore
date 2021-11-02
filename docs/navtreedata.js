@@ -37,15 +37,20 @@ var NAVTREE =
       ] ],
       [ "Building from source", "index.html#autotoc_md9", [
         [ "1. Building libmupdf", "index.html#autotoc_md10", [
-          [ "Tips for compiling MuPDF 1.18.0:", "index.html#autotoc_md11", null ]
+          [ "Tips for compiling MuPDF 1.19.0:", "index.html#autotoc_md11", null ]
         ] ],
         [ "2. Building MuPDFWrapper", "index.html#autotoc_md12", [
-          [ "Windows", "index.html#autotoc_md13", null ],
-          [ "macOS and Linux", "index.html#autotoc_md14", null ]
+          [ "Windows (x86 and x64)", "index.html#autotoc_md13", null ],
+          [ "Windows (arm64)", "index.html#autotoc_md14", null ],
+          [ "macOS and Linux", "index.html#autotoc_md15", null ]
         ] ],
-        [ "3. Creating the MuPDFCore NuGet package", "index.html#autotoc_md15", null ]
+        [ "3. Creating the MuPDFCore NuGet package", "index.html#autotoc_md16", null ],
+        [ "4. Running tests", "index.html#autotoc_md17", [
+          [ "Windows", "index.html#autotoc_md18", null ],
+          [ "macOS and Linux", "index.html#autotoc_md19", null ]
+        ] ]
       ] ],
-      [ "Note about MuPDFCore and .NET Framework <a name=\"netFrameworkNote\"></a>", "index.html#autotoc_md16", null ]
+      [ "Note about MuPDFCore and .NET Framework <a name=\"netFrameworkNote\"></a>", "index.html#autotoc_md20", null ]
     ] ],
     [ "Packages", "namespaces.html", [
       [ "Packages", "namespaces.html", "namespaces_dup" ],
