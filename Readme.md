@@ -483,7 +483,7 @@ Now, open a windows command line in the folder where you have downloaded the MuP
 * `MuPDFCoreTests-win-x64.tar.gz` contains the tests for Windows environments on x64 processors.
 * `MuPDFCoreTests-win-x86.tar.gz` contains the tests for Windows environments on x86 processors.
 
-To run the tests, copy each archive to a machine running the corresponding operating system, and extract it. Then:
+To run the tests, copy each archive to a machine running the corresponding operating system, and extract it (note: on Windows, the default zip file manager may struggle when extracting the text file with non-latin characters; you may need to manually extract this file). Then:
 
 #### Windows
 * Open a command prompt and `CD` into the folder where you have extracted the contents of the test archive.
