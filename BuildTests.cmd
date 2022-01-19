@@ -24,7 +24,7 @@ echo [104;97mCreating ZIP file...[0m
 cd Release\MuPDFCoreTests
 
 move win-x64 MuPDFCoreTests-win-x64
-zip -r MuPDFCoreTests-win-x64.zip MuPDFCoreTests-win-x64 >nul
+bash -c "zip -r MuPDFCoreTests-win-x64.zip MuPDFCoreTests-win-x64 >/dev/null"
 
 for /f %%i in ('dir /a:d /b "MuPDFCoreTests-win-x64"\*') do rd /s /q "MuPDFCoreTests-win-x64"\%%i
 del MuPDFCoreTests-win-x64\* /s /f /q 1>nul
@@ -45,7 +45,7 @@ echo [104;97mCreating ZIP file...[0m
 cd Release\MuPDFCoreTests
 
 move win-x86 MuPDFCoreTests-win-x86
-zip -r MuPDFCoreTests-win-x86.zip MuPDFCoreTests-win-x86 >nul
+bash -c "zip -r MuPDFCoreTests-win-x86.zip MuPDFCoreTests-win-x86 >/dev/null"
 
 for /f %%i in ('dir /a:d /b "MuPDFCoreTests-win-x86"\*') do rd /s /q "MuPDFCoreTests-win-x86"\%%i
 del MuPDFCoreTests-win-x86\* /s /f /q 1>nul
@@ -66,7 +66,7 @@ echo [104;97mCreating ZIP file...[0m
 cd Release\MuPDFCoreTests
 
 move win-arm64 MuPDFCoreTests-win-arm64
-zip -r MuPDFCoreTests-win-arm64.zip MuPDFCoreTests-win-arm64 >nul
+bash -c "zip -r MuPDFCoreTests-win-arm64.zip MuPDFCoreTests-win-arm64 >/dev/null"
 
 for /f %%i in ('dir /a:d /b "MuPDFCoreTests-win-arm64"\*') do rd /s /q "MuPDFCoreTests-win-arm64"\%%i
 del MuPDFCoreTests-win-arm64\* /s /f /q 1>nul
@@ -129,7 +129,7 @@ echo [104;97mCreating ZIP file...[0m
 cd Release\MuPDFCoreTests
 
 move mac-x64 MuPDFCoreTests-mac-x64
-zip -r MuPDFCoreTests-mac-x64.zip MuPDFCoreTests-mac-x64 >nul
+bash -c "zip -r MuPDFCoreTests-mac-x64.zip MuPDFCoreTests-mac-x64 >/dev/null"
 
 for /f %%i in ('dir /a:d /b "MuPDFCoreTests-mac-x64"\*') do rd /s /q "MuPDFCoreTests-mac-x64"\%%i
 del MuPDFCoreTests-mac-x64\* /s /f /q 1>nul
@@ -150,7 +150,7 @@ echo [104;97mCreating ZIP file...[0m
 cd Release\MuPDFCoreTests
 
 move mac-arm64 MuPDFCoreTests-mac-arm64
-zip -r MuPDFCoreTests-mac-arm64.zip MuPDFCoreTests-mac-arm64 >nul
+bash -c "zip -r MuPDFCoreTests-mac-arm64.zip MuPDFCoreTests-mac-arm64 >/dev/null"
 
 for /f %%i in ('dir /a:d /b "MuPDFCoreTests-mac-arm64"\*') do rd /s /q "MuPDFCoreTests-mac-arm64"\%%i
 del MuPDFCoreTests-mac-arm64\* /s /f /q 1>nul

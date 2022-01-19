@@ -40,6 +40,19 @@ namespace Tests
         }
 
         [TestMethod]
+        [DeploymentItem("Data/LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢.pdf")]
+        public void MuPDFDocumentCreationFromFileWithUTF8Characters()
+        {
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, "LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢.pdf");
+
+            Assert.IsNotNull(document, "The created document is null.");
+            Assert.AreNotEqual(IntPtr.Zero, document.NativeDocument, "The native document pointer is null.");
+            Assert.AreEqual(72, document.ImageXRes, "The image x resolution is wrong.");
+            Assert.AreEqual(72, document.ImageYRes, "The image x resolution is wrong.");
+        }
+
+        [TestMethod]
         public void MuPDFDocumentCreationFromPDFStream()
         {
             using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
@@ -445,6 +458,42 @@ namespace Tests
         }
 
         [TestMethod]
+        public void MuPDFDocumentImageSavingWithUTF8Characters()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            string tempFile = Path.GetTempFileName();
+
+            try
+            {
+                File.Delete(tempFile);
+            }
+            catch { }
+
+            tempFile += "LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢";
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            document.SaveImage(0, 1, PixelFormats.RGBA, tempFile, RasterOutputFileTypes.PNG);
+
+            Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
+
+            byte[] savedBytes = File.ReadAllBytes(tempFile);
+
+            try
+            {
+                File.Delete(tempFile);
+            }
+            catch { }
+
+            CollectionAssert.AreEqual(new byte[] { 0x89, 0x50, 0x4E, 0x47 }, savedBytes[0..4], "The start of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xAE, 0x42, 0x60, 0x82 }, savedBytes[^4..^0], "The end of the saved image appears to be wrong.");
+        }
+
+        [TestMethod]
         public void MuPDFDocumentImageSavingRegionPNG()
         {
             using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
@@ -736,6 +785,48 @@ namespace Tests
             using MuPDFDocument document2 = new MuPDFDocument(context, ref pdfStream2, InputFileTypes.PDF);
 
             string tempFile = Path.GetTempFileName();
+
+            MuPDFDocument.CreateDocument(context, tempFile, DocumentOutputFileTypes.PDF, true, document1.Pages[0], document2.Pages[0]);
+
+            Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
+
+            byte[] savedBytes = File.ReadAllBytes(tempFile);
+
+            try
+            {
+                File.Delete(tempFile);
+            }
+            catch { }
+
+            CollectionAssert.AreEqual(new byte[] { 0x25, 0x50, 0x44, 0x46 }, savedBytes[0..4], "The start of the created document appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x45, 0x4F, 0x46, 0x0A }, savedBytes[^4..^0], "The end of the created document appears to be wrong.");
+        }
+
+
+        [TestMethod]
+        public void MuPDFDocumentPDFDocumentCreationWithUTF8Characters()
+        {
+            using Stream pdfDataStream1 = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream1 = new MemoryStream();
+            pdfDataStream1.CopyTo(pdfStream1);
+
+            using Stream pdfDataStream2 = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Annotation.pdf");
+            MemoryStream pdfStream2 = new MemoryStream();
+            pdfDataStream2.CopyTo(pdfStream2);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document1 = new MuPDFDocument(context, ref pdfStream1, InputFileTypes.PDF);
+            using MuPDFDocument document2 = new MuPDFDocument(context, ref pdfStream2, InputFileTypes.PDF);
+
+            string tempFile = Path.GetTempFileName();
+
+            try
+            {
+                File.Delete(tempFile);
+            }
+            catch { }
+
+            tempFile += "LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢";
 
             MuPDFDocument.CreateDocument(context, tempFile, DocumentOutputFileTypes.PDF, true, document1.Pages[0], document2.Pages[0]);
 

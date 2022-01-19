@@ -9,6 +9,7 @@
   <ItemGroup>
     <None Remove="Data\Annotation.pdf" />
     <None Remove="Data\eng.traineddata" />
+    <None Remove="Data\LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢.pdf" />
     <None Remove="Data\Sample.pdf" />
     <None Remove="Data\Sample.png" />
   </ItemGroup>
@@ -21,6 +22,9 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Data\Annotation.pdf" />
+    <EmbeddedResource Include="Data\LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Data\Sample.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
