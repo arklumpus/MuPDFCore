@@ -162,7 +162,12 @@ namespace Tests
 
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
 
-            int result = NativeMethods.CreateDocumentFromFile(nativeContext, fileName, 0, ref nativeDocument, ref pageCount, ref xRes, ref yRes);
+            int result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                result = NativeMethods.CreateDocumentFromFile(nativeContext, encodedFileName.Address, 0, ref nativeDocument, ref pageCount, ref xRes, ref yRes);
+            }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "CreateDocumentFromFile returned the wrong exit code.");
             Assert.AreNotEqual(IntPtr.Zero, nativeDocument, "The native document pointer is null.");
@@ -234,7 +239,12 @@ namespace Tests
 
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
 
-            int result = NativeMethods.CreateDocumentFromFile(nativeContext, fileName, 1, ref nativeDocument, ref pageCount, ref xRes, ref yRes);
+            int result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                result = NativeMethods.CreateDocumentFromFile(nativeContext, encodedFileName.Address, 1, ref nativeDocument, ref pageCount, ref xRes, ref yRes);
+            }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "CreateDocumentFromFile returned the wrong exit code.");
             Assert.AreNotEqual(IntPtr.Zero, nativeDocument, "The native document pointer is null.");
@@ -733,7 +743,12 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
 
-            int result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, tempFile, 0);
+            int result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(tempFile))
+            {
+                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, encodedFileName.Address, 0);
+            }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveImage returned the wrong exit code.");
             Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
@@ -766,7 +781,12 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
 
-            int result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 1, tempFile, 1);
+            int result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(tempFile))
+            {
+                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 1, encodedFileName.Address, 1);
+            }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveImage returned the wrong exit code.");
             Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
@@ -799,7 +819,12 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
 
-            int result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 1, tempFile, 2);
+            int result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(tempFile))
+            {
+                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 1, encodedFileName.Address, 2);
+            }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveImage returned the wrong exit code.");
             Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
@@ -832,7 +857,12 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
 
-            int result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, tempFile, 3);
+            int result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(tempFile))
+            {
+                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, encodedFileName.Address, 3);
+            }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveImage returned the wrong exit code.");
             Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
@@ -1036,7 +1066,12 @@ namespace Tests
 
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
 
-            int result = NativeMethods.CreateDocumentWriter(nativeContext, fileName, 0, ref documentWriter);
+            int result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                result = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 0, ref documentWriter);
+            }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "CreateDocumentWriter for PDF returned the wrong exit code.");
             Assert.AreNotEqual(IntPtr.Zero, documentWriter, "The native document writer pointer for PDF is null.");
@@ -1064,7 +1099,12 @@ namespace Tests
 
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
 
-            int result = NativeMethods.CreateDocumentWriter(nativeContext, fileName, 1, ref documentWriter);
+            int result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                result = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 1, ref documentWriter);
+            }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "CreateDocumentWriter for SVG returned the wrong exit code.");
             Assert.AreNotEqual(IntPtr.Zero, documentWriter, "The native document writer pointer for SVG is null.");
@@ -1092,7 +1132,12 @@ namespace Tests
 
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
 
-            int result = NativeMethods.CreateDocumentWriter(nativeContext, fileName, 2, ref documentWriter);
+            int result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                result = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 2, ref documentWriter);
+            }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "CreateDocumentWriter for CBZ returned the wrong exit code.");
             Assert.AreNotEqual(IntPtr.Zero, documentWriter, "The native document writer pointer for CBZ is null.");
@@ -1118,7 +1163,10 @@ namespace Tests
 
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
 
-            _ = NativeMethods.CreateDocumentWriter(nativeContext, fileName, 0, ref documentWriter);
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                _ = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 0, ref documentWriter);
+            }
 
             return (documentWriter, fileName);
         }
@@ -1130,7 +1178,10 @@ namespace Tests
 
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
 
-            _ = NativeMethods.CreateDocumentWriter(nativeContext, fileName, 1, ref documentWriter);
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                _ = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 1, ref documentWriter);
+            }
 
             return (documentWriter, fileName);
         }
@@ -1142,7 +1193,10 @@ namespace Tests
 
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
 
-            _ = NativeMethods.CreateDocumentWriter(nativeContext, fileName, 2, ref documentWriter);
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                _ = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 2, ref documentWriter);
+            }
 
             return (documentWriter, fileName);
         }

@@ -343,8 +343,12 @@ namespace MuPDFCore
             float xRes = 0;
             float yRes = 0;
 
-            ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentFromFile(context.NativeContext, fileName, isImage ? 1 : 0, ref NativeDocument, ref PageCount, ref xRes, ref yRes);
+            ExitCodes result;
 
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                result = (ExitCodes)NativeMethods.CreateDocumentFromFile(context.NativeContext, encodedFileName.Address, isImage ? 1 : 0, ref NativeDocument, ref PageCount, ref xRes, ref yRes);
+            }
 
             if (xRes > 72)
             {
@@ -604,7 +608,12 @@ namespace MuPDFCore
 
             float fzoom = (float)zoom;
 
-            ExitCodes result = (ExitCodes)NativeMethods.SaveImage(OwnerContext.NativeContext, DisplayLists[pageNumber].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, fzoom, (int)pixelFormat, fileName, (int)fileType);
+            ExitCodes result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                result = (ExitCodes)NativeMethods.SaveImage(OwnerContext.NativeContext, DisplayLists[pageNumber].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, fzoom, (int)pixelFormat, encodedFileName.Address, (int)fileType);
+            }
 
             switch (result)
             {
@@ -743,8 +752,14 @@ namespace MuPDFCore
 
             IntPtr documentWriter = IntPtr.Zero;
 
-            //Initialise document writer.
-            ExitCodes result = (ExitCodes)NativeMethods.CreateDocumentWriter(context.NativeContext, fileName, (int)fileType, ref documentWriter);
+            ExitCodes result;
+
+            // Encode the file name in UTF-8 in unmanaged memory.
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                //Initialise document writer.
+                result = (ExitCodes)NativeMethods.CreateDocumentWriter(context.NativeContext, encodedFileName.Address, (int)fileType, ref documentWriter);
+            }
 
             switch (result)
             {

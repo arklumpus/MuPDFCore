@@ -24,7 +24,7 @@ namespace MuPDFCore
     /// <summary>
     /// Exit codes returned by native methods describing various errors that can occur.
     /// </summary>
-    public  enum ExitCodes
+    public enum ExitCodes
     {
         /// <summary>
         /// An error occurred while creating the context object.
@@ -364,6 +364,54 @@ namespace MuPDFCore
     }
 
     /// <summary>
+    /// A class to simplify passing a string to the MuPDF C library with the correct encoding.
+    /// </summary>
+    internal class UTF8EncodedString : IDisposable
+    {
+        private bool disposedValue;
+        
+        /// <summary>
+        /// The address of the bytes encoding the string in unmanaged memory.
+        /// </summary>
+        public IntPtr Address { get; }
+
+        /// <summary>
+        /// Create a null-terminated, UTF-8 encoded string in unmanaged memory.
+        /// </summary>
+        /// <param name="text"></param>
+        public UTF8EncodedString(string text)
+        {
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(text);
+
+            IntPtr dataHolder = Marshal.AllocHGlobal(data.Length + 1);
+            Marshal.Copy(data, 0, dataHolder, data.Length);
+            Marshal.WriteByte(dataHolder, data.Length, 0);
+
+            this.Address = dataHolder;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                Marshal.FreeHGlobal(Address);
+                disposedValue = true;
+            }
+        }
+
+        ~UTF8EncodedString()
+        {
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+    }
+
+    /// <summary>
     /// Native methods.
     /// </summary>
     internal static class NativeMethods
@@ -463,7 +511,7 @@ namespace MuPDFCore
         /// Create a new document from a file name.
         /// </summary>
         /// <param name="ctx">The context to which the document will belong.</param>
-        /// <param name="file_name">The path of the file to open.</param>
+        /// <param name="file_name">The path of the file to open, UTF-8 encoded.</param>
         /// <param name="get_image_resolution">If this is not 0, try opening the file as an image and return the actual resolution (in DPI) of the image. Otherwise (or if trying to open the file as an image fails), the returned resolution will be -1.</param>
         /// <param name="out_doc">The newly created document.</param>
         /// <param name="out_page_count">The number of pages in the document.</param>
@@ -471,7 +519,7 @@ namespace MuPDFCore
         /// <param name="out_image_xres">If the document is an image file, the horizontal resolution of the image.</param>
         /// <param name="out_image_yres">If the document is an image file, the vertical resolution of the image.</param>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int CreateDocumentFromFile(IntPtr ctx, string file_name, int get_image_resolution, ref IntPtr out_doc, ref int out_page_count, ref float out_image_xres, ref float out_image_yres);
+        internal static extern int CreateDocumentFromFile(IntPtr ctx, IntPtr file_name, int get_image_resolution, ref IntPtr out_doc, ref int out_page_count, ref float out_image_xres, ref float out_image_yres);
 
         /// <summary>
         /// Free a stream and its associated resources.
@@ -553,11 +601,11 @@ namespace MuPDFCore
         /// <param name="y1">The bottom coordinate in page units of the region of the display list that should be rendererd.</param>
         /// <param name="zoom">How much the specified region should be scaled when rendering. This determines the size in pixels of the rendered image.</param>
         /// <param name="colorFormat">The pixel data format.</param>
-        /// <param name="file_name">The path to the output file.</param>
+        /// <param name="file_name">The path to the output file, UTF-8 encoded.</param>
         /// <param name="output_format">An integer equivalent to <see cref="RasterOutputFileTypes"/> specifying the output format.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int SaveImage(IntPtr ctx, IntPtr list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, string file_name, int output_format);
+        internal static extern int SaveImage(IntPtr ctx, IntPtr list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, IntPtr file_name, int output_format);
 
         /// <summary>
         /// Write (part of) a display list to an image buffer in the specified format.
@@ -591,12 +639,12 @@ namespace MuPDFCore
         /// Create a new document writer object.
         /// </summary>
         /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
-        /// <param name="file_name">The name of file that will hold the writer's output.</param>
+        /// <param name="file_name">The name of file that will hold the writer's output, UTF-8 encoded.</param>
         /// <param name="format">An integer equivalent to <see cref="DocumentOutputFileTypes"/> specifying the output format.</param>
         /// <param name="out_document_writer">A pointer to the new document writer object.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int CreateDocumentWriter(IntPtr ctx, string file_name, int format, ref IntPtr out_document_writer);
+        internal static extern int CreateDocumentWriter(IntPtr ctx, IntPtr file_name, int format, ref IntPtr out_document_writer);
 
         /// <summary>
         /// Render (part of) a display list as a page in the specified document writer.
