@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -487,6 +488,53 @@ namespace MuPDFCore
             {
                 RenderingThreads[i].WaitForRendering();
             }
+        }
+
+        /// <summary>
+        /// Gets an element from a collection of <see cref="System.Span{T}">Span</see>&lt;<see cref="byte"/>&gt;
+        /// </summary>
+        /// <param name="index">The index of the element to get.</param>
+        /// <returns>An element from a collection of <see cref="System.Span{T}">Span</see>&lt;<see cref="byte"/>&gt;</returns>
+        public delegate Span<byte> GetSpanItem(int index);
+
+        /// <summary>
+        /// Render the specified region to an image of the specified size, split in a number of tiles equal to the number of threads used by this <see cref="MuPDFMultiThreadedPageRenderer"/>, without marshaling. This method will not return until all the rendering threads have finished.
+        /// Since creating an array of <see cref="Span{T}"/> is not allowed, this method returns a delegate that accepts an integer parameter (representing the index of the span in the "array") and returns the <see cref="Span{T}"/> corresponding to that index.
+        /// </summary>
+        /// <param name="targetSize">The total size of the image that should be rendered.</param>
+        /// <param name="region">The region in page units that should be rendered.</param>
+        /// <param name="disposables">A collection of <see cref="IDisposable"/>s that can be used to free the memory where the rendered tiles are stored. You should keep track of these and dispose them when you have finished working with the images.</param>
+        /// <param name="pixelFormat">The format of the pixel data.</param>
+        /// <returns>A delegate that accepts an integer parameter (representing the index of the span in the "array") and returns the <see cref="Span{T}"/> corresponding to that index.</returns>
+        public GetSpanItem Render(RoundedSize targetSize, Rectangle region, out IDisposable[] disposables, PixelFormats pixelFormat)
+        {
+            RoundedRectangle[] targets = targetSize.Split(this.ThreadCount);
+
+            IntPtr[] destinations = new IntPtr[targets.Length];
+            disposables = new IDisposable[targets.Length];
+
+            bool hasAlpha = pixelFormat == PixelFormats.RGBA || pixelFormat == PixelFormats.BGRA;
+
+            int[] sizes = new int[destinations.Length];
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                int allocSize = targets[i].Width * targets[i].Height * (hasAlpha ? 4 : 3);
+
+                sizes[i] = allocSize;
+                destinations[i] = Marshal.AllocHGlobal(allocSize);
+                disposables[i] = new DisposableIntPtr(destinations[i], allocSize);
+            }
+
+            this.Render(targetSize, region, destinations, pixelFormat);
+
+            return i =>
+            {
+                unsafe
+                {
+                    return new Span<byte>((void*)destinations[i], sizes[i]);
+                }
+            };
         }
 
         /// <summary>
