@@ -31,7 +31,7 @@ namespace Tests
         }
 
         [TestMethod]
-        public void MultiThreadedPageRendererRendering()
+        public void MultiThreadedPageRendererRenderingToIntPtrs()
         {
             using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
             MemoryStream pdfStream = new MemoryStream();
@@ -90,6 +90,59 @@ namespace Tests
                 CollectionAssert.AreEqual(expectedEnd[i], rendered[i][^4..^0], "The end of tile " + i.ToString() + " appears to be wrong.");
             }
         }
+
+        [TestMethod]
+        public void MultiThreadedPageRendererRenderingToSpans()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            int threadCount = 4;
+
+            RoundedSize targetSize = new RoundedSize(4000, 2600);
+            RoundedRectangle[] splitSize = targetSize.Split(threadCount);
+
+            byte[][] expectedStart = new byte[][]
+            {
+                new byte[] { 0x17, 0x73, 0xFF, 0x0B },
+                new byte[] { 0x17, 0x73, 0xFF, 0x0B },
+                new byte[] { 0x17, 0x73, 0xFF, 0x0B },
+                new byte[] { 0x17, 0x73, 0xFF, 0x0B }
+            };
+
+            byte[][] expectedEnd = new byte[][]
+            {
+                new byte[] { 0x17, 0x73, 0xFF, 0x0B },
+                new byte[] { 0x17, 0x73, 0xFF, 0x0B },
+                new byte[] { 0x17, 0x73, 0xFF, 0x0B },
+                new byte[] { 0x17, 0x73, 0xFF, 0x0B }
+            };
+
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            using MuPDFMultiThreadedPageRenderer renderer = document.GetMultiThreadedRenderer(0, 4);
+
+            MuPDFMultiThreadedPageRenderer.GetSpanItem rendered = renderer.Render(targetSize, new Rectangle(0, 0, 4000, 2600), out IDisposable[] disposables, PixelFormats.RGBA);
+
+            for (int i = 0; i < disposables.Length; i++)
+            {
+                Span<byte> renderedI = rendered(i);
+
+                Assert.AreEqual(10400000, renderedI.Length, "The size of tile " + i.ToString() + " appears to be wrong.");
+                CollectionAssert.AreEqual(expectedStart[i], new byte[] { renderedI[0], renderedI[1], renderedI[2], renderedI[3] }, "The start of tile " + i.ToString() + " appears to be wrong.");
+                CollectionAssert.AreEqual(expectedEnd[i], new byte[] { renderedI[renderedI.Length - 4], renderedI[renderedI.Length - 3], renderedI[renderedI.Length - 2], renderedI[renderedI.Length - 1] }, "The end of tile " + i.ToString() + " appears to be wrong.");
+            }
+
+            for (int i = 0; i < disposables.Length; i++)
+            {
+                disposables[i].Dispose();
+            }
+
+        }
+
 
         [TestMethod]
         public async Task MultiThreadedPageRendererProgressGetter()

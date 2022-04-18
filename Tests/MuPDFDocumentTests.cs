@@ -338,6 +338,50 @@ namespace Tests
         }
 
         [TestMethod]
+        public void MuPDFDocumentRenderingFullPageToRGBSpan()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            Span<byte> rendered = document.Render(0, 1, PixelFormats.RGB, out IDisposable disposable);
+
+            MuPDFDisplayList[] displayLists = (MuPDFDisplayList[])typeof(MuPDFDocument).GetField("DisplayLists", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(document);
+            Assert.IsNotNull(displayLists[0], "The display list has not been generated.");
+
+            Assert.AreEqual(4000 * 2600 * 3, rendered.Length, "The size of the rendered image is wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF4, 0xF9, 0xFF }, new byte[] { rendered[0], rendered[1], rendered[2] }, "The start of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF4, 0xF9, 0xFF }, new byte[] { rendered[rendered.Length - 3], rendered[rendered.Length - 2], rendered[rendered.Length - 1] }, "The end of the rendered image appears to be wrong.");
+
+            disposable.Dispose();
+        }
+
+        [TestMethod]
+        public void MuPDFDocumentRenderingRegionToRGBASpan()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            Span<byte> rendered = document.Render(0, new Rectangle(100, 100, 500, 500), Math.Sqrt(2), PixelFormats.RGBA, out IDisposable disposable);
+
+            MuPDFDisplayList[] displayLists = (MuPDFDisplayList[])typeof(MuPDFDocument).GetField("DisplayLists", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(document);
+            Assert.IsNotNull(displayLists[0], "The display list has not been generated.");
+
+            Assert.AreEqual(567 * 567 * 4, rendered.Length, "The size of the rendered image is wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x17, 0x73, 0xFF, 0x0B }, new byte[] { rendered[0], rendered[1], rendered[2], rendered[3] }, "The start of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x17, 0x73, 0xFF, 0x0B }, new byte[] { rendered[rendered.Length - 4], rendered[rendered.Length - 3], rendered[rendered.Length - 2], rendered[rendered.Length - 1] }, "The end of the rendered image appears to be wrong.");
+
+            disposable.Dispose();
+        }
+
+        [TestMethod]
         public void MuPDFDocumentCacheClearing()
         {
             using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
