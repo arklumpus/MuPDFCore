@@ -35,7 +35,11 @@ enum
 {
 	OUT_DOC_PDF = 0,
 	OUT_DOC_SVG = 1,
-	OUT_DOC_CBZ = 2
+	OUT_DOC_CBZ = 2,
+	OUT_DOC_DOCX = 3,
+	OUT_DOC_ODT = 4,
+	OUT_DOC_HTML = 5,
+	OUT_DOC_XHTML = 6
 };
 
 //Colour formats

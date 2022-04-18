@@ -473,6 +473,18 @@ extern "C"
 			case OUT_DOC_CBZ:
 				writ = fz_new_document_writer(ctx, file_name, "cbz", NULL);
 				break;
+			case OUT_DOC_DOCX:
+				writ = fz_new_document_writer(ctx, file_name, "docx", NULL);
+				break;
+			case OUT_DOC_ODT:
+				writ = fz_new_document_writer(ctx, file_name, "odt", NULL);
+				break;
+			case OUT_DOC_HTML:
+				writ = fz_new_document_writer(ctx, file_name, "html", NULL);
+				break;
+			case OUT_DOC_XHTML:
+				writ = fz_new_document_writer(ctx, file_name, "xhtml", NULL);
+				break;
 			}
 		}
 		fz_catch(ctx)
