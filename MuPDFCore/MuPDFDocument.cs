@@ -1053,8 +1053,10 @@ namespace MuPDFCore
         /// <param name="separator">The character(s) used to separate the text lines obtained from the document. If this is <see langword="null" />, <see cref="Environment.NewLine"/> is used as a default separator.</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> used to cancel the operation.</param>
+        /// <param name="progress">An <see cref="IProgress{OCRProgressInfo}"/> used to report progress.</param>
         /// <returns>A <see cref="string"/> containing all the text in the document. Characters are converted from the UTF-8 representation used in the document to equivalent UTF-16 <see cref="string"/>s.</returns>
-        public async Task<string> ExtractTextAsync(TesseractLanguage ocrLanguage, string separator = null, bool includeAnnotations = true)
+        public async Task<string> ExtractTextAsync(TesseractLanguage ocrLanguage, string separator = null, bool includeAnnotations = true, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
             separator = separator ?? Environment.NewLine;
 
@@ -1063,7 +1065,7 @@ namespace MuPDFCore
 
             for (int i = 0; i < this.Pages.Count; i++)
             {
-                MuPDFStructuredTextPage structuredTextPage = await this.GetStructuredTextPageAsync(i, ocrLanguage, includeAnnotations);
+                MuPDFStructuredTextPage structuredTextPage = await this.GetStructuredTextPageAsync(i, ocrLanguage, includeAnnotations, cancellationToken, progress);
                 foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
                 {
                     var numLines = textBlock.Count;
