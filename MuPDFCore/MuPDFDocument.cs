@@ -510,6 +510,45 @@ namespace MuPDFCore
         }
 
         /// <summary>
+        /// Render (part of) a page to a <see cref="Span{T}">Span</see>&lt;<see cref="byte"/>&gt;.
+        /// </summary>
+        /// <param name="pageNumber">The number of the page to render (starting at 0).</param>
+        /// <param name="region">The region of the page to render in page units.</param>
+        /// <param name="zoom">The scale at which the page will be rendered. This will determine the size in pixel of the image.</param>
+        /// <param name="pixelFormat">The format of the pixel data.</param>
+        /// <param name="disposable">An <see cref="IDisposable"/> that can be used to free the memory where the image is stored. You should keep track of this and dispose it when you have finished working with the image.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public Span<byte> Render(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, out IDisposable disposable, bool includeAnnotations = true)
+        {
+            int dataSize = GetRenderedSize(region, zoom, pixelFormat);
+
+            IntPtr destination = Marshal.AllocHGlobal(dataSize);
+            disposable = new DisposableIntPtr(destination, dataSize);
+
+            this.Render(pageNumber, region, zoom, pixelFormat, destination, includeAnnotations);
+
+            unsafe
+            {
+                return new Span<byte>((void*)destination, dataSize);
+            }
+        }
+
+        /// <summary>
+        /// Render a page to a <see cref="Span{T}">Span</see>&lt;<see cref="byte"/>&gt;.
+        /// </summary>
+        /// <param name="pageNumber">The number of the page to render (starting at 0).</param>
+        /// <param name="zoom">The scale at which the page will be rendered. This will determine the size in pixel of the image.</param>
+        /// <param name="pixelFormat">The format of the pixel data.</param>
+        /// <param name="disposable">An <see cref="IDisposable"/> that can be used to free the memory where the image is stored. You should keep track of this and dispose it when you have finished working with the image.</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public Span<byte> Render(int pageNumber, double zoom, PixelFormats pixelFormat, out IDisposable disposable, bool includeAnnotations = true)
+        {
+            Rectangle region = this.Pages[pageNumber].Bounds;
+            return Render(pageNumber, region, zoom, pixelFormat, out disposable, includeAnnotations);
+        }
+
+
+        /// <summary>
         /// Create a new <see cref="MuPDFMultiThreadedPageRenderer"/> that renders the specified page with the specified number of threads.
         /// </summary>
         /// <param name="pageNumber">The number of the page to render (starting at 0).</param>
@@ -570,8 +609,6 @@ namespace MuPDFCore
 
             return -1;
         }
-
-
 
         /// <summary>
         /// Save (part of) a page to an image file in the specified format.
