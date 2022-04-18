@@ -4,9 +4,27 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MuPDFCore
 {
+    /// <summary>
+    /// Describes OCR progress.
+    /// </summary>
+    public class OCRProgressInfo
+    {
+        /// <summary>
+        /// A value between 0 and 1, indicating how much progress has been completed.
+        /// </summary>
+        public double Progress { get; }
+
+        internal OCRProgressInfo(double progress)
+        {
+            this.Progress = progress;
+        }
+    }
+
     /// <summary>
     /// Represents a structured representation of the text contained in a page.
     /// </summary>
@@ -15,7 +33,7 @@ namespace MuPDFCore
         /// <summary>
         /// The blocks contained in the page.
         /// </summary>
-        public MuPDFStructuredTextBlock[] StructuredTextBlocks { get; }
+        public MuPDFStructuredTextBlock[] StructuredTextBlocks { get; private set; }
 
         /// <summary>
         /// The number of blocks in the page.
@@ -42,7 +60,7 @@ namespace MuPDFCore
             }
         }
 
-        internal MuPDFStructuredTextPage(MuPDFContext context, MuPDFDisplayList list, TesseractLanguage ocrLanguage, double zoom, Rectangle pageBounds)
+        internal MuPDFStructuredTextPage(MuPDFContext context, MuPDFDisplayList list, TesseractLanguage ocrLanguage, double zoom, Rectangle pageBounds, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
             int blockCount = -1;
 
@@ -52,13 +70,26 @@ namespace MuPDFCore
 
             if (ocrLanguage != null)
             {
-                result = (ExitCodes)NativeMethods.GetStructuredTextPageWithOCR(context.NativeContext, list.NativeDisplayList, ref nativeStructuredPage, ref blockCount, (float)zoom, pageBounds.X0, pageBounds.Y0, pageBounds.X1, pageBounds.Y1, "TESSDATA_PREFIX=" + ocrLanguage.Prefix, ocrLanguage.Language);
+                result = (ExitCodes)NativeMethods.GetStructuredTextPageWithOCR(context.NativeContext, list.NativeDisplayList, ref nativeStructuredPage, ref blockCount, (float)zoom, pageBounds.X0, pageBounds.Y0, pageBounds.X1, pageBounds.Y1, "TESSDATA_PREFIX=" + ocrLanguage.Prefix, ocrLanguage.Language, prog =>
+                {
+                    progress?.Report(new OCRProgressInfo(prog / 100.0));
+
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                });
             }
             else
             {
                 result = (ExitCodes)NativeMethods.GetStructuredTextPage(context.NativeContext, list.NativeDisplayList, ref nativeStructuredPage, ref blockCount);
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
 
             switch (result)
             {
@@ -113,10 +144,10 @@ namespace MuPDFCore
                     switch ((MuPDFStructuredTextBlock.Types)type)
                     {
                         case MuPDFStructuredTextBlock.Types.Image:
-                            StructuredTextBlocks[i] = new MuPDFImageStructuredTextBlock(bBox);
+                            this.StructuredTextBlocks[i] = new MuPDFImageStructuredTextBlock(bBox);
                             break;
                         case MuPDFStructuredTextBlock.Types.Text:
-                            StructuredTextBlocks[i] = new MuPDFTextStructuredTextBlock(bBox, blockPointers[i], lineCount);
+                            this.StructuredTextBlocks[i] = new MuPDFTextStructuredTextBlock(bBox, blockPointers[i], lineCount);
                             break;
                     }
                 }

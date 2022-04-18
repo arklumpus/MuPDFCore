@@ -279,7 +279,14 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language)
+	typedef int (*progressCallback)(int progress);
+
+	int progressFunction(fz_context* ctx, void* progress_arg, int progress)
+	{
+		return ((progressCallback)progress_arg)(progress);
+	}
+
+	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int __stdcall callback(int))
 	{
 		if (prefix != NULL)
 		{
@@ -316,7 +323,7 @@ extern "C"
 		{
 			device = fz_new_stext_device(ctx, page, &options);
 
-			ocr_device = fz_new_ocr_device(ctx, device, ctm, bounds, true, language, NULL, NULL);
+			ocr_device = fz_new_ocr_device(ctx, device, ctm, bounds, true, language, progressFunction, callback);
 
 			fz_run_display_list(ctx, list, ocr_device, ctm, fz_infinite_rect, NULL);
 
@@ -330,6 +337,16 @@ extern "C"
 		}
 		fz_always(ctx)
 		{
+			fz_try(ctx)
+			{
+				fz_close_device(ctx, ocr_device);
+				fz_close_device(ctx, device);
+			}
+			fz_catch(ctx)
+			{
+
+			}
+
 			fz_drop_device(ctx, ocr_device);
 			fz_drop_device(ctx, device);
 		}
@@ -929,7 +946,7 @@ extern "C"
 
 	DLL_PUBLIC int CreateDocumentFromStream(fz_context* ctx, const unsigned char* data, const uint64_t data_length, const char* file_type, int get_image_resolution, const fz_document** out_doc, const fz_stream** out_str, int* out_page_count, float* out_image_xres, float* out_image_yres)
 	{
-		
+
 		fz_stream* str;
 		fz_document* doc;
 

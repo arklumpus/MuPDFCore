@@ -306,7 +306,7 @@ namespace PDFViewerDemo
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void WindowOpened(object sender, EventArgs e)
+        private async void WindowOpened(object sender, EventArgs e)
         {
             //Render the initial PDF and initialise the PDFRenderer with it.
             MemoryStream ms = RenderInitialPDF();
@@ -314,8 +314,7 @@ namespace PDFViewerDemo
             Document = new MuPDFDocument(Context, ref ms, InputFileTypes.PDF);
 
             MaxPageNumber = 1;
-            this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document, ocrLanguage: GetCurrentLanguage(this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex));
-            this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
+            await InitializeDocument(0);
 
             //Start the UI updater thread.
             UIUpdater();
@@ -343,7 +342,7 @@ namespace PDFViewerDemo
         /// <param name="e"></param>
         private void FileChanged(object sender, FileSystemEventArgs e)
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
+            Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 //Keep track of the current DisplayArea.
                 Rect displayArea = this.FindControl<PDFRenderer>("MuPDFRenderer").DisplayArea;
@@ -353,8 +352,7 @@ namespace PDFViewerDemo
                 Document?.Dispose();
                 Document = new MuPDFDocument(Context, e.FullPath);
                 MaxPageNumber = Document.Pages.Count;
-                this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document, ocrLanguage: GetCurrentLanguage(this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex));
-                this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
+                await InitializeDocument(0);
 
                 //Restore the DisplayArea.
                 this.FindControl<PDFRenderer>("MuPDFRenderer").SetDisplayAreaNow(displayArea);
@@ -389,8 +387,7 @@ namespace PDFViewerDemo
                 Document = new MuPDFDocument(Context, result[0]);
 
                 MaxPageNumber = Document.Pages.Count;
-                this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document, ocrLanguage: GetCurrentLanguage(this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex));
-                this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
+                await InitializeDocument(0);
 
                 //Set up the FileWatcher to keep track of any changes to the file.
                 Watcher.EnableRaisingEvents = false;
@@ -405,13 +402,74 @@ namespace PDFViewerDemo
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void PageNumberChanged(object sender, NumericUpDownValueChangedEventArgs e)
+        private async void PageNumberChanged(object sender, NumericUpDownValueChangedEventArgs e)
         {
             //Only act if the page is actually different from the one displayed by the renderer. The -1 is due to the fact that the page numbers used by the library are 0-based, while we show them as 1-based indices.
             if ((int)e.NewValue - 1 != this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber)
             {
                 //We need to re-initialise the renderer. No need to ask it to release resources here because it will do it on its own (and we don't need to dispose the Document).
-                this.FindControl<PDFRenderer>("MuPDFRenderer").Initialize(Document, pageNumber: (int)e.NewValue - 1, ocrLanguage: GetCurrentLanguage(this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex));
+                await InitializeDocument((int)e.NewValue - 1);
+            }
+        }
+
+        /// <summary>
+        /// Initialize the document, showing a progress window for the OCR process, if necessary.
+        /// </summary>
+        private async Task InitializeDocument(int pageNumber)
+        {
+            // Currently selected OCR language.
+            TesseractLanguage currentOcrLanguage = GetCurrentLanguage(this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex);
+
+            // Check if we are actually performing OCR.
+            if (currentOcrLanguage != null)
+            {
+                // Create a window to show the OCR progress.
+                OCRProgressWindow progress = new OCRProgressWindow();
+
+                // Create a new CancellationTokenSource to allow users to cancel the OCR operation.
+                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+                // Handle the CancelClicked event from the progress dialog.
+                progress.CancelClicked += (s, e) =>
+                {
+                    cancellationTokenSource.Cancel();
+                };
+
+                // Show the progress window as a dialog box, but don't await it - we need to run stuff in the background.
+                _ = progress.ShowDialog(this);
+
+                // Catch the OperationCanceledException, to handle OCR cancellation.
+                try
+                {
+                    //We need to re-initialise the renderer. No need to ask it to release resources here because it will do it on its own (and we don't need to dispose the Document).
+                    await this.FindControl<PDFRenderer>("MuPDFRenderer").InitializeAsync(Document, pageNumber: pageNumber, ocrLanguage: currentOcrLanguage,
+
+                        // Use the cancellation token from the source created above.
+                        ocrCancellationToken: cancellationTokenSource.Token,
+
+                        // Use the progress callback to set the value in the progress window.
+                        ocrProgress: new Progress<OCRProgressInfo>(prog => progress.SetProgress(prog.Progress))
+
+                        );
+                    this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
+
+                    // Close the progress window.
+                    progress.Close();
+                }
+                catch (OperationCanceledException)
+                {
+                    // Close the progress window.
+                    progress.Close();
+
+                    // Change the selected OCR language to "None". This will cause this method to be invoked again.
+                    this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex = 0;
+                }
+            }
+            // No OCR, thus no need to show the progress window.
+            else
+            {
+                //We need to re-initialise the renderer. No need to ask it to release resources here because it will do it on its own (and we don't need to dispose the Document).
+                await this.FindControl<PDFRenderer>("MuPDFRenderer").InitializeAsync(Document, pageNumber: this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber, ocrLanguage: null);
                 this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
             }
         }
@@ -425,9 +483,7 @@ namespace PDFViewerDemo
         {
             if (Document != null)
             {
-                //We need to re-initialise the renderer. No need to ask it to release resources here because it will do it on its own (and we don't need to dispose the Document).
-                await this.FindControl<PDFRenderer>("MuPDFRenderer").InitializeAsync(Document, pageNumber: this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber, ocrLanguage: GetCurrentLanguage(this.FindControl<ComboBox>("OCRLanguageBox").SelectedIndex));
-                this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
+                await InitializeDocument(this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber);
             }
         }
 

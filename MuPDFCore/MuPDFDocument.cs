@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MuPDFCore
@@ -913,8 +914,10 @@ namespace MuPDFCore
         /// <param name="pageNumber">The number of the page (starting at 0)</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> used to cancel the operation.</param>
+        /// <param name="progress">An <see cref="IProgress{OCRProgressInfo}"/> used to report progress.</param>
         /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
-        public MuPDFStructuredTextPage GetStructuredTextPage(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true)
+        public MuPDFStructuredTextPage GetStructuredTextPage(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
             if (DisplayLists[pageNumber] == null)
             {
@@ -930,7 +933,7 @@ namespace MuPDFCore
                 region = new Rectangle(region.X0 * 72 / this.ImageXRes, region.Y0 * 72 / this.ImageYRes, region.X1 * 72 / this.ImageXRes, region.Y1 * 72 / this.ImageYRes);
             }
 
-            return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], ocrLanguage, zoom, region);
+            return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], ocrLanguage, zoom, region, cancellationToken, progress);
         }
 
         /// <summary>
@@ -939,8 +942,10 @@ namespace MuPDFCore
         /// <param name="pageNumber">The number of the page (starting at 0)</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> used to cancel the operation.</param>
+        /// <param name="progress">An <see cref="IProgress{OCRProgressInfo}"/> used to report progress.</param>
         /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
-        public async Task<MuPDFStructuredTextPage> GetStructuredTextPageAsync(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true)
+        public async Task<MuPDFStructuredTextPage> GetStructuredTextPageAsync(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
             if (DisplayLists[pageNumber] == null)
             {
@@ -956,7 +961,7 @@ namespace MuPDFCore
                 region = new Rectangle(region.X0 * 72 / this.ImageXRes, region.Y0 * 72 / this.ImageYRes, region.X1 * 72 / this.ImageXRes, region.Y1 * 72 / this.ImageYRes);
             }
 
-            return await Task.Run(() => new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], ocrLanguage, zoom, region));
+            return await Task.Run(() => new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], ocrLanguage, zoom, region, cancellationToken, progress));
         }
 
         /// <summary>

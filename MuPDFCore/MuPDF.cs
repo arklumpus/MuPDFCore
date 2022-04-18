@@ -787,6 +787,13 @@ namespace MuPDFCore
         internal static extern int GetStructuredTextPage(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref int out_stext_block_count);
 
         /// <summary>
+        /// Delegate defining a callback function that is invoked by the unmanaged MuPDF library to indicate OCR progress.
+        /// </summary>
+        /// <param name="progress">The current progress, ranging from 0 to 100.</param>
+        /// <returns>This function should return 0 to indicate that the OCR process should continue, or 1 to indicate that it should be stopped.</returns>
+        internal delegate int ProgressCallback(int progress);
+
+        /// <summary>
         /// Get a structured text representation of a display list, using the Tesseract OCR engine.
         /// </summary>
         /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
@@ -800,9 +807,10 @@ namespace MuPDFCore
         /// <param name="y1">The bottom coordinate in page units of the region of the display list that should be analysed.</param>
         /// <param name="prefix">A string value that will be used as an argument for the <c>putenv</c> function. If this is <see langword="null"/>, the <c>putenv</c> function is not invoked. Usually used to set the value of the <c>TESSDATA_PREFIX</c> environment variable.</param>
         /// <param name="language">The name of the language model file to use for the OCR.</param>
+        /// <param name="callback">A progress callback function. This function will be called with an integer parameter ranging from 0 to 100 to indicate OCR progress, and should return 0 to continue or 1 to abort the OCR process.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextPageWithOCR(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref int out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, string prefix, string language);
+        internal static extern int GetStructuredTextPageWithOCR(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref int out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, string prefix, string language, [MarshalAs(UnmanagedType.FunctionPtr)]ProgressCallback callback);
 
         /// <summary>
         /// Free a native structured text page and its associated resources.

@@ -279,7 +279,9 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
-        public async Task InitializeAsync(MuPDFDocument document, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
+        /// <param name="ocrCancellationToken">A <see cref="CancellationToken"/> used to cancel the OCR operation.</param>
+        /// <param name="ocrProgress">An <see cref="IProgress{OCRProgressInfo}"/> used to report OCR progress.</param>
+        public async Task InitializeAsync(MuPDFDocument document, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null, CancellationToken ocrCancellationToken = default, IProgress<OCRProgressInfo> ocrProgress = null)
         {
             if (IsViewerInitialized)
             {
@@ -291,7 +293,7 @@ namespace MuPDFCore.MuPDFRenderer
             Document = document;
             Context = null;
 
-            await ContinueInitializationAsync(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
+            await ContinueInitializationAsync(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage, ocrCancellationToken, ocrProgress);
         }
 
         /// <summary>
@@ -327,7 +329,9 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
-        public async Task InitializeAsync(string fileName, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
+        /// <param name="ocrCancellationToken">A <see cref="CancellationToken"/> used to cancel the OCR operation.</param>
+        /// <param name="ocrProgress">An <see cref="IProgress{OCRProgressInfo}"/> used to report OCR progress.</param>
+        public async Task InitializeAsync(string fileName, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null, CancellationToken ocrCancellationToken = default, IProgress<OCRProgressInfo> ocrProgress = null)
         {
             if (IsViewerInitialized)
             {
@@ -339,7 +343,7 @@ namespace MuPDFCore.MuPDFRenderer
             Context = new MuPDFContext();
             Document = new MuPDFDocument(Context, fileName);
 
-            await ContinueInitializationAsync(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
+            await ContinueInitializationAsync(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage, ocrCancellationToken, ocrProgress);
         }
 
         /// <summary>
@@ -372,14 +376,16 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
-        public async Task InitializeAsync(MemoryStream ms, InputFileTypes fileType, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
+        /// <param name="ocrCancellationToken">A <see cref="CancellationToken"/> used to cancel the OCR operation.</param>
+        /// <param name="ocrProgress">An <see cref="IProgress{OCRProgressInfo}"/> used to report OCR progress.</param>
+        public async Task InitializeAsync(MemoryStream ms, InputFileTypes fileType, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null, CancellationToken ocrCancellationToken = default, IProgress<OCRProgressInfo> ocrProgress = null)
         {
             //Get the byte array that underlies the MemoryStream.
             int origin = (int)ms.Seek(0, SeekOrigin.Begin);
             long dataLength = ms.Length;
             byte[] dataBytes = ms.GetBuffer();
 
-            await InitializeAsync(dataBytes, fileType, origin, (int)dataLength, threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
+            await InitializeAsync(dataBytes, fileType, origin, (int)dataLength, threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage, ocrCancellationToken, ocrProgress);
         }
 
         /// <summary>
@@ -435,7 +441,9 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
-        public async Task InitializeAsync(byte[] dataBytes, InputFileTypes fileType, int offset = 0, int length = -1, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null)
+        /// <param name="ocrCancellationToken">A <see cref="CancellationToken"/> used to cancel the OCR operation.</param>
+        /// <param name="ocrProgress">An <see cref="IProgress{OCRProgressInfo}"/> used to report OCR progress.</param>
+        public async Task InitializeAsync(byte[] dataBytes, InputFileTypes fileType, int offset = 0, int length = -1, int threadCount = 0, int pageNumber = 0, double resolutionMultiplier = 1, bool includeAnnotations = true, TesseractLanguage ocrLanguage = null, CancellationToken ocrCancellationToken = default, IProgress<OCRProgressInfo> ocrProgress = null)
         {
             if (IsViewerInitialized)
             {
@@ -461,7 +469,7 @@ namespace MuPDFCore.MuPDFRenderer
             //Create a new document, passing the wrapped pointer so that it can be released when the Document is disposed.
             Document = new MuPDFDocument(Context, pointer, length, fileType, ref disposer);
 
-            await ContinueInitializationAsync(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage);
+            await ContinueInitializationAsync(threadCount, pageNumber, resolutionMultiplier, includeAnnotations, ocrLanguage, ocrCancellationToken, ocrProgress);
         }
 
         /// <summary>
@@ -542,7 +550,9 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="resolutionMultiplier">This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <paramref name="resolutionMultiplier"/> is 1, the resolution will match the size (in screen units) of the <see cref="PDFRenderer"/>.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
-        private async Task ContinueInitializationAsync(int threadCount, int pageNumber, double resolutionMultiplier, bool includeAnnotations, TesseractLanguage ocrLanguage = null)
+        /// <param name="ocrCancellationToken">A <see cref="CancellationToken"/> used to cancel the OCR operation.</param>
+        /// <param name="ocrProgress">An <see cref="IProgress{OCRProgressInfo}"/> used to report OCR progress.</param>
+        private async Task ContinueInitializationAsync(int threadCount, int pageNumber, double resolutionMultiplier, bool includeAnnotations, TesseractLanguage ocrLanguage, CancellationToken ocrCancellationToken, IProgress<OCRProgressInfo> ocrProgress)
         {
             //Initialise threads and locking mechanics.
             if (RenderMutex == null)
@@ -570,7 +580,7 @@ namespace MuPDFCore.MuPDFRenderer
             }
 
             //Create the structured text representation.
-            this.StructuredTextPage = await Document.GetStructuredTextPageAsync(pageNumber, ocrLanguage, includeAnnotations);
+            this.StructuredTextPage = await Document.GetStructuredTextPageAsync(pageNumber, ocrLanguage, includeAnnotations, ocrCancellationToken, ocrProgress);
 
             //Create the multithreaded renderer.
             Renderer = Document.GetMultiThreadedRenderer(pageNumber, threadCount, includeAnnotations);
