@@ -313,12 +313,33 @@ namespace MuPDFCore
         private readonly IntPtr InternalPointer;
 
         /// <summary>
+        /// The number of bytes that have been allocated, for adding memory pressure.
+        /// </summary>
+        private readonly long BytesAllocated = -1;
+
+        /// <summary>
         /// Create a new DisposableIntPtr.
         /// </summary>
         /// <param name="pointer">The pointer that should be freed upon disposing of this object.</param>
         public DisposableIntPtr(IntPtr pointer)
         {
             this.InternalPointer = pointer;
+        }
+
+        /// <summary>
+        /// Create a new DisposableIntPtr, adding memory pressure to the GC to account for the allocation of unmanaged memory.
+        /// </summary>
+        /// <param name="pointer">The pointer that should be freed upon disposing of this object.</param>
+        /// <param name="bytesAllocated">The number of bytes that have been allocated, for adding memory pressure.</param>
+        public DisposableIntPtr(IntPtr pointer, long bytesAllocated)
+        {
+            this.InternalPointer = pointer;
+            this.BytesAllocated = bytesAllocated;
+
+            if (BytesAllocated > 0)
+            {
+                GC.AddMemoryPressure(bytesAllocated);
+            }
         }
 
         private bool disposedValue;
@@ -329,6 +350,12 @@ namespace MuPDFCore
             if (!disposedValue)
             {
                 Marshal.FreeHGlobal(InternalPointer);
+
+                if (BytesAllocated > 0)
+                {
+                    GC.RemoveMemoryPressure(BytesAllocated);
+                }
+                
                 disposedValue = true;
             }
         }
