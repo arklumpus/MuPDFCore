@@ -1982,11 +1982,13 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSamplePNGDisplayList();
 
+            int progressCount = 0;
 
-            int result = NativeMethods.GetStructuredTextPageWithOCR(nativeContext, nativeDisplayList, ref nativeSTextPage, ref sTextBlockCount, 1, x0, y0, x1, y1, "TESSDATA_PREFIX=" + prefix, "eng");
+            int result = NativeMethods.GetStructuredTextPageWithOCR(nativeContext, nativeDisplayList, ref nativeSTextPage, ref sTextBlockCount, 1, x0, y0, x1, y1, "TESSDATA_PREFIX=" + prefix, "eng", prog => { progressCount++; return 0; } );
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextPage returned the wrong exit code.");
             Assert.IsTrue(sTextBlockCount > 0, "The number of text blocks in the page is wrong.");
+            Assert.IsTrue(progressCount > 0, "The progress callback was not called.");
 
             try
             {

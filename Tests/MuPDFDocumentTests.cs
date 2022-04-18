@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 #pragma warning disable IDE0090 // Use 'new(...)'
@@ -1072,6 +1073,41 @@ namespace Tests
         }
 
         [TestMethod]
+        [DeploymentItem("Data/eng.traineddata")]
+        public async Task MuPDFDocumentStructuredTextPageGetterWithOCRAsyncProgress()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.png");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PNG);
+
+            int progressCount = 0;
+
+            MuPDFStructuredTextPage sTextPage = await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"), progress: new Progress<OCRProgressInfo>(prog => progressCount++));
+
+            Assert.IsNotNull(sTextPage, "The structured text page is null.");
+            Assert.IsTrue(sTextPage.Count > 0, "The structured text page is empty.");
+        }
+
+        [TestMethod]
+        [DeploymentItem("Data/eng.traineddata")]
+        public async Task MuPDFDocumentStructuredTextPageGetterWithOCRAsyncCancellation()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.png");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PNG);
+
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+            await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () => await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"), cancellationToken: cancellationTokenSource.Token, progress: new Progress<OCRProgressInfo>(prog => cancellationTokenSource.Cancel())), "The expected OperationCanceledException was not thrown.");
+        }
+
+        [TestMethod]
         public void MuPDFDocumentTextExtraction()
         {
             using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
@@ -1119,6 +1155,42 @@ namespace Tests
 
             Assert.IsFalse(string.IsNullOrEmpty(extractedText), "The extracted text is empty.");
             Assert.IsTrue(extractedText.Length > 10, "The extracted text is too short.");
+        }
+
+        [TestMethod]
+        [DeploymentItem("Data/eng.traineddata")]
+        public async Task MuPDFDocumentTextExtractionWithOCRAsyncProgress()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.png");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PNG);
+
+            int progressCount = 0;
+
+            string extractedText = await document.ExtractTextAsync(new TesseractLanguage("eng.traineddata"), progress: new Progress<OCRProgressInfo>(prog => progressCount++));
+
+            Assert.IsFalse(string.IsNullOrEmpty(extractedText), "The extracted text is empty.");
+            Assert.IsTrue(extractedText.Length > 10, "The extracted text is too short.");
+            Assert.IsTrue(progressCount > 0, "The progress callback was not called.");
+        }
+
+        [TestMethod]
+        [DeploymentItem("Data/eng.traineddata")]
+        public async Task MuPDFDocumentTextExtractionWithOCRAsyncCancellation()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.png");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PNG);
+
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+            await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () => await document.ExtractTextAsync(new TesseractLanguage("eng.traineddata"), cancellationToken: cancellationTokenSource.Token, progress: new Progress<OCRProgressInfo>(prog => cancellationTokenSource.Cancel())), "The expected OperationCanceledException was not thrown.");
         }
     }
 }
