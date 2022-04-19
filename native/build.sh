@@ -3,13 +3,25 @@
 cwd=$PWD
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    echo "Building linux-x64 native library..." ;
-    echo ;
-	rm -rf out/build/linux-x64 ;
-	mkdir -p out/build/linux-x64 ;
-    cd out/build/linux-x64 ;
-    cmake ../../../ ;
-    make ;
+	architecture=$(uname -m);
+	
+	if [[ "$architecture" == "x86_64" ]]; then
+		echo "Building linux-x64 native library..." ;
+		echo ;
+		rm -rf out/build/linux-x64 ;
+		mkdir -p out/build/linux-x64 ;
+		cd out/build/linux-x64 ;
+		cmake ../../../ ;
+		make ;
+	elif [[ "$architecture" == "aarch64" ]]; then
+		echo "Building linux-arm64 native library..." ;
+		echo ;
+		rm -rf out/build/linux-arm64 ;
+		mkdir -p out/build/linux-arm64 ;
+		cd out/build/linux-arm64 ;
+		cmake ../../../ ;
+		make ;
+	fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
 	architecture=$(uname -m);
 	

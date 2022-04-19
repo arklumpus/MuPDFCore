@@ -20,8 +20,15 @@ if (WIN32)
 endif()
 
 if(UNIX AND NOT APPLE)
-	target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/linux-x64/libmupdf.a")
-	target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/linux-x64/libmupdf-third.a")
+	if (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "x86_64")
+		target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/linux-x64/libmupdf.a")
+		target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/linux-x64/libmupdf-third.a")
+	endif()
+	
+	if (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "aarch64")
+		target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/linux-arm64/libmupdf.a")
+		target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/linux-arm64/libmupdf-third.a")
+	endif()
 endif()
 
 if (APPLE)
