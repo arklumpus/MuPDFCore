@@ -99,7 +99,7 @@ echo.
 echo Building with target [94mlinux-arm64[0m
 
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-arm64.pubxml
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-arm64.pubxml /p:PlatformTarget=arm64
 cd ..
 
 echo.
@@ -141,7 +141,7 @@ echo.
 echo Building with target [94mmac-arm64[0m
 
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\mac-arm64.pubxml
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\mac-arm64.pubxml /p:PlatformTarget=arm64
 cd ..
 
 echo.
