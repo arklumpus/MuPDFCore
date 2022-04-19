@@ -16,7 +16,11 @@
 */
 
 using System;
+using System.IO;
+using System.IO.Pipes;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Tests")]
 namespace MuPDFCore
@@ -355,7 +359,7 @@ namespace MuPDFCore
                 {
                     GC.RemoveMemoryPressure(BytesAllocated);
                 }
-                
+
                 disposedValue = true;
             }
         }
@@ -396,7 +400,7 @@ namespace MuPDFCore
     internal class UTF8EncodedString : IDisposable
     {
         private bool disposedValue;
-        
+
         /// <summary>
         /// The address of the bytes encoding the string in unmanaged memory.
         /// </summary>
@@ -435,6 +439,494 @@ namespace MuPDFCore
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+    }
+
+    /// <summary>
+    /// EventArgs for the <see cref="MuPDF.StandardOutputMessage"/> and <see cref="MuPDF.StandardErrorMessage"/> events.
+    /// </summary>
+    public class MessageEventArgs : EventArgs
+    {
+        /// <summary>
+        /// The message that has been logged.
+        /// </summary>
+        public string Message { get; }
+
+        /// <summary>
+        /// Create a new <see cref="MessageEventArgs"/> instance.
+        /// </summary>
+        /// <param name="message">The message that has been logged.</param>
+        public MessageEventArgs(string message)
+        {
+            this.Message = message;
+        }
+    }
+
+    /// <summary>
+    /// Contains static methods to perform setup operations.
+    /// </summary>
+    public static class MuPDF
+    {
+        private static int StdOutFD = -1;
+        private static int StdErrFD = -1;
+
+        private static TextWriter ConsoleOut;
+        private static TextWriter ConsoleErr;
+
+        private static ConsoleColor DefaultForeground;
+        private static ConsoleColor DefaultBackground;
+
+        private static string PipeName;
+        private static bool CleanupRegistered = false;
+        private static object CleanupLock = new object();
+
+        /// <summary>
+        /// This event is invoked when <see cref="RedirectOutput"/> has been called and the native MuPDF library writes to the standard output stream.
+        /// </summary>
+        public static event EventHandler<MessageEventArgs> StandardOutputMessage;
+
+        /// <summary>
+        /// This event is invoked when <see cref="RedirectOutput"/> has been called and the native MuPDF library writes to the standard error stream.
+        /// </summary>
+        public static event EventHandler<MessageEventArgs> StandardErrorMessage;
+
+        /// <summary>
+        /// Redirects output messages from the native MuPDF library to the <see cref="StandardOutputMessage"/> and <see cref="StandardErrorMessage"/> events. Note that this has side-effects.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> that finishes when the output streams have been redirected.</returns>
+        public static async Task RedirectOutput()
+        {
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            {
+                await RedirectOutputWindows();
+            }
+            else
+            {
+                await RedirectOutputUnix();
+            }
+
+            if (!CleanupRegistered)
+            {
+                AppDomain.CurrentDomain.ProcessExit += (s, e) =>
+                {
+                    ResetOutput();
+                };
+            }
+        }
+
+        const int UnixMaxPipeLength = 107;
+
+        private static async Task RedirectOutputUnix()
+        {
+            if (StdOutFD < 0 && StdErrFD < 0)
+            {
+                string tempPath = Path.GetTempPath();
+
+                string pipeName = "MuPDFCore-" + Guid.NewGuid().ToString();
+
+                pipeName = pipeName.Substring(0, Math.Min(pipeName.Length, UnixMaxPipeLength - tempPath.Length - 4));
+                pipeName = Path.Combine(tempPath, pipeName);
+
+                PipeName = pipeName;
+
+                Task redirectOutputTask = System.Threading.Tasks.Task.Run(() =>
+                {
+                    NativeMethods.RedirectOutput(out StdOutFD, out StdErrFD, pipeName + "-out", pipeName + "-err");
+                });
+
+                // Start stdout pipe (this is actually a socket)
+                _ = Task.Run(() =>
+                {
+                    using (NamedPipeClientStream client = new NamedPipeClientStream(pipeName + "-out"))
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                client.Connect(100);
+                                break;
+                            }
+                            catch { }
+                        }
+
+                        using (StreamReader reader = new StreamReader(client))
+                        {
+                            while (true)
+                            {
+                                string message = reader.ReadLine();
+
+                                if (!string.IsNullOrEmpty(message))
+                                {
+                                    StandardOutputMessage?.Invoke(null, new MessageEventArgs(message));
+                                }
+                            }
+                        }
+                    }
+
+                });
+
+                // Start stderr pipe (this is actually a socket)
+                _ = Task.Run(() =>
+                {
+                    using (NamedPipeClientStream client = new NamedPipeClientStream(pipeName + "-err"))
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                client.Connect(100);
+                                break;
+                            }
+                            catch { }
+                        }
+
+                        using (StreamReader reader = new StreamReader(client))
+                        {
+                            while (true)
+                            {
+                                string message = reader.ReadLine();
+
+                                if (!string.IsNullOrEmpty(message))
+                                {
+                                    StandardErrorMessage?.Invoke(null, new MessageEventArgs(message));
+                                }
+                            }
+                        }
+                    }
+
+                });
+
+                await redirectOutputTask;
+
+                ConsoleOut = Console.Out;
+                ConsoleErr = Console.Error;
+
+                ConsoleColor fg = Console.ForegroundColor;
+                ConsoleColor bg = Console.BackgroundColor;
+
+                Console.ResetColor();
+
+                DefaultForeground = Console.ForegroundColor;
+                DefaultBackground = Console.BackgroundColor;
+
+                Console.ForegroundColor = fg;
+                Console.BackgroundColor = bg;
+
+                Console.SetOut(new FileDescriptorTextWriter(Console.Out.Encoding, StdOutFD));
+                Console.SetError(new FileDescriptorTextWriter(Console.Error.Encoding, StdErrFD));
+            }
+        }
+
+        private static async Task RedirectOutputWindows()
+        {
+            if (StdOutFD < 0 && StdErrFD < 0)
+            {
+                string pipeName = "MuPDFCore-" + Guid.NewGuid().ToString();
+
+                Task redirectOutputTask = System.Threading.Tasks.Task.Run(() =>
+                {
+                    NativeMethods.RedirectOutput(out StdOutFD, out StdErrFD, "\\\\.\\pipe\\" + pipeName + "-out", "\\\\.\\pipe\\" + pipeName + "-err");
+                });
+
+                // Start stdout pipe
+                _ = Task.Run(() =>
+                {
+                    using (NamedPipeClientStream client = new NamedPipeClientStream(pipeName + "-out"))
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                client.Connect(100);
+                                break;
+                            }
+                            catch { }
+                        }
+
+                        using (StreamReader reader = new StreamReader(client))
+                        {
+                            while (true)
+                            {
+                                string message = reader.ReadLine();
+
+                                if (!string.IsNullOrEmpty(message))
+                                {
+                                    StandardOutputMessage?.Invoke(null, new MessageEventArgs(message));
+                                }
+                            }
+                        }
+                    }
+
+                });
+
+                // Start stderr pipe
+                _ = Task.Run(() =>
+                {
+                    using (NamedPipeClientStream client = new NamedPipeClientStream(pipeName + "-err"))
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                client.Connect(100);
+                                break;
+                            }
+                            catch { }
+                        }
+
+                        using (StreamReader reader = new StreamReader(client))
+                        {
+                            while (true)
+                            {
+                                string message = reader.ReadLine();
+
+                                if (!string.IsNullOrEmpty(message))
+                                {
+                                    StandardErrorMessage?.Invoke(null, new MessageEventArgs(message));
+                                }
+                            }
+                        }
+                    }
+
+                });
+
+                await redirectOutputTask;
+
+                ConsoleOut = Console.Out;
+                ConsoleErr = Console.Error;
+
+                ConsoleColor fg = Console.ForegroundColor;
+                ConsoleColor bg = Console.BackgroundColor;
+
+                Console.ResetColor();
+
+                DefaultForeground = Console.ForegroundColor;
+                DefaultBackground = Console.BackgroundColor;
+
+                Console.ForegroundColor = fg;
+                Console.BackgroundColor = bg;
+
+                Console.SetOut(new FileDescriptorTextWriter(Console.Out.Encoding, StdOutFD));
+                Console.SetError(new FileDescriptorTextWriter(Console.Error.Encoding, StdErrFD));
+            }
+        }
+
+        /// <summary>
+        /// Reset the default standard output and error streams for the native MuPDF library.
+        /// </summary>
+        public static void ResetOutput()
+        {
+            lock (CleanupLock)
+            {
+                if (StdOutFD >= 0 && StdErrFD >= 0)
+                {
+                    NativeMethods.ResetOutput(StdOutFD, StdErrFD);
+
+                    Console.SetOut(ConsoleOut);
+                    Console.SetError(ConsoleErr);
+
+                    StdOutFD = -1;
+                    StdErrFD = -1;
+
+                    if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        File.Delete(PipeName + "-out");
+                        File.Delete(PipeName + "-err");
+                    }
+                }
+            }
+        }
+
+        internal class FileDescriptorTextWriter : TextWriter
+        {
+            public override Encoding Encoding { get; }
+            private int FileDescriptor { get; }
+
+            public FileDescriptorTextWriter(Encoding encoding, int fileDescriptor)
+            {
+                this.Encoding = encoding;
+                this.FileDescriptor = fileDescriptor;
+            }
+
+            public override void Write(string value)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                if (Console.ForegroundColor != DefaultForeground || Console.BackgroundColor != DefaultBackground)
+                {
+                    sb.Append("[");
+                }
+
+                if (Console.ForegroundColor != DefaultForeground)
+                {
+                    switch (Console.ForegroundColor)
+                    {
+                        case ConsoleColor.Black:
+                            sb.Append("30");
+                            break;
+                        case ConsoleColor.DarkRed:
+                            sb.Append("31");
+                            break;
+                        case ConsoleColor.DarkGreen:
+                            sb.Append("32");
+                            break;
+                        case ConsoleColor.DarkYellow:
+                            sb.Append("33");
+                            break;
+                        case ConsoleColor.DarkBlue:
+                            sb.Append("34");
+                            break;
+                        case ConsoleColor.DarkMagenta:
+                            sb.Append("35");
+                            break;
+                        case ConsoleColor.DarkCyan:
+                            sb.Append("36");
+                            break;
+                        case ConsoleColor.Gray:
+                            sb.Append("37");
+                            break;
+                        case ConsoleColor.DarkGray:
+                            sb.Append("90");
+                            break;
+                        case ConsoleColor.Red:
+                            sb.Append("91");
+                            break;
+                        case ConsoleColor.Green:
+                            sb.Append("92");
+                            break;
+                        case ConsoleColor.Yellow:
+                            sb.Append("93");
+                            break;
+                        case ConsoleColor.Blue:
+                            sb.Append("94");
+                            break;
+                        case ConsoleColor.Magenta:
+                            sb.Append("95");
+                            break;
+                        case ConsoleColor.Cyan:
+                            sb.Append("96");
+                            break;
+                        case ConsoleColor.White:
+                            sb.Append("97");
+                            break;
+                    }
+                }
+
+                if (Console.ForegroundColor != DefaultForeground && Console.BackgroundColor != DefaultBackground)
+                {
+                    sb.Append(";");
+                }
+
+                if (Console.BackgroundColor != DefaultBackground)
+                {
+                    switch (Console.BackgroundColor)
+                    {
+                        case ConsoleColor.Black:
+                            sb.Append("40");
+                            break;
+                        case ConsoleColor.DarkRed:
+                            sb.Append("41");
+                            break;
+                        case ConsoleColor.DarkGreen:
+                            sb.Append("42");
+                            break;
+                        case ConsoleColor.DarkYellow:
+                            sb.Append("43");
+                            break;
+                        case ConsoleColor.DarkBlue:
+                            sb.Append("44");
+                            break;
+                        case ConsoleColor.DarkMagenta:
+                            sb.Append("45");
+                            break;
+                        case ConsoleColor.DarkCyan:
+                            sb.Append("46");
+                            break;
+                        case ConsoleColor.Gray:
+                            sb.Append("47");
+                            break;
+                        case ConsoleColor.DarkGray:
+                            sb.Append("100");
+                            break;
+                        case ConsoleColor.Red:
+                            sb.Append("101");
+                            break;
+                        case ConsoleColor.Green:
+                            sb.Append("102");
+                            break;
+                        case ConsoleColor.Yellow:
+                            sb.Append("103");
+                            break;
+                        case ConsoleColor.Blue:
+                            sb.Append("104");
+                            break;
+                        case ConsoleColor.Magenta:
+                            sb.Append("105");
+                            break;
+                        case ConsoleColor.Cyan:
+                            sb.Append("106");
+                            break;
+                        case ConsoleColor.White:
+                            sb.Append("107");
+                            break;
+                    }
+                }
+
+                if (Console.ForegroundColor != DefaultForeground || Console.BackgroundColor != DefaultBackground)
+                {
+                    sb.Append("m");
+                }
+
+                sb.Append(value);
+
+                if (Console.ForegroundColor != DefaultForeground || Console.BackgroundColor != DefaultBackground)
+                {
+                    sb.Append("[");
+                }
+
+                if (Console.ForegroundColor != DefaultForeground)
+                {
+                    sb.Append("39");
+                }
+
+                if (Console.ForegroundColor != DefaultForeground && Console.BackgroundColor != DefaultBackground)
+                {
+                    sb.Append(";");
+                }
+
+                if (Console.BackgroundColor != DefaultBackground)
+                {
+                    sb.Append("49");
+                }
+
+                if (Console.ForegroundColor != DefaultForeground || Console.BackgroundColor != DefaultBackground)
+                {
+                    sb.Append("m");
+                }
+
+                NativeMethods.WriteToFileDescriptor(FileDescriptor, sb.ToString(), sb.Length);
+            }
+
+            public override void Write(char value)
+            {
+                Write(value.ToString());
+            }
+
+            public override void Write(char[] buffer)
+            {
+                Write(new string(buffer));
+            }
+
+            public override void Write(char[] buffer, int index, int count)
+            {
+                Write(new string(buffer, index, count));
+            }
+
+            public override void WriteLine(string value)
+            {
+                Write(value);
+                WriteLine();
+            }
         }
     }
 
@@ -810,7 +1302,7 @@ namespace MuPDFCore
         /// <param name="callback">A progress callback function. This function will be called with an integer parameter ranging from 0 to 100 to indicate OCR progress, and should return 0 to continue or 1 to abort the OCR process.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextPageWithOCR(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref int out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, string prefix, string language, [MarshalAs(UnmanagedType.FunctionPtr)]ProgressCallback callback);
+        internal static extern int GetStructuredTextPageWithOCR(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref int out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, string prefix, string language, [MarshalAs(UnmanagedType.FunctionPtr)] ProgressCallback callback);
 
         /// <summary>
         /// Free a native structured text page and its associated resources.
@@ -820,5 +1312,32 @@ namespace MuPDFCore
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int DisposeStructuredTextPage(IntPtr ctx, IntPtr page);
+
+        /// <summary>
+        /// Redirect the standard output and standard error to named pipes with the specified names. On Windows, these are actually named pipes; on Linux and macOS, these are Unix sockets (matching the behaviour of System.IO.Pipes). Note that this has side-effects.
+        /// </summary>
+        /// <param name="stdoutFD">When the method returns, this variable will contain the file descriptor corresponding to the "real" stdout.</param>
+        /// <param name="stderrFD">When the method returns, this variable will contain the file descriptor corresponding to the "real" stderr.</param>
+        /// <param name="stdoutPipeName">The name of the pipe where stdout will be redirected. On Windows, this should be of the form "\\.\pipe\xxx", while on Linux and macOS it should be an absolute file path (maximum length 107/108 characters).</param>
+        /// <param name="stderrPipeName">The name of the pipe where stderr will be redirected. On Windows, this should be of the form "\\.\pipe\xxx", while on Linux and macOS it should be an absolute file path (maximum length 107/108 characters).</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void RedirectOutput(out int stdoutFD, out int stderrFD, string stdoutPipeName, string stderrPipeName);
+
+        /// <summary>
+        /// Write the specified <paramref name="text"/> to a file descriptor. Use 1 for stdout and 2 for stderr (which may have been redirected).
+        /// </summary>
+        /// <param name="fileDescriptor">The file descriptor on which to write.</param>
+        /// <param name="text">The text to write.</param>
+        /// <param name="length">The length of the text to write (i.e., text.Length).</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void WriteToFileDescriptor(int fileDescriptor, string text, int length);
+
+        /// <summary>
+        /// Reset the standard output and standard error (or redirect them to the specified file descriptors, theoretically). Use with the <paramref name="stdoutFD"/> and <paramref name="stderrFD"/> returned by <see cref="RedirectOutput"/> to undo what it did.
+        /// </summary>
+        /// <param name="stdoutFD">The file descriptor corresponding to the "real" stdout.</param>
+        /// <param name="stderrFD">The file descriptor corresponding to the "real" stderr.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void ResetOutput(int stdoutFD, int stderrFD);
     }
 }

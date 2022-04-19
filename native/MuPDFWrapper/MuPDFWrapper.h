@@ -132,6 +132,30 @@ struct fz_store
 extern "C"
 {
 	/// <summary>
+	/// Reset the standard output and standard error (or redirect them to the specified file descriptors, theoretically). Use with the <paramref name="stdoutFD"/> and <paramref name="stderrFD"/> returned by <see cref="RedirectOutput"/> to undo what it did.
+	/// </summary>
+	/// <param name="stdoutFD">The file descriptor corresponding to the "real" stdout.</param>
+	/// <param name="stderrFD">The file descriptor corresponding to the "real" stderr.</param>
+	DLL_PUBLIC void ResetOutput(int stdoutFD, int stderrFD);
+
+	/// <summary>
+	/// Write the specified <paramref name="text"/> to a file descriptor. Use 1 for stdout and 2 for stderr (which may have been redirected).
+	/// </summary>
+	/// <param name="fileDescriptor">The file descriptor on which to write.</param>
+	/// <param name="text">The text to write.</param>
+	/// <param name="length">The length of the text to write (i.e., text.Length).</param>
+	DLL_PUBLIC void WriteToFileDescriptor(int fileDescriptor, const char* text, int length);
+
+	/// <summary>
+	/// Redirect the standard output and standard error to named pipes with the specified names. On Windows, these are actually named pipes; on Linux and macOS, these are Unix sockets (matching the behaviour of System.IO.Pipes). Note that this has side-effects.
+	/// </summary>
+	/// <param name="stdoutFD">When the method returns, this variable will contain the file descriptor corresponding to the "real" stdout.</param>
+	/// <param name="stderrFD">When the method returns, this variable will contain the file descriptor corresponding to the "real" stderr.</param>
+	/// <param name="stdoutPipeName">The name of the pipe where stdout will be redirected. On Windows, this should be of the form "\\.\pipe\xxx", while on Linux and macOS it should be an absolute file path (maximum length 107/108 characters).</param>
+	/// <param name="stderrPipeName">The name of the pipe where stderr will be redirected. On Windows, this should be of the form "\\.\pipe\xxx", while on Linux and macOS it should be an absolute file path (maximum length 107/108 characters).</param>
+	DLL_PUBLIC void RedirectOutput(int* stdoutFD, int* stderrFD, const char* stdoutPipe, const char* stderrPipe);
+
+	/// <summary>
 	/// Get the contents of a structured text character.
 	/// </summary>
 	/// <param name="character">The address of the character.</param>
@@ -219,7 +243,7 @@ extern "C"
 	/// <param name="language">The name of the language model file to use for the OCR.</param>
 	/// <param name="callback">A progress callback function. This function will be called with an integer parameter ranging from 0 to 100 to indicate OCR progress, and should return 0 to continue or 1 to abort the OCR process.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int __stdcall callback(int));
+	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int callback(int));
 
 	/// <summary>
 	/// Get a structured text representation of a display list.

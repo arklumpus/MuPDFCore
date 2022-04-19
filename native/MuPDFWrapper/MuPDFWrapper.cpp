@@ -8,6 +8,17 @@
 
 #include "MuPDFWrapper.h"
 #include <iostream>
+#include <fcntl.h>
+
+#if defined _WIN32
+	#include <windows.h>
+	#include <io.h>
+#else
+	#include <unistd.h>
+	#include <sys/socket.h>
+	#include <sys/un.h>
+#endif
+
 
 fz_pixmap*
 new_pixmap_with_data(fz_context* ctx, fz_colorspace* colorspace, int w, int h, fz_separations* seps, int alpha, unsigned char* pixel_storage)
@@ -147,6 +158,94 @@ void unlock_mutex(void* user, int lock)
 
 extern "C"
 {
+	DLL_PUBLIC void ResetOutput(int stdoutFD, int stderrFD)
+	{
+		fprintf(stdout, "\n");
+		fprintf(stderr, "\n");
+
+		fflush(stdout);
+		fflush(stderr);
+
+		dup2(stdoutFD, fileno(stdout));
+		dup2(stderrFD, fileno(stderr));
+
+		fflush(stdout);
+		fflush(stderr);
+	}
+
+	DLL_PUBLIC void WriteToFileDescriptor(int fileDescriptor, const char* text, int length)
+	{
+		while (length > 0)
+		{
+			int written = write(fileDescriptor, text, length);
+
+			text += written;
+
+			length -= written;
+		}
+		
+	}
+
+#if defined _WIN32
+	void RedirectToPipe(const char* pipeName, int fd)
+	{
+		HANDLE hPipe = CreateNamedPipe(TEXT(pipeName), PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT | PIPE_ACCEPT_REMOTE_CLIENTS, 1, 1024 * 16, 1024 * 16, NMPWAIT_WAIT_FOREVER, NULL);
+
+		ConnectNamedPipe(hPipe, NULL);
+
+		int newFd = _open_osfhandle((intptr_t)hPipe, _O_WRONLY | _O_TEXT);
+		dup2(newFd, fd);
+	}
+#else
+	void RedirectToPipe(const char* pipeName, int fd)
+	{
+		struct sockaddr_un local;
+
+		int sockFd = socket(AF_UNIX, SOCK_STREAM, 0);
+
+		local.sun_family = AF_UNIX;
+		strcpy(local.sun_path, pipeName);
+		unlink(pipeName);
+
+#if defined __APPLE__
+		int len = strlen(local.sun_path) + sizeof(local.sun_family) + 1;
+#elif defined __linux__
+		int len = strlen(local.sun_path) + sizeof(local.sun_family);
+#endif
+
+		bind(sockFd, (struct sockaddr*)&local, len);
+
+		listen(sockFd, INT32_MAX);
+
+		int newFd = accept(sockFd, NULL, NULL);
+
+		dup2(newFd, fd);
+	}
+#endif
+
+	DLL_PUBLIC void RedirectOutput(int* stdoutFD, int* stderrFD, const char* stdoutPipe, const char* stderrPipe)
+	{
+		fflush(stdout);
+		fflush(stderr);
+
+		*stdoutFD = dup(fileno(stdout));
+		/*FILE* stdoutFile = fopen("stdout.txt", "w");
+		dup2(fileno(stdoutFile), fileno(stdout));*/
+
+		RedirectToPipe(stdoutPipe, fileno(stdout));
+		setvbuf(stdout, NULL, _IONBF, 0);
+
+		*stderrFD = dup(fileno(stderr));
+		/*FILE* stderrFile = fopen("stderr.txt", "w");
+		dup2(fileno(stderrFile), fileno(stderr));*/
+		RedirectToPipe(stderrPipe, fileno(stderr));
+		setvbuf(stderr, NULL, _IONBF, 0);
+
+		fflush(stdout);
+		fflush(stderr);
+	}
+
+
 	DLL_PUBLIC int GetStructuredTextChar(fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y)
 	{
 		*out_c = character->c;
@@ -283,10 +382,10 @@ extern "C"
 
 	int progressFunction(fz_context* ctx, void* progress_arg, int progress)
 	{
-		return ((progressCallback)progress_arg)(progress);
+		return (*((progressCallback*)progress_arg))(progress);
 	}
 
-	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int __stdcall callback(int))
+	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int callback(int))
 	{
 		if (prefix != NULL)
 		{
@@ -323,7 +422,7 @@ extern "C"
 		{
 			device = fz_new_stext_device(ctx, page, &options);
 
-			ocr_device = fz_new_ocr_device(ctx, device, ctm, bounds, true, language, progressFunction, callback);
+			ocr_device = fz_new_ocr_device(ctx, device, ctm, bounds, true, language, progressFunction, &callback);
 
 			fz_run_display_list(ctx, list, ocr_device, ctm, fz_infinite_rect, NULL);
 
