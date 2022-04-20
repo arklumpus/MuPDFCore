@@ -436,17 +436,7 @@ extern "C"
 		}
 		fz_always(ctx)
 		{
-			fz_try(ctx)
-			{
-				fz_close_device(ctx, ocr_device);
-				fz_close_device(ctx, device);
-			}
-			fz_catch(ctx)
-			{
-
-			}
-
-			fz_drop_device(ctx, ocr_device);
+			fz_close_device(ctx, device);
 			fz_drop_device(ctx, device);
 		}
 		fz_catch(ctx)
