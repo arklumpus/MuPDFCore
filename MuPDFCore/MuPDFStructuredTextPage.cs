@@ -62,6 +62,11 @@ namespace MuPDFCore
 
         internal MuPDFStructuredTextPage(MuPDFContext context, MuPDFDisplayList list, TesseractLanguage ocrLanguage, double zoom, Rectangle pageBounds, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
+            if (ocrLanguage != null && RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && RuntimeInformation.ProcessArchitecture == Architecture.X86 && (cancellationToken != default || progress != null))
+            {
+                throw new PlatformNotSupportedException("A cancellationToken or a progress callback are not supported on Windows x86!");
+            }
+
             int blockCount = -1;
 
             IntPtr nativeStructuredPage = IntPtr.Zero;

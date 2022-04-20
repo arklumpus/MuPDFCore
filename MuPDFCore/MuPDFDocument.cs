@@ -914,8 +914,8 @@ namespace MuPDFCore
         /// <param name="pageNumber">The number of the page (starting at 0)</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> used to cancel the operation.</param>
-        /// <param name="progress">An <see cref="IProgress{OCRProgressInfo}"/> used to report progress.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> used to cancel the operation. Providing a value other than the default is not supported on Windows x86 and will throw a runtime exception.</param>
+        /// <param name="progress">An <see cref="IProgress{OCRProgressInfo}"/> used to report progress. Providing a value other than null is not supported on Windows x86 and will throw a runtime exception.</param>
         /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
         public MuPDFStructuredTextPage GetStructuredTextPage(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
@@ -942,8 +942,8 @@ namespace MuPDFCore
         /// <param name="pageNumber">The number of the page (starting at 0)</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> used to cancel the operation.</param>
-        /// <param name="progress">An <see cref="IProgress{OCRProgressInfo}"/> used to report progress.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> used to cancel the operation. Providing a value other than the default is not supported on Windows x86 and will throw a runtime exception.</param>
+        /// <param name="progress">An <see cref="IProgress{OCRProgressInfo}"/> used to report progress. Providing a value other than null is not supported on Windows x86 and will throw a runtime exception.</param>
         /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
         public async Task<MuPDFStructuredTextPage> GetStructuredTextPageAsync(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {

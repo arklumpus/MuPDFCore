@@ -1988,7 +1988,11 @@ namespace Tests
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextPage returned the wrong exit code.");
             Assert.IsTrue(sTextBlockCount > 0, "The number of text blocks in the page is wrong.");
-            Assert.IsTrue(progressCount > 0, "The progress callback was not called.");
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.ProcessArchitecture != Architecture.X86)
+            {
+                Assert.IsTrue(progressCount > 0, "The progress callback was not called.");
+            }
 
             try
             {

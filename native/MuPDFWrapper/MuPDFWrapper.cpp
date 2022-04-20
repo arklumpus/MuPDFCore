@@ -422,7 +422,11 @@ extern "C"
 		{
 			device = fz_new_stext_device(ctx, page, &options);
 
+#if defined _WIN32 && (defined(i386) || defined(__i386__) || defined(__i386) || defined(_M_IX86))
+			ocr_device = fz_new_ocr_device(ctx, device, ctm, bounds, true, language, NULL, NULL);
+#else
 			ocr_device = fz_new_ocr_device(ctx, device, ctm, bounds, true, language, progressFunction, &callback);
+#endif
 
 			fz_run_display_list(ctx, list, ocr_device, ctm, fz_infinite_rect, NULL);
 

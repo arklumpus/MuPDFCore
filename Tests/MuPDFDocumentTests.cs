@@ -1085,10 +1085,17 @@ namespace Tests
 
             int progressCount = 0;
 
-            MuPDFStructuredTextPage sTextPage = await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"), progress: new Progress<OCRProgressInfo>(prog => progressCount++));
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && RuntimeInformation.ProcessArchitecture == Architecture.X86)
+            {
+                await Assert.ThrowsExceptionAsync<PlatformNotSupportedException>(async () => await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"), progress: new Progress<OCRProgressInfo>(prog => progressCount++)), "Providing a progress callback should throw a PlatformNotSupportedException on Windows x86.");
+            }
+            else
+            {
+                MuPDFStructuredTextPage sTextPage = await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"), progress: new Progress<OCRProgressInfo>(prog => progressCount++));
 
-            Assert.IsNotNull(sTextPage, "The structured text page is null.");
-            Assert.IsTrue(sTextPage.Count > 0, "The structured text page is empty.");
+                Assert.IsNotNull(sTextPage, "The structured text page is null.");
+                Assert.IsTrue(sTextPage.Count > 0, "The structured text page is empty.");
+            }
         }
 
         [TestMethod]
@@ -1104,7 +1111,14 @@ namespace Tests
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-            await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () => await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"), cancellationToken: cancellationTokenSource.Token, progress: new Progress<OCRProgressInfo>(prog => cancellationTokenSource.Cancel())), "The expected OperationCanceledException was not thrown.");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && RuntimeInformation.ProcessArchitecture == Architecture.X86)
+            {
+                await Assert.ThrowsExceptionAsync<PlatformNotSupportedException>(async () => await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"), cancellationToken: cancellationTokenSource.Token), "Providing a cancellation token should throw a PlatformNotSupportedException on Windows x86.");
+            }
+            else
+            {
+                await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () => await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"), cancellationToken: cancellationTokenSource.Token, progress: new Progress<OCRProgressInfo>(prog => cancellationTokenSource.Cancel())), "The expected OperationCanceledException was not thrown.");
+            }
         }
 
         [TestMethod]
@@ -1170,11 +1184,18 @@ namespace Tests
 
             int progressCount = 0;
 
-            string extractedText = await document.ExtractTextAsync(new TesseractLanguage("eng.traineddata"), progress: new Progress<OCRProgressInfo>(prog => progressCount++));
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && RuntimeInformation.ProcessArchitecture == Architecture.X86)
+            {
+                await Assert.ThrowsExceptionAsync<PlatformNotSupportedException>(async () => await document.ExtractTextAsync(new TesseractLanguage("eng.traineddata"), progress: new Progress<OCRProgressInfo>(prog => progressCount++)), "Providing a progress callback should throw a PlatformNotSupportedException on Windows x86.");
+            }
+            else
+            {
+                string extractedText = await document.ExtractTextAsync(new TesseractLanguage("eng.traineddata"), progress: new Progress<OCRProgressInfo>(prog => progressCount++));
 
-            Assert.IsFalse(string.IsNullOrEmpty(extractedText), "The extracted text is empty.");
-            Assert.IsTrue(extractedText.Length > 10, "The extracted text is too short.");
-            Assert.IsTrue(progressCount > 0, "The progress callback was not called.");
+                Assert.IsFalse(string.IsNullOrEmpty(extractedText), "The extracted text is empty.");
+                Assert.IsTrue(extractedText.Length > 10, "The extracted text is too short.");
+                Assert.IsTrue(progressCount > 0, "The progress callback was not called.");
+            }
         }
 
         [TestMethod]
@@ -1190,7 +1211,14 @@ namespace Tests
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-            await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () => await document.ExtractTextAsync(new TesseractLanguage("eng.traineddata"), cancellationToken: cancellationTokenSource.Token, progress: new Progress<OCRProgressInfo>(prog => cancellationTokenSource.Cancel())), "The expected OperationCanceledException was not thrown.");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && RuntimeInformation.ProcessArchitecture == Architecture.X86)
+            {
+                await Assert.ThrowsExceptionAsync<PlatformNotSupportedException>(async () => await document.ExtractTextAsync(new TesseractLanguage("eng.traineddata"), cancellationToken: cancellationTokenSource.Token), "Providing a cancellation token should throw a PlatformNotSupportedException on Windows x86.");
+            }
+            else
+            {
+                await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () => await document.ExtractTextAsync(new TesseractLanguage("eng.traineddata"), cancellationToken: cancellationTokenSource.Token, progress: new Progress<OCRProgressInfo>(prog => cancellationTokenSource.Cancel())), "The expected OperationCanceledException was not thrown.");
+            }
         }
     }
 }
