@@ -39,10 +39,10 @@ namespace Tests
 
             NativeMethods.WriteToFileDescriptor(1, testString + "\n", testString.Length + 1);
 
-            bool result = await semaphore.WaitAsync(100);
+            bool result = await semaphore.WaitAsync(1000);
 
             Assert.IsTrue(result, "Timed out waiting for the event handler to fire.");
-            Assert.AreEqual(testString, receivedMessage, "The string received by the event handler does not correspond to the test string.");
+            Assert.IsTrue(receivedMessage.Contains(testString), "The string received by the event handler does not contain the test string. Expected <" + testString + ">, received <" + receivedMessage + ">." );
 
             MuPDF.StandardOutputMessage -= eventHandler;
 
@@ -69,10 +69,10 @@ namespace Tests
 
             NativeMethods.WriteToFileDescriptor(2, testString + "\n", testString.Length + 1);
 
-            bool result = await semaphore.WaitAsync(100);
+            bool result = await semaphore.WaitAsync(1000);
 
             Assert.IsTrue(result, "Timed out waiting for the event handler to fire.");
-            Assert.AreEqual(testString, receivedMessage, "The string received by the event handler does not correspond to the test string.");
+            Assert.IsTrue(receivedMessage.Contains(testString), "The string received by the event handler does not contain the test string. Expected <" + testString + ">, received <" + receivedMessage + ">.");
 
             MuPDF.StandardErrorMessage -= eventHandler;
 
