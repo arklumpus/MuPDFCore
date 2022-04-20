@@ -2,6 +2,8 @@ var namespace_mu_p_d_f_core =
 [
     [ "MuPDFRenderer", "namespace_mu_p_d_f_core_1_1_mu_p_d_f_renderer.html", "namespace_mu_p_d_f_core_1_1_mu_p_d_f_renderer" ],
     [ "DisposableIntPtr", "class_mu_p_d_f_core_1_1_disposable_int_ptr.html", "class_mu_p_d_f_core_1_1_disposable_int_ptr" ],
+    [ "MessageEventArgs", "class_mu_p_d_f_core_1_1_message_event_args.html", "class_mu_p_d_f_core_1_1_message_event_args" ],
+    [ "MuPDF", "class_mu_p_d_f_core_1_1_mu_p_d_f.html", "class_mu_p_d_f_core_1_1_mu_p_d_f" ],
     [ "MuPDFContext", "class_mu_p_d_f_core_1_1_mu_p_d_f_context.html", "class_mu_p_d_f_core_1_1_mu_p_d_f_context" ],
     [ "MuPDFDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html", "class_mu_p_d_f_core_1_1_mu_p_d_f_document" ],
     [ "MuPDFException", "class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html", "class_mu_p_d_f_core_1_1_mu_p_d_f_exception" ],
@@ -16,6 +18,7 @@ var namespace_mu_p_d_f_core =
     [ "MuPDFStructuredTextLine", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line" ],
     [ "MuPDFStructuredTextPage", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page" ],
     [ "MuPDFTextStructuredTextBlock", "class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html", "class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block" ],
+    [ "OCRProgressInfo", "class_mu_p_d_f_core_1_1_o_c_r_progress_info.html", "class_mu_p_d_f_core_1_1_o_c_r_progress_info" ],
     [ "PointF", "struct_mu_p_d_f_core_1_1_point_f.html", "struct_mu_p_d_f_core_1_1_point_f" ],
     [ "Quad", "struct_mu_p_d_f_core_1_1_quad.html", "struct_mu_p_d_f_core_1_1_quad" ],
     [ "Rectangle", "struct_mu_p_d_f_core_1_1_rectangle.html", "struct_mu_p_d_f_core_1_1_rectangle" ],

@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.4.0</span>
+   &#160;<span id="projectnumber">1.5.0</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -90,6 +90,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_Readme"></a> <img src="icon.svg" alt="" style="pointer-events: none;" width="256" align="right" class="inline"/></p>
+<p><a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/License-AGPL_v3-blue.svg" alt="License: AGPL v3" style="pointer-events: none;" class="inline"/></a> <a href="https://nuget.org/packages/MuPDFCore"><img src="https://img.shields.io/nuget/v/MuPDFCore" alt="Version" class="inline"/></a></p>
 <p><b><a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a></b> is a set of multiplatform .NET Core bindings for <a href="https://mupdf.com/">MuPDF</a>. It can render PDF, XPS, EPUB and other formats to raster images returned either as raw bytes, or as image files in multiple formats (including PNG and PSD). It also supports multithreading.</p>
 <p>It also includes <b><a class="el" href="namespace_mu_p_d_f_core_1_1_mu_p_d_f_renderer.html">MuPDFCore.MuPDFRenderer</a></b>, an <a class="el" href="namespace_avalonia.html">Avalonia</a> control to display documents compatible with <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> in <a class="el" href="namespace_avalonia.html">Avalonia</a> windows (with multithreaded rendering).</p>
 <p>The library is released under the <a href="https://www.gnu.org/licenses/agpl-3.0.html">AGPLv3</a> licence.</p>
@@ -275,7 +276,7 @@ Structured text representation</h2>
 <p>The order of the blocks in the page (which affects the definition of a "range" of text and search operations) is the same as returned by the underlying MuPDF library, which is taken from the order the text is drawn in the source file, so may not be accurate. They can be reordered using the <code>Array.Sort</code> method on the <code>StructuredTextBlocks</code> array contained in the <code>MuPDFStructuredTextPage</code> (lines within blocks and characters within lines can be likewise reordered).</p>
 <h2><a class="anchor" id="autotoc_md7"></a>
 Optical Character Recognition (OCR) using Tesseract</h2>
-<p>MuPDF 1.18+ (embedded in <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> 1.3.0+) adds support for OCR using the <a href="https://github.com/tesseract-ocr/tesseract">Tesseract</a> library. To access this feature in <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a>, you can use one of the overloads of <code>GetStructuredTextPage</code> that takes a <code>TesseractLanguage</code> argument specifying the language to use for the OCR. This will run the OCR and return a <code>MuPDFStructuredTextPage</code> containing the character information obtained by Tesseract, which can be used normally. Depending on the model being used, the OCR step can take a relatively long time; therefore, the <code>MuPDFDocument</code> class also implements a <code>GetStructuredTextPageAsync</code> method, which does the same thing in an asynchronous way.</p>
+<p>MuPDF 1.18+ (embedded in <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> 1.3.0+) adds support for OCR using the <a href="https://github.com/tesseract-ocr/tesseract">Tesseract</a> library. To access this feature in <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a>, you can use one of the overloads of <code>GetStructuredTextPage</code> that takes a <code>TesseractLanguage</code> argument specifying the language to use for the OCR. This will run the OCR and return a <code>MuPDFStructuredTextPage</code> containing the character information obtained by Tesseract, which can be used normally. Depending on the model being used, the OCR step can take a relatively long time; therefore, the <code>MuPDFDocument</code> class also implements a <code>GetStructuredTextPageAsync</code> method, which does the same thing in an asynchronous way. The <code>GetStructuredTextPageAsync</code> method also has optional parameters to report the OCR progress and to make it possible to cancel its execution.</p>
 <p>Objects of the <code>TesseractLanguage</code> class contain information used to locate the trained language model file that is used by Tesseract. Normally, when using Tesseract, you would have to ensure that the trained language model files are available on the user's computer; however, this class implements some "clever" logic to download the necessary files on demand.</p>
 <p>In general, MuPDF provides Tesseract with a "language name" (e.g. <code>"eng"</code>). Tesseract then looks for a file called <code>eng.traineddata</code> either in the folder specified by the <code>TESSDATA_PREFIX</code> environment variable, or, if the variable is not defined, in a subfolder of the current working directory called <code>tessdata</code>. <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> manipulates the value of <code>TESSDATA_PREFIX</code> (at the process level) and the language name in order to specify the language file.</p>
 <p>The <code>TesseractLanguage</code> class has multiple constructors:</p>
@@ -291,7 +292,6 @@ Optical Character Recognition (OCR) using Tesseract</h2>
 <p class="startli">This means that if you use one of these constructors you do not have to worry about the language files being installed in the right place; as long as the user has an Internet connection, the library will download the language files as necessary.</p>
 </li>
 </ul>
-<p><b>Note</b>: the Tesseract OCR is not supported on macOS on Apple silicon, because I could not find a way to compile the native MuPDF library with Tesseract on this platform (can you help?). If you try to use any OCR method in an app published with target <code>osx-arm64</code>, you will get an exception (you can catch this and fail gracefully). If you need to use the OCR functions on macOS, you should publish with target <code>osx-x64</code> and rely on Rosetta 2 to run your program on Apple silicon Macs.</p>
 <h2><a class="anchor" id="autotoc_md8"></a>
 MuPDFCore.MuPDFRenderer control</h2>
 <p>To use the <code>PDFRenderer</code> control in an <a class="el" href="namespace_avalonia.html">Avalonia</a> application, first of all you need to add it to you <a class="el" href="namespace_avalonia.html">Avalonia</a> <code>Window</code>, e.g. in the XAML:</p>
@@ -337,9 +337,9 @@ Building from source</h1>
 </li>
 </ul>
 <p>Note that the files from macOS and Linux are different, despite sharing the same name.</p>
-<p>For convenience, these compiled files for MuPDF 1.19.0 are included in the <a href="https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib"><code>native/MuPDFWrapper/lib</code> folder</a> of this repository.</p>
+<p>For convenience, these compiled files for MuPDF 1.19.1 are included in the <a href="https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib"><code>native/MuPDFWrapper/lib</code> folder</a> of this repository.</p>
 <h3><a class="anchor" id="autotoc_md11"></a>
-Tips for compiling MuPDF 1.19.0:</h3>
+Tips for compiling MuPDF 1.19.1:</h3>
 <ul>
 <li>On all platforms:<ul>
 <li>You do not need to follow the instructions in <code>thirdparty/tesseract.txt</code>, as in this version the <em>leptonica</em> and <em>tesseract</em> libraries are already included in the source archive.</li>
@@ -348,19 +348,21 @@ Tips for compiling MuPDF 1.19.0:</h3>
 </ul>
 </li>
 <li>On Windows (x64):<ul>
-<li>Open the <code>platform/win32/mupdf.sln</code> solution in Visual Studio and select the <code>ReleaseTesseract</code> configuration and <code>x64</code> architecture. Right-click on each project, to open its properties, then go to <code>C/C++</code> &gt; <code>Code Generation</code> and set the <code>Runtime Library</code> to <code>Multi-threaded DLL (/MD)</code> (ignore any project for which this option is not available). Save everything (<code>CTRL+SHIFT+S</code>) and close Visual Studio.</li>
+<li>Open the <code>platform/win32/mupdf.sln</code> solution in Visual Studio. You should get a prompt to retarget your projects. Accept the default settings (latest Windows SDK and v143 of the tools).</li>
+<li>Select the <code>ReleaseTesseract</code> configuration and <code>x64</code> architecture. Select every project in the solution except <code>javaviewer</code> and <code>javaviewerlib</code> and right-click to open the project properties. Go to <code>C/C++</code> &gt; <code>Code Generation</code> and set the <code>Runtime Library</code> to <code>Multi-threaded DLL (/MD)</code>. Save everything (<code>CTRL+SHIFT+S</code>) and close Visual Studio.</li>
 <li>Now, open the <code>x64 Native Tools Command Prompt for VS</code>, move to the folder with the solution file, and build it using <code>msbuild mupdf.sln</code></li>
 <li>Then, build again using <code>msbuild mupdf.sln /p:Configuration=Release</code>. Ignore the compilation errors.</li>
 <li>Finally, build again using <code>msbuild mupdf.sln /p:Configuration=ReleaseTesseract</code>.</li>
-<li>This may still show some errors, but should produce the <code>libmupdf.lib</code> file that is required in the <code>x64/ReleaseTesseract</code> folder (the file should be ~383MB in size).</li>
+<li>This may still show some errors, but should produce the <code>libmupdf.lib</code> file that is required in the <code>x64/ReleaseTesseract</code> folder (the file should be ~444MB in size).</li>
 </ul>
 </li>
 <li>On Windows (x86):<ul>
-<li>Open the <code>platform/win32/mupdf.sln</code> solution in Visual Studio and select the <code>ReleaseTesseract</code> configuration and <code>Win32</code> architecture. Right-click on each project, to open its properties, then go to <code>C/C++</code> &gt; <code>Code Generation</code> and set the <code>Runtime Library</code> to <code>Multi-threaded DLL (/MD)</code> (ignore any project for which this option is not available). Save everything (<code>CTRL+SHIFT+S</code>) and close Visual Studio.</li>
+<li>You will have to use Visual Studio 2019, as Visual Studio 2022 is not supported on x86 platforms.</li>
+<li>Open the <code>platform/win32/mupdf.sln</code> solution in Visual Studio and select the <code>ReleaseTesseract</code> configuration and <code>Win32</code> architecture. Select every project in the solution except <code>javaviewer</code> and <code>javaviewerlib</code> and right-click to open the project properties. Go to <code>C/C++</code> &gt; <code>Code Generation</code> and set the <code>Runtime Library</code> to <code>Multi-threaded DLL (/MD)</code>. Save everything (<code>CTRL+SHIFT+S</code>) and close Visual Studio.</li>
 <li>Now, open the <code>x86 Native Tools Command Prompt for VS</code>, move to the folder with the solution file, and build it using <code>msbuild mupdf.sln /p:Platform=Win32</code></li>
 <li>Then, build again using <code>msbuild mupdf.sln /p:Configuration=Release /p:Platform=Win32</code>. Ignore the compilation errors.</li>
 <li>Finally, build again using <code>msbuild mupdf.sln /p:Configuration=ReleaseTesseract /p:Platform=Win32</code>.</li>
-<li>This may still show some errors, but should produce the <code>libmupdf.lib</code> file that is required in the <code>ReleaseTesseract</code> folder (the file should be ~362MB in size).</li>
+<li>This may still show some errors, but should produce the <code>libmupdf.lib</code> file that is required in the <code>ReleaseTesseract</code> folder (the file should be ~361MB in size).</li>
 </ul>
 </li>
 <li><p class="startli">On Windows (arm64)</p>
@@ -380,12 +382,12 @@ Tips for compiling MuPDF 1.19.0:</h3>
 </li>
 <li>Open the <code>platform/win32/mupdf.sln</code> solution in Visual Studio. You should get a prompt to retarget your projects. Accept the default settings (latest Windows SDK and v143 of the tools).</li>
 <li>In Visual Studio, click on the "Configuration Manager" item from the "Build" menu. In the new window, click on the drop down menu for the "Active solution platform" and select <code>&lt;New...&gt;</code>. In this new dialog, select the <code>ARM64</code> platform and choose to copy the settings from <code>x64</code>. Leave the <code>Create new project platforms</code> option enabled and click on <code>OK</code> (this may take some time).</li>
-<li>Close the Configuration Manager and select the <code>ReleaseTesseract</code> configuration and <code>ARM64</code> architecture. Right-click on each project, to open its properties, then go to <code>C/C++</code> &gt; <code>Code Generation</code> and set the <code>Runtime Library</code> to <code>Multi-threaded DLL (/MD)</code> (ignore any project for which this option is not available).</li>
+<li>Close the Configuration Manager and select the <code>ReleaseTesseract</code> configuration and <code>ARM64</code> architecture. Select every project in the solution except <code>javaviewer</code> and <code>javaviewerlib</code> and right-click to open the project properties. Go to <code>C/C++</code> &gt; <code>Code Generation</code> and set the <code>Runtime Library</code> to <code>Multi-threaded DLL (/MD)</code>.</li>
 <li>Open the properties for the <code>libpkcs7</code> project, go to <code>C/C++</code> &gt; <code>Preprocessor</code> and remove <code>HAVE_LIBCRYPTO</code> from the <code>Preprocessor Definitions</code>. Then go to <code>Librarian</code> &gt; <code>General</code> and remove <code>libcrypto.lib</code> from the <code>Additional Dependencies</code>.</li>
 <li>Save everything (<code>CTRL+SHIFT+S</code>) and close Visual Studio.</li>
 <li>Create a new folder <code>platform/win32/Release</code>. Now, the problem is that the <code>bin2coff</code> script included with MuPDF cannot create <code>obj</code> files for ARM64 (only for x86 and x64). Since I could not find a version that can do this, I <a href="https://github.com/arklumpus/bin2coff">translated the source code of bin2coff to C# and added this option myself</a>. You can download an ARM64 <code>bin2coff.exe</code> from <a href="https://github.com/arklumpus/bin2coff/releases/latest/download/win-arm64.zip">here</a>; place it in the <code>Release</code> folder that you have just created.</li>
-<li>Open the <code>Developer Command Prompt for VS</code>, move to the folder with the solution file (<code>platform/win32</code>), and build it using <code>msbuild mupdf.sln /p:Configuration=ReleaseTesseract</code>.</li>
-<li>After a while, this should produce <code>libmupdf.lib</code> in the <code>ARM64/ReleaseTesseract</code> folder (the file should be ~388MB in size).</li>
+<li>Open the <code>Developer Command Prompt for VS</code>, move to the folder with the solution file (<code>platform/win32</code>), and build it using <code>msbuild mupdf.sln /p:Configuration=ReleaseTesseract</code>. Some compilation errors may occur towards the end, but they should not matter.</li>
+<li>After a while, this should produce <code>libmupdf.lib</code> in the <code>ARM64/ReleaseTesseract</code> folder (the file should be ~444MB in size).</li>
 </ul>
 </li>
 <li>On Linux (x64):<ul>
@@ -402,13 +404,14 @@ Tips for compiling MuPDF 1.19.0:</h3>
 </ul>
 </li>
 <li>On macOS (Intel - x64):<ul>
-<li>Edit the <code>Makefile</code>, adding the <code>-fPIC</code> compiler option at the end of line 24 (which specifies the <code>CFLAGS</code>). Also add the <code>-std=c++11</code> option at the end of line 58 (which specifies the CXX_CMD).</li>
+<li>Edit the <code>Makefile</code>, adding the <code>-fPIC</code> compiler option at the end of line 24 (which specifies the <code>CFLAGS</code>). Also add the <code>-std=c++11</code> option at the end of line 58 (which specifies the <code>CXX_CMD</code>).</li>
 <li>Compile by running <code>USE_TESSERACT=yes make</code> (this enables OCR through the included Tesseract library).</li>
 </ul>
 </li>
 <li>On macOS (Apple silicon - arm64)<ul>
-<li>Edit the <code>Makefile</code>, adding the <code>-fPIC</code> compiler options at the end of line 24 (which specifies the <code>CFLAGS</code>). Also add the <code>-std=c++11</code> option at the end of line 58 (which specifies the CXX_CMD).</li>
-<li>Compile by running <code>make</code> (this disables OCR, unfortunately - if you find a way to compile MuPDF with OCR support on Apple silicon, let me know).</li>
+<li>Edit the <code>Makefile</code>, adding the <code>-fPIC</code> compiler options at the end of line 24 (which specifies the <code>CFLAGS</code>). Also add the <code>-std=c++11</code> option at the end of line 58 (which specifies the <code>CXX_CMD</code>).</li>
+<li>Delete or comment line 218 in <code>thirdparty/tesseract/src/arch/simddetect.cpp</code>.</li>
+<li>Compile by running <code>USE_TESSERACT=yes make</code> (this enables OCR through the included Tesseract library).</li>
 </ul>
 </li>
 </ul>
@@ -477,7 +480,7 @@ macOS and Linux</h3>
 <li><code>MuPDFCoreTests-win-x64.tar.gz</code> contains the tests for Windows environments on x64 processors.</li>
 <li><code>MuPDFCoreTests-win-x86.tar.gz</code> contains the tests for Windows environments on x86 processors.</li>
 </ul>
-<p>To run the tests, copy each archive to a machine running the corresponding operating system, and extract it. Then:</p>
+<p>To run the tests, copy each archive to a machine running the corresponding operating system, and extract it (note: on Windows, the default zip file manager may struggle when extracting the text file with non-latin characters; you may need to manually extract this file). Then:</p>
 <h3><a class="anchor" id="autotoc_md18"></a>
 Windows</h3>
 <ul>
@@ -492,7 +495,7 @@ macOS and Linux</h3>
 <li>Enter the command <code>./MuPDFCoreTestHost</code> (this will run the test program).</li>
 <li>On macOS, depending on your security settings, you may get a message saying <code>zsh: killed</code> when you try to run the program. To address this, you need to sign the executable, e.g. by running <code>codesign --timestamp --sign &lt;certificate&gt; MuPDFCoreTestHost</code>, where <code>&lt;certificate&gt;</code> is the name of a code signing certificate in your keychain (e.g. <code>Developer ID Application: John Smith</code>). After this, you can try again to run the test program with <code>./MuPDFCoreTestHost</code>.</li>
 </ul>
-<p>The test suite will start; it will print the name of each test, followed by a green <code>Succeeded</code> or a red <code>Failed</code> depending on the test result. If everything went correctly, all tests should succeed (except for the 5 OCR tests on Apple silicon Macs).</p>
+<p>The test suite will start; it will print the name of each test, followed by a green <code>Succeeded</code> or a red <code>Failed</code> depending on the test result. If everything went correctly, all tests should succeed.</p>
 <p>When all the tests have been run, the program will print a summary showing how many tests have succeeded (if any) and how many have failed (if any). If any tests have failed, a list of these will be printed, and then they will be run again one at a time, waiting for a key press before running each test (this makes it easier to follow what is going on). If you wish to kill the test process early, you can do so with <code>CTRL+C</code>.</p>
 <h1><a class="anchor" id="autotoc_md20"></a>
 Note about MuPDFCore and .NET Framework &lt;a name="netFrameworkNote"&gt;&lt;/a&gt;</h1>

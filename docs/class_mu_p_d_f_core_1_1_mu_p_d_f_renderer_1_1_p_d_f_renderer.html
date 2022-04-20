@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.4.0</span>
+   &#160;<span id="projectnumber">1.5.0</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -126,27 +126,27 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4d0c7f77003321d29dbcff339ac39455"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a4d0c7f77003321d29dbcff339ac39455">Initialize</a> (<a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_document.html">MuPDFDocument</a> document, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null)</td></tr>
 <tr class="memdesc:a4d0c7f77003321d29dbcff339ac39455"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_document.html" title="A wrapper over a MuPDF document object, which contains possibly multiple pages.">MuPDFDocument</a>.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a4d0c7f77003321d29dbcff339ac39455">More...</a><br /></td></tr>
 <tr class="separator:a4d0c7f77003321d29dbcff339ac39455"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48ea234b79e01d3f03df2aa603e02fe3"><td class="memItemLeft" align="right" valign="top">async Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a48ea234b79e01d3f03df2aa603e02fe3">InitializeAsync</a> (<a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_document.html">MuPDFDocument</a> document, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null)</td></tr>
-<tr class="memdesc:a48ea234b79e01d3f03df2aa603e02fe3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_document.html" title="A wrapper over a MuPDF document object, which contains possibly multiple pages.">MuPDFDocument</a>. The OCR step is run asynchronously, in order not to block the UI thread.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a48ea234b79e01d3f03df2aa603e02fe3">More...</a><br /></td></tr>
-<tr class="separator:a48ea234b79e01d3f03df2aa603e02fe3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a026cdf9ee1222daed654fed059601f72"><td class="memItemLeft" align="right" valign="top">async Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a026cdf9ee1222daed654fed059601f72">InitializeAsync</a> (<a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_document.html">MuPDFDocument</a> document, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null, CancellationToken ocrCancellationToken=default, IProgress&lt; <a class="el" href="class_mu_p_d_f_core_1_1_o_c_r_progress_info.html">OCRProgressInfo</a> &gt; ocrProgress=null)</td></tr>
+<tr class="memdesc:a026cdf9ee1222daed654fed059601f72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_document.html" title="A wrapper over a MuPDF document object, which contains possibly multiple pages.">MuPDFDocument</a>. The OCR step is run asynchronously, in order not to block the UI thread.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a026cdf9ee1222daed654fed059601f72">More...</a><br /></td></tr>
+<tr class="separator:a026cdf9ee1222daed654fed059601f72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f0e5046070368b4d5b123a1017755c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a8f0e5046070368b4d5b123a1017755c8">Initialize</a> (string fileName, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null)</td></tr>
 <tr class="memdesc:a8f0e5046070368b4d5b123a1017755c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a document that will be loaded from disk.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a8f0e5046070368b4d5b123a1017755c8">More...</a><br /></td></tr>
 <tr class="separator:a8f0e5046070368b4d5b123a1017755c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e8a4aa144684ec125965816b2dcb716"><td class="memItemLeft" align="right" valign="top">async Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a9e8a4aa144684ec125965816b2dcb716">InitializeAsync</a> (string fileName, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null)</td></tr>
-<tr class="memdesc:a9e8a4aa144684ec125965816b2dcb716"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a document that will be loaded from disk. The OCR step is run asynchronously, in order not to block the UI thread.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a9e8a4aa144684ec125965816b2dcb716">More...</a><br /></td></tr>
-<tr class="separator:a9e8a4aa144684ec125965816b2dcb716"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a394753442f87f857406e0b911419fb77"><td class="memItemLeft" align="right" valign="top">async Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a394753442f87f857406e0b911419fb77">InitializeAsync</a> (string fileName, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null, CancellationToken ocrCancellationToken=default, IProgress&lt; <a class="el" href="class_mu_p_d_f_core_1_1_o_c_r_progress_info.html">OCRProgressInfo</a> &gt; ocrProgress=null)</td></tr>
+<tr class="memdesc:a394753442f87f857406e0b911419fb77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a document that will be loaded from disk. The OCR step is run asynchronously, in order not to block the UI thread.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a394753442f87f857406e0b911419fb77">More...</a><br /></td></tr>
+<tr class="separator:a394753442f87f857406e0b911419fb77"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb6eae5f0c6977b32930e33d46addfca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#acb6eae5f0c6977b32930e33d46addfca">Initialize</a> (MemoryStream ms, <a class="el" href="namespace_mu_p_d_f_core.html#a6f956802ff33af39b555fc95caf5486f">InputFileTypes</a> fileType, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null)</td></tr>
 <tr class="memdesc:acb6eae5f0c6977b32930e33d46addfca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a document that will be loaded from a MemoryStream.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#acb6eae5f0c6977b32930e33d46addfca">More...</a><br /></td></tr>
 <tr class="separator:acb6eae5f0c6977b32930e33d46addfca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a155abebbbcf9bd5844f5a968b81d7fbb"><td class="memItemLeft" align="right" valign="top">async Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a155abebbbcf9bd5844f5a968b81d7fbb">InitializeAsync</a> (MemoryStream ms, <a class="el" href="namespace_mu_p_d_f_core.html#a6f956802ff33af39b555fc95caf5486f">InputFileTypes</a> fileType, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null)</td></tr>
-<tr class="memdesc:a155abebbbcf9bd5844f5a968b81d7fbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a document that will be loaded from a MemoryStream. The OCR step is run asynchronously, in order not to block the UI thread.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a155abebbbcf9bd5844f5a968b81d7fbb">More...</a><br /></td></tr>
-<tr class="separator:a155abebbbcf9bd5844f5a968b81d7fbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72c81912abc0f4f4d221ae5aedc2cac2"><td class="memItemLeft" align="right" valign="top">async Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a72c81912abc0f4f4d221ae5aedc2cac2">InitializeAsync</a> (MemoryStream ms, <a class="el" href="namespace_mu_p_d_f_core.html#a6f956802ff33af39b555fc95caf5486f">InputFileTypes</a> fileType, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null, CancellationToken ocrCancellationToken=default, IProgress&lt; <a class="el" href="class_mu_p_d_f_core_1_1_o_c_r_progress_info.html">OCRProgressInfo</a> &gt; ocrProgress=null)</td></tr>
+<tr class="memdesc:a72c81912abc0f4f4d221ae5aedc2cac2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a document that will be loaded from a MemoryStream. The OCR step is run asynchronously, in order not to block the UI thread.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a72c81912abc0f4f4d221ae5aedc2cac2">More...</a><br /></td></tr>
+<tr class="separator:a72c81912abc0f4f4d221ae5aedc2cac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76c055712e78a0f2575b53059ce05a69"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a76c055712e78a0f2575b53059ce05a69">Initialize</a> (byte[] dataBytes, <a class="el" href="namespace_mu_p_d_f_core.html#a6f956802ff33af39b555fc95caf5486f">InputFileTypes</a> fileType, int offset=0, int length=-1, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null)</td></tr>
 <tr class="memdesc:a76c055712e78a0f2575b53059ce05a69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a document that will be loaded from an array of bytes.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a76c055712e78a0f2575b53059ce05a69">More...</a><br /></td></tr>
 <tr class="separator:a76c055712e78a0f2575b53059ce05a69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98f6a7d2420bcd9d368f7f540e2d9e1d"><td class="memItemLeft" align="right" valign="top">async Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a98f6a7d2420bcd9d368f7f540e2d9e1d">InitializeAsync</a> (byte[] dataBytes, <a class="el" href="namespace_mu_p_d_f_core.html#a6f956802ff33af39b555fc95caf5486f">InputFileTypes</a> fileType, int offset=0, int length=-1, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null)</td></tr>
-<tr class="memdesc:a98f6a7d2420bcd9d368f7f540e2d9e1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a document that will be loaded from an array of bytes. The OCR step is run asynchronously, in order not to block the UI thread.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a98f6a7d2420bcd9d368f7f540e2d9e1d">More...</a><br /></td></tr>
-<tr class="separator:a98f6a7d2420bcd9d368f7f540e2d9e1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad06475fdd1cb91588789beb785c4ef86"><td class="memItemLeft" align="right" valign="top">async Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#ad06475fdd1cb91588789beb785c4ef86">InitializeAsync</a> (byte[] dataBytes, <a class="el" href="namespace_mu_p_d_f_core.html#a6f956802ff33af39b555fc95caf5486f">InputFileTypes</a> fileType, int offset=0, int length=-1, int threadCount=0, int pageNumber=0, double resolutionMultiplier=1, bool includeAnnotations=true, <a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a> ocrLanguage=null, CancellationToken ocrCancellationToken=default, IProgress&lt; <a class="el" href="class_mu_p_d_f_core_1_1_o_c_r_progress_info.html">OCRProgressInfo</a> &gt; ocrProgress=null)</td></tr>
+<tr class="memdesc:ad06475fdd1cb91588789beb785c4ef86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> to display a page of a document that will be loaded from an array of bytes. The OCR step is run asynchronously, in order not to block the UI thread.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#ad06475fdd1cb91588789beb785c4ef86">More...</a><br /></td></tr>
+<tr class="separator:ad06475fdd1cb91588789beb785c4ef86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07e1ea463721c5a89666d1b5fe27c175"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a07e1ea463721c5a89666d1b5fe27c175">ReleaseResources</a> ()</td></tr>
 <tr class="memdesc:a07e1ea463721c5a89666d1b5fe27c175"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release resources held by this <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a>. This is not an irreversible step: using one of the Initialize overloads after calling this method will restore functionality.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a07e1ea463721c5a89666d1b5fe27c175">More...</a><br /></td></tr>
 <tr class="separator:a07e1ea463721c5a89666d1b5fe27c175"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -355,7 +355,7 @@ Properties</h2></td></tr>
 
 <p>Alter the display area so that the whole page fits on screen. </p>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00688">688</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00698">698</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -376,7 +376,7 @@ Properties</h2></td></tr>
 
 <p>Alter the display area so that the page covers the whole surface of the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a> (even though parts of the page may be outside it). </p>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00697">697</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00707">707</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -398,7 +398,7 @@ Properties</h2></td></tr>
 <p>Get the current rendering progress. </p>
 <dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="class_mu_p_d_f_core_1_1_render_progress.html" title="Holds a summary of the progress of the current rendering operation.">RenderProgress</a> object with information about the rendering progress of each thread.</dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00718">718</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00728">728</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -420,7 +420,7 @@ Properties</h2></td></tr>
 <p>Get the currently selected text. </p>
 <dl class="section return"><dt>Returns</dt><dd>The currently selected text.</dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00727">727</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00737">737</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -508,7 +508,7 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00397">397</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00403">403</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -582,7 +582,7 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00355">355</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00359">359</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -716,12 +716,12 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00306">306</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00308">308</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
-<a id="a98f6a7d2420bcd9d368f7f540e2d9e1d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98f6a7d2420bcd9d368f7f540e2d9e1d">&#9670;&nbsp;</a></span>InitializeAsync() <span class="overload">[1/4]</span></h2>
+<a id="ad06475fdd1cb91588789beb785c4ef86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad06475fdd1cb91588789beb785c4ef86">&#9670;&nbsp;</a></span>InitializeAsync() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -778,7 +778,19 @@ Properties</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a>&#160;</td>
-          <td class="paramname"><em>ocrLanguage</em> = <code>null</code>&#160;</td>
+          <td class="paramname"><em>ocrLanguage</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CancellationToken&#160;</td>
+          <td class="paramname"><em>ocrCancellationToken</em> = <code>default</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IProgress&lt; <a class="el" href="class_mu_p_d_f_core_1_1_o_c_r_progress_info.html">OCRProgressInfo</a> &gt;&#160;</td>
+          <td class="paramname"><em>ocrProgress</em> = <code>null</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -800,16 +812,18 @@ Properties</h2></td></tr>
     <tr><td class="paramname">resolutionMultiplier</td><td>This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <em>resolutionMultiplier</em>  is 1, the resolution will match the size (in screen units) of the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a>.</td></tr>
     <tr><td class="paramname">includeAnnotations</td><td>If this is <code>true</code>, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</td></tr>
     <tr><td class="paramname">ocrLanguage</td><td>The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</td></tr>
+    <tr><td class="paramname">ocrCancellationToken</td><td>A CancellationToken used to cancel the OCR operation.</td></tr>
+    <tr><td class="paramname">ocrProgress</td><td>An IProgress&lt;OCRProgressInfo&gt; used to report OCR progress.</td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00438">438</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00446">446</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
-<a id="a155abebbbcf9bd5844f5a968b81d7fbb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a155abebbbcf9bd5844f5a968b81d7fbb">&#9670;&nbsp;</a></span>InitializeAsync() <span class="overload">[2/4]</span></h2>
+<a id="a72c81912abc0f4f4d221ae5aedc2cac2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72c81912abc0f4f4d221ae5aedc2cac2">&#9670;&nbsp;</a></span>InitializeAsync() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -854,7 +868,19 @@ Properties</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a>&#160;</td>
-          <td class="paramname"><em>ocrLanguage</em> = <code>null</code>&#160;</td>
+          <td class="paramname"><em>ocrLanguage</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CancellationToken&#160;</td>
+          <td class="paramname"><em>ocrCancellationToken</em> = <code>default</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IProgress&lt; <a class="el" href="class_mu_p_d_f_core_1_1_o_c_r_progress_info.html">OCRProgressInfo</a> &gt;&#160;</td>
+          <td class="paramname"><em>ocrProgress</em> = <code>null</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -874,16 +900,18 @@ Properties</h2></td></tr>
     <tr><td class="paramname">resolutionMultiplier</td><td>This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <em>resolutionMultiplier</em>  is 1, the resolution will match the size (in screen units) of the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a>.</td></tr>
     <tr><td class="paramname">includeAnnotations</td><td>If this is <code>true</code>, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</td></tr>
     <tr><td class="paramname">ocrLanguage</td><td>The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</td></tr>
+    <tr><td class="paramname">ocrCancellationToken</td><td>A CancellationToken used to cancel the OCR operation.</td></tr>
+    <tr><td class="paramname">ocrProgress</td><td>An IProgress&lt;OCRProgressInfo&gt; used to report OCR progress.</td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00375">375</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00381">381</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
-<a id="a48ea234b79e01d3f03df2aa603e02fe3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48ea234b79e01d3f03df2aa603e02fe3">&#9670;&nbsp;</a></span>InitializeAsync() <span class="overload">[3/4]</span></h2>
+<a id="a026cdf9ee1222daed654fed059601f72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a026cdf9ee1222daed654fed059601f72">&#9670;&nbsp;</a></span>InitializeAsync() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -922,7 +950,19 @@ Properties</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a>&#160;</td>
-          <td class="paramname"><em>ocrLanguage</em> = <code>null</code>&#160;</td>
+          <td class="paramname"><em>ocrLanguage</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CancellationToken&#160;</td>
+          <td class="paramname"><em>ocrCancellationToken</em> = <code>default</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IProgress&lt; <a class="el" href="class_mu_p_d_f_core_1_1_o_c_r_progress_info.html">OCRProgressInfo</a> &gt;&#160;</td>
+          <td class="paramname"><em>ocrProgress</em> = <code>null</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -941,16 +981,18 @@ Properties</h2></td></tr>
     <tr><td class="paramname">resolutionMultiplier</td><td>This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <em>resolutionMultiplier</em>  is 1, the resolution will match the size (in screen units) of the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a>.</td></tr>
     <tr><td class="paramname">includeAnnotations</td><td>If this is <code>true</code>, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</td></tr>
     <tr><td class="paramname">ocrLanguage</td><td>The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</td></tr>
+    <tr><td class="paramname">ocrCancellationToken</td><td>A CancellationToken used to cancel the OCR operation.</td></tr>
+    <tr><td class="paramname">ocrProgress</td><td>An IProgress&lt;OCRProgressInfo&gt; used to report OCR progress.</td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00282">282</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00284">284</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
-<a id="a9e8a4aa144684ec125965816b2dcb716"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e8a4aa144684ec125965816b2dcb716">&#9670;&nbsp;</a></span>InitializeAsync() <span class="overload">[4/4]</span></h2>
+<a id="a394753442f87f857406e0b911419fb77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a394753442f87f857406e0b911419fb77">&#9670;&nbsp;</a></span>InitializeAsync() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -989,7 +1031,19 @@ Properties</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="class_mu_p_d_f_core_1_1_tesseract_language.html">TesseractLanguage</a>&#160;</td>
-          <td class="paramname"><em>ocrLanguage</em> = <code>null</code>&#160;</td>
+          <td class="paramname"><em>ocrLanguage</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CancellationToken&#160;</td>
+          <td class="paramname"><em>ocrCancellationToken</em> = <code>default</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IProgress&lt; <a class="el" href="class_mu_p_d_f_core_1_1_o_c_r_progress_info.html">OCRProgressInfo</a> &gt;&#160;</td>
+          <td class="paramname"><em>ocrProgress</em> = <code>null</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1008,11 +1062,13 @@ Properties</h2></td></tr>
     <tr><td class="paramname">resolutionMultiplier</td><td>This value can be used to increase or decrease the resolution at which the static renderisation of the page will be produced. If <em>resolutionMultiplier</em>  is 1, the resolution will match the size (in screen units) of the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a>.</td></tr>
     <tr><td class="paramname">includeAnnotations</td><td>If this is <code>true</code>, annotations (e.g. signatures) are included in the rendering. Otherwise, only the page contents are included.</td></tr>
     <tr><td class="paramname">ocrLanguage</td><td>The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</td></tr>
+    <tr><td class="paramname">ocrCancellationToken</td><td>A CancellationToken used to cancel the OCR operation.</td></tr>
+    <tr><td class="paramname">ocrProgress</td><td>An IProgress&lt;OCRProgressInfo&gt; used to report OCR progress.</td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00330">330</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00334">334</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -1033,7 +1089,7 @@ Properties</h2></td></tr>
 
 <p>Release resources held by this <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">PDFRenderer</a>. This is not an irreversible step: using one of the Initialize overloads after calling this method will restore functionality. </p>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00609">609</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00619">619</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -1061,7 +1117,7 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l01289">1289</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l01299">1299</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -1090,7 +1146,7 @@ Properties</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The number of matches that have been found.</dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00756">756</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00766">766</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -1111,7 +1167,7 @@ Properties</h2></td></tr>
 
 <p>Selects all the text in the document. </p>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00735">735</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00745">745</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -1139,7 +1195,7 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00650">650</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00660">660</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -1178,7 +1234,7 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00663">663</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_p_d_f_renderer_8cs_source.html#l00673">673</a> of file <a class="el" href="_p_d_f_renderer_8cs_source.html">PDFRenderer.cs</a>.</p>
 
 </div>
 </div>

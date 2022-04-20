@@ -99,12 +99,14 @@ var menudata={children:[
 {text:"h",url:"functions_prop.html#index_h"},
 {text:"i",url:"functions_prop.html#index_i"},
 {text:"l",url:"functions_prop.html#index_l"},
+{text:"m",url:"functions_prop.html#index_m"},
 {text:"o",url:"functions_prop.html#index_o"},
 {text:"p",url:"functions_prop.html#index_p"},
 {text:"r",url:"functions_prop.html#index_r"},
 {text:"s",url:"functions_prop.html#index_s"},
 {text:"t",url:"functions_prop.html#index_t"},
 {text:"w",url:"functions_prop.html#index_w"},
-{text:"z",url:"functions_prop.html#index_z"}]}]}]},
+{text:"z",url:"functions_prop.html#index_z"}]},
+{text:"Events",url:"functions_evnt.html"}]}]},
 {text:"Files",url:"files.html",children:[
 {text:"File List",url:"files.html"}]}]}

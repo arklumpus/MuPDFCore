@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.4.0</span>
+   &#160;<span id="projectnumber">1.5.0</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -110,6 +110,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab9829c61cf710e0ad619ea712eacd2d8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_disposable_int_ptr.html#ab9829c61cf710e0ad619ea712eacd2d8">DisposableIntPtr</a> (IntPtr pointer)</td></tr>
 <tr class="memdesc:ab9829c61cf710e0ad619ea712eacd2d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new <a class="el" href="class_mu_p_d_f_core_1_1_disposable_int_ptr.html" title="An IDisposable wrapper around an IntPtr that frees the allocated memory when it is disposed.">DisposableIntPtr</a>.  <a href="class_mu_p_d_f_core_1_1_disposable_int_ptr.html#ab9829c61cf710e0ad619ea712eacd2d8">More...</a><br /></td></tr>
 <tr class="separator:ab9829c61cf710e0ad619ea712eacd2d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b38ee4942d24d3282edd15268013887"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_disposable_int_ptr.html#a2b38ee4942d24d3282edd15268013887">DisposableIntPtr</a> (IntPtr pointer, long bytesAllocated)</td></tr>
+<tr class="memdesc:a2b38ee4942d24d3282edd15268013887"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new <a class="el" href="class_mu_p_d_f_core_1_1_disposable_int_ptr.html" title="An IDisposable wrapper around an IntPtr that frees the allocated memory when it is disposed.">DisposableIntPtr</a>, adding memory pressure to the GC to account for the allocation of unmanaged memory.  <a href="class_mu_p_d_f_core_1_1_disposable_int_ptr.html#a2b38ee4942d24d3282edd15268013887">More...</a><br /></td></tr>
+<tr class="separator:a2b38ee4942d24d3282edd15268013887"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a107c2235a8568707b8327038ba7256d3"><td class="memItemLeft" align="right" valign="top"><a id="a107c2235a8568707b8327038ba7256d3"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Dispose</b> ()</td></tr>
 <tr class="separator:a107c2235a8568707b8327038ba7256d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -117,10 +120,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Dispose</b> ()</td></
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An IDisposable wrapper around an IntPtr that frees the allocated memory when it is disposed. </p>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00308">308</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00312">312</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab9829c61cf710e0ad619ea712eacd2d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab9829c61cf710e0ad619ea712eacd2d8">&#9670;&nbsp;</a></span>DisposableIntPtr()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9829c61cf710e0ad619ea712eacd2d8">&#9670;&nbsp;</a></span>DisposableIntPtr() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -143,7 +146,46 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Dispose</b> ()</td></
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00319">319</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00328">328</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
+
+</div>
+</div>
+<a id="a2b38ee4942d24d3282edd15268013887"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b38ee4942d24d3282edd15268013887">&#9670;&nbsp;</a></span>DisposableIntPtr() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">MuPDFCore.DisposableIntPtr.DisposableIntPtr </td>
+          <td>(</td>
+          <td class="paramtype">IntPtr&#160;</td>
+          <td class="paramname"><em>pointer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>bytesAllocated</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new <a class="el" href="class_mu_p_d_f_core_1_1_disposable_int_ptr.html" title="An IDisposable wrapper around an IntPtr that frees the allocated memory when it is disposed.">DisposableIntPtr</a>, adding memory pressure to the GC to account for the allocation of unmanaged memory. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pointer</td><td>The pointer that should be freed upon disposing of this object.</td></tr>
+    <tr><td class="paramname">bytesAllocated</td><td>The number of bytes that have been allocated, for adding memory pressure.</td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_8cs_source.html#l00338">338</a> of file <a class="el" href="_mu_p_d_f_8cs_source.html">MuPDF.cs</a>.</p>
 
 </div>
 </div>

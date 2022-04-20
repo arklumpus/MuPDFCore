@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mupdfcore_3a_20multiplatform_20_2enet_20core_20bindings_20for_20mupdf_753',['MuPDFCore: Multiplatform .NET Core bindings for MuPDF',['../index.html',1,'']]]
+  ['mupdfcore_3a_20multiplatform_20_2enet_20core_20bindings_20for_20mupdf_773',['MuPDFCore: Multiplatform .NET Core bindings for MuPDF',['../index.html',1,'']]]
 ];

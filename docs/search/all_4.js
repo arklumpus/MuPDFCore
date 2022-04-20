@@ -31,5 +31,5 @@ var searchData=
   ['exit_5fsuccess_97',['EXIT_SUCCESS',['../namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59a28b393e44874f1d095f7c1281de0ffc2',1,'MuPDFCore']]],
   ['exitcodes_98',['ExitCodes',['../namespace_mu_p_d_f_core.html#aa6919d62a772f0334777d47f9c2d6c59',1,'MuPDFCore']]],
   ['extracttext_99',['ExtractText',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a70387793b8634c7cdda9d4c9f6c23de2',1,'MuPDFCore.MuPDFDocument.ExtractText(string separator=null, bool includeAnnotations=true)'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#adec1ed3c29832eb920dd86508b78cbc4',1,'MuPDFCore.MuPDFDocument.ExtractText(TesseractLanguage ocrLanguage, string separator=null, bool includeAnnotations=true)']]],
-  ['extracttextasync_100',['ExtractTextAsync',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ad2b6fc8675ff275b268055a55c8d231f',1,'MuPDFCore::MuPDFDocument']]]
+  ['extracttextasync_100',['ExtractTextAsync',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a677d1895aa6147e51839631b89b1812d',1,'MuPDFCore::MuPDFDocument']]]
 ];

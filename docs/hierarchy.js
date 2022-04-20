@@ -3,6 +3,9 @@ var hierarchy =
     [ "Control", null, [
       [ "MuPDFCore.MuPDFRenderer.PDFRenderer", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html", null ]
     ] ],
+    [ "EventArgs", null, [
+      [ "MuPDFCore.MessageEventArgs", "class_mu_p_d_f_core_1_1_message_event_args.html", null ]
+    ] ],
     [ "Exception", null, [
       [ "MuPDFCore.MuPDFException", "class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html", null ]
     ] ],
@@ -29,8 +32,10 @@ var hierarchy =
       [ "MuPDFCore.MuPDFStructuredTextLine", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html", null ],
       [ "MuPDFCore.MuPDFStructuredTextPage", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html", null ]
     ] ],
+    [ "MuPDFCore.MuPDF", "class_mu_p_d_f_core_1_1_mu_p_d_f.html", null ],
     [ "MuPDFCore.MuPDFStructuredTextAddressSpan", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address_span.html", null ],
     [ "MuPDFCore.MuPDFStructuredTextCharacter", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html", null ],
+    [ "MuPDFCore.OCRProgressInfo", "class_mu_p_d_f_core_1_1_o_c_r_progress_info.html", null ],
     [ "MuPDFCore.PointF", "struct_mu_p_d_f_core_1_1_point_f.html", null ],
     [ "MuPDFCore.Quad", "struct_mu_p_d_f_core_1_1_quad.html", null ],
     [ "MuPDFCore.Rectangle", "struct_mu_p_d_f_core_1_1_rectangle.html", null ],

@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MuPDFCore
-   &#160;<span id="projectnumber">1.4.0</span>
+   &#160;<span id="projectnumber">1.5.0</span>
    </div>
    <div id="projectbrief">Multiplatform .NET Core bindings for MuPDF</div>
   </td>
@@ -94,7 +94,7 @@ $(document).ready(function(){initNavTree('class_mu_p_d_f_core_1_1_mu_p_d_f_multi
 </div><!--header-->
 <div class="contents">
 
-<p>A class that holds the necessary resources to render a page of a MuPDF document using multiple threads.  
+<p>A class that holds the necessary resources to render a page of a <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f.html" title="Contains static methods to perform setup operations.">MuPDF</a> document using multiple threads.  
  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for MuPDFCore.MuPDFMultiThreadedPageRenderer:</div>
@@ -111,6 +111,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:afb748f194d7f6983f68c475b53943da5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#afb748f194d7f6983f68c475b53943da5">Render</a> (<a class="el" href="struct_mu_p_d_f_core_1_1_rounded_size.html">RoundedSize</a> targetSize, <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html">Rectangle</a> region, IntPtr[] destinations, <a class="el" href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">PixelFormats</a> pixelFormat)</td></tr>
 <tr class="memdesc:afb748f194d7f6983f68c475b53943da5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render the specified region to an image of the specified size, split in a number of tiles equal to the number of threads used by this <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html" title="A class that holds the necessary resources to render a page of a MuPDF document using multiple thread...">MuPDFMultiThreadedPageRenderer</a>, without marshaling. This method will not return until all the rendering threads have finished.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#afb748f194d7f6983f68c475b53943da5">More...</a><br /></td></tr>
 <tr class="separator:afb748f194d7f6983f68c475b53943da5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c7011b80aa57829007e3ff16fd7bb6a"><td class="memItemLeft" align="right" valign="top">delegate Span&lt; byte &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#a1c7011b80aa57829007e3ff16fd7bb6a">GetSpanItem</a> (int index)</td></tr>
+<tr class="memdesc:a1c7011b80aa57829007e3ff16fd7bb6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an element from a collection of <a class="el" href="">Span</a>&lt;byte&gt;  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#a1c7011b80aa57829007e3ff16fd7bb6a">More...</a><br /></td></tr>
+<tr class="separator:a1c7011b80aa57829007e3ff16fd7bb6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae618aac7a0b15dd131d4f6637007b4f3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#a1c7011b80aa57829007e3ff16fd7bb6a">GetSpanItem</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#ae618aac7a0b15dd131d4f6637007b4f3">Render</a> (<a class="el" href="struct_mu_p_d_f_core_1_1_rounded_size.html">RoundedSize</a> targetSize, <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html">Rectangle</a> region, out IDisposable[] disposables, <a class="el" href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">PixelFormats</a> pixelFormat)</td></tr>
+<tr class="memdesc:ae618aac7a0b15dd131d4f6637007b4f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render the specified region to an image of the specified size, split in a number of tiles equal to the number of threads used by this <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html" title="A class that holds the necessary resources to render a page of a MuPDF document using multiple thread...">MuPDFMultiThreadedPageRenderer</a>, without marshaling. This method will not return until all the rendering threads have finished. Since creating an array of Span&lt;T&gt; is not allowed, this method returns a delegate that accepts an integer parameter (representing the index of the span in the "array") and returns the Span&lt;T&gt; corresponding to that index.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#ae618aac7a0b15dd131d4f6637007b4f3">More...</a><br /></td></tr>
+<tr class="separator:ae618aac7a0b15dd131d4f6637007b4f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05eca723202ae5ca1b535b8fe32ef405"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#a05eca723202ae5ca1b535b8fe32ef405">Abort</a> ()</td></tr>
 <tr class="memdesc:a05eca723202ae5ca1b535b8fe32ef405"><td class="mdescLeft">&#160;</td><td class="mdescRight">Signal to the rendering threads that they should abort rendering as soon as possible.  <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#a05eca723202ae5ca1b535b8fe32ef405">More...</a><br /></td></tr>
 <tr class="separator:a05eca723202ae5ca1b535b8fe32ef405"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,9 +134,9 @@ Properties</h2></td></tr>
 <tr class="separator:a9f2e30c872e3b409af2333aede3503f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A class that holds the necessary resources to render a page of a MuPDF document using multiple threads. </p>
+<div class="textblock"><p>A class that holds the necessary resources to render a page of a <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f.html" title="Contains static methods to perform setup operations.">MuPDF</a> document using multiple threads. </p>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html#l00275">275</a> of file <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html">MuPDFMultiThreadedPageRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html#l00276">276</a> of file <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html">MuPDFMultiThreadedPageRenderer.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a05eca723202ae5ca1b535b8fe32ef405"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a05eca723202ae5ca1b535b8fe32ef405">&#9670;&nbsp;</a></span>Abort()</h2>
@@ -149,7 +155,7 @@ Properties</h2></td></tr>
 
 <p>Signal to the rendering threads that they should abort rendering as soon as possible. </p>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html#l00495">495</a> of file <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html">MuPDFMultiThreadedPageRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html#l00543">543</a> of file <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html">MuPDFMultiThreadedPageRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -171,12 +177,39 @@ Properties</h2></td></tr>
 <p>Get the current rendering progress of all the threads. </p>
 <dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="class_mu_p_d_f_core_1_1_render_progress.html" title="Holds a summary of the progress of the current rendering operation.">RenderProgress</a> object containing the rendering progress of all the threads.</dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html#l00507">507</a> of file <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html">MuPDFMultiThreadedPageRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html#l00555">555</a> of file <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html">MuPDFMultiThreadedPageRenderer.cs</a>.</p>
+
+</div>
+</div>
+<a id="a1c7011b80aa57829007e3ff16fd7bb6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c7011b80aa57829007e3ff16fd7bb6a">&#9670;&nbsp;</a></span>GetSpanItem()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">delegate Span&lt;byte&gt; MuPDFCore.MuPDFMultiThreadedPageRenderer.GetSpanItem </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets an element from a collection of <a class="el" href="">Span</a>&lt;byte&gt; </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>The index of the element to get.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An element from a collection of <a class="el" href="">Span</a>&lt;byte&gt;</dd></dl>
 
 </div>
 </div>
 <a id="afb748f194d7f6983f68c475b53943da5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb748f194d7f6983f68c475b53943da5">&#9670;&nbsp;</a></span>Render()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#afb748f194d7f6983f68c475b53943da5">&#9670;&nbsp;</a></span>Render() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -224,7 +257,61 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html#l00382">382</a> of file <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html">MuPDFMultiThreadedPageRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html#l00383">383</a> of file <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html">MuPDFMultiThreadedPageRenderer.cs</a>.</p>
+
+</div>
+</div>
+<a id="ae618aac7a0b15dd131d4f6637007b4f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae618aac7a0b15dd131d4f6637007b4f3">&#9670;&nbsp;</a></span>Render() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html#a1c7011b80aa57829007e3ff16fd7bb6a">GetSpanItem</a> MuPDFCore.MuPDFMultiThreadedPageRenderer.Render </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_mu_p_d_f_core_1_1_rounded_size.html">RoundedSize</a>&#160;</td>
+          <td class="paramname"><em>targetSize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html">Rectangle</a>&#160;</td>
+          <td class="paramname"><em>region</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">out IDisposable[]&#160;</td>
+          <td class="paramname"><em>disposables</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb">PixelFormats</a>&#160;</td>
+          <td class="paramname"><em>pixelFormat</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Render the specified region to an image of the specified size, split in a number of tiles equal to the number of threads used by this <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html" title="A class that holds the necessary resources to render a page of a MuPDF document using multiple thread...">MuPDFMultiThreadedPageRenderer</a>, without marshaling. This method will not return until all the rendering threads have finished. Since creating an array of Span&lt;T&gt; is not allowed, this method returns a delegate that accepts an integer parameter (representing the index of the span in the "array") and returns the Span&lt;T&gt; corresponding to that index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">targetSize</td><td>The total size of the image that should be rendered.</td></tr>
+    <tr><td class="paramname">region</td><td>The region in page units that should be rendered.</td></tr>
+    <tr><td class="paramname">disposables</td><td>A collection of IDisposables that can be used to free the memory where the rendered tiles are stored. You should keep track of these and dispose them when you have finished working with the images.</td></tr>
+    <tr><td class="paramname">pixelFormat</td><td>The format of the pixel data.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A delegate that accepts an integer parameter (representing the index of the span in the "array") and returns the Span&lt;T&gt; corresponding to that index.</dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html#l00509">509</a> of file <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html">MuPDFMultiThreadedPageRenderer.cs</a>.</p>
 
 </div>
 </div>
@@ -251,7 +338,7 @@ Properties</h2></td></tr>
 
 <p>The number of threads that are used to render the image. </p>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html#l00305">305</a> of file <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html">MuPDFMultiThreadedPageRenderer.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html#l00306">306</a> of file <a class="el" href="_mu_p_d_f_multi_threaded_page_renderer_8cs_source.html">MuPDFMultiThreadedPageRenderer.cs</a>.</p>
 
 </div>
 </div>

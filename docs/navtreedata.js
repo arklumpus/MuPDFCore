@@ -37,7 +37,7 @@ var NAVTREE =
       ] ],
       [ "Building from source", "index.html#autotoc_md9", [
         [ "1. Building libmupdf", "index.html#autotoc_md10", [
-          [ "Tips for compiling MuPDF 1.19.0:", "index.html#autotoc_md11", null ]
+          [ "Tips for compiling MuPDF 1.19.1:", "index.html#autotoc_md11", null ]
         ] ],
         [ "2. Building MuPDFWrapper", "index.html#autotoc_md12", [
           [ "Windows (x86 and x64)", "index.html#autotoc_md13", null ],
@@ -68,7 +68,8 @@ var NAVTREE =
         [ "Functions", "functions_func.html", null ],
         [ "Variables", "functions_vars.html", null ],
         [ "Enumerations", "functions_enum.html", null ],
-        [ "Properties", "functions_prop.html", null ]
+        [ "Properties", "functions_prop.html", null ],
+        [ "Events", "functions_evnt.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -80,8 +81,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_mu_p_d_f_8cs_source.html",
-"class_mu_p_d_f_core_1_1_tesseract_language.html#a15b11b8626d4dbb7f01dd45ee4ad3176a8fd93a2400d9612d1773381b49e37d63",
-"class_mu_p_d_f_core_1_1_tesseract_language.html#af64dce4052f4a0df58df7e8051a416cda4721faeeb72c7d5c19acb9d37b961fb0"
+"class_mu_p_d_f_core_1_1_tesseract_language.html#a15b11b8626d4dbb7f01dd45ee4ad3176a71c04ef1ea8a194decbcb029fb810490",
+"class_mu_p_d_f_core_1_1_tesseract_language.html#ad72f06b070354601393980d454045de9"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
