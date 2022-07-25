@@ -608,7 +608,6 @@ namespace Tests
         [TestMethod]
         public void SubDisplayListRenderingBGRA()
         {
-            Stream expectedStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample_BGRA.bin");
             int bufferSize = 4000 * 2605 * 4;
             byte[] buffer = new byte[bufferSize];
 
@@ -626,7 +625,6 @@ namespace Tests
 
             try
             {
-                expectedStream.Dispose();
                 bufferHandle.Free();
                 dataHandle.Free();
                 ms.Dispose();
