@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2021 Artifex Software, Inc.
+// Copyright (C) 2004-2022 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -22,6 +22,8 @@
 
 #ifndef MUPDF_PDF_XREF_H
 #define MUPDF_PDF_XREF_H
+
+#include "mupdf/pdf/document.h"
 
 /*
 	Allocate a slot in the xref table and return a fresh unused object number.
@@ -140,6 +142,8 @@ pdf_obj *pdf_trailer(fz_context *ctx, pdf_document *doc);
 void pdf_set_populating_xref_trailer(fz_context *ctx, pdf_document *doc, pdf_obj *trailer);
 int pdf_xref_len(fz_context *ctx, pdf_document *doc);
 
+pdf_obj *pdf_metadata(fz_context *ctx, pdf_document *doc);
+
 /*
 	Used while reading the individual xref sections from a file.
 */
@@ -153,6 +157,7 @@ pdf_xref_entry *pdf_get_populating_xref_entry(fz_context *ctx, pdf_document *doc
 	xref.
 */
 pdf_xref_entry *pdf_get_xref_entry(fz_context *ctx, pdf_document *doc, int i);
+pdf_xref_entry *pdf_get_xref_entry_no_null(fz_context *ctx, pdf_document *doc, int i);
 void pdf_replace_xref(fz_context *ctx, pdf_document *doc, pdf_xref_entry *entries, int n);
 void pdf_forget_xref(fz_context *ctx, pdf_document *doc);
 pdf_xref_entry *pdf_get_incremental_xref_entry(fz_context *ctx, pdf_document *doc, int i);

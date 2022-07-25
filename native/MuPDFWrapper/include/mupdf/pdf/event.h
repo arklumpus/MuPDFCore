@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2021 Artifex Software, Inc.
+// Copyright (C) 2004-2022 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -22,6 +22,8 @@
 
 #ifndef MUPDF_PDF_EVENT_H
 #define MUPDF_PDF_EVENT_H
+
+#include "mupdf/pdf/document.h"
 
 /*
 	Document events: the objects via which MuPDF informs the calling app
@@ -68,10 +70,12 @@ void *pdf_get_doc_event_callback_data(fz_context *ctx, pdf_document *doc);
 */
 typedef struct
 {
+	pdf_document *doc;
 	const char *message;
 	int icon_type;
 	int button_group_type;
 	const char *title;
+	int has_check_box;
 	const char *check_box_message;
 	int initially_checked;
 	int finally_checked;

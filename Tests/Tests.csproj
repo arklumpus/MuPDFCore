@@ -53,7 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MuPDFCore" Version="1.6.0-a2" />
+    <PackageReference Include="MuPDFCore" Version="1.6.0-a7" />
   </ItemGroup>
 
 </Project>

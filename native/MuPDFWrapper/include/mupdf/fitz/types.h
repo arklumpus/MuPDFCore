@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2022 Artifex Software, Inc.
+// Copyright (C) 2021 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -20,24 +20,22 @@
 // Artifex Software, Inc., 1305 Grant Avenue - Suite 200, Novato,
 // CA 94945, U.S.A., +1(415)492-9861, for further information.
 
-#ifndef MUPDF_PDF_JAVASCRIPT_H
-#define MUPDF_PDF_JAVASCRIPT_H
+#ifndef MUPDF_FITZ_TYPES_H
+#define MUPDF_FITZ_TYPES_H
 
-#include "mupdf/pdf/document.h"
-#include "mupdf/pdf/form.h"
+typedef struct fz_document fz_document;
 
-void pdf_enable_js(fz_context *ctx, pdf_document *doc);
-void pdf_disable_js(fz_context *ctx, pdf_document *doc);
-int pdf_js_supported(fz_context *ctx, pdf_document *doc);
-void pdf_drop_js(fz_context *ctx, pdf_js *js);
-
-void pdf_js_event_init(pdf_js *js, pdf_obj *target, const char *value, int willCommit);
-int pdf_js_event_result(pdf_js *js);
-int pdf_js_event_result_validate(pdf_js *js, char **newvalue);
-char *pdf_js_event_value(pdf_js *js);
-void pdf_js_event_init_keystroke(pdf_js *js, pdf_obj *target, pdf_keystroke_event *evt);
-int pdf_js_event_result_keystroke(pdf_js *js, pdf_keystroke_event *evt);
-
-void pdf_js_execute(pdf_js *js, const char *name, const char *code, char **result);
+/**
+	Locations within the document are referred to in terms of
+	chapter and page, rather than just a page number. For some
+	documents (such as epub documents with large numbers of pages
+	broken into many chapters) this can make navigation much faster
+	as only the required chapter needs to be decoded at a time.
+*/
+typedef struct
+{
+	int chapter;
+	int page;
+} fz_location;
 
 #endif

@@ -23,6 +23,8 @@
 #ifndef MUPDF_PDF_OBJECT_H
 #define MUPDF_PDF_OBJECT_H
 
+#include "mupdf/fitz/stream.h"
+
 typedef struct pdf_document pdf_document;
 typedef struct pdf_crypt pdf_crypt;
 typedef struct pdf_journal pdf_journal;
@@ -85,6 +87,37 @@ int pdf_name_eq(fz_context *ctx, pdf_obj *a, pdf_obj *b);
 int pdf_obj_marked(fz_context *ctx, pdf_obj *obj);
 int pdf_mark_obj(fz_context *ctx, pdf_obj *obj);
 void pdf_unmark_obj(fz_context *ctx, pdf_obj *obj);
+
+typedef struct pdf_cycle_list pdf_cycle_list;
+struct pdf_cycle_list {
+	pdf_cycle_list *up;
+	int num;
+};
+int pdf_cycle(fz_context *ctx, pdf_cycle_list *here, pdf_cycle_list *prev, pdf_obj *obj);
+
+typedef struct
+{
+	int len;
+	unsigned char bits[1];
+} pdf_mark_bits;
+
+pdf_mark_bits *pdf_new_mark_bits(fz_context *ctx, pdf_document *doc);
+void pdf_drop_mark_bits(fz_context *ctx, pdf_mark_bits *marks);
+void pdf_mark_bits_reset(fz_context *ctx, pdf_mark_bits *marks);
+int pdf_mark_bits_set(fz_context *ctx, pdf_mark_bits *marks, pdf_obj *obj);
+
+typedef struct
+{
+	int len;
+	int max;
+	int *list;
+	int local_list[8];
+} pdf_mark_list;
+
+int pdf_mark_list_push(fz_context *ctx, pdf_mark_list *list, pdf_obj *obj);
+void pdf_mark_list_pop(fz_context *ctx, pdf_mark_list *list);
+void pdf_mark_list_init(fz_context *ctx, pdf_mark_list *list);
+void pdf_mark_list_free(fz_context *ctx, pdf_mark_list *list);
 
 void pdf_set_obj_memo(fz_context *ctx, pdf_obj *obj, int bit, int memo);
 int pdf_obj_memo(fz_context *ctx, pdf_obj *obj, int bit, int *memo);
@@ -318,5 +351,8 @@ void pdf_deserialise_journal(fz_context *ctx, pdf_document *doc, fz_stream *stm)
 
 /* Internal call as part of creating objects. */
 void pdf_add_journal_fragment(fz_context *ctx, pdf_document *doc, int parent, pdf_obj *copy, fz_buffer *copy_stream, int newobj);
+
+char *pdf_format_date(fz_context *ctx, int64_t time, char *s, size_t n);
+int64_t pdf_parse_date(fz_context *ctx, const char *s);
 
 #endif

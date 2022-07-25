@@ -23,6 +23,9 @@
 #ifndef MUPDF_PDF_FORM_H
 #define MUPDF_PDF_FORM_H
 
+#include "mupdf/fitz/display-list.h"
+#include "mupdf/pdf/document.h"
+
 /* Types of widget */
 enum pdf_widget_type
 {
@@ -151,6 +154,7 @@ void pdf_calculate_form(fz_context *ctx, pdf_document *doc);
 void pdf_reset_form(fz_context *ctx, pdf_document *doc, pdf_obj *fields, int exclude);
 
 int pdf_field_type(fz_context *ctx, pdf_obj *field);
+const char *pdf_field_type_string(fz_context *ctx, pdf_obj *field);
 int pdf_field_flags(fz_context *ctx, pdf_obj *field);
 
 /*

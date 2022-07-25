@@ -25,16 +25,19 @@
 
 #include "mupdf/pdf/font.h"
 #include "mupdf/pdf/resource.h"
+#include "mupdf/pdf/document.h"
 
 typedef struct pdf_gstate pdf_gstate;
 typedef struct pdf_processor pdf_processor;
 
 void *pdf_new_processor(fz_context *ctx, int size);
+pdf_processor *pdf_keep_processor(fz_context *ctx, pdf_processor *proc);
 void pdf_close_processor(fz_context *ctx, pdf_processor *proc);
 void pdf_drop_processor(fz_context *ctx, pdf_processor *proc);
 
 struct pdf_processor
 {
+	int refs;
 	void (*close_processor)(fz_context *ctx, pdf_processor *proc);
 	void (*drop_processor)(fz_context *ctx, pdf_processor *proc);
 
@@ -290,7 +293,7 @@ typedef struct
 	The filter options struct allows you to filter objects using callbacks.
 */
 pdf_processor *pdf_new_filter_processor(fz_context *ctx, pdf_document *doc, pdf_processor *chain, pdf_obj *old_res, pdf_obj *new_res, int struct_parents, fz_matrix transform, pdf_filter_options *filter);
-pdf_obj *pdf_filter_xobject_instance(fz_context *ctx, pdf_obj *old_xobj, pdf_obj *page_res, fz_matrix ctm, pdf_filter_options *filter);
+pdf_obj *pdf_filter_xobject_instance(fz_context *ctx, pdf_obj *old_xobj, pdf_obj *page_res, fz_matrix ctm, pdf_filter_options *filter, pdf_cycle_list *cycle_up);
 
 /*
 	Functions to actually process annotations, glyphs and general stream objects.
