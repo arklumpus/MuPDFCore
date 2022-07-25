@@ -62,6 +62,16 @@ namespace PDFViewerDemo
         private MuPDFDocument Document;
 
         /// <summary>
+        /// Cached user password to decrypt the document.
+        /// </summary>
+        private string UserPassword;
+
+        /// <summary>
+        /// Cached owner password to remove document restrictions.
+        /// </summary>
+        private string OwnerPassword;
+
+        /// <summary>
         /// A watcher that raises an event if the file that has been opened is overwritten.
         /// </summary>
         private readonly FileSystemWatcher Watcher = new FileSystemWatcher();
@@ -342,8 +352,12 @@ namespace PDFViewerDemo
         /// <param name="e"></param>
         private void FileChanged(object sender, FileSystemEventArgs e)
         {
+            Watcher.EnableRaisingEvents = false;
+
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
+                await Task.Delay(1000);
+
                 //Keep track of the current DisplayArea.
                 Rect displayArea = this.FindControl<PDFRenderer>("MuPDFRenderer").DisplayArea;
 
@@ -351,11 +365,108 @@ namespace PDFViewerDemo
                 this.FindControl<PDFRenderer>("MuPDFRenderer").ReleaseResources();
                 Document?.Dispose();
                 Document = new MuPDFDocument(Context, e.FullPath);
+
+                //The document is encrypted: we need a password to decrypt it.
+                if (Document.EncryptionState == EncryptionState.Encrypted)
+                {
+                    bool success;
+
+                    //Try using the cached password.
+                    if (!string.IsNullOrEmpty(UserPassword))
+                    {
+                        //Try unlocking the document with the cached user password.
+                        bool unlockResult = Document.TryUnlock(UserPassword, out PasswordTypes pswType);
+
+                        //Check if the password is correct.
+                        if (unlockResult)
+                        {
+                            //The password is correct.
+
+                            //Check that the cached user password is still the user password and that the document is thus unlocked.
+                            if (pswType.HasFlag(PasswordTypes.User) && Document.EncryptionState == EncryptionState.Unlocked)
+                            {
+                                //All is fine.
+                                success = true;
+                            }
+                            else
+                            {
+                                //The cached user password is now the owner password. We need a new password.
+                                success = false;
+                            }
+                        }
+                        else
+                        {
+                            //The cached user password is no longer correct. We need a new password.
+                            success = false;
+                        }
+                    }
+                    else
+                    {
+                        success = false;
+                    }
+
+                    //If we need a new password, ask the user for it.
+                    if (!success)
+                    {
+                        //Ask the user for the password.
+                        PasswordWindow pwdWin = new PasswordWindow();
+                        string password = await pwdWin.ShowDialog<string>(this);
+
+                        if (string.IsNullOrEmpty(password))
+                        {
+                            //The user did not provide a password. The document cannot be opened.
+                            await new DialogWindow("The document cannot be opened without the user password!").ShowDialog(this);
+                            success = false;
+                        }
+                        else
+                        {
+                            //The user provided a password. Try unlocking the document with the password.
+                            bool unlockResult = Document.TryUnlock(password, out PasswordTypes pswType);
+
+                            //Check if the password is correct.
+                            if (unlockResult)
+                            {
+                                //The password is correct.
+
+                                //Check that the user provided the user password (and not the owner password) and that the document is thus unlocked.
+                                if (pswType.HasFlag(PasswordTypes.User) && Document.EncryptionState == EncryptionState.Unlocked)
+                                {
+                                    //All is fine.
+                                    success = true;
+                                    UserPassword = password;
+                                }
+                                else
+                                {
+                                    //The user provided the owner password instead of the user password. The document cannot be opened.
+                                    await new DialogWindow("The password corresponds to the \"owner\" password for the document, but the \"user\" password is instead required!").ShowDialog(this);
+                                    success = false;
+                                }
+                            }
+                            else
+                            {
+                                //The user provided an incorrect password. The document cannot be opened.
+                                await new DialogWindow("The password is incorrect!").ShowDialog(this);
+                                success = false;
+                            }
+                        }
+
+                        //If the document could not be unlocked, fall back to the default PDF.
+                        if (!success)
+                        {
+                            MemoryStream ms = RenderInitialPDF();
+                            Document = new MuPDFDocument(Context, ref ms, InputFileTypes.PDF);
+                            Watcher.EnableRaisingEvents = false;
+                        }
+                    }
+                }
+
                 MaxPageNumber = Document.Pages.Count;
                 await InitializeDocument(0);
 
                 //Restore the DisplayArea.
                 this.FindControl<PDFRenderer>("MuPDFRenderer").SetDisplayAreaNow(displayArea);
+
+                Watcher.EnableRaisingEvents = true;
             });
         }
 
@@ -375,7 +486,7 @@ namespace PDFViewerDemo
 
             string[] result = await dialog.ShowAsync(this);
 
-            if (result.Length == 1)
+            if (result != null && result.Length == 1)
             {
                 //First of all we need the PDFRenderer to stop doing anything with the Document.
                 this.FindControl<PDFRenderer>("MuPDFRenderer").ReleaseResources();
@@ -386,14 +497,83 @@ namespace PDFViewerDemo
                 //Create a new document and initialise the PDFRenderer with it.
                 Document = new MuPDFDocument(Context, result[0]);
 
+                //Reset the cached user password.
+                UserPassword = null;
+
+                //Reset the cached owner password.
+                OwnerPassword = null;
+
+                //The document is encrypted: we need a password to decrypt it.
+                if (Document.EncryptionState == EncryptionState.Encrypted)
+                {
+                    //Ask the user for the password.
+                    PasswordWindow pwdWin = new PasswordWindow();
+                    string password = await pwdWin.ShowDialog<string>(this);
+
+                    bool success;
+
+                    if (string.IsNullOrEmpty(password))
+                    {
+                        //The user did not provide a password. The document cannot be opened.
+                        await new DialogWindow("The document cannot be opened without the user password!").ShowDialog(this);
+                        success = false;
+                    }
+                    else
+                    {
+                        //The user provided a password. Try unlocking the document with the password.
+                        bool unlockResult = Document.TryUnlock(password, out PasswordTypes pswType);
+
+                        //Check if the password is correct.
+                        if (unlockResult)
+                        {
+                            //The password is correct.
+
+                            //Check that the user provided the user password (and not the owner password) and that the document is thus unlocked.
+                            if (pswType.HasFlag(PasswordTypes.User) && Document.EncryptionState == EncryptionState.Unlocked)
+                            {
+                                //All is fine.
+                                success = true;
+                                UserPassword = password;
+                            }
+                            else
+                            {
+                                //The user provided the owner password instead of the user password. The document cannot be opened.
+                                await new DialogWindow("The password corresponds to the \"owner\" password for the document, but the \"user\" password is instead required!").ShowDialog(this);
+                                success = false;
+                            }
+                        }
+                        else
+                        {
+                            //The user provided an incorrect password. The document cannot be opened.
+                            await new DialogWindow("The password is incorrect!").ShowDialog(this);
+                            success = false;
+                        }
+                    }
+
+                    //If the document could not be unlocked, fall back to the default PDF.
+                    if (!success)
+                    {
+                        result[0] = null;
+                        MemoryStream ms = RenderInitialPDF();
+                        Document = new MuPDFDocument(Context, ref ms, InputFileTypes.PDF);
+                    }
+                }
+
                 MaxPageNumber = Document.Pages.Count;
                 await InitializeDocument(0);
 
-                //Set up the FileWatcher to keep track of any changes to the file.
-                Watcher.EnableRaisingEvents = false;
-                Watcher.Path = Path.GetDirectoryName(result[0]);
-                Watcher.Filter = Path.GetFileName(result[0]);
-                Watcher.EnableRaisingEvents = true;
+                if (!string.IsNullOrEmpty(result[0]))
+                {
+                    //Set up the FileWatcher to keep track of any changes to the file.
+                    Watcher.EnableRaisingEvents = false;
+                    Watcher.Path = Path.GetDirectoryName(result[0]);
+                    Watcher.Filter = Path.GetFileName(result[0]);
+                    Watcher.EnableRaisingEvents = true;
+                }
+                else
+                {
+                    Watcher.EnableRaisingEvents = false;
+                }
             }
         }
 
@@ -644,6 +824,92 @@ namespace PDFViewerDemo
         /// <param name="e"></param>
         private async void CopyClicked(object sender, RoutedEventArgs e)
         {
+            //Check whether an owner password is required to allow users to copy content from the document.
+            if (Document.RestrictionState == RestrictionState.Restricted && Document.Restrictions.HasFlag(DocumentRestrictions.Copy))
+            {
+                bool success;
+
+                //Try using the cached password.
+                if (!string.IsNullOrEmpty(OwnerPassword))
+                {
+                    //Try unlocking the document with the cached user password.
+                    bool unlockResult = Document.TryUnlock(OwnerPassword, out PasswordTypes pswType);
+
+                    //Check if the password is correct.
+                    if (unlockResult)
+                    {
+                        //The password is correct.
+
+                        //Check that the cached owner password is still the owner password and that the document is thus unlocked.
+                        if (pswType.HasFlag(PasswordTypes.Owner) && Document.RestrictionState == RestrictionState.Unlocked)
+                        {
+                            //All is fine.
+                            success = true;
+                        }
+                        else
+                        {
+                            //The cached owner password is now the user password. We need a new password.
+                            success = false;
+                        }
+                    }
+                    else
+                    {
+                        //The cached owner password is no longer correct. We need a new password.
+                        success = false;
+                    }
+                }
+                else
+                {
+                    success = false;
+                }
+
+                //If we need a new password, ask the user for it.
+                if (!success)
+                {
+                    //Ask the user for the password.
+                    PasswordWindow pwdWin = new PasswordWindow();
+                    string password = await pwdWin.ShowDialog<string>(this);
+
+                    if (string.IsNullOrEmpty(password))
+                    {
+                        //The user did not provide a password. The text cannot be copied.
+                        await new DialogWindow("Text cannot be copied without the owner password!").ShowDialog(this);
+                        return;
+                    }
+                    else
+                    {
+                        //The user provided a password. Try unlocking the document with the password.
+                        bool unlockResult = Document.TryUnlock(password, out PasswordTypes pswType);
+
+                        //Check if the password is correct.
+                        if (unlockResult)
+                        {
+                            //The password is correct.
+
+                            //Check that the user provided the owner password (and not the user password) and that the document is thus unlocked.
+                            if (pswType.HasFlag(PasswordTypes.Owner) && Document.RestrictionState == RestrictionState.Unlocked)
+                            {
+                                //All is fine.
+                                success = true;
+                                OwnerPassword = password;
+                            }
+                            else
+                            {
+                                //The user provided the user password instead of the owner password. The text cannot be copied.
+                                await new DialogWindow("The password corresponds to the \"user\" password for the document, but the \"owner\" password is instead required!").ShowDialog(this);
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            //The user provided an incorrect password. The text cannot be copied.
+                            await new DialogWindow("The password is incorrect!").ShowDialog(this);
+                            return;
+                        }
+                    }
+                }
+            }
+
             string selection = this.FindControl<PDFRenderer>("MuPDFRenderer").GetSelectedText() ?? "";
             await Application.Current.Clipboard.SetTextAsync(selection);
         }

@@ -13,7 +13,7 @@
     <PackageReference Include="Avalonia" Version="0.10.10" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.10" />
     <PackageReference Include="HarfBuzzSharp" Version="2.8.2-preview.155" />
-    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.5.0" />
+    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.6.0-a7" />
     <PackageReference Include="SkiaSharp" Version="2.88.0-preview.155" />
     <PackageReference Include="VectSharp.PDF" Version="2.2.2" />
   </ItemGroup>
