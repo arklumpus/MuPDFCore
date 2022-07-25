@@ -10,6 +10,9 @@
     <None Remove="Data\Annotation.pdf" />
     <None Remove="Data\eng.traineddata" />
     <None Remove="Data\LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢.pdf" />
+    <None Remove="Data\Sample-owner.pdf" />
+    <None Remove="Data\Sample-user-owner.pdf" />
+    <None Remove="Data\Sample-user.pdf" />
     <None Remove="Data\Sample.pdf" />
     <None Remove="Data\Sample.png" />
   </ItemGroup>
@@ -23,6 +26,15 @@
   <ItemGroup>
     <EmbeddedResource Include="Data\Annotation.pdf" />
     <EmbeddedResource Include="Data\LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Sample-owner.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Sample-user-owner.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Sample-user.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Sample.pdf">
@@ -41,7 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MuPDFCore" Version="1.5.0" />
+    <PackageReference Include="MuPDFCore" Version="1.6.0-a2" />
   </ItemGroup>
 
 </Project>

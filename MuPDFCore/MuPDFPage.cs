@@ -64,6 +64,11 @@ namespace MuPDFCore
         /// <param name="number">The number of the page that should be extracted (starting at 0).</param>
         internal MuPDFPage(MuPDFContext context, MuPDFDocument document, int number)
         {
+            if (document.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             this.OwnerContext = context;
             this.OwnerDocument = document;
             this.PageNumber = number;

@@ -1220,5 +1220,108 @@ namespace Tests
                 await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () => await document.ExtractTextAsync(new TesseractLanguage("eng.traineddata"), cancellationToken: cancellationTokenSource.Token, progress: new Progress<OCRProgressInfo>(prog => cancellationTokenSource.Cancel())), "The expected OperationCanceledException was not thrown.");
             }
         }
+
+        [TestMethod]
+        [DeploymentItem("Data/Sample-user.pdf")]
+        public void MuPDFDecryptDocument()
+        {
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, "Sample-user.pdf");
+
+            Assert.IsNotNull(document, "The created document is null.");
+            Assert.AreNotEqual(IntPtr.Zero, document.NativeDocument, "The native document pointer is null.");
+            Assert.AreEqual(72, document.ImageXRes, "The image x resolution is wrong.");
+            Assert.AreEqual(72, document.ImageYRes, "The image x resolution is wrong.");
+            
+            Assert.AreEqual(EncryptionState.Encrypted, document.EncryptionState, "The document is not encrypted.");
+            Assert.IsFalse(document.TryUnlock("wrongpsw", out PasswordTypes pwType), "The wrong password should not be able to unlock the document.");
+            Assert.AreEqual(PasswordTypes.User, pwType, "A user password should be required.");
+            Assert.ThrowsException<DocumentLockedException>(() => document.Pages[0].ToString(), "Accessing a page on an encrypted document should fail.");
+            Assert.IsTrue(document.TryUnlock("userpsw"), "The correct password should unlock the document.");
+            Assert.AreEqual(EncryptionState.Unlocked, document.EncryptionState, "The document should now be unlocked.");
+            Assert.IsNotNull(document.Pages[0].ToString(), "Accessing a page after the document has been unlocked should work.");
+        }
+
+        [TestMethod]
+        [DeploymentItem("Data/Sample-owner.pdf")]
+        public void MuPDFRemoveDocumentRestrictions()
+        {
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, "Sample-owner.pdf");
+
+            Assert.IsNotNull(document, "The created document is null.");
+            Assert.AreNotEqual(IntPtr.Zero, document.NativeDocument, "The native document pointer is null.");
+            Assert.AreEqual(72, document.ImageXRes, "The image x resolution is wrong.");
+            Assert.AreEqual(72, document.ImageYRes, "The image x resolution is wrong.");
+
+            Assert.AreEqual(RestrictionState.Restricted, document.RestrictionState, "The document is not restricted.");
+            Assert.IsFalse(document.TryUnlock("wrongpsw", out PasswordTypes pwType), "The wrong password should not be able to unlock the document.");
+            Assert.AreEqual(PasswordTypes.Owner, pwType, "An owner password should be required.");
+            Assert.IsTrue(document.TryUnlock("ownerpsw"), "The correct password should unlock the document.");
+            Assert.AreEqual(RestrictionState.Unlocked, document.RestrictionState, "The document should now be unlocked.");
+        }
+
+        [TestMethod]
+        [DeploymentItem("Data/Sample-user-owner.pdf")]
+        public void MuPDFDecryptAndRemoveDocumentRestrictions()
+        {
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, "Sample-user-owner.pdf");
+
+            Assert.IsNotNull(document, "The created document is null.");
+            Assert.AreNotEqual(IntPtr.Zero, document.NativeDocument, "The native document pointer is null.");
+            Assert.AreEqual(72, document.ImageXRes, "The image x resolution is wrong.");
+            Assert.AreEqual(72, document.ImageYRes, "The image x resolution is wrong.");
+
+            Assert.AreEqual(RestrictionState.Restricted, document.RestrictionState, "The document is not restricted.");
+            Assert.AreEqual(EncryptionState.Encrypted, document.EncryptionState, "The document is not encrypted.");
+            Assert.IsFalse(document.TryUnlock("wrongpsw", out PasswordTypes pwType), "The wrong password should not be able to unlock the document.");
+            Assert.AreEqual(PasswordTypes.Owner | PasswordTypes.User, pwType, "Both a user and an owner password should be required.");
+            Assert.ThrowsException<DocumentLockedException>(() => document.Pages[0].ToString(), "Accessing a page on an encrypted document should fail.");
+
+            Assert.IsTrue(document.TryUnlock("userpsw"), "The user password should decrypt the document.");
+            Assert.AreEqual(EncryptionState.Unlocked, document.EncryptionState, "The document should now be decrypted.");
+            Assert.AreEqual(RestrictionState.Restricted, document.RestrictionState, "The document should still be restricted.");
+            Assert.IsNotNull(document.Pages[0].ToString(), "Accessing a page after the document has been decrypted should work.");
+
+            Assert.IsFalse(document.TryUnlock("wrongpsw", out pwType), "The wrong password should not be able to unlock the document.");
+            Assert.AreEqual(PasswordTypes.Owner, pwType, "Only an owner password should now be required.");
+            
+            Assert.IsTrue(document.TryUnlock("ownerpsw"), "The owner password should unlock the document.");
+            Assert.AreEqual(RestrictionState.Unlocked, document.RestrictionState, "The document should now be unlocked.");
+        }
+
+        [TestMethod]
+        [DeploymentItem("Data/Sample-user-owner.pdf")]
+        public void MuPDFRemoveDocumentRestrictionsAndDecrypt()
+        {
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, "Sample-user-owner.pdf");
+
+            Assert.IsNotNull(document, "The created document is null.");
+            Assert.AreNotEqual(IntPtr.Zero, document.NativeDocument, "The native document pointer is null.");
+            Assert.AreEqual(72, document.ImageXRes, "The image x resolution is wrong.");
+            Assert.AreEqual(72, document.ImageYRes, "The image x resolution is wrong.");
+
+            Assert.AreEqual(RestrictionState.Restricted, document.RestrictionState, "The document is not restricted.");
+            Assert.AreEqual(EncryptionState.Encrypted, document.EncryptionState, "The document is not encrypted.");
+            Assert.IsFalse(document.TryUnlock("wrongpsw", out PasswordTypes pwType), "The wrong password should not be able to unlock the document.");
+            Assert.AreEqual(PasswordTypes.Owner | PasswordTypes.User, pwType, "Both a user and an owner password should be required.");
+            Assert.ThrowsException<DocumentLockedException>(() => document.Pages[0].ToString(), "Accessing a page on an encrypted document should fail.");
+
+            Assert.IsTrue(document.TryUnlock("ownerpsw"), "The owner password should unlock the document.");
+            Assert.AreEqual(RestrictionState.Unlocked, document.RestrictionState, "The document should now be unlocked.");
+            Assert.AreEqual(EncryptionState.Encrypted, document.EncryptionState, "The document should still be encrypted.");
+            Assert.ThrowsException<DocumentLockedException>(() => document.Pages[0].ToString(), "Accessing a page on an encrypted document should still fail.");
+
+            Assert.IsFalse(document.TryUnlock("wrongpsw", out pwType), "The wrong password should not be able to unlock the document.");
+            Assert.AreEqual(PasswordTypes.User, pwType, "Only a user password should now be required.");
+            Assert.ThrowsException<DocumentLockedException>(() => document.Pages[0].ToString(), "Accessing a page on an encrypted document should still fail.");
+
+            Assert.IsTrue(document.TryUnlock("userpsw"), "The user password should decrypt the document.");
+            Assert.AreEqual(EncryptionState.Unlocked, document.EncryptionState, "The document should now be decrypted.");
+            Assert.AreEqual(RestrictionState.Unlocked, document.RestrictionState, "The document should still be unlocked.");
+            Assert.IsNotNull(document.Pages[0].ToString(), "Accessing a page after the document has been decrypted should work.");
+        }
     }
 }

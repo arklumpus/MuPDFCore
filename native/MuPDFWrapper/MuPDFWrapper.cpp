@@ -158,6 +158,43 @@ void unlock_mutex(void* user, int lock)
 
 extern "C"
 {
+	DLL_PUBLIC int GetPermissions(fz_context* ctx, fz_document* doc)
+	{
+		int tbr = 0;
+
+		if (fz_has_permission(ctx, doc, FZ_PERMISSION_PRINT))
+		{
+			tbr = tbr | 1;
+		}
+
+		if (fz_has_permission(ctx, doc, FZ_PERMISSION_COPY))
+		{
+			tbr = tbr | 2;
+		}
+
+		if (fz_has_permission(ctx, doc, FZ_PERMISSION_EDIT))
+		{
+			tbr = tbr | 4;
+		}
+
+		if (fz_has_permission(ctx, doc, FZ_PERMISSION_ANNOTATE))
+		{
+			tbr = tbr | 8;
+		}
+
+		return tbr;
+	}
+
+	DLL_PUBLIC int UnlockWithPassword(fz_context* ctx, fz_document* doc, const char* password)
+	{
+		return fz_authenticate_password(ctx, doc, password);
+	}
+
+	DLL_PUBLIC int CheckIfPasswordNeeded(fz_context* ctx, fz_document* doc)
+	{
+		return fz_needs_password(ctx, doc);
+	}
+
 	DLL_PUBLIC void ResetOutput(int stdoutFD, int stderrFD)
 	{
 		fprintf(stdout, "\n");

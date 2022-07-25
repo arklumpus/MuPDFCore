@@ -256,6 +256,100 @@ namespace MuPDFCore
     }
 
     /// <summary>
+    /// Possible document encryption states.
+    /// </summary>
+    public enum EncryptionState
+    {
+        /// <summary>
+        /// The document is not encrypted.
+        /// </summary>
+        Unencrypted = 0,
+
+        /// <summary>
+        /// The document is encrypted and a user password is necessary to render it.
+        /// </summary>
+        Encrypted = 1,
+
+        /// <summary>
+        /// The document is encrypted and the correct user password has been supplied.
+        /// </summary>
+        Unlocked = 2
+    }
+
+    /// <summary>
+    /// Possible document restriction states.
+    /// </summary>
+    public enum RestrictionState
+    {
+        /// <summary>
+        /// The document does not have any restrictions associated to it.
+        /// </summary>
+        Unrestricted = 0,
+
+        /// <summary>
+        /// Some restrictions apply to the document. An owner password is required to remove these restrictions.
+        /// </summary>
+        Restricted = 1,
+
+        /// <summary>
+        /// The document had some restrictions and the correct owner password has been supplied.
+        /// </summary>
+        Unlocked = 2
+    }
+
+    /// <summary>
+    /// Document restrictions.
+    /// </summary>
+    public enum DocumentRestrictions
+    {
+        /// <summary>
+        /// No operation is restricted.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// Printing the document is restricted.
+        /// </summary>
+        Print = 1,
+
+        /// <summary>
+        /// Copying the document is restricted.
+        /// </summary>
+        Copy = 2,
+
+        /// <summary>
+        /// Editing the document is restricted.
+        /// </summary>
+        Edit = 4,
+
+        /// <summary>
+        /// Annotating the document is restricted.
+        /// </summary>
+        Annotate = 8
+    }
+
+    /// <summary>
+    /// Password types.
+    /// </summary>
+    public enum PasswordTypes
+    {
+        /// <summary>
+        /// No password.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// The password corresponds to the user password.
+        /// </summary>
+        User = 1,
+
+        /// <summary>
+        /// The password corresponds to the owner password.
+        /// </summary>
+        Owner = 2
+    }
+
+    /// <summary>
     /// A struct to hold information about the current rendering process and to abort rendering as needed.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
@@ -392,6 +486,14 @@ namespace MuPDFCore
         {
             this.ErrorCode = errorCode;
         }
+    }
+
+    /// <summary>
+    /// The exception that is thrown when an attempt is made to render an encrypted document without supplying the required password.
+    /// </summary>
+    public class DocumentLockedException : Exception
+    {
+        internal DocumentLockedException(string message) : base(message) { }
     }
 
     /// <summary>
@@ -1339,5 +1441,33 @@ namespace MuPDFCore
         /// <param name="stderrFD">The file descriptor corresponding to the "real" stderr.</param>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern void ResetOutput(int stdoutFD, int stderrFD);
+
+        /// <summary>
+        /// Unlocks a document with a password.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The document that needs to be unlocked.</param>
+        /// <param name="password">The password to unlock the document.</param>
+        /// <returns>0 if the document could not be unlocked, 1 if the document did not require unlocking in the first place, 2 if the document was unlocked using the user password and 4 if the document was unlocked using the owner password.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int UnlockWithPassword(IntPtr ctx, IntPtr doc, string password);
+
+        /// <summary>
+        /// Checks whether a password is required to open the document.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The document that needs to be checked.</param>
+        /// <returns>0 if a password is not needed, 1 if a password is needed.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int CheckIfPasswordNeeded(IntPtr ctx, IntPtr doc);
+
+        /// <summary>
+        /// Returns the current permissions for the document. Note that these are not actually enforced.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The document whose permissions need to be checked.</param>
+        /// <returns>An integer with bit 0 set if the document can be printed, bit 1 set if it can be copied, bit 2 set if it can be edited, and bit 3 set if it can be annotated.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetPermissions(IntPtr ctx, IntPtr doc);
     }
 }

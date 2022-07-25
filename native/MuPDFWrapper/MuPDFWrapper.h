@@ -132,6 +132,31 @@ struct fz_store
 extern "C"
 {
 	/// <summary>
+	/// Returns the current permissions for the document. Note that these are not actually enforced.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The document whose permissions need to be checked.</param>
+	/// <returns>An integer with bit 0 set if the document can be printed, bit 1 set if it can be copied, bit 2 set if it can be edited, and bit 3 set if it can be annotated.</returns>
+	DLL_PUBLIC int GetPermissions(fz_context* ctx, fz_document* doc);
+
+	/// <summary>
+	/// Unlocks a document with a password.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The document that needs to be unlocked.</param>
+	/// <param name="password">The password to unlock the document.</param>
+	/// <returns>0 if the document could not be unlocked, 1 if the document did not require unlocking in the first place, 2 if the document was unlocked using the user password and 4 if the document was unlocked using the owner password.</returns>
+	DLL_PUBLIC int UnlockWithPassword(fz_context* ctx, fz_document* doc, const char* password);
+
+	/// <summary>
+	/// Checks whether a password is required to open the document.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The document that needs to be checked.</param>
+	/// <returns>0 if a password is not needed, 1 if a password is needed.</returns>
+	DLL_PUBLIC int CheckIfPasswordNeeded(fz_context* ctx, fz_document* doc);
+
+	/// <summary>
 	/// Reset the standard output and standard error (or redirect them to the specified file descriptors, theoretically). Use with the <paramref name="stdoutFD"/> and <paramref name="stderrFD"/> returned by <see cref="RedirectOutput"/> to undo what it did.
 	/// </summary>
 	/// <param name="stdoutFD">The file descriptor corresponding to the "real" stdout.</param>

@@ -109,6 +109,23 @@ namespace MuPDFCore
         public bool ClipToPageBounds { get; set; } = true;
 
         /// <summary>
+        /// Describes the encryption state of the document.
+        /// </summary>
+        public EncryptionState EncryptionState { get; private set; }
+
+        /// <summary>
+        /// Describes the restriction state of the document.
+        /// </summary>
+        public RestrictionState RestrictionState { get; private set; }
+
+        /// <summary>
+        /// Describes the operations that are restricted on the document. This is not actually enforced by the library,
+        /// but library users should only allow these operations if the document has been unlocked with the owner password
+        /// (i.e. if <see cref="RestrictionState"/> is <see cref="RestrictionState.Unlocked"/>).
+        /// </summary>
+        public DocumentRestrictions Restrictions { get; private set; }
+
+        /// <summary>
         /// Create a new <see cref="MuPDFDocument"/> from data bytes accessible through the specified pointer.
         /// </summary>
         /// <param name="context">The context that will own this document.</param>
@@ -170,6 +187,50 @@ namespace MuPDFCore
                     throw new MuPDFException("Unknown error", result);
             }
 
+            if (NativeMethods.CheckIfPasswordNeeded(context.NativeContext, this.NativeDocument) != 0)
+            {
+                this.EncryptionState = EncryptionState.Encrypted;
+            }
+            else
+            {
+                this.EncryptionState = EncryptionState.Unencrypted;
+            }
+
+            int permissions = NativeMethods.GetPermissions(context.NativeContext, this.NativeDocument);
+
+            int restrictions = 0;
+
+            if ((permissions & 1) == 0)
+            {
+                restrictions |= 1;
+            }
+
+            if ((permissions & 2) == 0)
+            {
+                restrictions |= 2;
+            }
+
+            if ((permissions & 4) == 0)
+            {
+                restrictions |= 4;
+            }
+
+            if ((permissions & 8) == 0)
+            {
+                restrictions |= 8;
+            }
+
+            if (restrictions == 0)
+            {
+                this.Restrictions = DocumentRestrictions.None;
+                this.RestrictionState = RestrictionState.Unrestricted;
+            }
+            else
+            {
+                this.Restrictions = (DocumentRestrictions)restrictions;
+                this.RestrictionState = RestrictionState.Restricted;
+            }
+
             Pages = new MuPDFPageCollection(context, this, PageCount);
             DisplayLists = new MuPDFDisplayList[PageCount];
         }
@@ -226,6 +287,50 @@ namespace MuPDFCore
                     throw new MuPDFException("Cannot count pages", result);
                 default:
                     throw new MuPDFException("Unknown error", result);
+            }
+
+            if (NativeMethods.CheckIfPasswordNeeded(context.NativeContext, this.NativeDocument) != 0)
+            {
+                this.EncryptionState = EncryptionState.Encrypted;
+            }
+            else
+            {
+                this.EncryptionState = EncryptionState.Unencrypted;
+            }
+
+            int permissions = NativeMethods.GetPermissions(context.NativeContext, this.NativeDocument);
+
+            int restrictions = 0;
+
+            if ((permissions & 1) == 0)
+            {
+                restrictions |= 1;
+            }
+
+            if ((permissions & 2) == 0)
+            {
+                restrictions |= 2;
+            }
+
+            if ((permissions & 4) == 0)
+            {
+                restrictions |= 4;
+            }
+
+            if ((permissions & 8) == 0)
+            {
+                restrictions |= 8;
+            }
+
+            if (restrictions == 0)
+            {
+                this.Restrictions = DocumentRestrictions.None;
+                this.RestrictionState = RestrictionState.Unrestricted;
+            }
+            else
+            {
+                this.Restrictions = (DocumentRestrictions)restrictions;
+                this.RestrictionState = RestrictionState.Restricted;
             }
 
             Pages = new MuPDFPageCollection(context, this, PageCount);
@@ -290,6 +395,50 @@ namespace MuPDFCore
                     throw new MuPDFException("Cannot count pages", result);
                 default:
                     throw new MuPDFException("Unknown error", result);
+            }
+
+            if (NativeMethods.CheckIfPasswordNeeded(context.NativeContext, this.NativeDocument) != 0)
+            {
+                this.EncryptionState = EncryptionState.Encrypted;
+            }
+            else
+            {
+                this.EncryptionState = EncryptionState.Unencrypted;
+            }
+
+            int permissions = NativeMethods.GetPermissions(context.NativeContext, this.NativeDocument);
+
+            int restrictions = 0;
+
+            if ((permissions & 1) == 0)
+            {
+                restrictions |= 1;
+            }
+
+            if ((permissions & 2) == 0)
+            {
+                restrictions |= 2;
+            }
+
+            if ((permissions & 4) == 0)
+            {
+                restrictions |= 4;
+            }
+
+            if ((permissions & 8) == 0)
+            {
+                restrictions |= 8;
+            }
+
+            if (restrictions == 0)
+            {
+                this.Restrictions = DocumentRestrictions.None;
+                this.RestrictionState = RestrictionState.Unrestricted;
+            }
+            else
+            {
+                this.Restrictions = (DocumentRestrictions)restrictions;
+                this.RestrictionState = RestrictionState.Restricted;
             }
 
             Pages = new MuPDFPageCollection(context, this, PageCount);
@@ -381,6 +530,50 @@ namespace MuPDFCore
                     throw new MuPDFException("Unknown error", result);
             }
 
+            if (NativeMethods.CheckIfPasswordNeeded(context.NativeContext, this.NativeDocument) != 0)
+            {
+                this.EncryptionState = EncryptionState.Encrypted;
+            }
+            else
+            {
+                this.EncryptionState = EncryptionState.Unencrypted;
+            }
+
+            int permissions = NativeMethods.GetPermissions(context.NativeContext, this.NativeDocument);
+
+            int restrictions = 0;
+
+            if ((permissions & 1) == 0)
+            {
+                restrictions |= 1;
+            }
+
+            if ((permissions & 2) == 0)
+            {
+                restrictions |= 2;
+            }
+
+            if ((permissions & 4) == 0)
+            {
+                restrictions |= 4;
+            }
+
+            if ((permissions & 8) == 0)
+            {
+                restrictions |= 8;
+            }
+
+            if (restrictions == 0)
+            {
+                this.Restrictions = DocumentRestrictions.None;
+                this.RestrictionState = RestrictionState.Unrestricted;
+            }
+            else
+            {
+                this.Restrictions = (DocumentRestrictions)restrictions;
+                this.RestrictionState = RestrictionState.Restricted;
+            }
+
             Pages = new MuPDFPageCollection(context, this, PageCount);
             DisplayLists = new MuPDFDisplayList[PageCount];
         }
@@ -408,6 +601,11 @@ namespace MuPDFCore
         /// <returns>A byte array containing the raw values for the pixels of the rendered image.</returns>
         public byte[] Render(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             int bufferSize = MuPDFDocument.GetRenderedSize(region, zoom, pixelFormat);
 
             byte[] buffer = new byte[bufferSize];
@@ -437,6 +635,11 @@ namespace MuPDFCore
         /// <returns>A byte array containing the raw values for the pixels of the rendered image.</returns>
         public byte[] Render(int pageNumber, double zoom, PixelFormats pixelFormat, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             Rectangle region = this.Pages[pageNumber].Bounds;
             return Render(pageNumber, region, zoom, pixelFormat, includeAnnotations);
         }
@@ -452,6 +655,11 @@ namespace MuPDFCore
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         public void Render(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, IntPtr destination, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             if (DisplayLists[pageNumber] == null)
             {
                 DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
@@ -506,6 +714,11 @@ namespace MuPDFCore
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         public void Render(int pageNumber, double zoom, PixelFormats pixelFormat, IntPtr destination, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             Rectangle region = this.Pages[pageNumber].Bounds;
             Render(pageNumber, region, zoom, pixelFormat, destination, includeAnnotations);
         }
@@ -521,6 +734,11 @@ namespace MuPDFCore
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         public Span<byte> Render(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, out IDisposable disposable, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             int dataSize = GetRenderedSize(region, zoom, pixelFormat);
 
             IntPtr destination = Marshal.AllocHGlobal(dataSize);
@@ -544,6 +762,11 @@ namespace MuPDFCore
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         public Span<byte> Render(int pageNumber, double zoom, PixelFormats pixelFormat, out IDisposable disposable, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             Rectangle region = this.Pages[pageNumber].Bounds;
             return Render(pageNumber, region, zoom, pixelFormat, out disposable, includeAnnotations);
         }
@@ -558,6 +781,11 @@ namespace MuPDFCore
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         public MuPDFMultiThreadedPageRenderer GetMultiThreadedRenderer(int pageNumber, int threadCount, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             if (DisplayLists[pageNumber] == null)
             {
                 DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
@@ -575,6 +803,11 @@ namespace MuPDFCore
         /// <returns>An integer representing the number of bytes that will be necessary to store the pixel data of the rendered image.</returns>
         public int GetRenderedSize(int pageNumber, double zoom, PixelFormats pixelFormat)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             return GetRenderedSize(Pages[pageNumber].Bounds, zoom, pixelFormat);
         }
 
@@ -623,6 +856,11 @@ namespace MuPDFCore
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         public void SaveImage(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, string fileName, RasterOutputFileTypes fileType, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             if (pixelFormat == PixelFormats.RGBA && fileType == RasterOutputFileTypes.PNM)
             {
                 throw new ArgumentException("Cannot save an image with alpha channel in PNM format!", nameof(fileType));
@@ -677,6 +915,11 @@ namespace MuPDFCore
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         public void SaveImage(int pageNumber, double zoom, PixelFormats pixelFormat, string fileName, RasterOutputFileTypes fileType, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             Rectangle region = this.Pages[pageNumber].Bounds;
             SaveImage(pageNumber, region, zoom, pixelFormat, fileName, fileType, includeAnnotations);
         }
@@ -693,6 +936,11 @@ namespace MuPDFCore
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         public void WriteImage(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             if (pixelFormat == PixelFormats.RGBA && fileType == RasterOutputFileTypes.PNM)
             {
                 throw new ArgumentException("Cannot save an image with alpha channel in PNM format!", nameof(fileType));
@@ -759,6 +1007,11 @@ namespace MuPDFCore
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
         public void WriteImage(int pageNumber, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             Rectangle region = this.Pages[pageNumber].Bounds;
             WriteImage(pageNumber, region, zoom, pixelFormat, outputStream, fileType, includeAnnotations);
         }
@@ -900,6 +1153,11 @@ namespace MuPDFCore
         /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
         public MuPDFStructuredTextPage GetStructuredTextPage(int pageNumber, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             if (DisplayLists[pageNumber] == null)
             {
                 DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
@@ -919,6 +1177,11 @@ namespace MuPDFCore
         /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
         public MuPDFStructuredTextPage GetStructuredTextPage(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             if (DisplayLists[pageNumber] == null)
             {
                 DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
@@ -947,6 +1210,11 @@ namespace MuPDFCore
         /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
         public async Task<MuPDFStructuredTextPage> GetStructuredTextPageAsync(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             if (DisplayLists[pageNumber] == null)
             {
                 DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
@@ -972,6 +1240,11 @@ namespace MuPDFCore
         /// <returns>A <see cref="string"/> containing all the text in the document. Characters are converted from the UTF-8 representation used in the document to equivalent UTF-16 <see cref="string"/>s.</returns>
         public string ExtractText(string separator = null, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             separator = separator ?? Environment.NewLine;
 
             var text = new StringBuilder();
@@ -1014,6 +1287,11 @@ namespace MuPDFCore
         /// <returns>A <see cref="string"/> containing all the text in the document. Characters are converted from the UTF-8 representation used in the document to equivalent UTF-16 <see cref="string"/>s.</returns>
         public string ExtractText(TesseractLanguage ocrLanguage, string separator = null, bool includeAnnotations = true)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             separator = separator ?? Environment.NewLine;
 
             var text = new StringBuilder();
@@ -1058,6 +1336,11 @@ namespace MuPDFCore
         /// <returns>A <see cref="string"/> containing all the text in the document. Characters are converted from the UTF-8 representation used in the document to equivalent UTF-16 <see cref="string"/>s.</returns>
         public async Task<string> ExtractTextAsync(TesseractLanguage ocrLanguage, string separator = null, bool includeAnnotations = true, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
             separator = separator ?? Environment.NewLine;
 
             var text = new StringBuilder();
@@ -1089,6 +1372,86 @@ namespace MuPDFCore
             }
 
             return text.ToString();
+        }
+
+        /// <summary>
+        /// Attempts to unlock the document with the supplied password.
+        /// </summary>
+        /// <param name="password">The user or owner password to use to unlock the document.</param>
+        /// <returns><see langword="true"/>If the document was successfully unlocked (or if it was never locked to begin with), <see langword="false"/> if the password was incorrect and the document is still locked.</returns>
+        /// <remarks>This method can be used both to unlock an encrypted document and to check whether the supplied owner password is correct.</remarks>
+        public bool TryUnlock(string password)
+        {
+            return TryUnlock(password, out _);
+        }
+
+        /// <summary>
+        /// Attempts to unlock the document with the supplied password.
+        /// </summary>
+        /// <param name="password">The user or owner password to use to unlock the document.</param>
+        /// <param name="passwordType">If the method returns true, this can be used to determine whether the supplied password was the user password or the owner password. If the method returns <see langword="false"/>,
+        /// this can be used to determine whether a user password and/or an owner password are required.</param>
+        /// <returns><see langword="true"/>If the document was successfully unlocked (or if it was never locked to begin with), <see langword="false"/> if the password was incorrect and the document is still locked.</returns>
+        /// <remarks>This method can be used both to unlock an encrypted document and to check whether the supplied owner password is correct.</remarks>
+        public bool TryUnlock(string password, out PasswordTypes passwordType)
+        {
+            int result = NativeMethods.UnlockWithPassword(this.OwnerContext.NativeContext, this.NativeDocument, password);
+
+            int pt = 0;
+
+            switch (result)
+            {
+                case 0:
+                    pt = 0;
+
+                    if (this.EncryptionState == EncryptionState.Encrypted)
+                    {
+                        pt |= 1;
+                    }
+
+                    if (this.RestrictionState == RestrictionState.Restricted)
+                    {
+                        pt |= 2;
+                    }
+
+                    passwordType = (PasswordTypes)pt;
+                    return !(this.EncryptionState == EncryptionState.Encrypted || this.RestrictionState == RestrictionState.Restricted);
+                case 1:
+                    passwordType = PasswordTypes.None;
+                    return true;
+                case 2:
+                    if (this.EncryptionState == EncryptionState.Encrypted)
+                    {
+                        this.EncryptionState = EncryptionState.Unlocked;
+                    }
+                    passwordType = PasswordTypes.User;
+                    return true;
+                case 4:
+                    if (this.RestrictionState == RestrictionState.Restricted)
+                    {
+                        this.RestrictionState = RestrictionState.Unlocked;
+                    }
+                    passwordType = PasswordTypes.Owner;
+                    return true;
+                case 6:
+                    pt = 0;
+
+                    if (this.EncryptionState == EncryptionState.Encrypted)
+                    {
+                        this.EncryptionState = EncryptionState.Unlocked;
+                        pt |= 1;
+                    }
+
+                    if (this.RestrictionState == RestrictionState.Restricted)
+                    {
+                        this.RestrictionState = RestrictionState.Unlocked;
+                        pt |= 2;
+                    }
+                    passwordType = (PasswordTypes)pt;
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("Unexpected return value when unlocking the document: " + result.ToString());
+            }
         }
 
 
