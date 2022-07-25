@@ -111,7 +111,10 @@ namespace MuPDFCore
         ///<inheritdoc/>
         ~MuPDFPage()
         {
-            Dispose(disposing: false);
+            if (NativePage != IntPtr.Zero)
+            {
+                Dispose(disposing: false);
+            }
         }
 
         ///<inheritdoc/>
