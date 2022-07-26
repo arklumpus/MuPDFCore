@@ -4,8 +4,6 @@ Demo/Demo.csproj.user
 Demo/Properties
 Demo/bin
 Demo/obj
-Doxy.css
-Doxyfile
 MuPDFCore.MuPDFRenderer/bin
 MuPDFCore.MuPDFRenderer/obj
 MuPDFCore/MuPDFCore.csproj.user
@@ -17,7 +15,6 @@ PDFViewerDemo/obj
 PDFViewerDemo/nuget.config
 PDFViewerDemo/Properties
 Thumbs.db
-social.png
 man/
 native/CMakeSettings.json
 native/out
