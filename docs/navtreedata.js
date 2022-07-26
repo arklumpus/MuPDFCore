@@ -29,28 +29,25 @@ var NAVTREE =
       [ "Getting started", "index.html#autotoc_md1", null ],
       [ "Usage", "index.html#autotoc_md2", [
         [ "Documentation", "index.html#autotoc_md3", null ],
-        [ "Examples", "index.html#autotoc_md4", null ],
-        [ "MuPDFCore library", "index.html#autotoc_md5", null ],
-        [ "Structured text representation", "index.html#autotoc_md6", null ],
-        [ "Optical Character Recognition (OCR) using Tesseract", "index.html#autotoc_md7", null ],
-        [ "MuPDFCore.MuPDFRenderer control", "index.html#autotoc_md8", null ]
+        [ "Minimal working example", "index.html#autotoc_md4", null ],
+        [ "Examples", "index.html#autotoc_md5", null ]
       ] ],
-      [ "Building from source", "index.html#autotoc_md9", [
-        [ "1. Building libmupdf", "index.html#autotoc_md10", [
-          [ "Tips for compiling MuPDF 1.20.0:", "index.html#autotoc_md11", null ]
+      [ "Building from source", "index.html#autotoc_md6", [
+        [ "1. Building libmupdf", "index.html#autotoc_md7", [
+          [ "Tips for compiling MuPDF 1.20.0:", "index.html#autotoc_md8", null ]
         ] ],
-        [ "2. Building MuPDFWrapper", "index.html#autotoc_md12", [
-          [ "Windows (x86 and x64)", "index.html#autotoc_md13", null ],
-          [ "Windows (arm64)", "index.html#autotoc_md14", null ],
-          [ "macOS and Linux", "index.html#autotoc_md15", null ]
+        [ "2. Building MuPDFWrapper", "index.html#autotoc_md9", [
+          [ "Windows (x86 and x64)", "index.html#autotoc_md10", null ],
+          [ "Windows (arm64)", "index.html#autotoc_md11", null ],
+          [ "macOS and Linux", "index.html#autotoc_md12", null ]
         ] ],
-        [ "3. Creating the MuPDFCore NuGet package", "index.html#autotoc_md16", null ],
-        [ "4. Running tests", "index.html#autotoc_md17", [
-          [ "Windows", "index.html#autotoc_md18", null ],
-          [ "macOS and Linux", "index.html#autotoc_md19", null ]
+        [ "3. Creating the MuPDFCore NuGet package", "index.html#autotoc_md13", null ],
+        [ "4. Running tests", "index.html#autotoc_md14", [
+          [ "Windows", "index.html#autotoc_md15", null ],
+          [ "macOS and Linux", "index.html#autotoc_md16", null ]
         ] ]
       ] ],
-      [ "Note about MuPDFCore and .NET Framework <a name=\"netFrameworkNote\"></a>", "index.html#autotoc_md20", null ]
+      [ "Note about MuPDFCore and .NET Framework <a name=\"netFrameworkNote\"></a>", "index.html#autotoc_md17", null ]
     ] ],
     [ "Packages", "namespaces.html", [
       [ "Package List", "namespaces.html", "namespaces_dup" ],
@@ -85,7 +82,7 @@ var NAVTREEINDEX =
 "class_mu_p_d_f_core_1_1_tesseract_language.html#a15b11b8626d4dbb7f01dd45ee4ad3176a81f126d1737d78aed8b8a01648a18dec",
 "class_mu_p_d_f_core_1_1_tesseract_language.html#a68f1943167a4334387d42e8aa1bd9da3a1bd0bf844cb1fba7b2fcf39c310248f2",
 "class_mu_p_d_f_core_1_1_tesseract_language.html#af64dce4052f4a0df58df7e8051a416cda272ccb8592bafde0baf1dedce0fd3ac2",
-"struct_mu_p_d_f_core_1_1_rectangle.html#a4bd91e5c1be8e68b552c5b7862a18ed2"
+"struct_mu_p_d_f_core_1_1_rectangle.html#a4ea4052094e051b974b7ca1bc9346655"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -111,203 +111,32 @@ Getting started</h1>
 Usage</h1>
 <h2><a class="anchor" id="autotoc_md3"></a>
 Documentation</h2>
-<p >Interactive documentation for the library can be accessed from the <a href="https://arklumpus.github.io/MuPDFCore/">documentation website</a>. A <a href="https://arklumpus.github.io/MuPDFCore/MuPDFCore.pdf">PDF reference manual</a> is also available.</p>
+<p >You can find detailed descriptions of how to use <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> and some code examples in the <a href="https://github.com/arklumpus/MuPDFCore/wiki">MuPDFCore wiki</a>. Interactive documentation for the library API can be accessed from the <a href="https://arklumpus.github.io/MuPDFCore/">documentation website</a>. A <a href="https://arklumpus.github.io/MuPDFCore/MuPDFCore.pdf">PDF reference manual</a> is also available.</p>
 <h2><a class="anchor" id="autotoc_md4"></a>
+Minimal working example</h2>
+<p >The following example shows the bare minimum code necessary to render a page of a PDF document to a PNG image using <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a>:</p>
+<div class="fragment"><div class="line"><span class="comment">//Initialise the MuPDF context. This is needed to open or create documents.</span></div>
+<div class="line"><span class="keyword">using </span>MuPDFContext ctx = <span class="keyword">new</span> MuPDFContext();</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">//Open a PDF document</span></div>
+<div class="line"><span class="keyword">using </span>MuPDFDocument document = <span class="keyword">new</span> MuPDFDocument(ctx, <span class="stringliteral">&quot;path/to/document.pdf&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">//Page index (page 0 is the first page of the document)</span></div>
+<div class="line"><span class="keywordtype">int</span> pageIndex = 0;</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">//Zoom level, converting document units into pixels. For a PDF document, a 1x zoom level corresponds to a</span></div>
+<div class="line"><span class="comment">//72dpi resolution.</span></div>
+<div class="line"><span class="keywordtype">double</span> zoomLevel = 1;</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">//Save the first page as a PNG image with transparency, at a 1x zoom level (1pt = 1px).</span></div>
+<div class="line">document.SaveImage(pageIndex, zoomLevel, PixelFormats.RGBA, <span class="stringliteral">&quot;path/to/output.png&quot;</span>, RasterOutputFileTypes.PNG);</div>
+</div><!-- fragment --><p >Look at the <a href="https://github.com/arklumpus/MuPDFCore/wiki">wiki</a> for more information.</p>
+<h2><a class="anchor" id="autotoc_md5"></a>
 Examples</h2>
 <p >The <a href="https://github.com/arklumpus/MuPDFCore/tree/master/Demo">Demo</a> folder in the repository contains some examples of how the library can be used to extract pages from a PDF or XPS document, render them to a raster image, or combine them in a new document</p>
 <p >The <a href="https://github.com/arklumpus/MuPDFCore/tree/master/PDFViewerDemo">PDFViewerDemo</a> folder contains a complete (though minimal) example of a PDF viewer program built around the <code><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html" title="A control to render PDF documents (and other formats), potentally using multiple threads.">MuPDFCore.MuPDFRenderer.PDFRenderer</a></code> control.</p>
 <p >Note that these examples intentionally avoid any error handling code: in a production setting, you should typically make sure that calls to <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> library functions are within a <code>try...catch</code> block to handle any resulting <code>MuPDFException</code>s.</p>
-<h2><a class="anchor" id="autotoc_md5"></a>
-MuPDFCore library</h2>
-<p >The first step when using <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> is to create a <code><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_context.html" title="A wrapper around a MuPDF context object, which contains the exception stack and the resource cache st...">MuPDFCore.MuPDFContext</a></code> object that is used internally by the MuPDF library to store various things:</p>
-<div class="fragment"><div class="line">MuPDFContext context = <span class="keyword">new</span> MuPDFContext();</div>
-</div><!-- fragment --><p >This object is <code>IDisposable</code>, therefore you should always call the <code>Dispose()</code> method on it once you are done with it (or, better yet, wrap it in a <code>using</code> directive). In most instances, you will only need one instance of <code>MuPDFContext</code> for your whole application.</p>
-<p >Amongst other things, MuPDF uses this context to store a cache of "assets" (e.g. images or fonts) that have been used while rendering documents and that may be needed in future. This requires some memory: by default, the maximum size of this cache store is 256MB; however, if you want to restrict how much memory can be used, you can alter this by providing a <code>long</code> value to constructor, indicating the size in bites for the store. A value of <code>0</code> means that the store can grow up to an unlimited size. Furthermore, you can clear the cache completely by using the <code>MuPDFContext.ClearCache</code> method, or partially by using the <code>MuPDFContext.ShrinkCache</code> method.</p>
-<p >Once you have obtained a <code>MuPDFContext</code>, you can use it to open a <code>MuPDFDocument</code>. A document can be opened from a file on disk:</p>
-<div class="fragment"><div class="line">MuPDFDocument document = <span class="keyword">new</span> MuPDFDocument(context, <span class="stringliteral">&quot;path/to/file&quot;</span>);</div>
-</div><!-- fragment --><p >Or from a <code>byte[]</code> array (in this case, you will have to specify the format of the document):</p>
-<div class="fragment"><div class="line"><span class="keywordtype">byte</span>[] data;</div>
-<div class="line"> </div>
-<div class="line">...</div>
-<div class="line"> </div>
-<div class="line">MuPDFDocument document = <span class="keyword">new</span> MuPDFDocument(context, data, InputFileTypes.PDF);</div>
-</div><!-- fragment --><p >Or from a <code>MemoryStream</code> (in this case too, you will have to specify the format of the document):</p>
-<div class="fragment"><div class="line">MemoryStream stream;</div>
-<div class="line"> </div>
-<div class="line">...</div>
-<div class="line"> </div>
-<div class="line">MuPDFDocument document = <span class="keyword">new</span> MuPDFDocument(context, ref stream, InputFileTypes.PDF);</div>
-</div><!-- fragment --><p >The <code>MemoryStream</code> is passed with the <code>ref</code> keyword to indicate that the <code>MuPDFDocument</code> will take care of appropriately disposing it once it finishes using it.</p>
-<p >A <code>MuPDFDocument</code> is also <code>IDisposable</code> and should be properly disposed of to avoid memory leaks.</p>
-<p ><b>Important note</b>: the constructor taking a <code>byte[]</code> and the one taking a <code>MemoryStream</code> will not copy the data bytes before sending them to the native MuPDF library functions. Rather, they will <em>pin them in place</em>. This is a <b>bad thing</b> because it will mess up with the Garbage Collector's management of memory. Therefore, this is only suitable for short-lived objects. If you need to initialise a long-lived document object from memory, you should first copy the data to unmanaged memory and then use one of the constructors that take an <code>IntPtr</code> parameter, e.g.:</p>
-<div class="fragment"><div class="line"><span class="keywordtype">byte</span>[] data;</div>
-<div class="line"> </div>
-<div class="line">...</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Allocate enough unmanaged memory</span></div>
-<div class="line">IntPtr ptr = Marshal.AllocHGlobal(data.Length);</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Copy the byte array to unmanaged memory</span></div>
-<div class="line">Marshal.Copy(data, 0, ptr, data.Length);</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Wrap the pointer in an IDisposable</span></div>
-<div class="line">IDisposable dispIntPtr = <span class="keyword">new</span> DisposableIntPtr(ptr);</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Create the document</span></div>
-<div class="line">MuPDFDocument document = <span class="keyword">new</span> MuPDFDocument(ctx, ptr, data.Length, InputFileTypes.PDF, ref dispIntPtr);</div>
-</div><!-- fragment --><p >The <code>DisposableIntPtr</code> class is a wrapper around a pointer that calls <code>Marshal.FreeHGlobal</code> on it once it is disposed. Passing it as the final optional parameter of <code>MuPDFDocument</code> constructor (again by reference, to indicate that the document takes ownership of the object) makes sure that the memory is properly freed once the document is disposed.</p>
-<p >After having obtained a document, you can do many things with it: for example, you can render a page and save the results to a file on disk, or you can collect multiple pages and combine them in a new document. Code to do this can be found in the <a href="https://github.com/arklumpus/MuPDFCore/blob/master/Demo/Program.cs"><code>Program.cs</code></a> file of the Demo project.</p>
-<p >Furthermore, you can render a page directly to memory:</p>
-<div class="fragment"><div class="line"><span class="keywordtype">byte</span>[] pixelData = document.Render(0, 1, PixelFormats.RGBA);</div>
-</div><!-- fragment --><p >This method renders page 0 (i.e. the first page of the document) at a 1x resolution (1pt in the document is equivalent to 1px in the image), preserving alpha (transparency) information, and returns the image as an array of the bytes that constitute the pixel data (four bytes per pixel). A variation of this method allows you to supply a rectangular region of the page that you would like to render, rather than the whole page.</p>
-<p >Alternatively, if you already know where the image data should be put (e.g. because you are using some kind of graphics library that lets you manipulate the pixel data of its images), you can use the methods that take an <code>IntPtr</code> destination:</p>
-<div class="fragment"><div class="line">IntPtr destination;</div>
-<div class="line"> </div>
-<div class="line">...</div>
-<div class="line"> </div>
-<div class="line">document.Render(0, 1, PixelFormats.RGBA, destination);</div>
-</div><!-- fragment --><p >In this case, <b>you have to make sure that there is enough memory to hold the resulting image</b>! Otherwise, an <code>AccessViolationException</code> will occur and your program will usually fail catastrophically. Since it may sometimes be hard to determine how much memory a particular image will need (especially because of subtle differences in the rounding routines, which can cause images to be 1px larger or shorter than expected), the <code>GetRenderedSize</code> method is provided, which returns the number of bytes that will be needed to render a certain page. For example:</p>
-<div class="fragment"><div class="line"><span class="comment">//Get the number of bytes that will be necessary to hold the rendered page at the given resolution.</span></div>
-<div class="line"><span class="keywordtype">int</span> sizeInBytes = document.GetRenderedSize(0, 1, PixelFormats.RGBA);</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Allocate an appropriate amount of memory.</span></div>
-<div class="line">IntPtr destination = Marshal.AllocHGlobal(sizeInBytes);</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Again, we use a DisposableIntPtr to make sure that we are freeing the memory when we are done with it.</span></div>
-<div class="line"><span class="keyword">using</span> (DisposableIntPtr holder = <span class="keyword">new</span> DisposableIntPtr(destination))</div>
-<div class="line">{</div>
-<div class="line">    <span class="comment">//Make sure that all the parameters match those of the call to GetRenderedSize, or the size of the</span></div>
-<div class="line">    <span class="comment">//resulting image may be different than expected! Even a translation of 1px could have catastrophic</span></div>
-<div class="line">    <span class="comment">//consequences.</span></div>
-<div class="line">    document.Render(0, 1, PixelFormats.RGBA, destination);</div>
-<div class="line">}</div>
-</div><!-- fragment --><p >Finally, <b>none of these methods are inherently thread-safe</b>! E.g. you cannot render multiple pages of the same document (nor multiple regions of a single page) by simply performing multiple calls to <code>MuPDFDocument.Render</code> in parallel. For multi-threaded operation, you must instead use a <code>MuPDFMultiThreadedPageRender</code>. You can obtain one from a document:</p>
-<div class="fragment"><div class="line">MuPDFMultiThreadedPageRenderer renderer = document.GetMultiThreadedRenderer(0, 2);</div>
-</div><!-- fragment --><p >This method obtains an object that can be used to render the first page of the document using two threads. By using the <code>Render</code> method of this object, the page can be rendered. The page will be rendered to a number of separate tiles equal to the number of threads, which will then be your responsibility to appropriately "stitch up" (e.g. if you want to display them on screen, you could just place them appropriately). The size of each tile (and the position it should occupy) can be computed by using the <code>Split</code> method of the <code>RoundedSize</code> struct.</p>
-<p >Furthermore, multiple <code>MuPDFMultiThreadedPageRenderer</code>s can be used in parallel, which makes it possible e.g. to render every page in the document at the same time (while also using multiple threads to render each page). The following example will render all the pages in a document at the same time in RGBA format at a 1.5x zoom, using 2 threads for each page:</p>
-<div class="fragment"><div class="line"><span class="comment">//Create a MuPDFContext with a using statement, so that it gets disposed at the right time.</span></div>
-<div class="line"><span class="keyword">using </span>MuPDFContext context = <span class="keyword">new</span> MuPDFContext();</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Open the document also with a using statement.</span></div>
-<div class="line"><span class="keyword">using </span>MuPDFDocument document = <span class="keyword">new</span> MuPDFDocument(context, <span class="stringliteral">&quot;path/to/file.pdf&quot;</span>);</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Create arrays to hold the objects for the various pages</span></div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Renderers: one per page</span></div>
-<div class="line">MuPDFMultiThreadedPageRenderer[] renderers = <span class="keyword">new</span> MuPDFMultiThreadedPageRenderer[document.Pages.Count];</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Page size: one per page</span></div>
-<div class="line">RoundedSize[] renderedPageSizes = <span class="keyword">new</span> RoundedSize[document.Pages.Count];</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Boundaries of the tiles that make up each page: one array per page, with one element per thread</span></div>
-<div class="line">RoundedRectangle[][] tileBounds = <span class="keyword">new</span> RoundedRectangle[document.Pages.Count][];</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Addresses of the memory areas where the image data of the tiles will be stored: one array per page, with one element per thread</span></div>
-<div class="line">IntPtr[][] destinations = <span class="keyword">new</span> IntPtr[document.Pages.Count][];</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Cycle through the pages in the document to initialise everything</span></div>
-<div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; document.Pages.Count; i++)</div>
-<div class="line">{</div>
-<div class="line">    <span class="comment">//Initialise the renderer for the current page, using two threads (total number of threads: number of pages x 2</span></div>
-<div class="line">    renderers[i] = document.GetMultiThreadedRenderer(i, 2);</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">//Determine the boundaries of the page when it is rendered with a 1.5x zoom factor</span></div>
-<div class="line">    RoundedRectangle roundedBounds = document.Pages[i].Bounds.Round(1.5);</div>
-<div class="line">    renderedPageSizes[i] = <span class="keyword">new</span> RoundedSize(roundedBounds.Width, roundedBounds.Height);</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">//Determine the boundaries of each tile by splitting the total size of the page by the number of threads.</span></div>
-<div class="line">    tileBounds[i] = renderedPageSizes[i].Split(renderers[i].ThreadCount);</div>
-<div class="line"> </div>
-<div class="line">    destinations[i] = <span class="keyword">new</span> IntPtr[renderers[i].ThreadCount];</div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; renderers[i].ThreadCount; j++)</div>
-<div class="line">    {</div>
-<div class="line">        <span class="comment">//Allocate the required memory for the j-th tile of the i-th page.</span></div>
-<div class="line">        <span class="comment">//Since we will be rendering with a 24-bit-per-pixel format, the required memory in bytes is height x width x 3.</span></div>
-<div class="line">        destinations[i][j] = Marshal.AllocHGlobal(tileBounds[i][j].Height * tileBounds[i][j].Width * 3);</div>
-<div class="line">    }</div>
-<div class="line">}</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Start the actual rendering operations in parallel.</span></div>
-<div class="line">Parallel.For(0, document.Pages.Count, i =&gt;</div>
-<div class="line">{</div>
-<div class="line">    renderers[i].Render(renderedPageSizes[i], document.Pages[i].Bounds, destinations[i], PixelFormats.RGB);</div>
-<div class="line">});</div>
-<div class="line"> </div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//The code in this for-loop is not really part of MuPDFCore - it just shows an example of using VectSharp to &quot;stitch&quot; the tiles up and produce the full image.</span></div>
-<div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; document.Pages.Count; i++)</div>
-<div class="line">{</div>
-<div class="line">    <span class="comment">//Create a new (empty) image to hold the whole page.</span></div>
-<div class="line">    VectSharp.Page renderedPage = <span class="keyword">new</span> VectSharp.Page(renderedPageSizes[i].Width, renderedPageSizes[i].Height);</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">//Draw each tile onto the image.</span></div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; renderers[i].ThreadCount; j++)</div>
-<div class="line">    {</div>
-<div class="line">        <span class="comment">//Create a raster image object containing the pixel data. Yay, we do not need to copy/marshal anything!</span></div>
-<div class="line">        VectSharp.RasterImage tile = <span class="keyword">new</span> VectSharp.RasterImage(destinations[i][j], tileBounds[i][j].Width, tileBounds[i][j].Height, <span class="keyword">false</span>, <span class="keyword">false</span>);</div>
-<div class="line"> </div>
-<div class="line">        <span class="comment">//Draw the tile on the main image page.</span></div>
-<div class="line">        renderedPage.Graphics.DrawRasterImage(tileBounds[i][j].X0, tileBounds[i][j].Y0, tile);</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">//Save the full page as a PNG image.</span></div>
-<div class="line">    renderedPage.SaveAsPNG(<span class="stringliteral">&quot;page&quot;</span> + i.ToString() + <span class="stringliteral">&quot;.png&quot;</span>);</div>
-<div class="line">}</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">//Clean-up code.</span></div>
-<div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; document.Pages.Count; i++)</div>
-<div class="line">{</div>
-<div class="line">    <span class="comment">//Release the allocated memory.</span></div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; renderers[i].ThreadCount; j++)</div>
-<div class="line">    {</div>
-<div class="line">        Marshal.FreeHGlobal(destinations[i][j]);</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">//Release the renderer (if you skip this, the quiescent renderer&#39;s threads will not be stopped, and your application will never exit!</span></div>
-<div class="line">    renderers[i].Dispose();</div>
-<div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md6"></a>
-Structured text representation</h2>
-<p >The <code>GetStructuredTextPage</code> method of the <code>MuPDFDocument</code> class makes it possible to obtain a "structured text" representation of each page of the document. This consists of a <code>MuPDFStructuredTextPage</code> object, which is a collection of 0 or more <code>MuPDFStructuredTextBlock</code>s.</p>
-<p >Each <code>MuPDFStructuredTextBlock</code> either represents an image or a block of text, typically a paragraph (though there is no guarantee that this is the case). <code>MuPDFStructuredTextBlock</code>s are themselves collections of <code>MuPDFStructuredTextLine</code>s, and each line is a collection of <code>MuPDFStructuredTextCharacter</code>s (in the case of a block representing an image, it will contain a single line with a single character).</p>
-<p ><code>MuPDFStructuredTextBlock</code>s and <code>MuPDFStructuredTextLine</code>s have a <code>BoundingBox</code> property that defines a rectangle (in page units) that bounds the contents of the block/line in the page. Similarly, <code>MuPDFStructuredTextCharacter</code>s have a <code>BoundingQuad</code> (rather than being a <code>Rectangle</code>, this is a <code>Quad</code>, i.e. a quadrilater defined by its four vertices, which may or may not be a rectangle). These can be used e.g. to highlight regions of text in the page.</p>
-<p >The <code>MuPDFStructuredTextPage</code> also has methods to determine which character contains or is closest to a specified point (useful, for example, to determine on which character the user clicked), to obtain a list of shapes that encompass a specified range of text, and to perform text searches using regular expressions.</p>
-<p >The order of the blocks in the page (which affects the definition of a "range" of text and search operations) is the same as returned by the underlying MuPDF library, which is taken from the order the text is drawn in the source file, so may not be accurate. They can be reordered using the <code>Array.Sort</code> method on the <code>StructuredTextBlocks</code> array contained in the <code>MuPDFStructuredTextPage</code> (lines within blocks and characters within lines can be likewise reordered).</p>
-<h2><a class="anchor" id="autotoc_md7"></a>
-Optical Character Recognition (OCR) using Tesseract</h2>
-<p >MuPDF 1.18+ (embedded in <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> 1.3.0+) adds support for OCR using the <a href="https://github.com/tesseract-ocr/tesseract">Tesseract</a> library. To access this feature in <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a>, you can use one of the overloads of <code>GetStructuredTextPage</code> that takes a <code>TesseractLanguage</code> argument specifying the language to use for the OCR. This will run the OCR and return a <code>MuPDFStructuredTextPage</code> containing the character information obtained by Tesseract, which can be used normally. Depending on the model being used, the OCR step can take a relatively long time; therefore, the <code>MuPDFDocument</code> class also implements a <code>GetStructuredTextPageAsync</code> method, which does the same thing in an asynchronous way. The <code>GetStructuredTextPageAsync</code> method also has optional parameters to report the OCR progress and to make it possible to cancel its execution.</p>
-<p >Objects of the <code>TesseractLanguage</code> class contain information used to locate the trained language model file that is used by Tesseract. Normally, when using Tesseract, you would have to ensure that the trained language model files are available on the user's computer; however, this class implements some "clever" logic to download the necessary files on demand.</p>
-<p >In general, MuPDF provides Tesseract with a "language name" (e.g. <code>"eng"</code>). Tesseract then looks for a file called <code>eng.traineddata</code> either in the folder specified by the <code>TESSDATA_PREFIX</code> environment variable, or, if the variable is not defined, in a subfolder of the current working directory called <code>tessdata</code>. <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> manipulates the value of <code>TESSDATA_PREFIX</code> (at the process level) and the language name in order to specify the language file.</p>
-<p >The <code>TesseractLanguage</code> class has multiple constructors:</p>
-<ul>
-<li><code>TesseractLanguage(string prefix, string language)</code>: this constructor is used to directly specify the value of <code>TESSDATA_PREFIX</code> and the language name. The library does not process these in any way. If <code>prefix</code> is <code>null</code>, the value of <code>TESSDATA_PREFIX</code> is not changed, and Tesseract uses the system value.</li>
-<li><code>TesseractLanguage(string fileName)</code>: with this constructor, you can directly specify the path to a trained language model file. You can obtain such a file from <a href="https://github.com/tesseract-ocr/tessdata_fast">the tessdata_fast repository</a> or from <a href="https://github.com/tesseract-ocr/tessdata_best">the tessdata_best repository</a>. If the file does not have a <code>.traineddata</code> extension, it will be copied in a temporary location.</li>
-<li><p class="startli"><code>TesseractLanguage(Fast language, bool useAnyCached = false)</code> \ <code>TesseractLanguage(FastScript language, bool useAnyCached = false)</code> \ <code>TesseractLanguage(Best language, bool useAnyCached = false)</code> \ <code>TesseractLanguage(BestScript language, bool useAnyCached = false)</code></p>
-<p class="startli">With these constructors, you can specify a language from the list of available languages defined in the <code>TesseractLanguage.Fast</code>, <code>TesseractLanguage.FastScript</code>, <code>TesseractLanguage.Best</code>, and <code>TesseractLanguage.BestScript</code> enums.</p>
-<p class="startli"><a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> will then look for the trained model file corresponding to the selected language, relative to the <em>path of the executable</em>, in a folder called <code>tessdata/fast</code> and then in a folder called <code>fast</code> (or <code>best</code>, depending on the overload; for the overloads taking a script name, it looks in <code>tessdata/fast/script</code> or <code>fast/script</code> instead).</p>
-<p class="startli">If the language file is not found in either of these folders, it then looks for it in a subfolder called <code>tessdata/fast</code> in <code>Environment.SpecialFolder.LocalApplicationData</code>. If the optional argument <code>useAnyCached</code> is <code>true</code>, it also looks for the language file in the same folder as the executable, and then in the <code>best</code> (or <code>fast</code>) subfolders. In this case, for example, if the language file for <code>TesseractLanguage.Fast.Eng</code> is not available, but the file for <code>TesseractLanguage.Best.Eng</code> is available, the latter will be used.</p>
-<p class="startli">Finally, if the language file could not be found in any of the possible paths, <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> will download it from the appropriate repository and place it in the appropriate subfolder of the <code>tessdata</code> folder in <code>Environment.SpecialFolder.LocalApplicationData</code>. The file will then be reused as necessary.</p>
-<p class="startli">The <code>TESSDATA_PREFIX</code> and language name will then be set accordingly to where the file was located.</p>
-<p class="startli">This means that if you use one of these constructors you do not have to worry about the language files being installed in the right place; as long as the user has an Internet connection, the library will download the language files as necessary.</p>
-</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md8"></a>
-MuPDFCore.MuPDFRenderer control</h2>
-<p >To use the <code>PDFRenderer</code> control in an <a class="el" href="namespace_avalonia.html">Avalonia</a> application, first of all you need to add it to you <a class="el" href="namespace_avalonia.html">Avalonia</a> <code>Window</code>, e.g. in the XAML:</p>
-<div class="fragment"><div class="line">&lt;<span class="keywordtype">Window</span> <span class="keyword">xmlns</span>=<span class="stringliteral">&quot;https://github.com/avaloniaui&quot;</span></div>
-<div class="line">        ...</div>
-<div class="line">        <span class="keyword">xmlns:mupdf</span>=<span class="stringliteral">&quot;clr-namespace:MuPDFCore.MuPDFRenderer;assembly=MuPDFCore.MuPDFRenderer&quot;</span></div>
-<div class="line">        <span class="keyword">Opened</span>=<span class="stringliteral">&quot;WindowOpened&quot;</span></div>
-<div class="line">        ... &gt;</div>
-<div class="line">    &lt;<span class="keywordtype">mupdf:PDFRenderer</span> <span class="keyword">Name</span>=<span class="stringliteral">&quot;MuPDFRenderer&quot;</span> /&gt;</div>
-<div class="line">&lt;/<span class="keywordtype">Window</span>&gt;</div>
-</div><!-- fragment --><p >You then need to initialise it from the backing code, e.g. in a <code>WindowOpened</code> event:</p>
-<div class="fragment"><div class="line"><span class="keyword">private</span> <span class="keywordtype">void</span> WindowOpened(<span class="keywordtype">object</span> sender, EventArgs e)</div>
-<div class="line">{</div>
-<div class="line">    this.FindControl&lt;PDFRenderer&gt;(<span class="stringliteral">&quot;MuPDFRenderer&quot;</span>).Initialize(<span class="stringliteral">&quot;path/to/file.pdf&quot;</span>);</div>
-<div class="line">}</div>
-</div><!-- fragment --><p >This way, the renderer will start showing the first page of the specified document, using a number of rendering threads that is decided based on the number of processors in the computer. There are many other ways to initialise a PDFRenderer, so make sure to look at the <a href="https://arklumpus.github.io/MuPDFCore/">documentation</a> to see the other possibilities!</p>
-<h1><a class="anchor" id="autotoc_md9"></a>
+<h1><a class="anchor" id="autotoc_md6"></a>
 Building from source</h1>
 <p >Building the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> library from source requires the following steps:</p>
 <ol type="1">
@@ -316,7 +145,7 @@ Building from source</h1>
 <li>Creating the <code><a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a></code> library NuGet package</li>
 </ol>
 <p >Steps 1 and 2 need to be performed on all of Windows, macOS and Linux, and on the various possible architectures (x86, x64 and arm64 for Windows, x64/Intel and arm64/Apple for macOS, and x64 and arm64 for Linux - no cross-compiling)! Otherwise, some native assets will be missing and it will not be possible to build the NuGet package.</p>
-<h2><a class="anchor" id="autotoc_md10"></a>
+<h2><a class="anchor" id="autotoc_md7"></a>
 1. Building libmupdf</h2>
 <p >You can download the open-source (GNU AGPL) MuPDF source code from <a href="https://mupdf.com/downloads/index.html">here</a>. You will need to uncompress the source file and compile the library on Windows, macOS and Linux. You need the following files:</p>
 <ul>
@@ -337,7 +166,7 @@ Building from source</h1>
 </ul>
 <p >Note that the files from macOS and Linux are different, despite sharing the same name.</p>
 <p >For convenience, these compiled files for MuPDF 1.19.1 are included in the <a href="https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib"><code>native/MuPDFWrapper/lib</code> folder</a> of this repository.</p>
-<h3><a class="anchor" id="autotoc_md11"></a>
+<h3><a class="anchor" id="autotoc_md8"></a>
 Tips for compiling MuPDF 1.20.0:</h3>
 <ul>
 <li>On all platforms:<ul>
@@ -413,14 +242,14 @@ Tips for compiling MuPDF 1.20.0:</h3>
 </ul>
 </li>
 </ul>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="autotoc_md9"></a>
 2. Building MuPDFWrapper</h2>
 <p >Once you have the required static library files, you should download the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> source code: <a href="https://github.com/arklumpus/MuPDFCore/archive/v1.4.0.tar.gz">MuPDFCore-1.4.0.tar.gz</a> (or clone the repository) and place the library files in the appropriate subdirectories in the <code>native/MuPDFWrapper/lib/</code> folder.</p>
 <p >To compile <code>MuPDFWrapper</code> you will need <a href="https://cmake.org/">CMake</a> (version 3.8 or higher) and (on Windows) <a href="https://ninja-build.org/">Ninja</a>.</p>
 <p >On Windows, the easiest way to get all the required tools is probably to install <a href="https://visualstudio.microsoft.com/it/">Visual Studio</a>. By selecting the "Desktop development with C++" workload you should get everything you need.</p>
 <p >On macOS, you will need to install at least the Command-Line Tools for Xcode (if necessary, you should be prompted to do this while you perform the following steps) and CMake.</p>
 <p >Once you have everything at the ready, you will have to build MuPDFWrapper on the seven platforms.</p>
-<h3><a class="anchor" id="autotoc_md13"></a>
+<h3><a class="anchor" id="autotoc_md10"></a>
 Windows (x86 and x64)</h3>
 <ol type="1">
 <li></li>
@@ -434,7 +263,7 @@ Windows (x86 and x64)</h3>
 <li>Type <code>build</code>. This will start the <code>build.cmd</code> batch script that will delete any previous build and compile the library.</li>
 </ol>
 <p >After this finishes, you should find a file named <code>MuPDFWrapper.dll</code> in the <code>native/out/build/win-x64/MuPDFWrapper/</code> directory or in the <code>native/out/build/win-x86/MuPDFWrapper/</code> directory. Leave it there.</p>
-<h3><a class="anchor" id="autotoc_md14"></a>
+<h3><a class="anchor" id="autotoc_md11"></a>
 Windows (arm64)</h3>
 <ol type="1">
 <li>Locate the batch file that sets up the developer command prompt environment. You can do this by finding the "Developer Command Prompt for VS" link in the start menu, then clicking on <code>Open file location</code>, opening the properties of the link and looking at the <code>Target</code>. This could be e.g. <code>C:\Program Files\Microsoft Visual Studio\2022\Preview\Common7\Tools\VsDevCmd.bat</code>.</li>
@@ -445,7 +274,7 @@ Windows (arm64)</h3>
 <li>Type <code>build</code>. This will start the <code>build.cmd</code> batch script that will delete any previous build and compile the library.</li>
 </ol>
 <p >After this finishes, you should find a file named <code>MuPDFWrapper.dll</code> in the <code>native/out/build/win-arm64/MuPDFWrapper/</code> directory. Leave it there.</p>
-<h3><a class="anchor" id="autotoc_md15"></a>
+<h3><a class="anchor" id="autotoc_md12"></a>
 macOS and Linux</h3>
 <ol type="1">
 <li>Assuming you have everything ready, open a terminal in the folder where you have downloaded the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> source code.</li>
@@ -454,14 +283,14 @@ macOS and Linux</h3>
 <li>Type <code>./build.sh</code>. This will delete any previous build and compile the library.</li>
 </ol>
 <p >After this finishes, you should find a file named <code>libMuPDFWrapper.dylib</code> in the <code>native/out/build/mac-x64/MuPDFWrapper/</code> directory (on macOS running on an Intel x64 processor) or in the <code>native/out/build/mac-arm64/MuPDFWrapper/</code> directory (on macOS running on an Apple silicon arm64 processor), and a file named <code>libMuPDFWrapper.so</code> in the <code>native/out/build/linux-x64/MuPDFWrapper/</code> directory (on Linux). Leave it there.</p>
-<h2><a class="anchor" id="autotoc_md16"></a>
+<h2><a class="anchor" id="autotoc_md13"></a>
 3. Creating the MuPDFCore NuGet package</h2>
 <p >Once you have the <code>MuPDFWrapper.dll</code>, <code>libMuPDFWrapper.dylib</code> and <code>libMuPDFWrapper.so</code> files, make sure they are in the correct folders (<code>native/out/build/xxx-yyy/MuPDFWrapper/</code>), <b>all on the same machine</b>.</p>
 <p >To create the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> NuGet package, you will need the <a href="https://dotnet.microsoft.com/download/dotnet/current">.NET Core 2.0 SDK or higher</a> for your platform. Once you have installed it and have everything ready, open a terminal in the folder where you have downloaded the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> source code and type:</p>
 <div class="fragment"><div class="line">cd MuPDFCore</div>
 <div class="line">dotnet pack -c Release</div>
 </div><!-- fragment --><p >This will create a NuGet package in <code>MuPDFCore/bin/Release</code>. You can install this package on your projects by adding a local NuGet source.</p>
-<h2><a class="anchor" id="autotoc_md17"></a>
+<h2><a class="anchor" id="autotoc_md14"></a>
 4. Running tests</h2>
 <p >To verify that everything is working correctly, you should build the <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> test suite and run it on all platforms. To build the test suite, you will need the <a href="https://dotnet.microsoft.com/download/dotnet/current">.NET 6 SDK or higher</a>. You will also need to have enabled the <a href="https://docs.microsoft.com/en-us/windows/wsl/install">Windows Subsystem for Linux</a>.</p>
 <p >To build the test suite:</p>
@@ -482,13 +311,13 @@ macOS and Linux</h3>
 <li><code>MuPDFCoreTests-win-x86.tar.gz</code> contains the tests for Windows environments on x86 processors.</li>
 </ul>
 <p >To run the tests, copy each archive to a machine running the corresponding operating system, and extract it (note: on Windows, the default zip file manager may struggle when extracting the text file with non-latin characters; you may need to manually extract this file). Then:</p>
-<h3><a class="anchor" id="autotoc_md18"></a>
+<h3><a class="anchor" id="autotoc_md15"></a>
 Windows</h3>
 <ul>
 <li>Open a command prompt and <code>CD</code> into the folder where you have extracted the contents of the test archive.</li>
 <li>Enter the command <code>MuPDFCoreTestHost</code> (this will run the test program).</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md19"></a>
+<h3><a class="anchor" id="autotoc_md16"></a>
 macOS and Linux</h3>
 <ul>
 <li>Open a terminal and <code>cd</code> into the folder where you have extracted the contents of the test archive.</li>
@@ -498,7 +327,7 @@ macOS and Linux</h3>
 </ul>
 <p >The test suite will start; it will print the name of each test, followed by a green <code>Succeeded</code> or a red <code>Failed</code> depending on the test result. If everything went correctly, all tests should succeed.</p>
 <p >When all the tests have been run, the program will print a summary showing how many tests have succeeded (if any) and how many have failed (if any). If any tests have failed, a list of these will be printed, and then they will be run again one at a time, waiting for a key press before running each test (this makes it easier to follow what is going on). If you wish to kill the test process early, you can do so with <code>CTRL+C</code>.</p>
-<h1><a class="anchor" id="autotoc_md20"></a>
+<h1><a class="anchor" id="autotoc_md17"></a>
 Note about MuPDFCore and .NET Framework &lt;a name="netFrameworkNote"&gt;&lt;/a&gt;</h1>
 <p >If you wish to use <a class="el" href="namespace_mu_p_d_f_core.html">MuPDFCore</a> in a .NET Framework project, you will need to manually copy the native MuPDFWrapper library for the platform you are using to the executable directory (this is done automatically if you target .NET/.NET core).</p>
 <p >One way to obtain the appropriate library files is:</p>
