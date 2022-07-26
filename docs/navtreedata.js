@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "MuPDFCore", "index.html", [
-    [ "MuPDFCore: Multiplatform .NET Core bindings for MuPDF", "index.html", [
+    [ "MuPDFCore: Multiplatform .NET bindings for MuPDF", "index.html", [
       [ "Getting started", "index.html#autotoc_md1", null ],
       [ "Usage", "index.html#autotoc_md2", [
         [ "Documentation", "index.html#autotoc_md3", null ],
@@ -37,7 +37,7 @@ var NAVTREE =
       ] ],
       [ "Building from source", "index.html#autotoc_md9", [
         [ "1. Building libmupdf", "index.html#autotoc_md10", [
-          [ "Tips for compiling MuPDF 1.19.1:", "index.html#autotoc_md11", null ]
+          [ "Tips for compiling MuPDF 1.20.0:", "index.html#autotoc_md11", null ]
         ] ],
         [ "2. Building MuPDFWrapper", "index.html#autotoc_md12", [
           [ "Windows (x86 and x64)", "index.html#autotoc_md13", null ],
@@ -53,8 +53,8 @@ var NAVTREE =
       [ "Note about MuPDFCore and .NET Framework <a name=\"netFrameworkNote\"></a>", "index.html#autotoc_md20", null ]
     ] ],
     [ "Packages", "namespaces.html", [
-      [ "Packages", "namespaces.html", "namespaces_dup" ],
-      [ "Package Functions", "namespacemembers.html", [
+      [ "Package List", "namespaces.html", "namespaces_dup" ],
+      [ "Package Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
         [ "Enumerations", "namespacemembers_enum.html", null ]
       ] ]
@@ -81,8 +81,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_mu_p_d_f_8cs_source.html",
-"class_mu_p_d_f_core_1_1_tesseract_language.html#a15b11b8626d4dbb7f01dd45ee4ad3176a71c04ef1ea8a194decbcb029fb810490",
-"class_mu_p_d_f_core_1_1_tesseract_language.html#ad72f06b070354601393980d454045de9"
+"class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#aae1576a5614b665202808086fd84fcd3",
+"class_mu_p_d_f_core_1_1_tesseract_language.html#a15b11b8626d4dbb7f01dd45ee4ad3176a81f126d1737d78aed8b8a01648a18dec",
+"class_mu_p_d_f_core_1_1_tesseract_language.html#a68f1943167a4334387d42e8aa1bd9da3a1bd0bf844cb1fba7b2fcf39c310248f2",
+"class_mu_p_d_f_core_1_1_tesseract_language.html#af64dce4052f4a0df58df7e8051a416cda272ccb8592bafde0baf1dedce0fd3ac2",
+"struct_mu_p_d_f_core_1_1_rectangle.html#a4bd91e5c1be8e68b552c5b7862a18ed2"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

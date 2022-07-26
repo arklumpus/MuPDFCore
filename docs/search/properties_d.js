@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['zoom_768',['Zoom',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#ad2964abec1ae1dde10f1145c851adbf1',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomenabled_769',['ZoomEnabled',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a2ff0f7ce05dac392726917aa52d7f3e0',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['zoomincrement_770',['ZoomIncrement',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a5a2fdaa31f4bf7ae8b3912d620a83759',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]]
+  ['width_0',['Width',['../struct_mu_p_d_f_core_1_1_rectangle.html#a4ea4052094e051b974b7ca1bc9346655',1,'MuPDFCore.Rectangle.Width()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#a29904ab0820872c48e43631ece9f1fff',1,'MuPDFCore.RoundedRectangle.Width()']]],
+  ['writingmode_1',['WritingMode',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a2f3bc0d1d174cf148916593ad8ec0efe',1,'MuPDFCore::MuPDFStructuredTextLine']]]
 ];

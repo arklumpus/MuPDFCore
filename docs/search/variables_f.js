@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['y_506',['Y',['../struct_mu_p_d_f_core_1_1_point_f.html#aebce5c221345cf92d72876e66fda8255',1,'MuPDFCore::PointF']]],
-  ['y0_507',['Y0',['../struct_mu_p_d_f_core_1_1_rectangle.html#a5e3466975ea3adbd9ab7a6920247170b',1,'MuPDFCore.Rectangle.Y0()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#af2a366728b46c908496c2cccac6788a4',1,'MuPDFCore.RoundedRectangle.Y0()']]],
-  ['y1_508',['Y1',['../struct_mu_p_d_f_core_1_1_rectangle.html#aca202ae10d09cc9307a57e3c8f206bed',1,'MuPDFCore.Rectangle.Y1()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#a0028471434c2a335eb07bfa623a603e3',1,'MuPDFCore.RoundedRectangle.Y1()']]]
+  ['zoomenabledproperty_0',['ZoomEnabledProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a9058818acd9f085c35f672c79262162b',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['zoomincrementproperty_1',['ZoomIncrementProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a7cef637c2ca16aba3ffae0be352ae002',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['zoomproperty_2',['ZoomProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#aa80851bc316f16e126c48da9edd18ef0',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]]
 ];

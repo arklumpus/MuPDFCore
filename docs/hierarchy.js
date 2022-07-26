@@ -1,12 +1,14 @@
 var hierarchy =
 [
     [ "Control", null, [
+      [ "MuPDFCore.MuPDFRenderer.PDFRenderer", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html", null ],
       [ "MuPDFCore.MuPDFRenderer.PDFRenderer", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html", null ]
     ] ],
     [ "EventArgs", null, [
       [ "MuPDFCore.MessageEventArgs", "class_mu_p_d_f_core_1_1_message_event_args.html", null ]
     ] ],
     [ "Exception", null, [
+      [ "MuPDFCore.DocumentLockedException", "class_mu_p_d_f_core_1_1_document_locked_exception.html", null ],
       [ "MuPDFCore.MuPDFException", "class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html", null ]
     ] ],
     [ "IComparable", null, [

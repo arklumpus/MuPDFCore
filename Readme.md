@@ -1,11 +1,11 @@
-# MuPDFCore: Multiplatform .NET Core bindings for MuPDF
+# MuPDFCore: Multiplatform .NET bindings for MuPDF
 
 <img src="icon.svg" width="256" align="right">
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Version](https://img.shields.io/nuget/v/MuPDFCore)](https://nuget.org/packages/MuPDFCore)
 
-__MuPDFCore__ is a set of multiplatform .NET Core bindings for [MuPDF](https://mupdf.com/). It can render PDF, XPS, EPUB and other formats to raster images returned either as raw bytes, or as image files in multiple formats (including PNG and PSD). It also supports multithreading.
+__MuPDFCore__ is a set of multiplatform .NET bindings for [MuPDF](https://mupdf.com/). It can render PDF, XPS, EPUB and other formats to raster images returned either as raw bytes, or as image files in multiple formats (including PNG and PSD). It also supports multithreading.
 
 It also includes __MuPDFCore.MuPDFRenderer__, an Avalonia control to display documents compatible with MuPDFCore in Avalonia windows (with multithreaded rendering).
 
@@ -21,7 +21,7 @@ The MuPDFCore library targets .NET Standard 2.0, thus it can be used in projects
 * Linux x64 (64 bit)
 * Linux arm64/aarch64 (ARM 64 bit)
 * macOS Intel x86_64 (64 bit)
-* macOS Apple silicon (ARM 64 bit, without support for the OCR functions)
+* macOS Apple silicon (ARM 64 bit)
 
 To use the library in your project, you should install the [MuPDFCore NuGet package](https://www.nuget.org/packages/MuPDFCore/) and/or the [MuPDFCore.PDFRenderer NuGet package](https://www.nuget.org/packages/MuPDFCore.MuPDFRenderer/). When you publish a program that uses MuPDFCore, the correct native library for the target architecture will automatically be copied to the build folder (but see the [note](#netFrameworkNote) for .NET Framework).
 
@@ -337,11 +337,10 @@ Note that the files from macOS and Linux are different, despite sharing the same
 
 For convenience, these compiled files for MuPDF 1.19.1 are included in the [`native/MuPDFWrapper/lib` folder](https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib) of this repository.
 
-#### Tips for compiling MuPDF 1.19.1:
+#### Tips for compiling MuPDF 1.20.0:
 
 * On all platforms:
     * You do not need to follow the instructions in `thirdparty/tesseract.txt`, as in this version the _leptonica_ and _tesseract_ libraries are already included in the source archive.
-    * Delete or comment line 1082 in `source/fitz/ocr-device.c` (the one reading `fz_save_pixmap_as_png(ctx, ocr->pixmap, "ass.png");`). This line creates a file called `ass.png` when running the OCR process. This may be useful for debugging, but may have the unintended consequence of overwriting a file with same name, or cause a runtime error if the user does not have write permissions.
 	* Delete or comment line 316 in `source/fitz/output.c` (the `fz_throw` invocation within the `buffer_seek` method - this should leave the `buffer_seek` method empty). This line throws an exception when a seek operation on a buffer is attempted. The problem is that this makes it impossible to render a document as a PSD image in memory, because the `fz_write_pixmap_as_psd` method performs a few seek operations. By removing this line, we turn buffer seeks into no-ops; this doesn't seem to have catastrophic side-effects and the PSD documents produced in this way appear to be fine.
 
 * On Windows (x64):
@@ -350,7 +349,7 @@ For convenience, these compiled files for MuPDF 1.19.1 are included in the [`nat
     * Now, open the `x64 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it using `msbuild mupdf.sln`
     * Then, build again using `msbuild mupdf.sln /p:Configuration=Release`. Ignore the compilation errors.
     * Finally, build again using `msbuild mupdf.sln /p:Configuration=ReleaseTesseract`.
-    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `x64/ReleaseTesseract` folder (the file should be ~444MB in size).
+    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `x64/ReleaseTesseract` folder (the file should be ~441MB in size).
 
 * On Windows (x86):
     * You will have to use Visual Studio 2019, as Visual Studio 2022 is not supported on x86 platforms.
@@ -358,7 +357,7 @@ For convenience, these compiled files for MuPDF 1.19.1 are included in the [`nat
     * Now, open the `x86 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it using `msbuild mupdf.sln /p:Platform=Win32`
     * Then, build again using `msbuild mupdf.sln /p:Configuration=Release /p:Platform=Win32`. Ignore the compilation errors.
     * Finally, build again using `msbuild mupdf.sln /p:Configuration=ReleaseTesseract /p:Platform=Win32`.
-    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `ReleaseTesseract` folder (the file should be ~361MB in size).
+    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `ReleaseTesseract` folder (the file should be ~362MB in size).
 
 * On Windows (arm64)
     
@@ -423,7 +422,7 @@ Once you have everything at the ready, you will have to build MuPDFWrapper on th
 
 1. <p>Assuming you have installed Visual Studio, you should open the "<strong>x64</strong> Native Tools Command Prompt for VS" or the "<strong>x86</strong> Native Tools Command Prompt for VS" (you should be able to find these in the Start menu). Take care to open the version corresponding to the architecture you are building for, otherwise you will not be able to compile the library. A normal command prompt will not work, either.</p>
     <p><strong>Note 1</strong>: you <strong>must</strong> build the library on two separate systems, one running a 32-bit version of Windows and the other running a 64-bit version. If you try to build the x86 library on an x64 system, the system will probably build a 64-bit library and place it in the 32-bit output folder, which will just make things very confusing.</p>
-    <p><strong>Note 2 for Windows x86</strong>: for some reason, Visual Studio might install the 64-bit version of CMake and Ninja, even though you are on a 32-bit machine. If this happens, you will have to manually install the 32-bit CMake and compile a 32-bit version of Ninja (which also requires Python to be installed). You will notice if this is an issue because the 64-bit programs will refuse to run.</p>
+    <p><strong>Note 2 for Windows x86</strong>: for some reason, Visual Studio might install the 64-bit version of CMake and Ninja, even though you are on a 32-bit machine. If this happens, you will have to manually install the 32-bit CMake and compile a 32-bit version of Ninja. You will notice if this is an issue because the 64-bit programs will refuse to run.</p>
 2. `CD` to the directory where you have downloaded the MuPDFCore source code.
 3. `CD` into the `native` directory.
 4. Type `build`. This will start the `build.cmd` batch script that will delete any previous build and compile the library.
@@ -474,7 +473,7 @@ To build the test suite:
 1. Make sure that you have changed the version of the MuPDFCore NuGet package so that it is higher than the latest version of MuPDFCore in the NuGet repository (you should use a pre-release suffix, e.g. `1.4.0-a1` to avoid future headaches with new versions of MuPDFCore). This is set in line 9 of the `MuPDFCore/MuPDFCore.csproj` file.
 2. Add the `MuPDFCore/bin/Release` folder to your local NuGet repositories (you can do this e.g. in Visual Studio).
 3. If you have not done so already, create the MuPDFCore NuGet package following step 3 above.
-4. Update line 50 of the `Tests/Tests.csproj` project file so that it refers to the version of the MuPDFCore package you have just created.
+4. Update line 56 of the `Tests/Tests.csproj` project file so that it refers to the version of the MuPDFCore package you have just created.
 
 These steps ensure that you are testing the right version of MuPDFCore (i.e. your freshly built copy) and not something else that may have been cached.
 

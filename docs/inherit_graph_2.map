@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_mu_p_d_f_core_1_1_mu_p_d_f.html" title="Contains static methods to perform setup operations." alt="" coords="5,5,147,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,42,85,69"/>
+<area shape="rect" id="node2" href="$class_mu_p_d_f_core_1_1_document_locked_exception.html" title="The exception that is thrown when an attempt is made to render an encrypted document without supplyin..." alt="" coords="133,5,332,47"/>
+<area shape="rect" id="node3" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html" title="The exception that is thrown when a MuPDF operation fails." alt="" coords="133,71,332,98"/>
 </map>

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['upperleft_500',['UpperLeft',['../struct_mu_p_d_f_core_1_1_quad.html#af62d01bae133ddadcdd6f19eb6851b41',1,'MuPDFCore::Quad']]],
-  ['upperright_501',['UpperRight',['../struct_mu_p_d_f_core_1_1_quad.html#ae43a90c7f5685395f964441ecd92a976',1,'MuPDFCore::Quad']]]
+  ['width_0',['Width',['../struct_mu_p_d_f_core_1_1_size.html#a48e452c3dd0663d71508b7b2bee69a51',1,'MuPDFCore.Size.Width()'],['../struct_mu_p_d_f_core_1_1_rounded_size.html#a5e5954ae76c12cb8a36572be2354aa4b',1,'MuPDFCore.RoundedSize.Width()']]]
 ];
