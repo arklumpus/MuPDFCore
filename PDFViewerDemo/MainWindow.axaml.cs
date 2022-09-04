@@ -649,7 +649,7 @@ namespace PDFViewerDemo
             else
             {
                 //We need to re-initialise the renderer. No need to ask it to release resources here because it will do it on its own (and we don't need to dispose the Document).
-                await this.FindControl<PDFRenderer>("MuPDFRenderer").InitializeAsync(Document, pageNumber: this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber, ocrLanguage: null);
+                await this.FindControl<PDFRenderer>("MuPDFRenderer").InitializeAsync(Document, pageNumber: pageNumber, ocrLanguage: null);
                 this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
             }
         }
