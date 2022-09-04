@@ -212,13 +212,13 @@ namespace PDFViewerDemo
 
             gpr.Restore();
 
-            gpr.FillText(400, 92, "Move the mouse with", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
-            gpr.FillText(400, 148, "the left button pressed", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
-            gpr.FillText(400, 204, "to pan around or to", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
-            gpr.FillText(400, 260, "select text", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
+            gpr.FillText(400, 92, "Move the mouse with", new VectSharp.Font(VectSharp.FontFamily.ResolveFontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
+            gpr.FillText(400, 148, "the left button pressed", new VectSharp.Font(VectSharp.FontFamily.ResolveFontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
+            gpr.FillText(400, 204, "to pan around or to", new VectSharp.Font(VectSharp.FontFamily.ResolveFontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
+            gpr.FillText(400, 260, "select text", new VectSharp.Font(VectSharp.FontFamily.ResolveFontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
 
-            gpr.FillText(400, 530, "Use the mouse wheel", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
-            gpr.FillText(400, 586, "to zoom in/out", new VectSharp.Font(new VectSharp.FontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
+            gpr.FillText(400, 530, "Use the mouse wheel", new VectSharp.Font(VectSharp.FontFamily.ResolveFontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
+            gpr.FillText(400, 586, "to zoom in/out", new VectSharp.Font(VectSharp.FontFamily.ResolveFontFamily(VectSharp.FontFamily.StandardFontFamilies.HelveticaBold), 35), VectSharp.Colours.Gray);
 
             MemoryStream ms = new MemoryStream();
             doc.SaveAsPDF(ms);
