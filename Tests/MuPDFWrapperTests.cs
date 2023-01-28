@@ -1432,7 +1432,7 @@ namespace Tests
             string tempFileName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName) + "1" + Path.GetExtension(fileName));
             byte[] actualBytes = File.ReadAllBytes(tempFileName);
 
-            CollectionAssert.AreEqual(new byte[] { 0x3C, 0x3F, 0x78, 0x6D }, actualBytes[0..4], "The start of the created document appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x3C, 0x73, 0x76, 0x67 }, actualBytes[0..4], "The start of the created document appears to be wrong.");
             CollectionAssert.AreEqual(new byte[] { 0x76, 0x67, 0x3E, 0x0A }, actualBytes[^4..^0], "The end of the created document appears to be wrong.");
 
             try

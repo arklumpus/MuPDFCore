@@ -19,7 +19,7 @@ namespace Tests
         [TestMethod]
         public void MuPDFContextCreationWithEmptyStoreSize()
         {
-            using MuPDFContext context = new MuPDFContext(0);
+            using MuPDFContext context = new MuPDFContext((uint)0);
             Assert.AreNotEqual(IntPtr.Zero, context.NativeContext, "The native context pointer is null.");
         }
 

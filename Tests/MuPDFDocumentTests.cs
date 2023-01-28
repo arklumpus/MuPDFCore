@@ -964,7 +964,7 @@ namespace Tests
             }
             catch { }
 
-            CollectionAssert.AreEqual(new byte[] { 0x3C, 0x3F, 0x78, 0x6D }, savedBytes[0..4], "The start of the created document appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x3C, 0x73, 0x76, 0x67 }, savedBytes[0..4], "The start of the created document appears to be wrong.");
             CollectionAssert.AreEqual(new byte[] { 0x76, 0x67, 0x3E, 0x0A }, savedBytes[^4..^0], "The end of the created document appears to be wrong.");
         }
 
