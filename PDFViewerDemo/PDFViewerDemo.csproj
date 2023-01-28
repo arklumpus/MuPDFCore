@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -13,7 +13,7 @@
     <PackageReference Include="Avalonia" Version="0.10.18" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
     <PackageReference Include="HarfBuzzSharp" Version="2.8.2.1" />
-    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.6.0" />
+    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.7.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.1" />
     <PackageReference Include="VectSharp.PDF" Version="2.5.4" />
   </ItemGroup>
