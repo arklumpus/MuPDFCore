@@ -92,9 +92,9 @@ You can download the open-source (GNU AGPL) MuPDF source code from [here](https:
 
 Note that the files from macOS and Linux are different, despite sharing the same name.
 
-For convenience, these compiled files for MuPDF 1.19.1 are included in the [`native/MuPDFWrapper/lib` folder](https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib) of this repository.
+For convenience, these compiled files for MuPDF 1.21.1 are included in the [`native/MuPDFWrapper/lib` folder](https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib) of this repository.
 
-#### Tips for compiling MuPDF 1.20.0:
+#### Tips for compiling MuPDF 1.21.1:
 
 * On all platforms:
     * You do not need to follow the instructions in `thirdparty/tesseract.txt`, as in this version the _leptonica_ and _tesseract_ libraries are already included in the source archive.
@@ -106,7 +106,7 @@ For convenience, these compiled files for MuPDF 1.19.1 are included in the [`nat
     * Now, open the `x64 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it using `msbuild mupdf.sln`
     * Then, build again using `msbuild mupdf.sln /p:Configuration=Release`. Ignore the compilation errors.
     * Finally, build again using `msbuild mupdf.sln /p:Configuration=ReleaseTesseract`.
-    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `x64/ReleaseTesseract` folder (the file should be ~441MB in size).
+    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `x64/ReleaseTesseract` folder (the file should be ~497MB in size).
 
 * On Windows (x86):
     * You will have to use Visual Studio 2019, as Visual Studio 2022 is not supported on x86 platforms.
@@ -114,7 +114,7 @@ For convenience, these compiled files for MuPDF 1.19.1 are included in the [`nat
     * Now, open the `x86 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it using `msbuild mupdf.sln /p:Platform=Win32`
     * Then, build again using `msbuild mupdf.sln /p:Configuration=Release /p:Platform=Win32`. Ignore the compilation errors.
     * Finally, build again using `msbuild mupdf.sln /p:Configuration=ReleaseTesseract /p:Platform=Win32`.
-    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `ReleaseTesseract` folder (the file should be ~362MB in size).
+    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `ReleaseTesseract` folder (the file should be ~415MB in size).
 
 * On Windows (arm64)
     
@@ -122,10 +122,18 @@ For convenience, these compiled files for MuPDF 1.19.1 are included in the [`nat
     
     First of all, make sure that you have installed Visual Studio 2022 and have selected the C++ ARM64 build tools component of the "Desktop development with C++" workload.
     
-    **Note**: When you install Visual Studio on an ARM machine, it will complain that this is not supported and will be slow. Ignore that warning.
-
     * Download and extract the MuPDF source code and follow the instructions for all platforms above.
     * Add ` || defined(_M_ARM64)` at the end of line 16 in `scripts/tesseract/endianness.h`.
+    * Open the file `thirdparty/openjpeg/src/lib/openjp2/ht_dec.c` and add the following after line 57 ([source](https://github.com/ngtcp2/ngtcp2/commit/576f2d470cdf3da7b15348f4f609e4c7a0070499)):
+        ```C
+        unsigned int __popcnt(unsigned int x) {
+            unsigned int c = 0;
+            for (; x; ++c) {
+                x &= x - 1;
+            }
+            return c;
+        }
+        ```
     * Now we need to edit a few files in the `thirdparty/tesseract/src/arch` folder.
         * Comment or delete lines 149-177 (inclusive) in `simddetect.cpp`. You should now have an empty block between `#  elif defined(_WIN32)` and `#else`. Also comment or delete lines 198-220 (inclusive) and 237-260 (inclusive).
         * Comment or delete lines 20-22 (inclusive) in `dotproductsse.cpp`. Replace the whole body of the `DotProductSSE` method (lines 30-76) with `return DotProductNative(u, v, n);`.
@@ -141,7 +149,7 @@ For convenience, these compiled files for MuPDF 1.19.1 are included in the [`nat
     * Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
     * Create a new folder `platform/win32/Release`. Now, the problem is that the `bin2coff` script included with MuPDF cannot create `obj` files for ARM64 (only for x86 and x64). Since I could not find a version that can do this, I [translated the source code of bin2coff to C# and added this option myself](https://github.com/arklumpus/bin2coff). You can download an ARM64 `bin2coff.exe` from [here](https://github.com/arklumpus/bin2coff/releases/latest/download/win-arm64.zip); place it in the `Release` folder that you have just created.
     * Open the `Developer Command Prompt for VS`, move to the folder with the solution file (`platform/win32`), and build it using `msbuild mupdf.sln /p:Configuration=ReleaseTesseract`. Some compilation errors may occur towards the end, but they should not matter.
-    * After a while, this should produce `libmupdf.lib` in the `ARM64/ReleaseTesseract` folder (the file should be ~444MB in size).
+    * After a while, this should produce `libmupdf.lib` in the `ARM64/ReleaseTesseract` folder (the file should be ~500MB in size).
 
 * On Linux (x64):
     * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 24 (which specifies the `CFLAGS`).
@@ -165,7 +173,7 @@ For convenience, these compiled files for MuPDF 1.19.1 are included in the [`nat
 
 ### 2. Building MuPDFWrapper
 
-Once you have the required static library files, you should download the MuPDFCore source code: [MuPDFCore-1.4.0.tar.gz](https://github.com/arklumpus/MuPDFCore/archive/v1.4.0.tar.gz) (or clone the repository) and place the library files in the appropriate subdirectories in the `native/MuPDFWrapper/lib/` folder.
+Once you have the required static library files, you should download the MuPDFCore source code (just clone this repository) and place the library files in the appropriate subdirectories in the `native/MuPDFWrapper/lib/` folder.
 
 To compile `MuPDFWrapper` you will need [CMake](https://cmake.org/) (version 3.8 or higher) and (on Windows) [Ninja](https://ninja-build.org/).
 
@@ -234,7 +242,7 @@ To build the test suite:
 
 These steps ensure that you are testing the right version of MuPDFCore (i.e. your freshly built copy) and not something else that may have been cached.
 
-Now, open a windows command line in the folder where you have downloaded the MuPDFCore source code, type `BuildTests` and press `Enter`. This will create a number of files in the `Release\MuPDFCoreTests` folder, where each file is an archive containing the tests for a certain platform and architecture:
+Now, open a Windows command line in the folder where you have downloaded the MuPDFCore source code, type `BuildTests` and press `Enter`. This will create a number of files in the `Release\MuPDFCoreTests` folder, where each file is an archive containing the tests for a certain platform and architecture:
 
 * `MuPDFCoreTests-linux-x64.tar.gz` contains the tests for Linux environments on x64 processors.
 * `MuPDFCoreTests-linux-arm64.tar.gz` contains the tests for Linux environments on arm64 processors.
