@@ -151,13 +151,13 @@ For convenience, these compiled files for MuPDF 1.21.1 are included in the [`nat
     * Open the `Developer Command Prompt for VS`, move to the folder with the solution file (`platform/win32`), and build it using `msbuild mupdf.sln /p:Configuration=ReleaseTesseract`. Some compilation errors may occur towards the end, but they should not matter.
     * After a while, this should produce `libmupdf.lib` in the `ARM64/ReleaseTesseract` folder (the file should be ~500MB in size).
 
-* On Linux (x64):
+* On Linux (x64, for both `glibc`- and `musl`- based distros):
     * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 24 (which specifies the `CFLAGS`).
-    * Comment line 218 in `include/mupdf/fitz/config.h`.
+    * Comment line 218 in `include/mupdf/fitz/config.h` (for some reason, this seems to disable OCR even when using `USE_TESSERACT=yes` to build).
     * Make sure that you are using a recent enough version of GCC (version 7.3.1 seems to be enough).
     * Compile by running `USE_TESSERACT=yes make HAVE_X11=no HAVE_GLUT=no` (this builds just the command-line libraries and tools, and enables OCR through the included Tesseract library).
 
-* On Linux (arm64):
+* On Linux (arm64, for both `glibc`- and `musl`- based distros):
     * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 24 (which specifies the `CFLAGS`).
     * Delete or comment line 218 in `thirdparty/tesseract/src/arch/simddetect.cpp`.
     * Make sure that you are using a recent enough version of GCC (version 7.3.1 seems to be enough).
@@ -174,7 +174,7 @@ For convenience, these compiled files for MuPDF 1.21.1 are included in the [`nat
 
 ### 2. Building MuPDFWrapper
 
-Once you have the required static library files, you should download the MuPDFCore source code (just clone this repository) and place the library files in the appropriate subdirectories in the `native/MuPDFWrapper/lib/` folder.
+Once you have the required static library files, you should download the MuPDFCore source code (just clone this repository) and place the library files in the appropriate subdirectories in the `native/MuPDFWrapper/lib/` folder (for Linux x64, copy the library built agains `glibc` to the `linux-x64` folder, and the library built against `musl` to the `linux-musl-x64` folder).
 
 To compile `MuPDFWrapper` you will need [CMake](https://cmake.org/) (version 3.8 or higher) and (on Windows) [Ninja](https://ninja-build.org/).
 

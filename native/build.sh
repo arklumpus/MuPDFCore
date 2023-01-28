@@ -11,7 +11,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		rm -rf out/build/linux-x64 ;
 		mkdir -p out/build/linux-x64 ;
 		cd out/build/linux-x64 ;
-		cmake ../../../ ;
+		cmake -DLIBC="GLIBC" ../../../ ;
 		make ;
 	elif [[ "$architecture" == "aarch64" ]]; then
 		echo "Building linux-arm64 native library..." ;
@@ -19,7 +19,27 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		rm -rf out/build/linux-arm64 ;
 		mkdir -p out/build/linux-arm64 ;
 		cd out/build/linux-arm64 ;
-		cmake ../../../ ;
+		cmake -DLIBC="GLIBC" ../../../ ;
+		make ;
+	fi
+elif [[ "$OSTYPE" == "linux-musl"* ]]; then
+	architecture=$(uname -m);
+	
+	if [[ "$architecture" == "x86_64" ]]; then
+		echo "Building linux-musl-x64 native library..." ;
+		echo ;
+		rm -rf out/build/linux-musl-x64 ;
+		mkdir -p out/build/linux-musl-x64 ;
+		cd out/build/linux-musl-x64 ;
+		cmake -DLIBC="MUSL" ../../../ ;
+		make ;
+	elif [[ "$architecture" == "aarch64" ]]; then
+		echo "Building linux-musl-arm64 native library..." ;
+		echo ;
+		rm -rf out/build/linux-musl-arm64 ;
+		mkdir -p out/build/linux-musl-arm64 ;
+		cd out/build/linux-musl-arm64 ;
+		cmake -DLIBC="MUSL" ../../../ ;
 		make ;
 	fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
