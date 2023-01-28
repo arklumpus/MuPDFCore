@@ -215,11 +215,11 @@ After this finishes, you should find a file named `MuPDFWrapper.dll` in the `nat
 3. Type `chmod +x build.sh`.
 4. Type `./build.sh`. This will delete any previous build and compile the library.
 
-After this finishes, you should find a file named `libMuPDFWrapper.dylib` in the `native/out/build/mac-x64/MuPDFWrapper/` directory (on macOS running on an Intel x64 processor) or in the `native/out/build/mac-arm64/MuPDFWrapper/` directory (on macOS running on an Apple silicon arm64 processor), and a file named `libMuPDFWrapper.so` in the `native/out/build/linux-x64/MuPDFWrapper/` directory (on Linux). Leave it there.
+After this finishes, you should find a file named `libMuPDFWrapper.dylib` in the `native/out/build/mac-x64/MuPDFWrapper/` directory (on macOS running on an Intel x64 processor) or in the `native/out/build/mac-arm64/MuPDFWrapper/` directory (on macOS running on an Apple silicon arm64 processor), and a file named `libMuPDFWrapper.so` in the `native/out/build/linux-XXX/MuPDFWrapper/` directory (on Linux - where `XXX` can be `x64`, `arm64`, `musl-x64`, or `musl-arm64`). Leave it there.
 
 ### 3. Creating the MuPDFCore NuGet package
 
-Once you have the `MuPDFWrapper.dll`, `libMuPDFWrapper.dylib` and `libMuPDFWrapper.so` files, make sure they are in the correct folders (`native/out/build/xxx-yyy/MuPDFWrapper/`), __all on the same machine__.
+Once you have the `MuPDFWrapper.dll` (3x), `libMuPDFWrapper.dylib` (2x) and `libMuPDFWrapper.so` (4x) files, make sure they are in the correct folders (`native/out/build/xxx-yyy/MuPDFWrapper/`), __all on the same machine__.
 
 To create the MuPDFCore NuGet package, you will need the [.NET Core 2.0 SDK or higher](https://dotnet.microsoft.com/download/dotnet/current) for your platform. Once you have installed it and have everything ready, open a terminal in the folder where you have downloaded the MuPDFCore source code and type:
 
@@ -245,12 +245,15 @@ These steps ensure that you are testing the right version of MuPDFCore (i.e. you
 
 Now, open a Windows command line in the folder where you have downloaded the MuPDFCore source code, type `BuildTests` and press `Enter`. This will create a number of files in the `Release\MuPDFCoreTests` folder, where each file is an archive containing the tests for a certain platform and architecture:
 
-* `MuPDFCoreTests-linux-x64.tar.gz` contains the tests for Linux environments on x64 processors.
-* `MuPDFCoreTests-linux-arm64.tar.gz` contains the tests for Linux environments on arm64 processors.
+* `MuPDFCoreTests-linux-x64.tar.gz` contains the tests for Linux environments using `glibc` on x64 processors.
+* `MuPDFCoreTests-linux-arm64.tar.gz` contains the tests for Linux environments using `glibc` on arm64 processors.
+* `MuPDFCoreTests-linux-x64.tar.gz` contains the tests for Linux environments using `musl` on x64 processors.
+* `MuPDFCoreTests-linux-arm64.tar.gz` contains the tests for Linux environments using `musl` on arm64 processors.
 * `MuPDFCoreTests-mac-x64.tar.gz` contains the tests for macOS environments on Intel processors.
 * `MuPDFCoreTests-mac-arm64.tar.gz` contains the tests for macOS environments on Apple silicon processors.
 * `MuPDFCoreTests-win-x64.tar.gz` contains the tests for Windows environments on x64 processors.
 * `MuPDFCoreTests-win-x86.tar.gz` contains the tests for Windows environments on x86 processors.
+* `MuPDFCoreTests-win-arm64.tar.gz` contains the tests for Windows environments on arm64 processors.
 
 To run the tests, copy each archive to a machine running the corresponding operating system, and extract it (note: on Windows, the default zip file manager may struggle when extracting the text file with non-latin characters; you may need to manually extract this file). Then:
 
@@ -277,6 +280,6 @@ One way to obtain the appropriate library files is:
 1. Manually download the NuGet package for [MuPDFCore](https://www.nuget.org/packages/MuPDFCore/) (click on the "Download package" link on the right).
 2. Rename the `.nupkg` file so that it has a `.zip` extension.
 3. Extract the zip file.
-4. Within the extracted folder, the library files are in the `runtimes/xxx/native/` folder, where `xxx` is `linux-x64`, `linux-arm64`, `osx-x64`, `osx-arm64`, `win-x64`, `win-x86` or `win-arm64`, depending on the platform you are using.
+4. Within the extracted folder, the library files are in the `runtimes/xxx/native/` folder, where `xxx` is `linux-x64`, `linux-arm64`, `linux-musl-x64`, `linux-musl-arm64`, `osx-x64`, `osx-arm64`, `win-x64`, `win-x86` or `win-arm64`, depending on the platform you are using.
 
 Make sure you copy the appropriate file to the same folder as the executable!

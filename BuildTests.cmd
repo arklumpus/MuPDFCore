@@ -138,6 +138,27 @@ rmdir MuPDFCoreTests-linux-arm64
 cd ..\..
 
 echo.
+echo Building with target [94mlinux-musl-arm64[0m
+
+cd MuPDFCoreTestHost
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-musl-arm64.pubxml /p:PlatformTarget=arm64
+cd ..
+
+echo.
+echo [104;97mCreating tarball...[0m
+
+cd Release\MuPDFCoreTests
+
+move linux-musl-arm64 MuPDFCoreTests-linux-musl-arm64
+bash -c "tar -czf MuPDFCoreTests-linux-musl-arm64.tar.gz MuPDFCoreTests-linux-musl-arm64"
+
+for /f %%i in ('dir /a:d /b "MuPDFCoreTests-linux-musl-arm64"\*') do rd /s /q "MuPDFCoreTests-linux-musl-arm64"\%%i
+del MuPDFCoreTests-linux-musl-arm64\* /s /f /q 1>nul
+rmdir MuPDFCoreTests-linux-musl-arm64
+
+cd ..\..
+
+echo.
 echo Building with target [94mmac-x64[0m
 
 cd MuPDFCoreTestHost
