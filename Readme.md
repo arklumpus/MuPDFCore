@@ -153,6 +153,7 @@ For convenience, these compiled files for MuPDF 1.21.1 are included in the [`nat
 
 * On Linux (x64):
     * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 24 (which specifies the `CFLAGS`).
+    * Comment line 218 in `include/mupdf/fitz/config.h`.
     * Make sure that you are using a recent enough version of GCC (version 7.3.1 seems to be enough).
     * Compile by running `USE_TESSERACT=yes make HAVE_X11=no HAVE_GLUT=no` (this builds just the command-line libraries and tools, and enables OCR through the included Tesseract library).
 
