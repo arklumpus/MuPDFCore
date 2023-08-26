@@ -25,7 +25,7 @@ using System.Linq;
 
 namespace PDFViewerDemo
 {
-    public class MainWindow : Window
+    public partial class MainWindow : Window
     {
         /// <summary>
         /// Defines the <see cref="MaxPageNumber"/> property.
@@ -117,7 +117,7 @@ namespace PDFViewerDemo
             ocrLanguageItems.AddRange(from el in fastLanguages select el.ToString());
             ocrLanguageItems.AddRange(from el in fastScripts select el.ToString());
 
-            ocrLanguageBox.Items = ocrLanguageItems;
+            ocrLanguageBox.ItemsSource = ocrLanguageItems;
             ocrLanguageBox.SelectedIndex = 0;
 
             Watcher.Changed += FileChanged;
@@ -267,7 +267,7 @@ namespace PDFViewerDemo
                             }
 
                             //The update does not need to have a high priority.
-                        }, DispatcherPriority.MinValue);
+                        }, DispatcherPriority.ApplicationIdle);
                     }
                     else
                     {
@@ -305,7 +305,7 @@ namespace PDFViewerDemo
             //Render the page to the bitmap, without marshaling.
             using (ILockedFramebuffer fb = bmp.Lock())
             {
-                Document.Render(this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber, bounds, zoom, PixelFormats.RGBA, fb.Address);
+                Document.Render(this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber, bounds, zoom, MuPDFCore.PixelFormats.RGBA, fb.Address);
             }
 
             return bmp;
@@ -911,7 +911,7 @@ namespace PDFViewerDemo
             }
 
             string selection = this.FindControl<PDFRenderer>("MuPDFRenderer").GetSelectedText() ?? "";
-            await Application.Current.Clipboard.SetTextAsync(selection);
+            await GetTopLevel(this).Clipboard.SetTextAsync(selection);
         }
 
         /// <summary>
@@ -924,7 +924,7 @@ namespace PDFViewerDemo
             if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.C)
             {
                 string selection = this.FindControl<PDFRenderer>("MuPDFRenderer").GetSelectedText() ?? "";
-                await Application.Current.Clipboard.SetTextAsync(selection);
+                await GetTopLevel(this).Clipboard.SetTextAsync(selection);
             }
             else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.A)
             {

@@ -8,7 +8,7 @@
         mc:Ignorable="d" Width="800" Height="700"
         MinWidth="300" MinHeight="100"
         x:Class="PDFViewerDemo.MainWindow"
-        Title="PDF Viewer" Opened="WindowOpened" FontSize="16" Name="MainWindow"
+        Title="PDF Viewer" Opened="WindowOpened" FontSize="16" Name="ParentWindow"
         Closed="WindowClosed" KeyDown="WindowKeyDown">
   <Window.Resources>
     <!--Used when converting page numbers: the page numbers are 0-based, but most people would expect the first page to be page number 1.-->
@@ -64,9 +64,9 @@
             <ColumnDefinition Width="Auto"></ColumnDefinition>
           </Grid.ColumnDefinitions>
           <TextBlock VerticalAlignment="Center" FontWeight="Bold">Page:</TextBlock>
-          <NumericUpDown Grid.Column="1" FormatString="0" Minimum="1" Maximum="{Binding #MainWindow.MaxPageNumber}" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" Value="{Binding #MuPDFRenderer.PageNumber, Converter={StaticResource increaseByOne}}" ValueChanged="PageNumberChanged"></NumericUpDown>
+          <NumericUpDown Grid.Column="1" FormatString="0" Minimum="1" Maximum="{Binding #ParentWindow.MaxPageNumber}" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" Value="{Binding #MuPDFRenderer.PageNumber, Converter={StaticResource increaseByOne}}" ValueChanged="PageNumberChanged"></NumericUpDown>
           <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="10, 0, 5, 0">/</TextBlock>
-          <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0, 0, 0, 0" Text="{Binding #MainWindow.MaxPageNumber}"></TextBlock>
+          <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0, 0, 0, 0" Text="{Binding #ParentWindow.MaxPageNumber}"></TextBlock>
         </Grid>
 
         <!--Navigator showing a thumbnail of the page and a rectangle representing the current DisplayArea.-->
