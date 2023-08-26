@@ -10,10 +10,6 @@
         x:Class="PDFViewerDemo.MainWindow"
         Title="PDF Viewer" Opened="WindowOpened" FontSize="16" Name="ParentWindow"
         Closed="WindowClosed" KeyDown="WindowKeyDown">
-  <Window.Resources>
-    <!--Used when converting page numbers: the page numbers are 0-based, but most people would expect the first page to be page number 1.-->
-    <local:IncreaseByOne x:Key="increaseByOne"/>
-  </Window.Resources>
   <Grid Margin="10">
     <Grid.RowDefinitions>
       <RowDefinition Height="1*" />
@@ -54,7 +50,7 @@
 
         <Button Grid.Row="0" Margin="0, 5, 0, 5" Click="OpenFileClicked">Open file...</Button>
 
-        <!--Show the current page number. The value can be retrieved through a Binding, but updating it requires
+        <!--Show the current page number. Bindings don't work anymore since Avalonia 11, furthermore updating it requires
         a re-initialisation of the viewer, which is performed by the event handler.-->
         <Grid Grid.Row="1" Margin="0, 5, 0, 5">
           <Grid.ColumnDefinitions>
@@ -64,7 +60,7 @@
             <ColumnDefinition Width="Auto"></ColumnDefinition>
           </Grid.ColumnDefinitions>
           <TextBlock VerticalAlignment="Center" FontWeight="Bold">Page:</TextBlock>
-          <NumericUpDown Grid.Column="1" FormatString="0" Minimum="1" Maximum="{Binding #ParentWindow.MaxPageNumber}" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" Value="{Binding #MuPDFRenderer.PageNumber, Converter={StaticResource increaseByOne}}" ValueChanged="PageNumberChanged"></NumericUpDown>
+          <NumericUpDown Name="PageNumberBox" Grid.Column="1" FormatString="0" Minimum="1" Maximum="{Binding #ParentWindow.MaxPageNumber}" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" ValueChanged="PageNumberChanged"></NumericUpDown>
           <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="10, 0, 5, 0">/</TextBlock>
           <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0, 0, 0, 0" Text="{Binding #ParentWindow.MaxPageNumber}"></TextBlock>
         </Grid>
@@ -77,7 +73,7 @@
           <Rectangle Fill="#4077AADD" Stroke="#77AADD" StrokeThickness="2" Name="DisplayAreaRectangle" Width="50" Height="50"></Rectangle>
         </Canvas>
 
-        <!--Show the current zoom value. This can be both retrieved and updated through the binding.-->
+        <!--Show the current zoom value. Bindings don't work anymore since Avalonia 11.-->
         <Grid Grid.Row="3" Margin="0, 5, 0, 5">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -86,7 +82,7 @@
             <ColumnDefinition Width="Auto"></ColumnDefinition>
           </Grid.ColumnDefinitions>
           <TextBlock VerticalAlignment="Center" FontWeight="Bold">Zoom:</TextBlock>
-          <NumericUpDown Grid.Column="1" FormatString="0%" Minimum="0" Increment="0.1" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" Value="{Binding #MuPDFRenderer.Zoom}"></NumericUpDown>
+          <NumericUpDown Grid.Column="1" FormatString="\{0:P0\}" Minimum="0" Increment="0.1" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" Name="ZoomBox" ValueChanged="ZoomChanged"></NumericUpDown>
         </Grid>
 
         <Grid Grid.Row="4" Margin="0, 5, 0, 5">

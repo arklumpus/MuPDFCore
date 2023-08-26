@@ -121,6 +121,22 @@ namespace PDFViewerDemo
             ocrLanguageBox.SelectedIndex = 0;
 
             Watcher.Changed += FileChanged;
+
+            // Since bindings don't seem to be working properly anymore, we need our own "manual bindings".
+            this.FindControl<PDFRenderer>("MuPDFRenderer").PropertyChanged += (s, e) =>
+            {
+                if (e.Property == PDFRenderer.PageNumberProperty)
+                {
+                    this.FindControl<NumericUpDown>("PageNumberBox").Value = e.GetNewValue<int>() + 1;
+                }
+                else if (e.Property == PDFRenderer.ZoomProperty)
+                {
+                    // Prevent the zoom NumericUpDown from re-updating the zoom while we are changing it.
+                    UpdatingZoomFromRenderer = true;
+                    this.FindControl<NumericUpDown>("ZoomBox").Value = (decimal)e.GetNewValue<double>();
+                    UpdatingZoomFromRenderer = false;
+                }
+            };
         }
 
         private void InitializeComponent()
@@ -592,6 +608,23 @@ namespace PDFViewerDemo
             }
         }
 
+        // We set this to true when the zoom value of the PDF renderer has changed independently of the NumericUpDown (e.g., because the user has used the mouse wheel).
+        // In that case, we do not feed back the update to the PDF renderer, to avoid creating a loop.
+        private bool UpdatingZoomFromRenderer = false;
+
+        /// <summary>
+        /// Invoked when the value of the NumericUpDown containing the zoom level is changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ZoomChanged(object sender, NumericUpDownValueChangedEventArgs e)
+        {
+            if (!UpdatingZoomFromRenderer)
+            {
+                this.FindControl<PDFRenderer>("MuPDFRenderer").Zoom = (double)(e.NewValue ?? 1);
+            }
+        }
+
         /// <summary>
         /// Initialize the document, showing a progress window for the OCR process, if necessary.
         /// </summary>
@@ -652,6 +685,13 @@ namespace PDFViewerDemo
                 await this.FindControl<PDFRenderer>("MuPDFRenderer").InitializeAsync(Document, pageNumber: pageNumber, ocrLanguage: null);
                 this.FindControl<Image>("PageAreaImage").Source = GenerateThumbnail();
             }
+
+            this.FindControl<NumericUpDown>("PageNumberBox").Value = this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber + 1;
+
+
+            UpdatingZoomFromRenderer = true;
+            this.FindControl<NumericUpDown>("ZoomBox").Value = (decimal)this.FindControl<PDFRenderer>("MuPDFRenderer").Zoom;
+            UpdatingZoomFromRenderer = false;
         }
 
         /// <summary>
@@ -954,22 +994,6 @@ namespace PDFViewerDemo
         private void ClearClicked(object sender, RoutedEventArgs e)
         {
             this.FindControl<PDFRenderer>("MuPDFRenderer").HighlightedRegions = null;
-        }
-    }
-
-    /// <summary>
-    /// Used when converting page numbers: the page numbers are 0-based, but most people would expect the first page to be page number 1.
-    /// </summary>
-    class IncreaseByOne : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return System.Convert.ToInt32(value) + 1;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return System.Convert.ToInt32(value) - 1;
         }
     }
 }

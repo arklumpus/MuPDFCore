@@ -10,7 +10,7 @@
     <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/arklumpus/MuPDFCore</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arklumpus/MuPDFCore</RepositoryUrl>
-    <Version>1.7.1-a1</Version>
+    <Version>1.7.1-a2</Version>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 

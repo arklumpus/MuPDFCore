@@ -533,6 +533,7 @@ namespace MuPDFCore.MuPDFRenderer
             double containingHeight = Math.Max(widthRatio, heightRatio) * this.Bounds.Height * resolutionMultiplier;
 
             SetDisplayAreaNowInternal(new Rect(new Point(-(containingWidth - FixedArea.Width) * 0.5, -(containingHeight - FixedArea.Height) * 0.5), new Avalonia.Size(containingWidth, containingHeight)));
+            this._Zoom = this.Bounds.Width / DisplayArea.Width * 72 / 96 * (VisualRoot as ILayoutRoot).LayoutScaling;
 
             //We are ready!
             IsViewerInitialized = true;
@@ -605,6 +606,7 @@ namespace MuPDFCore.MuPDFRenderer
             double containingHeight = Math.Max(widthRatio, heightRatio) * this.Bounds.Height * resolutionMultiplier;
 
             SetDisplayAreaNowInternal(new Rect(new Point(-(containingWidth - FixedArea.Width) * 0.5, -(containingHeight - FixedArea.Height) * 0.5), new Avalonia.Size(containingWidth, containingHeight)));
+            this._Zoom = this.Bounds.Width / DisplayArea.Width * 72 / 96 * (VisualRoot as ILayoutRoot).LayoutScaling;
 
             //We are ready!
             IsViewerInitialized = true;

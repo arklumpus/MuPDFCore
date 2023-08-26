@@ -13,7 +13,7 @@
     <PackageReference Include="Avalonia" Version="11.0.4" />
     <PackageReference Include="Avalonia.Desktop" Version="11.0.4" />
     <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.4" />
-    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.7.1-a1" />
+    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.7.1-a2" />
     <PackageReference Include="VectSharp.PDF" Version="2.5.4" />
   </ItemGroup>
 </Project>
