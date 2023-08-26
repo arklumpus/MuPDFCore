@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using VectSharp.PDF;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Avalonia.Platform.Storage;
 
 namespace PDFViewerDemo
 {
@@ -493,17 +494,16 @@ namespace PDFViewerDemo
         /// <param name="e"></param>
         private async void OpenFileClicked(object sender, RoutedEventArgs e)
         {
-            //Show a dialog with the supported file types.
-            OpenFileDialog dialog = new OpenFileDialog()
-            {
-                AllowMultiple = false,
-                Title = "Open document...",
-            };
+            //Show a dialog to select a file.
+            IReadOnlyList<Avalonia.Platform.Storage.IStorageFile> result = await this.StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions() { Title = "Open document...", AllowMultiple = false });
 
-            string[] result = await dialog.ShowAsync(this);
+            string localPath = null;
 
-            if (result != null && result.Length == 1)
+            if (result != null && result.Count == 1)
             {
+                // Get the file path.
+                localPath = result[0].TryGetLocalPath();
+
                 //First of all we need the PDFRenderer to stop doing anything with the Document.
                 this.FindControl<PDFRenderer>("MuPDFRenderer").ReleaseResources();
 
@@ -511,7 +511,7 @@ namespace PDFViewerDemo
                 Document?.Dispose();
 
                 //Create a new document and initialise the PDFRenderer with it.
-                Document = new MuPDFDocument(Context, result[0]);
+                Document = new MuPDFDocument(Context, localPath);
 
                 //Reset the cached user password.
                 UserPassword = null;
@@ -569,7 +569,7 @@ namespace PDFViewerDemo
                     //If the document could not be unlocked, fall back to the default PDF.
                     if (!success)
                     {
-                        result[0] = null;
+                        localPath = null;
                         MemoryStream ms = RenderInitialPDF();
                         Document = new MuPDFDocument(Context, ref ms, InputFileTypes.PDF);
                     }
@@ -578,12 +578,12 @@ namespace PDFViewerDemo
                 MaxPageNumber = Document.Pages.Count;
                 await InitializeDocument(0);
 
-                if (!string.IsNullOrEmpty(result[0]))
+                if (!string.IsNullOrEmpty(localPath))
                 {
                     //Set up the FileWatcher to keep track of any changes to the file.
                     Watcher.EnableRaisingEvents = false;
-                    Watcher.Path = Path.GetDirectoryName(result[0]);
-                    Watcher.Filter = Path.GetFileName(result[0]);
+                    Watcher.Path = Path.GetDirectoryName(localPath);
+                    Watcher.Filter = Path.GetFileName(localPath);
                     Watcher.EnableRaisingEvents = true;
                 }
                 else
