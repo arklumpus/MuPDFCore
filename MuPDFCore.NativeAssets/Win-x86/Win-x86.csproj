@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <PackageId>MuPDFCore.NativeAssets.Win-x86</PackageId>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RuntimeIdentifiers>win-x86</RuntimeIdentifiers>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>This package provides Win-x86 native assets for MuPDFCore, a set of multiplatform .NET Core bindings for MuPDF.</Description>
+    <Version>1.8.0-a18</Version>
+    <PackageIcon>icon.png</PackageIcon>
+    <Authors>Giorgio Bianchini</Authors>
+    <Company>University of Bristol</Company>
+    <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/arklumpus/MuPDFCore</PackageProjectUrl>
+    <PackageTags>mupdf pdf xps png jpg thread multithreading</PackageTags>
+    <RepositoryUrl>https://github.com/arklumpus/MuPDFCore</RepositoryUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageOutputPath>..\NuGetPackages</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\native\out\build\win-x86\MuPDFWrapper\MuPDFWrapper.dll">
+      <Pack>true</Pack>
+      <PackagePath>runtimes/win-x86/native/</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\icon.png">
+      <Pack>true</Pack>
+      <PackagePath>.</PackagePath>
+    </None>
+  </ItemGroup>
+  
+</Project>

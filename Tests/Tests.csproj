@@ -4,6 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>../strong_name_key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -53,7 +55,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MuPDFCore" Version="1.8.0-a13" />
+    <PackageReference Include="MuPDFCore" Version="1.8.0-a19" />
   </ItemGroup>
 
 </Project>

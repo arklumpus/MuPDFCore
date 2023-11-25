@@ -2,11 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<RuntimeIdentifiers>win-x64;win-x86;linux-x64;linux-arm64;osx-x64;linux-musl-x64;linux-musl-arm64</RuntimeIdentifiers>
+		<RuntimeIdentifiers>win-x64;win-x86;win-arm64;osx-x64;osx-arm64;linux-x64;linux-arm64;linux-musl-x64;linux-musl-arm64</RuntimeIdentifiers>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Description>MuPDFCore is a set of multiplatform .NET Core bindings for MuPDF. It can render PDF, XPS, EPUB and other formats to raster images returned either as raw bytes, or as image files in multiple formats (including PNG and PSD). It also supports multithreading.</Description>
-		<Version>1.8.0-a17</Version>
+		<Version>1.8.0-a19</Version>
 		<PackageIcon>icon.png</PackageIcon>
 		<Authors>Giorgio Bianchini</Authors>
 		<Company>University of Bristol</Company>
@@ -25,57 +25,17 @@
 			<PackagePath>.</PackagePath>
 		</None>
 	</ItemGroup>
-
+	
 	<ItemGroup>
-		<Content Include="..\native\out\build\linux-x64\MuPDFWrapper\libMuPDFWrapper.so">
-			<Pack>true</Pack>
-			<PackagePath>runtimes/linux-x64/native/</PackagePath>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="..\native\out\build\linux-arm64\MuPDFWrapper\libMuPDFWrapper.so">
-			<Pack>true</Pack>
-			<PackagePath>runtimes/linux-arm64/native/</PackagePath>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="..\native\out\build\mac-x64\MuPDFWrapper\libMuPDFWrapper.dylib">
-			<Pack>true</Pack>
-			<PackagePath>runtimes/osx-x64/native/</PackagePath>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="..\native\out\build\mac-arm64\MuPDFWrapper\libMuPDFWrapper.dylib">
-			<Pack>true</Pack>
-			<PackagePath>runtimes/osx-arm64/native/</PackagePath>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="..\native\out\build\win-x64\MuPDFWrapper\MuPDFWrapper.dll">
-			<Pack>true</Pack>
-			<PackagePath>runtimes/win-x64/native/</PackagePath>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="..\native\out\build\win-x86\MuPDFWrapper\MuPDFWrapper.dll">
-			<Pack>true</Pack>
-			<PackagePath>runtimes/win-x86/native/</PackagePath>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="..\native\out\build\win-arm64\MuPDFWrapper\MuPDFWrapper.dll">
-			<Pack>true</Pack>
-			<PackagePath>runtimes/win-arm64/native/</PackagePath>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
+		<PackageReference Include="MuPDFCore.NativeAssets.Linux-arm64" Version="1.8.0-a18" />
+		<PackageReference Include="MuPDFCore.NativeAssets.Linux-x64" Version="1.8.0-a18" />
+		<PackageReference Include="MuPDFCore.NativeAssets.Linux-musl-arm64" Version="1.8.0-a18" />
+		<PackageReference Include="MuPDFCore.NativeAssets.Linux-musl-x64" Version="1.8.0-a18" />
+		<PackageReference Include="MuPDFCore.NativeAssets.Mac-arm64" Version="1.8.0-a18" />
+		<PackageReference Include="MuPDFCore.NativeAssets.Mac-x64" Version="1.8.0-a18" />
+		<PackageReference Include="MuPDFCore.NativeAssets.Win-arm64" Version="1.8.0-a18" />
+		<PackageReference Include="MuPDFCore.NativeAssets.Win-x64" Version="1.8.0-a18" />
+		<PackageReference Include="MuPDFCore.NativeAssets.Win-x86" Version="1.8.0-a18" />
 		<PackageReference Include="System.Memory" Version="4.5.4" />
 	</ItemGroup>
 

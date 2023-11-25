@@ -26,3 +26,6 @@ MuPDFCoreTestHost/bin
 MuPDFCoreTestHost/obj
 Tests/bin
 Tests/obj
+MuPDFCore.NativeAssets/*/bin
+MuPDFCore.NativeAssets/*/obj
+MuPDFCore.NativeAssets/NuGetPackages
