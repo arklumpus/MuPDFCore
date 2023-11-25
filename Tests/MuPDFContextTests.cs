@@ -53,5 +53,49 @@ namespace Tests
             context.ClearStore();
             Assert.AreEqual(0, context.StoreSize, "The size of the store is not 0.");
         }
+
+        [TestMethod]
+        public void MuPDFContextGetAntialiasing()
+        {
+            using MuPDFContext context = new MuPDFContext();
+            Assert.AreEqual(8, context.GraphicsAntiAliasing, "The graphics anti-aliasing level is not 8.");
+            Assert.AreEqual(8, context.TextAntiAliasing, "The text anti-aliasing level is not 8.");
+        }
+
+        [TestMethod]
+        public void MuPDFContextSetAntialiasing()
+        {
+            using MuPDFContext context = new MuPDFContext();
+            context.AntiAliasing = 4;
+            Assert.AreEqual(4, context.GraphicsAntiAliasing, "The graphics anti-aliasing level was not set correctly.");
+            Assert.AreEqual(4, context.TextAntiAliasing, "The text anti-aliasing level was not set correctly.");
+        }
+
+        [TestMethod]
+        public void MuPDFContextSetGraphicsAntialiasing()
+        {
+            using MuPDFContext context = new MuPDFContext();
+            context.GraphicsAntiAliasing = 4;
+            Assert.AreEqual(4, context.GraphicsAntiAliasing, "The graphics anti-aliasing level was not set correctly.");
+            Assert.AreEqual(8, context.TextAntiAliasing, "The text anti-aliasing level is not 8.");
+        }
+
+        [TestMethod]
+        public void MuPDFContextSetTextAntialiasing()
+        {
+            using MuPDFContext context = new MuPDFContext();
+            context.TextAntiAliasing = 4;
+            Assert.AreEqual(8, context.GraphicsAntiAliasing, "The graphics anti-aliasing level is not 8.");
+            Assert.AreEqual(4, context.TextAntiAliasing, "The text anti-aliasing level was not set correctly.");
+        }
+
+        [TestMethod]
+        public void MuPDFContextSetAntialiasingOutOfRange()
+        {
+            using MuPDFContext context = new MuPDFContext();
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => context.AntiAliasing = 9, "Setting an invalid anti-aliasing level did not fail!");
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => context.GraphicsAntiAliasing = 9, "Setting an invalid graphics anti-aliasing level did not fail!");
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => context.TextAntiAliasing = 9, "Setting an invalid text anti-aliasing level did not fail!");
+        }
     }
 }

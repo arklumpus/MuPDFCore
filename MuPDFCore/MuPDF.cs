@@ -1088,6 +1088,26 @@ namespace MuPDFCore
         internal static extern ulong GetMaxStoreSize(IntPtr ctx);
 
         /// <summary>
+        /// Set the current antialiasing levels.
+        /// </summary>
+        /// <param name="ctx">The context whose antialiasing levels should be set.</param>
+        /// <param name="aa">The overall antialiasing level. Ignored if &lt; 0.</param>
+        /// <param name="graphics_aa">The graphics antialiasing level. Ignored if &lt; 0.</param>
+        /// <param name="text_aa">The text antialiasing level. Ignored if &lt; 0.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void SetAALevel(IntPtr ctx, int aa, int graphics_aa, int text_aa);
+
+        /// <summary>
+        /// Get the current antialiasing levels.
+        /// </summary>
+        /// <param name="ctx">The context whose antialiasing levels should be retrieved.</param>
+        /// <param name="out_aa">The overall antialiasing level.</param>
+        /// <param name="out_graphics_aa">The graphics antialiasing level.</param>
+        /// <param name="out_text_aa">The text antialiasing level.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void GetAALevel(IntPtr ctx, out int out_aa, out int out_graphics_aa, out int out_text_aa);
+
+        /// <summary>
         /// Create a display list from a page.
         /// </summary>
         /// <param name="ctx">A pointer to the context used to create the document.</param>

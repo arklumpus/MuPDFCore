@@ -52,6 +52,68 @@ namespace MuPDFCore
         }
 
         /// <summary>
+        /// Sets the current anti-aliasing level. Changing this value will affect both
+        /// the <see cref="TextAntiAliasing"/> and the <see cref="GraphicsAntiAliasing"/>;
+        /// </summary>
+        public int AntiAliasing
+        {
+            set
+            {
+                if (value < 0 || value > 8)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "The anti-aliasing level must range between 0 and 8 (inclusive).");
+                }
+
+                NativeMethods.SetAALevel(this.NativeContext, value, -1, -1);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the current text anti-aliasing level.
+        /// </summary>
+        public int TextAntiAliasing
+        {
+            get
+            {
+                NativeMethods.GetAALevel(this.NativeContext, out _, out _, out int tbr);
+                return tbr;
+            }
+
+            set
+            {
+                if (value < 0 || value > 8)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "The anti-aliasing level must range between 0 and 8 (inclusive).");
+                }
+
+                NativeMethods.SetAALevel(this.NativeContext, -1, -1, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the current graphics anti-aliasing level.
+        /// </summary>
+        public int GraphicsAntiAliasing
+        {
+            get
+            {
+                NativeMethods.GetAALevel(this.NativeContext, out _, out int tbr, out _);
+                return tbr;
+            }
+
+            set
+            {
+                if (value < 0 || value > 8)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "The anti-aliasing level must range between 0 and 8 (inclusive).");
+                }
+
+                int prevTxt = this.TextAntiAliasing;
+                NativeMethods.SetAALevel(this.NativeContext, -1, value, prevTxt);
+            }
+        }
+
+        /// <summary>
         /// Create a new <see cref="MuPDFContext"/> instance with the specified cache store size.
         /// </summary>
         /// <param name="storeSize">The maximum size in bytes of the resource cache store. The default value is 256 MiB.</param>

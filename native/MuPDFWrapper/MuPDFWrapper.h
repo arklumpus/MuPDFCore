@@ -477,6 +477,24 @@ extern "C"
 	DLL_PUBLIC int DisposeDocument(fz_context* ctx, fz_document* doc);
 
 	/// <summary>
+	/// Set the current antialiasing levels.
+	/// </summary>
+	/// <param name="ctx">The context whose antialiasing levels should be set.</param>
+	/// <param name="aa">The overall antialiasing level. Ignored if &lt; 0.</param>
+	/// <param name="graphics_aa">The graphics antialiasing level. Ignored if &lt; 0.</param>
+	/// <param name="text_aa">The text antialiasing level. Ignored if &lt; 0.</param>
+	DLL_PUBLIC void SetAALevel(fz_context* ctx, int aa, int graphics_aa, int text_aa);
+	
+	/// <summary>
+	/// Get the current antialiasing levels.
+	/// </summary>
+	/// <param name="ctx">The context whose antialiasing levels should be retrieved.</param>
+	/// <param name="out_aa">The overall antialiasing level.</param>
+	/// <param name="out_graphics_aa">The graphics antialiasing level.</param>
+	/// <param name="out_text_aa">The text antialiasing level.</param>
+	DLL_PUBLIC void GetAALevel(fz_context* ctx, int* out_aa, int* out_graphics_aa, int* out_text_aa);
+
+	/// <summary>
 	/// Get the current size of the store.
 	/// </summary>
 	/// <param name="ctx">The context whose store's size should be determined.</param>

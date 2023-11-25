@@ -1187,6 +1187,31 @@ extern "C"
 		fz_drop_document(ctx, doc);
 		return EXIT_SUCCESS;
 	}
+	
+	DLL_PUBLIC void SetAALevel(fz_context* ctx, int aa, int graphics_aa, int text_aa)
+	{
+		if (aa >= 0)
+		{
+			fz_set_aa_level(ctx, aa);
+		}
+		
+		if (graphics_aa >= 0)
+		{
+			fz_set_graphics_aa_level(ctx, graphics_aa);
+		}
+		
+		if (text_aa >= 0)
+		{
+			fz_set_text_aa_level(ctx, text_aa);
+		}
+	}
+	
+	DLL_PUBLIC void GetAALevel(fz_context* ctx, int* out_aa, int* out_graphics_aa, int* out_text_aa)
+	{
+		*out_aa = fz_aa_level(ctx);
+		*out_graphics_aa = fz_graphics_aa_level(ctx);
+		*out_text_aa = fz_text_aa_level(ctx);
+	}
 
 	DLL_PUBLIC uint64_t GetCurrentStoreSize(const fz_context* ctx)
 	{
