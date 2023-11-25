@@ -17,8 +17,8 @@
 //
 // Alternative licensing terms are available from the licensor.
 // For commercial licensing, see <https://www.artifex.com/> or contact
-// Artifex Software, Inc., 1305 Grant Avenue - Suite 200, Novato,
-// CA 94945, U.S.A., +1(415)492-9861, for further information.
+// Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
+// CA 94129, USA, for further information.
 
 #ifndef MUPDF_FITZ_PIXMAP_H
 #define MUPDF_FITZ_PIXMAP_H
@@ -319,11 +319,17 @@ void fz_invert_pixmap_luminance(fz_context *ctx, fz_pixmap *pix);
 void fz_tint_pixmap(fz_context *ctx, fz_pixmap *pix, int black, int white);
 
 /**
-	Invert all the pixels in a given rectangle of a
+	Invert all the pixels in a given rectangle of a (premultiplied)
 	pixmap. All components of all pixels in the rectangle are
 	inverted (except alpha, which is unchanged).
 */
 void fz_invert_pixmap_rect(fz_context *ctx, fz_pixmap *image, fz_irect rect);
+
+/**
+	Invert all the pixels in a non-premultiplied pixmap in a
+	very naive manner.
+*/
+void fz_invert_pixmap_raw(fz_context *ctx, fz_pixmap *pix);
 
 /**
 	Apply gamma correction to a pixmap. All components

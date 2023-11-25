@@ -17,8 +17,8 @@
 //
 // Alternative licensing terms are available from the licensor.
 // For commercial licensing, see <https://www.artifex.com/> or contact
-// Artifex Software, Inc., 1305 Grant Avenue - Suite 200, Novato,
-// CA 94945, U.S.A., +1(415)492-9861, for further information.
+// Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
+// CA 94129, USA, for further information.
 
 #ifndef MUPDF_PDF_OBJECT_H
 #define MUPDF_PDF_OBJECT_H
@@ -63,6 +63,7 @@ pdf_obj *pdf_deep_copy_obj(fz_context *ctx, pdf_obj *obj);
 
 pdf_obj *pdf_keep_obj(fz_context *ctx, pdf_obj *obj);
 void pdf_drop_obj(fz_context *ctx, pdf_obj *obj);
+pdf_obj *pdf_drop_singleton_obj(fz_context *ctx, pdf_obj *obj);
 
 int pdf_is_null(fz_context *ctx, pdf_obj *obj);
 int pdf_is_bool(fz_context *ctx, pdf_obj *obj);
@@ -172,6 +173,7 @@ pdf_obj *pdf_dict_gets(fz_context *ctx, pdf_obj *dict, const char *key);
 pdf_obj *pdf_dict_getsa(fz_context *ctx, pdf_obj *dict, const char *key, const char *abbrev);
 pdf_obj *pdf_dict_get_inheritable(fz_context *ctx, pdf_obj *dict, pdf_obj *key);
 pdf_obj *pdf_dict_getp_inheritable(fz_context *ctx, pdf_obj *dict, const char *path);
+pdf_obj *pdf_dict_gets_inheritable(fz_context *ctx, pdf_obj *dict, const char *key);
 void pdf_dict_put(fz_context *ctx, pdf_obj *dict, pdf_obj *key, pdf_obj *val);
 void pdf_dict_put_drop(fz_context *ctx, pdf_obj *dict, pdf_obj *key, pdf_obj *val);
 void pdf_dict_get_put_drop(fz_context *ctx, pdf_obj *dict, pdf_obj *key, pdf_obj *val, pdf_obj **old_val);
@@ -200,6 +202,7 @@ pdf_obj *pdf_dict_puts_dict(fz_context *ctx, pdf_obj *dict, const char *key, int
 
 int pdf_dict_get_bool(fz_context *ctx, pdf_obj *dict, pdf_obj *key);
 int pdf_dict_get_int(fz_context *ctx, pdf_obj *dict, pdf_obj *key);
+int64_t pdf_dict_get_int64(fz_context *ctx, pdf_obj *dict, pdf_obj *key);
 float pdf_dict_get_real(fz_context *ctx, pdf_obj *dict, pdf_obj *key);
 const char *pdf_dict_get_name(fz_context *ctx, pdf_obj *dict, pdf_obj *key);
 const char *pdf_dict_get_string(fz_context *ctx, pdf_obj *dict, pdf_obj *key, size_t *sizep);
@@ -272,8 +275,39 @@ fz_rect pdf_to_rect(fz_context *ctx, pdf_obj *array);
 fz_matrix pdf_to_matrix(fz_context *ctx, pdf_obj *array);
 int64_t pdf_to_date(fz_context *ctx, pdf_obj *time);
 
+/*
+	pdf_get_indirect_document and pdf_get_bound_document are
+	now deprecated. Please do not use them in future. They will
+	be removed.
+
+	Please use pdf_pin_document instead.
+*/
 pdf_document *pdf_get_indirect_document(fz_context *ctx, pdf_obj *obj);
 pdf_document *pdf_get_bound_document(fz_context *ctx, pdf_obj *obj);
+
+/*
+	pdf_pin_document returns a new reference to the document
+	to which obj is bound. The caller is responsible for
+	dropping this reference once they have finished with it.
+
+	This is a replacement for pdf_get_indirect_document
+	and pdf_get_bound_document that are now deprecated. Those
+	returned a borrowed reference that did not need to be
+	dropped.
+
+	Note that this can validly return NULL in various cases:
+	1) When the object is of a simple type (such as a number
+	or a string), it contains no reference to the enclosing
+	document. 2) When the object has yet to be inserted into
+	a PDF document (such as during parsing). 3) And (in
+	future versions) when the document has been destroyed
+	but the object reference remains.
+
+	It is the caller's responsibility to deal with a NULL
+	return here.
+*/
+pdf_document *pdf_pin_document(fz_context *ctx, pdf_obj *obj);
+
 void pdf_set_int(fz_context *ctx, pdf_obj *obj, int64_t i);
 
 /* Voodoo to create PDF_NAME(Foo) macros from name-table.h */
@@ -323,6 +357,10 @@ void pdf_begin_implicit_operation(fz_context *ctx, pdf_document *doc);
 
 /* Call this to end an operation. */
 void pdf_end_operation(fz_context *ctx, pdf_document *doc);
+
+/* Call this to abandon an operation. Revert to the state
+ * when you began. */
+void pdf_abandon_operation(fz_context *ctx, pdf_document *doc);
 
 /* Call this to find out how many undo/redo steps there are, and the
  * current position we are within those. 0 = original document,

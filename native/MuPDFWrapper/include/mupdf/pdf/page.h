@@ -17,8 +17,8 @@
 //
 // Alternative licensing terms are available from the licensor.
 // For commercial licensing, see <https://www.artifex.com/> or contact
-// Artifex Software, Inc., 1305 Grant Avenue - Suite 200, Novato,
-// CA 94945, U.S.A., +1(415)492-9861, for further information.
+// Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
+// CA 94129, USA, for further information.
 
 #ifndef MUPDF_PDF_PAGE_H
 #define MUPDF_PDF_PAGE_H
@@ -33,30 +33,21 @@ pdf_obj *pdf_lookup_page_obj(fz_context *ctx, pdf_document *doc, int needle);
 /*
 	Cache the page tree for fast forward/reverse page lookups.
 
-	It is the caller's responsibility to ensure that nothing alters
-	the page tree between this call and the matching pdf_drop_page_tree
-	or undefined behaviour may occur.
-
-	Any successful call to pdf_load_page_tree MUST be matched with
-	a call to pdf_drop_page_tree.
+	No longer required. This is a No Op, now as page tree
+	maps are loaded automatically 'just in time'.
 */
 void pdf_load_page_tree(fz_context *ctx, pdf_document *doc);
 
 /*
 	Discard the page tree maps.
 
-	Calls to this should exactly match successful calls to
-	pdf_load_page_tree.
+	No longer required. This is a No Op, now as page tree
+	maps are discarded automatically 'just in time'.
 */
 void pdf_drop_page_tree(fz_context *ctx, pdf_document *doc);
 
-/*
-	Find the page number of a named destination.
+void pdf_drop_page_tree_internal(fz_context *ctx, pdf_document *doc);
 
-	For use with looking up the destination page of a fragment
-	identifier in hyperlinks: foo.pdf#bar or foo.pdf#page=5.
-*/
-int pdf_lookup_anchor(fz_context *ctx, pdf_document *doc, const char *name, float *xp, float *yp);
 
 /*
 	Make page self sufficient.
@@ -78,9 +69,12 @@ void pdf_flatten_inheritable_page_items(fz_context *ctx, pdf_obj *page);
 */
 pdf_page *pdf_load_page(fz_context *ctx, pdf_document *doc, int number);
 fz_page *pdf_load_page_imp(fz_context *ctx, fz_document *doc, int chapter, int number);
+int pdf_page_has_transparency(fz_context *ctx, pdf_page *page);
 
 void pdf_page_obj_transform(fz_context *ctx, pdf_obj *pageobj, fz_rect *page_mediabox, fz_matrix *page_ctm);
 void pdf_page_transform(fz_context *ctx, pdf_page *page, fz_rect *mediabox, fz_matrix *ctm);
+void pdf_page_obj_transform_box(fz_context *ctx, pdf_obj *pageobj, fz_rect *page_mediabox, fz_matrix *page_ctm, fz_box_type box);
+void pdf_page_transform_box(fz_context *ctx, pdf_page *page, fz_rect *mediabox, fz_matrix *ctm, fz_box_type box);
 pdf_obj *pdf_page_resources(fz_context *ctx, pdf_page *page);
 pdf_obj *pdf_page_contents(fz_context *ctx, pdf_page *page);
 pdf_obj *pdf_page_group(fz_context *ctx, pdf_page *page);
@@ -104,7 +98,7 @@ fz_link *pdf_load_links(fz_context *ctx, pdf_page *page);
 	exists (visible area after cropping), otherwise the media box will
 	be used (possibly including printing marks).
 */
-fz_rect pdf_bound_page(fz_context *ctx, pdf_page *page);
+fz_rect pdf_bound_page(fz_context *ctx, pdf_page *page, fz_box_type box);
 
 /*
 	Interpret a loaded page and render it on a device.
@@ -154,13 +148,13 @@ void pdf_run_page_contents_with_usage(fz_context *ctx, pdf_page *page, fz_device
 void pdf_run_page_annots_with_usage(fz_context *ctx, pdf_page *page, fz_device *dev, fz_matrix ctm, const char *usage, fz_cookie *cookie);
 void pdf_run_page_widgets_with_usage(fz_context *ctx, pdf_page *page, fz_device *dev, fz_matrix ctm, const char *usage, fz_cookie *cookie);
 
-void pdf_filter_page_contents(fz_context *ctx, pdf_document *doc, pdf_page *page, pdf_filter_options *filter);
-void pdf_filter_annot_contents(fz_context *ctx, pdf_document *doc, pdf_annot *annot, pdf_filter_options *filter);
+void pdf_filter_page_contents(fz_context *ctx, pdf_document *doc, pdf_page *page, pdf_filter_options *options);
+void pdf_filter_annot_contents(fz_context *ctx, pdf_document *doc, pdf_annot *annot, pdf_filter_options *options);
 
-fz_pixmap *pdf_new_pixmap_from_page_contents_with_usage(fz_context *ctx, pdf_page *page, fz_matrix ctm, fz_colorspace *cs, int alpha, const char *usage);
-fz_pixmap *pdf_new_pixmap_from_page_with_usage(fz_context *ctx, pdf_page *page, fz_matrix ctm, fz_colorspace *cs, int alpha, const char *usage);
-fz_pixmap *pdf_new_pixmap_from_page_contents_with_separations_and_usage(fz_context *ctx, pdf_page *page, fz_matrix ctm, fz_colorspace *cs, fz_separations *seps, int alpha, const char *usage);
-fz_pixmap *pdf_new_pixmap_from_page_with_separations_and_usage(fz_context *ctx, pdf_page *page, fz_matrix ctm, fz_colorspace *cs, fz_separations *seps, int alpha, const char *usage);
+fz_pixmap *pdf_new_pixmap_from_page_contents_with_usage(fz_context *ctx, pdf_page *page, fz_matrix ctm, fz_colorspace *cs, int alpha, const char *usage, fz_box_type box);
+fz_pixmap *pdf_new_pixmap_from_page_with_usage(fz_context *ctx, pdf_page *page, fz_matrix ctm, fz_colorspace *cs, int alpha, const char *usage, fz_box_type box);
+fz_pixmap *pdf_new_pixmap_from_page_contents_with_separations_and_usage(fz_context *ctx, pdf_page *page, fz_matrix ctm, fz_colorspace *cs, fz_separations *seps, int alpha, const char *usage, fz_box_type box);
+fz_pixmap *pdf_new_pixmap_from_page_with_separations_and_usage(fz_context *ctx, pdf_page *page, fz_matrix ctm, fz_colorspace *cs, fz_separations *seps, int alpha, const char *usage, fz_box_type box);
 
 enum {
 	PDF_REDACT_IMAGE_NONE,

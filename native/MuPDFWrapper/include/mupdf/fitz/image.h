@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2021 Artifex Software, Inc.
+// Copyright (C) 2004-2023 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -17,8 +17,8 @@
 //
 // Alternative licensing terms are available from the licensor.
 // For commercial licensing, see <https://www.artifex.com/> or contact
-// Artifex Software, Inc., 1305 Grant Avenue - Suite 200, Novato,
-// CA 94945, U.S.A., +1(415)492-9861, for further information.
+// Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
+// CA 94129, USA, for further information.
 
 #ifndef MUPDF_FITZ_IMAGE_H
 #define MUPDF_FITZ_IMAGE_H
@@ -329,7 +329,6 @@ struct fz_image
 	unsigned int interpolate:1;
 	unsigned int use_colorkey:1;
 	unsigned int use_decode:1;
-	unsigned int invert_cmyk_jpeg:1;
 	unsigned int decoded:1;
 	unsigned int scalable:1;
 	uint8_t orientation;

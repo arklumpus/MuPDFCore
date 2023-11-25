@@ -240,8 +240,8 @@ namespace Tests
             Assert.IsNotNull(displayLists[0], "The display list has not been generated.");
 
             Assert.AreEqual(4000 * 2600 * 3, rendered.Length, "The size of the rendered image is wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0xF4, 0xF9, 0xFF }, rendered[0..3], "The start of the rendered image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0xF4, 0xF9, 0xFF }, rendered[^3..^0], "The end of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF5, 0xF9, 0xFF }, rendered[0..3], "The start of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF5, 0xF9, 0xFF }, rendered[^3..^0], "The end of the rendered image appears to be wrong.");
         }
 
         [TestMethod]
@@ -304,8 +304,8 @@ namespace Tests
             Assert.IsNotNull(displayLists[0], "The display list has not been generated.");
 
             Assert.AreEqual(4000 * 2600 * 3, rendered.Length, "The size of the rendered image is wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0xF4, 0xF9, 0xFF }, rendered[0..3], "The start of the rendered image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0xF4, 0xF9, 0xFF }, rendered[^3..^0], "The end of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF5, 0xF9, 0xFF }, rendered[0..3], "The start of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF5, 0xF9, 0xFF }, rendered[^3..^0], "The end of the rendered image appears to be wrong.");
 
             Marshal.FreeHGlobal(destination);
         }
@@ -354,8 +354,8 @@ namespace Tests
             Assert.IsNotNull(displayLists[0], "The display list has not been generated.");
 
             Assert.AreEqual(4000 * 2600 * 3, rendered.Length, "The size of the rendered image is wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0xF4, 0xF9, 0xFF }, new byte[] { rendered[0], rendered[1], rendered[2] }, "The start of the rendered image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0xF4, 0xF9, 0xFF }, new byte[] { rendered[rendered.Length - 3], rendered[rendered.Length - 2], rendered[rendered.Length - 1] }, "The end of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF5, 0xF9, 0xFF }, new byte[] { rendered[0], rendered[1], rendered[2] }, "The start of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF5, 0xF9, 0xFF }, new byte[] { rendered[rendered.Length - 3], rendered[rendered.Length - 2], rendered[rendered.Length - 1] }, "The end of the rendered image appears to be wrong.");
 
             disposable.Dispose();
         }
@@ -619,7 +619,7 @@ namespace Tests
             catch { }
 
             CollectionAssert.AreEqual(new byte[] { 0x50, 0x36, 0x0A, }, savedBytes[0..3], "The start of the saved image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0xF4, 0xF9, 0xFF }, savedBytes[^3..^0], "The end of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF5, 0xF9, 0xFF }, savedBytes[^3..^0], "The end of the saved image appears to be wrong.");
         }
 
         [TestMethod]
@@ -728,7 +728,7 @@ namespace Tests
             byte[] writtenBytes = renderStream.ToArray();
 
             CollectionAssert.AreEqual(new byte[] { 0x50, 0x36, 0x0A, }, writtenBytes[0..3], "The start of the saved image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0xF4, 0xF9, 0xFF }, writtenBytes[^3..^0], "The end of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF5, 0xF9, 0xFF }, writtenBytes[^3..^0], "The end of the saved image appears to be wrong.");
         }
 
         [TestMethod]

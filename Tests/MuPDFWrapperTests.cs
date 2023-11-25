@@ -503,7 +503,7 @@ namespace Tests
             Assert.AreEqual(0, x0, "The display list left coordinate is wrong.");
             Assert.AreEqual(0, y0, "The display list top coordinate is wrong.");
             Assert.AreEqual(4000, x1, "The display list right is wrong.");
-            Assert.AreEqual(2605, y1, "The display list bottom is wrong.");
+            Assert.AreEqual(2600, y1, "The display list bottom is wrong.");
 
             try
             {
@@ -575,7 +575,7 @@ namespace Tests
         [TestMethod]
         public void SubDisplayListRenderingRGB()
         {
-            int bufferSize = 4000 * 2605 * 3;
+            int bufferSize = 4000 * 2600 * 3;
             byte[] buffer = new byte[bufferSize];
 
             GCHandle bufferHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
@@ -587,8 +587,8 @@ namespace Tests
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "RenderSubDisplayList returned the wrong exit code.");
 
-            CollectionAssert.AreEqual(new byte[] { 0xF4, 0xF9, 0xFF }, buffer[0..3], "The start of the rendered image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xFF, 0xFF }, buffer[^3..^0], "The end of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF5, 0xF9, 0xFF }, buffer[0..3], "The start of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF5, 0xF9, 0xFF }, buffer[^3..^0], "The end of the rendered image appears to be wrong.");
 
             try
             {
@@ -608,7 +608,7 @@ namespace Tests
         [TestMethod]
         public void SubDisplayListRenderingBGRA()
         {
-            int bufferSize = 4000 * 2605 * 4;
+            int bufferSize = 4000 * 2600 * 4;
             byte[] buffer = new byte[bufferSize];
 
             GCHandle bufferHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
@@ -621,7 +621,7 @@ namespace Tests
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "RenderSubDisplayList returned the wrong exit code.");
 
             CollectionAssert.AreEqual(new byte[] { 0x0B, 0x05, 0x01, 0x0B }, buffer[0..4], "The start of the rendered image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0, 0, 0, 0 }, buffer[^4..^0], "The end of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x0B, 0x05, 0x01, 0x0B }, buffer[^4..^0], "The end of the rendered image appears to be wrong.");
 
             try
             {
@@ -640,7 +640,7 @@ namespace Tests
 
         private static (GCHandle bufferHandle, GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext) RenderSampleDisplayList()
         {
-            int bufferSize = 4000 * 2605 * 3;
+            int bufferSize = 4000 * 2600 * 3;
             byte[] buffer = new byte[bufferSize];
 
             GCHandle bufferHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
@@ -754,7 +754,7 @@ namespace Tests
             byte[] actualBytes = File.ReadAllBytes(tempFile);
 
             CollectionAssert.AreEqual(new byte[] { 0x50, 0x36, 0x0A, 0x34 }, actualBytes[0..4], "The start of the rendered image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF }, actualBytes[^4..^0], "The end of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xF5, 0xF9, 0xFF }, actualBytes[^4..^0], "The end of the rendered image appears to be wrong.");
 
             try
             {
@@ -792,7 +792,7 @@ namespace Tests
             byte[] actualBytes = File.ReadAllBytes(tempFile);
 
             CollectionAssert.AreEqual(new byte[] { 0x50, 0x37, 0x0A, 0x57 }, actualBytes[0..4], "The start of the rendered image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0, 0, 0, 0 }, actualBytes[^4..^0], "The end of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x17, 0x74, 0xFF, 0x0B }, actualBytes[^4..^0], "The end of the rendered image appears to be wrong.");
 
             try
             {
@@ -904,7 +904,7 @@ namespace Tests
             Marshal.Copy(outputData, actualBytes, 0, actualBytes.Length);
 
             CollectionAssert.AreEqual(new byte[] { 0x50, 0x36, 0x0A, 0x34 }, actualBytes[0..4], "The start of the rendered image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF }, actualBytes[^4..^0], "The end of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xF5, 0xF9, 0xFF }, actualBytes[^4..^0], "The end of the rendered image appears to be wrong.");
 
             try
             {
@@ -939,7 +939,7 @@ namespace Tests
             Marshal.Copy(outputData, actualBytes, 0, actualBytes.Length);
 
             CollectionAssert.AreEqual(new byte[] { 0x50, 0x37, 0x0A, 0x57 }, actualBytes[0..4], "The start of the rendered image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0, 0, 0, 0 }, actualBytes[^4..^0], "The end of the rendered image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x17, 0x74, 0xFF, 0x0B }, actualBytes[^4..^0], "The end of the rendered image appears to be wrong.");
 
             try
             {

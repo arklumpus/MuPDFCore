@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2022 Artifex Software, Inc.
+// Copyright (C) 2004-2023 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -17,8 +17,8 @@
 //
 // Alternative licensing terms are available from the licensor.
 // For commercial licensing, see <https://www.artifex.com/> or contact
-// Artifex Software, Inc., 1305 Grant Avenue - Suite 200, Novato,
-// CA 94945, U.S.A., +1(415)492-9861, for further information.
+// Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
+// CA 94129, USA, for further information.
 
 #ifndef MUPDF_PDF_DOCUMENT_H
 #define MUPDF_PDF_DOCUMENT_H
@@ -424,17 +424,17 @@ struct pdf_document
 	pdf_xref *saved_xref_sections;
 	int *xref_index;
 	int save_in_progress;
-	int has_xref_streams;
-	int has_old_style_xrefs;
+	int last_xref_was_old_style;
 	int has_linearization_object;
 
-	int page_map_nesting;
 	int map_page_count;
 	pdf_rev_page_map *rev_page_map;
-	int *fwd_page_map;
+	pdf_obj **fwd_page_map;
+	int page_tree_broken;
 
 	int repair_attempted;
 	int repair_in_progress;
+	int non_structural_change; /* True if we are modifying the document in a way that does not change the (page) structure */
 
 	/* State indicating which file parsing method we are using */
 	int file_reading_linearly;
@@ -490,7 +490,6 @@ struct pdf_document
 	int num_type3_fonts;
 	int max_type3_fonts;
 	fz_font **type3_fonts;
-	int type3_lock;
 
 	struct {
 		fz_hash_table *fonts;
@@ -669,6 +668,24 @@ void pdf_delete_page(fz_context *ctx, pdf_document *doc, int number);
 */
 void pdf_delete_page_range(fz_context *ctx, pdf_document *doc, int start, int end);
 
+/*
+	Get page label (string) from a page number (index).
+*/
+void pdf_page_label(fz_context *ctx, pdf_document *doc, int page, char *buf, size_t size);
+void pdf_page_label_imp(fz_context *ctx, fz_document *doc, int chapter, int page, char *buf, size_t size);
+
+typedef enum {
+	PDF_PAGE_LABEL_NONE = 0,
+	PDF_PAGE_LABEL_DECIMAL = 'D',
+	PDF_PAGE_LABEL_ROMAN_UC = 'R',
+	PDF_PAGE_LABEL_ROMAN_LC = 'r',
+	PDF_PAGE_LABEL_ALPHA_UC = 'A',
+	PDF_PAGE_LABEL_ALPHA_LC = 'a',
+} pdf_page_label_style;
+
+void pdf_set_page_labels(fz_context *ctx, pdf_document *doc, int index, pdf_page_label_style style, const char *prefix, int start);
+void pdf_delete_page_labels(fz_context *ctx, pdf_document *doc, int index);
+
 fz_text_language pdf_document_language(fz_context *ctx, pdf_document *doc);
 void pdf_set_document_language(fz_context *ctx, pdf_document *doc, fz_text_language lang);
 
@@ -775,5 +792,17 @@ void pdf_load_journal(fz_context *ctx, pdf_document *doc, const char *filename);
 	does not match. Will throw on a corrupted journal.
 */
 void pdf_read_journal(fz_context *ctx, pdf_document *doc, fz_stream *stm);
+
+/*
+	Minimize the memory used by a document.
+
+	We walk the in memory xref tables, evicting the PDF objects
+	therein that aren't in use.
+
+	This reduces the current memory use, but any subsequent use
+	of these objects will load them back into memory again.
+*/
+void pdf_minimize_document(fz_context *ctx, pdf_document *doc);
+
 
 #endif

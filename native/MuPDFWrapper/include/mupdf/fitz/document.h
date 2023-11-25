@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2022 Artifex Software, Inc.
+// Copyright (C) 2004-2023 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -17,8 +17,8 @@
 //
 // Alternative licensing terms are available from the licensor.
 // For commercial licensing, see <https://www.artifex.com/> or contact
-// Artifex Software, Inc., 1305 Grant Avenue - Suite 200, Novato,
-// CA 94945, U.S.A., +1(415)492-9861, for further information.
+// Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
+// CA 94129, USA, for further information.
 
 #ifndef MUPDF_FITZ_DOCUMENT_H
 #define MUPDF_FITZ_DOCUMENT_H
@@ -36,6 +36,19 @@
 typedef struct fz_document_handler fz_document_handler;
 typedef struct fz_page fz_page;
 typedef intptr_t fz_bookmark;
+
+typedef enum
+{
+	FZ_MEDIA_BOX,
+	FZ_CROP_BOX,
+	FZ_BLEED_BOX,
+	FZ_TRIM_BOX,
+	FZ_ART_BOX,
+	FZ_UNKNOWN_BOX
+} fz_box_type;
+
+fz_box_type fz_box_type_from_string(const char *name);
+const char *fz_string_from_box_type(fz_box_type box);
 
 /**
 	Simple constructor for fz_locations.
@@ -95,6 +108,10 @@ typedef enum
 	FZ_PERMISSION_COPY = 'c',
 	FZ_PERMISSION_EDIT = 'e',
 	FZ_PERMISSION_ANNOTATE = 'n',
+	FZ_PERMISSION_FORM = 'f',
+	FZ_PERMISSION_ACCESSIBILITY = 'y',
+	FZ_PERMISSION_ASSEMBLE = 'a',
+	FZ_PERMISSION_PRINT_HQ = 'h',
 }
 fz_permission;
 
@@ -182,11 +199,17 @@ typedef int (fz_document_count_pages_fn)(fz_context *ctx, fz_document *doc, int 
 typedef fz_page *(fz_document_load_page_fn)(fz_context *ctx, fz_document *doc, int chapter, int page);
 
 /**
+	Type for a function to get the page label of a page in the document.
+	See fz_page_label for more information.
+*/
+typedef void (fz_document_page_label_fn)(fz_context *ctx, fz_document *doc, int chapter, int page, char *buf, size_t size);
+
+/**
 	Type for a function to query
 	a document's metadata. See fz_lookup_metadata for more
 	information.
 */
-typedef int (fz_document_lookup_metadata_fn)(fz_context *ctx, fz_document *doc, const char *key, char *buf, int size);
+typedef int (fz_document_lookup_metadata_fn)(fz_context *ctx, fz_document *doc, const char *key, char *buf, size_t size);
 
 /**
 	Type for a function to set
@@ -229,7 +252,7 @@ typedef void (fz_page_drop_page_fn)(fz_context *ctx, fz_page *page);
 	bounding box of a page. See fz_bound_page for more
 	information.
 */
-typedef fz_rect (fz_page_bound_page_fn)(fz_context *ctx, fz_page *page);
+typedef fz_rect (fz_page_bound_page_fn)(fz_context *ctx, fz_page *page, fz_box_type box);
 
 /**
 	Type for a function to run the
@@ -350,6 +373,17 @@ typedef fz_document *(fz_document_open_accel_with_stream_fn)(fz_context *ctx, fz
 typedef int (fz_document_recognize_fn)(fz_context *ctx, const char *magic);
 
 /**
+	Recognize a document type from stream contents.
+
+	stream: stream contents to recognise.
+
+	Returns a number between 0 (not recognized) and 100
+	(fully recognized) based on how certain the recognizer
+	is that this is of the required type.
+*/
+typedef int (fz_document_recognize_content_fn)(fz_context *ctx, fz_stream *stream);
+
+/**
 	Type for a function to be called when processing an already opened page.
 	See fz_process_opened_pages.
 */
@@ -377,6 +411,26 @@ void fz_register_document_handlers(fz_context *ctx);
 	a mimetype.
 */
 const fz_document_handler *fz_recognize_document(fz_context *ctx, const char *magic);
+
+/**
+	Given a filename find a document handler that can handle a
+	document of this type.
+
+	filename: The filename of the document. This will be opened and sampled
+	to check data.
+*/
+const fz_document_handler *fz_recognize_document_content(fz_context *ctx, const char *filename);
+
+/**
+	Given a magic find a document handler that can handle a
+	document of this type.
+
+	stream: the file stream to sample.
+
+	magic: Can be a filename extension (including initial period) or
+	a mimetype.
+*/
+const fz_document_handler *fz_recognize_document_stream_content(fz_context *ctx, fz_stream *stream, const char *magic);
 
 /**
 	Open a document file and read its basic structure so pages and
@@ -410,6 +464,11 @@ fz_document *fz_open_accelerated_document(fz_context *ctx, const char *filename,
 	or mime-type.
 */
 fz_document *fz_open_document_with_stream(fz_context *ctx, const char *magic, fz_stream *stream);
+
+/**
+	Open a document using a buffer rather than opening a file on disk.
+*/
+fz_document *fz_open_document_with_buffer(fz_context *ctx, const char *magic, fz_buffer *buffer);
 
 /**
 	Open a document using the specified stream object rather than
@@ -657,6 +716,7 @@ fz_page *fz_new_page_of_size(fz_context *ctx, int size, fz_document *doc);
 	Determine the size of a page at 72 dpi.
 */
 fz_rect fz_bound_page(fz_context *ctx, fz_page *page);
+fz_rect fz_bound_page_box(fz_context *ctx, fz_page *page, fz_box_type box);
 
 /**
 	Run a page through a device.
@@ -748,6 +808,11 @@ void fz_drop_page(fz_context *ctx, fz_page *page);
 	is no transition specified for the page.
 */
 fz_transition *fz_page_presentation(fz_context *ctx, fz_page *page, fz_transition *transition, float *duration);
+
+/**
+	Get page label for a given page.
+*/
+const char *fz_page_label(fz_context *ctx, fz_page *page, char *buf, int size);
 
 /**
 	Check permission flags on document.
@@ -858,7 +923,7 @@ void *fz_process_opened_pages(fz_context *ctx, fz_document *doc, fz_process_open
 struct fz_page
 {
 	int refs;
-	fz_document *doc; /* reference to parent document */
+	fz_document *doc; /* kept reference to parent document. Guaranteed non-NULL. */
 	int chapter; /* chapter number */
 	int number; /* page number in chapter */
 	int incomplete; /* incomplete from progressive loading; don't cache! */
@@ -875,7 +940,13 @@ struct fz_page
 	fz_page_uses_overprint_fn *overprint;
 	fz_page_create_link_fn *create_link;
 	fz_page_delete_link_fn *delete_link;
-	fz_page **prev, *next; /* linked list of currently open pages */
+
+	/* linked list of currently open pages. This list is maintained
+	 * by fz_load_chapter_page and fz_drop_page. All pages hold a
+	 * kept reference to the document, so the document cannot disappear
+	 * while pages exist. 'Incomplete' pages are NOT kept in this
+	 * list. */
+	fz_page **prev, *next;
 };
 
 /**
@@ -901,13 +972,22 @@ struct fz_document
 	fz_document_count_chapters_fn *count_chapters;
 	fz_document_count_pages_fn *count_pages;
 	fz_document_load_page_fn *load_page;
+	fz_document_page_label_fn *page_label;
 	fz_document_lookup_metadata_fn *lookup_metadata;
 	fz_document_set_metadata_fn *set_metadata;
 	fz_document_output_intent_fn *get_output_intent;
 	fz_document_output_accelerator_fn *output_accelerator;
 	int did_layout;
 	int is_reflowable;
-	fz_page *open; /* linked list of currently open pages */
+
+	/* Linked list of currently open pages. These are not
+	 * references, but just a linked list of open pages,
+	 * maintained by fz_load_chapter_page, and fz_drop_page.
+	 * Every page holds a kept reference to the document, so
+	 * the document cannot be destroyed while a page exists.
+	 * Incomplete pages are NOT inserted into this list, but
+	 * do still hold a real document reference. */
+	fz_page *open;
 };
 
 struct fz_document_handler
@@ -919,6 +999,7 @@ struct fz_document_handler
 	const char **mimetypes;
 	fz_document_open_accel_fn *open_accel;
 	fz_document_open_accel_with_stream_fn *open_accel_with_stream;
+	fz_document_recognize_content_fn *recognize_content;
 };
 
 #endif

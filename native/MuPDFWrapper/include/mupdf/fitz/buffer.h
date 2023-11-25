@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2022 Artifex Software, Inc.
+// Copyright (C) 2004-2023 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -17,8 +17,8 @@
 //
 // Alternative licensing terms are available from the licensor.
 // For commercial licensing, see <https://www.artifex.com/> or contact
-// Artifex Software, Inc., 1305 Grant Avenue - Suite 200, Novato,
-// CA 94945, U.S.A., +1(415)492-9861, for further information.
+// Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
+// CA 94129, USA, for further information.
 
 #ifndef MUPDF_FITZ_BUFFER_H
 #define MUPDF_FITZ_BUFFER_H
@@ -105,6 +105,12 @@ fz_buffer *fz_new_buffer_from_shared_data(fz_context *ctx, const unsigned char *
 fz_buffer *fz_new_buffer_from_copied_data(fz_context *ctx, const unsigned char *data, size_t size);
 
 /**
+	Make a new buffer, containing a copy of the data used in
+	the original.
+*/
+fz_buffer *fz_clone_buffer(fz_context *ctx, fz_buffer *buf);
+
+/**
 	Create a new buffer with data decoded from a base64 input string.
 */
 fz_buffer *fz_new_buffer_from_base64(fz_context *ctx, const char *data, size_t size);
@@ -137,6 +143,16 @@ void fz_trim_buffer(fz_context *ctx, fz_buffer *buf);
 	Never throws exceptions.
 */
 void fz_clear_buffer(fz_context *ctx, fz_buffer *buf);
+
+/**
+	Create a new buffer with a (subset of) the data from the buffer.
+
+	start: if >= 0, offset from start of buffer, if < 0 offset from end of buffer.
+
+	end: if >= 0, offset from start of buffer, if < 0 offset from end of buffer.
+
+*/
+fz_buffer *fz_slice_buffer(fz_context *ctx, fz_buffer *buf, int64_t start, int64_t end);
 
 /**
 	Append the contents of the source buffer onto the end of the
