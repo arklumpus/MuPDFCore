@@ -644,7 +644,7 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int WriteImage(fz_context* ctx, fz_display_list* list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, int output_format, const fz_buffer** out_buffer, const unsigned char** out_data, uint64_t* out_length)
+	DLL_PUBLIC int WriteImage(fz_context* ctx, fz_display_list* list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, int output_format, int quality, const fz_buffer** out_buffer, const unsigned char** out_data, uint64_t* out_length)
 	{
 		fz_matrix ctm;
 		fz_pixmap* pix;
@@ -725,6 +725,9 @@ extern "C"
 			case OUT_PSD:
 				fz_write_pixmap_as_psd(ctx, out, pix);
 				break;
+			case OUT_JPEG:
+				fz_write_pixmap_as_jpeg(ctx, out, pix, quality);
+				break;
 			}
 		}
 		fz_catch(ctx)
@@ -752,7 +755,7 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int SaveImage(fz_context* ctx, fz_display_list* list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, const char* file_name, int output_format)
+	DLL_PUBLIC int SaveImage(fz_context* ctx, fz_display_list* list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, const char* file_name, int output_format, int quality)
 	{
 		fz_matrix ctm;
 		fz_pixmap* pix;
@@ -814,6 +817,9 @@ extern "C"
 				break;
 			case OUT_PSD:
 				fz_save_pixmap_as_psd(ctx, pix, file_name);
+				break;
+			case OUT_JPEG:
+				fz_save_pixmap_as_jpeg(ctx, pix, file_name, quality);
 				break;
 			}
 		}

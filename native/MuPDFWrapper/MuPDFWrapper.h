@@ -27,7 +27,8 @@ enum
 	OUT_PNM = 0,
 	OUT_PAM = 1,
 	OUT_PNG = 2,
-	OUT_PSD = 3
+	OUT_PSD = 3,
+	OUT_JPEG = 4
 };
 
 //Output document formats.
@@ -332,11 +333,12 @@ extern "C"
 	/// <param name="zoom">How much the specified region should be scaled when rendering. This determines the size in pixels of the rendered image.</param>
 	/// <param name="colorFormat">The pixel data format.</param>
 	/// <param name="output_format">An integer specifying the output format.</param>
+	/// <param name="quality">Quality level for the output format (where applicable).</param>
 	/// <param name="out_buffer">The address of the buffer on which the data has been written (only useful for disposing the buffer later).</param>
 	/// <param name="out_data">The address of the byte array where the data has been actually written.</param>
 	/// <param name="out_length">The length in bytes of the image data.</param>
 	/// <returns>An integer detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int WriteImage(fz_context* ctx, fz_display_list* list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, int output_format, const fz_buffer** out_buffer, const unsigned char** out_data, uint64_t* out_length);
+	DLL_PUBLIC int WriteImage(fz_context* ctx, fz_display_list* list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, int output_format, int quality, const fz_buffer** out_buffer, const unsigned char** out_data, uint64_t* out_length);
 
 	/// <summary>
 	/// Free a native buffer and its associated resources.
@@ -359,8 +361,9 @@ extern "C"
 	/// <param name="colorFormat">The pixel data format.</param>
 	/// <param name="file_name">The path to the output file.</param>
 	/// <param name="output_format">An integer specifying the output format.</param>
+	/// <param name="quality">Quality level for the output format (where applicable).</param>
 	/// <returns>An integer detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int SaveImage(fz_context* ctx, fz_display_list* list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, const char* file_name, int output_format);
+	DLL_PUBLIC int SaveImage(fz_context* ctx, fz_display_list* list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, const char* file_name, int output_format, int quality);
 
 	/// <summary>
 	/// Create cloned contexts that can be used in multithreaded rendering.

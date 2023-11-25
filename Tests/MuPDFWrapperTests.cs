@@ -745,7 +745,7 @@ namespace Tests
 
             using (UTF8EncodedString encodedFileName = new UTF8EncodedString(tempFile))
             {
-                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, encodedFileName.Address, 0);
+                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, encodedFileName.Address, 0, 90);
             }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveImage returned the wrong exit code.");
@@ -783,7 +783,7 @@ namespace Tests
 
             using (UTF8EncodedString encodedFileName = new UTF8EncodedString(tempFile))
             {
-                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 1, encodedFileName.Address, 1);
+                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 1, encodedFileName.Address, 1, 90);
             }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveImage returned the wrong exit code.");
@@ -821,7 +821,7 @@ namespace Tests
 
             using (UTF8EncodedString encodedFileName = new UTF8EncodedString(tempFile))
             {
-                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 1, encodedFileName.Address, 2);
+                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 1, encodedFileName.Address, 2, 90);
             }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveImage returned the wrong exit code.");
@@ -859,7 +859,7 @@ namespace Tests
 
             using (UTF8EncodedString encodedFileName = new UTF8EncodedString(tempFile))
             {
-                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, encodedFileName.Address, 3);
+                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, encodedFileName.Address, 3, 90);
             }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveImage returned the wrong exit code.");
@@ -887,6 +887,44 @@ namespace Tests
         }
 
         [TestMethod]
+        public void ImageSavingAsJPEG()
+        {
+            string tempFile = Path.GetTempFileName();
+
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
+
+            int result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(tempFile))
+            {
+                result = NativeMethods.SaveImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, encodedFileName.Address, 4, 50);
+            }
+
+            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveImage returned the wrong exit code.");
+            Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
+
+            byte[] actualBytes = File.ReadAllBytes(tempFile);
+
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, actualBytes[0..4], "The start of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x1C, 0x0F, 0xFF, 0xD9 }, actualBytes[^4..^0], "The end of the saved image appears to be wrong.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+
+                File.Delete(tempFile);
+            }
+            catch { }
+        }
+
+        [TestMethod]
         public void ImageWritingAsPNM()
         {
             IntPtr outputBuffer = IntPtr.Zero;
@@ -895,7 +933,7 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
 
-            int result = NativeMethods.WriteImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, 0, ref outputBuffer, ref outputData, ref outputDataLength);
+            int result = NativeMethods.WriteImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, 0, 90, ref outputBuffer, ref outputData, ref outputDataLength);
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "WriteImage returned the wrong exit code.");
 
@@ -930,7 +968,7 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
 
-            int result = NativeMethods.WriteImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 1, 1, ref outputBuffer, ref outputData, ref outputDataLength);
+            int result = NativeMethods.WriteImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 1, 1, 90, ref outputBuffer, ref outputData, ref outputDataLength);
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "WriteImage returned the wrong exit code.");
 
@@ -965,7 +1003,7 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
 
-            int result = NativeMethods.WriteImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, 2, ref outputBuffer, ref outputData, ref outputDataLength);
+            int result = NativeMethods.WriteImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, 2, 90, ref outputBuffer, ref outputData, ref outputDataLength);
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "WriteImage returned the wrong exit code.");
 
@@ -1000,7 +1038,7 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
 
-            int result = NativeMethods.WriteImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, 3, ref outputBuffer, ref outputData, ref outputDataLength);
+            int result = NativeMethods.WriteImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, 3, 90, ref outputBuffer, ref outputData, ref outputDataLength);
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "WriteImage returned the wrong exit code.");
 
@@ -1027,6 +1065,41 @@ namespace Tests
         }
 
         [TestMethod]
+        public void ImageWritingAsJPEG()
+        {
+            IntPtr outputBuffer = IntPtr.Zero;
+            IntPtr outputData = IntPtr.Zero;
+            ulong outputDataLength = 0;
+
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
+
+            int result = NativeMethods.WriteImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, 4, 50, ref outputBuffer, ref outputData, ref outputDataLength);
+
+            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "WriteImage returned the wrong exit code.");
+
+            byte[] actualBytes = new byte[(int)outputDataLength];
+
+            Marshal.Copy(outputData, actualBytes, 0, actualBytes.Length);
+
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, actualBytes[0..4], "The start of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x1C, 0x0F, 0xFF, 0xD9 }, actualBytes[^4..^0], "The end of the saved image appears to be wrong.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+
+                _ = NativeMethods.DisposeBuffer(nativeContext, outputBuffer);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
         public void BufferDisposal()
         {
             IntPtr outputBuffer = IntPtr.Zero;
@@ -1035,7 +1108,7 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
 
-            _ = NativeMethods.WriteImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, 2, ref outputBuffer, ref outputData, ref outputDataLength);
+            _ = NativeMethods.WriteImage(nativeContext, nativeDisplayList, x0, y0, x1, y1, 1, 0, 2, 90, ref outputBuffer, ref outputData, ref outputDataLength);
 
             int result = NativeMethods.DisposeBuffer(nativeContext, outputBuffer);
 

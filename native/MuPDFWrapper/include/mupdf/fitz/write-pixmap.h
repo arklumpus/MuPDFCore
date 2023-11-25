@@ -236,6 +236,13 @@ void fz_save_pixmap_as_jpeg(fz_context *ctx, fz_pixmap *pixmap, const char *file
 void fz_write_pixmap_as_png(fz_context *ctx, fz_output *out, const fz_pixmap *pixmap);
 
 /**
+	Write a pixmap as a JPEG.
+	
+	NOTE: added here by Giorgio Bianchini, 25/11/2023 - not sure why it is missing.
+*/
+void fz_write_pixmap_as_jpeg(fz_context *ctx, fz_output *out, fz_pixmap *pix, int quality);
+
+/**
 	Create a new png band writer (greyscale or RGB, with or without
 	alpha).
 */

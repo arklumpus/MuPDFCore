@@ -503,6 +503,34 @@ namespace Tests
         }
 
         [TestMethod]
+        public void MuPDFDocumentImageSavingFullPageJPEGWithQuality()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            string tempFile = Path.GetTempFileName();
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            document.SaveImageAsJPEG(0, 1, tempFile, 50);
+
+            Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
+
+            byte[] savedBytes = File.ReadAllBytes(tempFile);
+
+            try
+            {
+                File.Delete(tempFile);
+            }
+            catch { }
+
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, savedBytes[0..4], "The start of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x1C, 0x0F, 0xFF, 0xD9 }, savedBytes[^4..^0], "The end of the saved image appears to be wrong.");
+        }
+
+        [TestMethod]
         public void MuPDFDocumentImageSavingWithUTF8Characters()
         {
             using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
@@ -564,6 +592,62 @@ namespace Tests
 
             CollectionAssert.AreEqual(new byte[] { 0x89, 0x50, 0x4E, 0x47 }, savedBytes[0..4], "The start of the saved image appears to be wrong.");
             CollectionAssert.AreEqual(new byte[] { 0xAE, 0x42, 0x60, 0x82 }, savedBytes[^4..^0], "The end of the saved image appears to be wrong.");
+        }
+
+        [TestMethod]
+        public void MuPDFDocumentImageSavingRegionJPEG()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            string tempFile = Path.GetTempFileName();
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            document.SaveImage(0, new Rectangle(100, 100, 500, 500), Math.Sqrt(2), PixelFormats.RGB, tempFile, RasterOutputFileTypes.JPEG);
+
+            Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
+
+            byte[] savedBytes = File.ReadAllBytes(tempFile);
+
+            try
+            {
+                File.Delete(tempFile);
+            }
+            catch { }
+
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, savedBytes[0..4], "The start of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xD1, 0xBF, 0xFF, 0xD9 }, savedBytes[^4..^0], "The end of the saved image appears to be wrong.");
+        }
+
+        [TestMethod]
+        public void MuPDFDocumentImageSavingRegionJPEGWithQuality()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            string tempFile = Path.GetTempFileName();
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            document.SaveImageAsJPEG(0, new Rectangle(100, 100, 500, 500), Math.Sqrt(2), tempFile, 50);
+
+            Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
+
+            byte[] savedBytes = File.ReadAllBytes(tempFile);
+
+            try
+            {
+                File.Delete(tempFile);
+            }
+            catch { }
+
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, savedBytes[0..4], "The start of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF1, 0xBF, 0xFF, 0xD9 }, savedBytes[^4..^0], "The end of the saved image appears to be wrong.");
         }
 
         [TestMethod]
@@ -670,6 +754,26 @@ namespace Tests
             CollectionAssert.AreEqual(new byte[] { 0xAE, 0x42, 0x60, 0x82 }, writtenBytes[^4..^0], "The end of the saved image appears to be wrong.");
         }
 
+        [TestMethod]
+        public void MuPDFDocumentImageWritingFullPageJPEGWithQuality()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            using MemoryStream renderStream = new MemoryStream();
+
+            document.WriteImageAsJPEG(0, 1, renderStream, 50);
+
+            byte[] writtenBytes = renderStream.ToArray();
+
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, writtenBytes[0..4], "The start of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0x1C, 0x0F, 0xFF, 0xD9 }, writtenBytes[^4..^0], "The end of the saved image appears to be wrong.");
+        }
+
 
         [TestMethod]
         public void MuPDFDocumentImageWritingRegionPNG()
@@ -689,6 +793,46 @@ namespace Tests
 
             CollectionAssert.AreEqual(new byte[] { 0x89, 0x50, 0x4E, 0x47 }, writtenBytes[0..4], "The start of the saved image appears to be wrong.");
             CollectionAssert.AreEqual(new byte[] { 0xAE, 0x42, 0x60, 0x82 }, writtenBytes[^4..^0], "The end of the saved image appears to be wrong.");
+        }
+
+        [TestMethod]
+        public void MuPDFDocumentImageWritingRegionJPEG()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            using MemoryStream renderStream = new MemoryStream();
+
+            document.WriteImage(0, new Rectangle(100, 100, 500, 500), Math.Sqrt(2), PixelFormats.RGB, renderStream, RasterOutputFileTypes.JPEG);
+
+            byte[] writtenBytes = renderStream.ToArray();
+
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, writtenBytes[0..4], "The start of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xD1, 0xBF, 0xFF, 0xD9 }, writtenBytes[^4..^0], "The end of the saved image appears to be wrong.");
+        }
+
+        [TestMethod]
+        public void MuPDFDocumentImageWritingRegionJPEGWithQuality()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            using MemoryStream renderStream = new MemoryStream();
+
+            document.WriteImageAsJPEG(0, new Rectangle(100, 100, 500, 500), Math.Sqrt(2), renderStream, 50);
+
+            byte[] writtenBytes = renderStream.ToArray();
+
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, writtenBytes[0..4], "The start of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xF1, 0xBF, 0xFF, 0xD9 }, writtenBytes[^4..^0], "The end of the saved image appears to be wrong.");
         }
 
         [TestMethod]

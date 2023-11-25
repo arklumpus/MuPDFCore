@@ -205,7 +205,12 @@ namespace MuPDFCore
         /// <summary>
         /// PhotoShop Document format.
         /// </summary>
-        PSD = 3
+        PSD = 3,
+
+        /// <summary>
+        /// Joint Photographic Experts Group format, with quality level 90.
+        /// </summary>
+        JPEG = 4
     };
 
     /// <summary>
@@ -1244,9 +1249,10 @@ namespace MuPDFCore
         /// <param name="colorFormat">The pixel data format.</param>
         /// <param name="file_name">The path to the output file, UTF-8 encoded.</param>
         /// <param name="output_format">An integer equivalent to <see cref="RasterOutputFileTypes"/> specifying the output format.</param>
+        /// <param name="quality">Quality level for the output format (where applicable).</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int SaveImage(IntPtr ctx, IntPtr list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, IntPtr file_name, int output_format);
+        internal static extern int SaveImage(IntPtr ctx, IntPtr list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, IntPtr file_name, int output_format, int quality);
 
         /// <summary>
         /// Write (part of) a display list to an image buffer in the specified format.
@@ -1260,12 +1266,13 @@ namespace MuPDFCore
         /// <param name="zoom">How much the specified region should be scaled when rendering. This determines the size in pixels of the rendered image.</param>
         /// <param name="colorFormat">The pixel data format.</param>
         /// <param name="output_format">An integer equivalent to <see cref="RasterOutputFileTypes"/> specifying the output format.</param>
+        /// <param name="quality">Quality level for the output format (where applicable).</param>
         /// <param name="out_buffer">The address of the buffer on which the data has been written (only useful for disposing the buffer later).</param>
         /// <param name="out_data">The address of the byte array where the data has been actually written.</param>
         /// <param name="out_length">The length in bytes of the image data.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int WriteImage(IntPtr ctx, IntPtr list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, int output_format, ref IntPtr out_buffer, ref IntPtr out_data, ref ulong out_length);
+        internal static extern int WriteImage(IntPtr ctx, IntPtr list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, int output_format, int quality, ref IntPtr out_buffer, ref IntPtr out_data, ref ulong out_length);
 
         /// <summary>
         /// Free a native buffer and its associated resources.

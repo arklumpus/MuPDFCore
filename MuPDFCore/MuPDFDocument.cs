@@ -866,6 +866,16 @@ namespace MuPDFCore
                 throw new ArgumentException("Cannot save an image with alpha channel in PNM format!", nameof(fileType));
             }
 
+            if (pixelFormat != PixelFormats.RGB && fileType == RasterOutputFileTypes.JPEG)
+            {
+                throw new ArgumentException("The JPEG format only supports RGB pixel data without an alpha channel!", nameof(fileType));
+            }
+
+            if ((pixelFormat != PixelFormats.RGB && pixelFormat != PixelFormats.RGBA) && fileType == RasterOutputFileTypes.PNG)
+            {
+                throw new ArgumentException("The PNG format only supports RGB or RGBA pixel data!", nameof(fileType));
+            }
+
             if (DisplayLists[pageNumber] == null)
             {
                 DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
@@ -888,7 +898,66 @@ namespace MuPDFCore
 
             using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
             {
-                result = (ExitCodes)NativeMethods.SaveImage(OwnerContext.NativeContext, DisplayLists[pageNumber].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, fzoom, (int)pixelFormat, encodedFileName.Address, (int)fileType);
+                result = (ExitCodes)NativeMethods.SaveImage(OwnerContext.NativeContext, DisplayLists[pageNumber].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, fzoom, (int)pixelFormat, encodedFileName.Address, (int)fileType, 90);
+            }
+
+            switch (result)
+            {
+                case ExitCodes.EXIT_SUCCESS:
+                    break;
+                case ExitCodes.ERR_CANNOT_RENDER:
+                    throw new MuPDFException("Cannot render page", result);
+                case ExitCodes.ERR_CANNOT_SAVE:
+                    throw new MuPDFException("Cannot save to the output file", result);
+                default:
+                    throw new MuPDFException("Unknown error", result);
+            }
+        }
+
+        /// <summary>
+        /// Save (part of) a page to an image file in JPEG format, with the specified quality.
+        /// </summary>
+        /// <param name="pageNumber">The number of the page to render (starting at 0).</param>
+        /// <param name="region">The region of the page to render in page units.</param>
+        /// <param name="zoom">The scale at which the page will be rendered. This will determine the size in pixel of the image.</param>
+        /// <param name="fileName">The path to the output file.</param>
+        /// <param name="quality">The quality of the JPEG output file (ranging from 0 to 100).</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public void SaveImageAsJPEG(int pageNumber, Rectangle region, double zoom, string fileName, int quality, bool includeAnnotations = true)
+        {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
+            if (quality < 0 || quality > 100)
+            {
+                throw new ArgumentOutOfRangeException(nameof(quality), quality, "The JPEG quality must range between 0 and 100 (inclusive)!");
+            }
+
+            if (DisplayLists[pageNumber] == null)
+            {
+                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
+            }
+
+            if (zoom < 0.000001 | zoom * region.Width <= 0.001 || zoom * region.Height <= 0.001)
+            {
+                throw new ArgumentOutOfRangeException(nameof(zoom), zoom, "The zoom factor is too small!");
+            }
+
+            if (this.ImageXRes != 72 || this.ImageYRes != 72)
+            {
+                zoom *= Math.Sqrt(this.ImageXRes * this.ImageYRes) / 72;
+                region = new Rectangle(region.X0 * 72 / this.ImageXRes, region.Y0 * 72 / this.ImageYRes, region.X1 * 72 / this.ImageXRes, region.Y1 * 72 / this.ImageYRes);
+            }
+
+            float fzoom = (float)zoom;
+
+            ExitCodes result;
+
+            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            {
+                result = (ExitCodes)NativeMethods.SaveImage(OwnerContext.NativeContext, DisplayLists[pageNumber].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, fzoom, (int)PixelFormats.RGB, encodedFileName.Address, (int)RasterOutputFileTypes.JPEG, quality);
             }
 
             switch (result)
@@ -925,6 +994,25 @@ namespace MuPDFCore
         }
 
         /// <summary>
+        /// Save a page to an image file in JPEG format, with the specified quality.
+        /// </summary>
+        /// <param name="pageNumber">The number of the page to render (starting at 0).</param>
+        /// <param name="zoom">The scale at which the page will be rendered. This will determine the size in pixel of the image.</param>
+        /// <param name="fileName">The path to the output file.</param>
+        /// <param name="quality">The quality of the JPEG output file (ranging from 0 to 100).</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public void SaveImageAsJPEG(int pageNumber, double zoom, string fileName, int quality, bool includeAnnotations = true)
+        {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
+            Rectangle region = this.Pages[pageNumber].Bounds;
+            SaveImageAsJPEG(pageNumber, region, zoom, fileName, quality, includeAnnotations);
+        }
+
+        /// <summary>
         /// Write (part of) a page to an image stream in the specified format.
         /// </summary>
         /// <param name="pageNumber">The number of the page to render (starting at 0).</param>
@@ -944,6 +1032,16 @@ namespace MuPDFCore
             if (pixelFormat == PixelFormats.RGBA && fileType == RasterOutputFileTypes.PNM)
             {
                 throw new ArgumentException("Cannot save an image with alpha channel in PNM format!", nameof(fileType));
+            }
+
+            if (pixelFormat != PixelFormats.RGB && fileType == RasterOutputFileTypes.JPEG)
+            {
+                throw new ArgumentException("The JPEG format only supports RGB pixel data without an alpha channel!", nameof(fileType));
+            }
+
+            if ((pixelFormat != PixelFormats.RGB && pixelFormat != PixelFormats.RGBA) && fileType == RasterOutputFileTypes.PNG)
+            {
+                throw new ArgumentException("The PNG format only supports RGB or RGBA pixel data!", nameof(fileType));
             }
 
             if (DisplayLists[pageNumber] == null)
@@ -968,7 +1066,79 @@ namespace MuPDFCore
             IntPtr outputData = IntPtr.Zero;
             ulong outputDataLength = 0;
 
-            ExitCodes result = (ExitCodes)NativeMethods.WriteImage(OwnerContext.NativeContext, DisplayLists[pageNumber].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, fzoom, (int)pixelFormat, (int)fileType, ref outputBuffer, ref outputData, ref outputDataLength);
+            ExitCodes result = (ExitCodes)NativeMethods.WriteImage(OwnerContext.NativeContext, DisplayLists[pageNumber].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, fzoom, (int)pixelFormat, (int)fileType, 90, ref outputBuffer, ref outputData, ref outputDataLength);
+
+            switch (result)
+            {
+                case ExitCodes.EXIT_SUCCESS:
+                    break;
+                case ExitCodes.ERR_CANNOT_RENDER:
+                    throw new MuPDFException("Cannot render page", result);
+                case ExitCodes.ERR_CANNOT_CREATE_CONTEXT:
+                    throw new MuPDFException("Cannot create the output buffer", result);
+                default:
+                    throw new MuPDFException("Unknown error", result);
+            }
+
+            byte[] buffer = new byte[1024];
+
+            while (outputDataLength > 0)
+            {
+                int bytesToCopy = (int)Math.Min(buffer.Length, (long)outputDataLength);
+                Marshal.Copy(outputData, buffer, 0, bytesToCopy);
+                outputData = IntPtr.Add(outputData, bytesToCopy);
+                outputStream.Write(buffer, 0, bytesToCopy);
+                outputDataLength -= (ulong)bytesToCopy;
+            }
+
+            NativeMethods.DisposeBuffer(OwnerContext.NativeContext, outputBuffer);
+        }
+
+
+        /// <summary>
+        /// Write (part of) a page to an image stream in JPEG format, with the specified quality.
+        /// </summary>
+        /// <param name="pageNumber">The number of the page to render (starting at 0).</param>
+        /// <param name="region">The region of the page to render in page units.</param>
+        /// <param name="zoom">The scale at which the page will be rendered. This will determine the size in pixel of the image.</param>
+        /// <param name="outputStream">The stream to which the image data will be written.</param>
+        /// <param name="quality">The quality of the JPEG output (ranging from 0 to 100).</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public void WriteImageAsJPEG(int pageNumber, Rectangle region, double zoom, Stream outputStream, int quality, bool includeAnnotations = true)
+        {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
+            if (quality < 0 || quality > 100)
+            {
+                throw new ArgumentOutOfRangeException(nameof(quality), quality, "The JPEG quality must range between 0 and 100 (inclusive)!");
+            }
+
+            if (DisplayLists[pageNumber] == null)
+            {
+                DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
+            }
+
+            if (zoom < 0.000001 | zoom * region.Width <= 0.001 || zoom * region.Height <= 0.001)
+            {
+                throw new ArgumentOutOfRangeException(nameof(zoom), zoom, "The zoom factor is too small!");
+            }
+
+            if (this.ImageXRes != 72 || this.ImageYRes != 72)
+            {
+                zoom *= Math.Sqrt(this.ImageXRes * this.ImageYRes) / 72;
+                region = new Rectangle(region.X0 * 72 / this.ImageXRes, region.Y0 * 72 / this.ImageYRes, region.X1 * 72 / this.ImageXRes, region.Y1 * 72 / this.ImageYRes);
+            }
+
+            float fzoom = (float)zoom;
+
+            IntPtr outputBuffer = IntPtr.Zero;
+            IntPtr outputData = IntPtr.Zero;
+            ulong outputDataLength = 0;
+
+            ExitCodes result = (ExitCodes)NativeMethods.WriteImage(OwnerContext.NativeContext, DisplayLists[pageNumber].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, fzoom, (int)PixelFormats.RGB, (int)RasterOutputFileTypes.JPEG, quality, ref outputBuffer, ref outputData, ref outputDataLength);
 
             switch (result)
             {
@@ -1014,6 +1184,25 @@ namespace MuPDFCore
 
             Rectangle region = this.Pages[pageNumber].Bounds;
             WriteImage(pageNumber, region, zoom, pixelFormat, outputStream, fileType, includeAnnotations);
+        }
+
+        /// <summary>
+        /// Write a page to an image stream in JPEG format, with the specified quality.
+        /// </summary>
+        /// <param name="pageNumber">The number of the page to render (starting at 0).</param>
+        /// <param name="zoom">The scale at which the page will be rendered. This will determine the size in pixel of the image.</param>
+        /// <param name="outputStream">The stream to which the image data will be written.</param>
+        /// <param name="quality">The quality of the JPEG output (ranging from 0 to 100).</param>
+        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
+        public void WriteImageAsJPEG(int pageNumber, double zoom, Stream outputStream, int quality, bool includeAnnotations = true)
+        {
+            if (this.EncryptionState == EncryptionState.Encrypted)
+            {
+                throw new DocumentLockedException("A password is necessary to render the document!");
+            }
+
+            Rectangle region = this.Pages[pageNumber].Bounds;
+            WriteImageAsJPEG(pageNumber, region, zoom, outputStream, quality, includeAnnotations);
         }
 
         /// <summary>
