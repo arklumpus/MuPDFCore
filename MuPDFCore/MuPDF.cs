@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Tests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100d18d076ff369e4fb7295f51bbfedc5974e626236cec589265dca9183dd03ac869402b455337d976594875fb1993db7971bce4c6326bf5b6497ed50fe64629147cbe6ba727baf462fb9fcd2abb2db58feb93c754c92c107d6d57d9e099e8654ddc949d4622f13e01ef079351bc83c73988218218f3e67909ee75d225d6e9d78a7")]
 namespace MuPDFCore
 {
     /// <summary>
