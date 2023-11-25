@@ -83,7 +83,7 @@ namespace MuPDFCore
         /// <summary>
         /// The number of pages in the document.
         /// </summary>
-        private readonly int PageCount;
+        private int PageCount;
 
         /// <summary>
         /// An <see cref="IDisposable"/> that will be disposed together with this object.
@@ -98,12 +98,12 @@ namespace MuPDFCore
         /// <summary>
         /// An array of <see cref="MuPDFDisplayList"/>, one for each page in the document.
         /// </summary>
-        private readonly MuPDFDisplayList[] DisplayLists;
+        private MuPDFDisplayList[] DisplayLists;
 
         /// <summary>
         /// The pages contained in the document.
         /// </summary>
-        public MuPDFPageCollection Pages { get; }
+        public MuPDFPageCollection Pages { get; private set; }
 
         /// <summary>
         /// Defines whether the images resulting from rendering operations should be clipped to the page boundaries.
@@ -590,6 +590,57 @@ namespace MuPDFCore
                 DisplayLists[i]?.Dispose();
                 DisplayLists[i] = null;
             }
+        }
+
+        /// <summary>
+        /// Sets the document layout for reflowable document types (e.g., HTML, MOBI). Does not have any effect for documents with a fixed layout (e.g., PDF).
+        /// </summary>
+        /// <param name="width">The width of each page, in points. Must be &gt; 0.</param>
+        /// <param name="height">The height of each page, in points. Must be &gt; 0.</param>
+        /// <param name="em">The default font size, in points.</param>
+        public void Layout(float width, float height, float em)
+        {
+            if (width <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(width), width, "The page width must be greater than 0!");
+            }
+
+            if (height <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(height), height, "The page height must be greater than 0!");
+            }
+
+            this.ClearCache();
+            this.Pages.Dispose();
+
+            NativeMethods.LayoutDocument(this.OwnerContext.NativeContext, this.NativeDocument, width, height, em, out int pageCount);
+
+            this.PageCount = pageCount;
+            this.Pages = new MuPDFPageCollection(this.OwnerContext, this, PageCount);
+            this.DisplayLists = new MuPDFDisplayList[PageCount];
+        }
+
+        /// <summary>
+        /// Sets the document layout for reflowable document types (e.g., HTML, MOBI), so that the document is rendered to a single
+        /// page, as tall as necessary. Does not have any effect for documents with a fixed layout (e.g., PDF).
+        /// </summary>
+        /// <param name="width">The width of each page, in points. Must be &gt; 0.</param>
+        /// <param name="em">The default font size, in points.</param>
+        public void LayoutSinglePage(float width, float em)
+        {
+            if (width <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(width), width, "The page width must be greater than 0!");
+            }
+
+            this.ClearCache();
+            this.Pages.Dispose();
+
+            NativeMethods.LayoutDocument(this.OwnerContext.NativeContext, this.NativeDocument, width, 0, em, out int pageCount);
+
+            this.PageCount = pageCount;
+            this.Pages = new MuPDFPageCollection(this.OwnerContext, this, PageCount);
+            this.DisplayLists = new MuPDFDisplayList[PageCount];
         }
 
         /// <summary>
