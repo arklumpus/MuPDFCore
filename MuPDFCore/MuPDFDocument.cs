@@ -55,7 +55,9 @@ namespace MuPDFCore
             ".pnm",
             ".pam",
             ".epub",
-            ".fb2"
+            ".fb2",
+            ".mobi",
+            ".html"
         };
 
         /// <summary>

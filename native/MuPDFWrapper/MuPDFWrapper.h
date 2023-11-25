@@ -433,6 +433,18 @@ extern "C"
 	/// <param name="page">The page to free.</param>
 	/// <returns>An integer detailing whether any errors occurred.</returns>
 	DLL_PUBLIC int DisposePage(fz_context* ctx, fz_page* page);
+	
+	/// <summary>
+	/// Layout reflowable document types.
+	/// </summary>
+	/// <param name="ctx">The context to which the document belongs.</param>
+	/// <param name="doc">The document to layout.</param>
+	/// <param name="width">The page width.</param>
+	/// <param name="height">The page height.</param>
+	/// <param name="em">The default font size, in points.</param>
+	/// <param name="out_page_count">The number of pages in the document, after the layout.</param>
+	/// <returns>An integer detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int LayoutDocument(fz_context* ctx, fz_document* doc, float width, float height, float em, int* out_page_count);
 
 	/// <summary>
 	/// Create a new document from a file name.

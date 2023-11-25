@@ -1016,6 +1016,23 @@ extern "C"
 		fz_drop_page(ctx, page);
 		return EXIT_SUCCESS;
 	}
+	
+	DLL_PUBLIC int LayoutDocument(fz_context* ctx, fz_document* doc, float width, float height, float em, int* out_page_count)
+	{
+		fz_layout_document(ctx, doc, width, height, em);
+		
+		//Count the number of pages.
+		fz_try(ctx)
+		{
+			*out_page_count = fz_count_pages(ctx, doc);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_CANNOT_COUNT_PAGES;
+		}
+		
+		return EXIT_SUCCESS;
+	}
 
 	DLL_PUBLIC int CreateDocumentFromFile(fz_context* ctx, const char* file_name, int get_image_resolution, const fz_document** out_doc, int* out_page_count, float* out_image_xres, float* out_image_yres)
 	{
@@ -1063,6 +1080,9 @@ extern "C"
 		{
 			return ERR_CANNOT_OPEN_FILE;
 		}
+		
+		//Reflow the document to an A4 page size.
+		fz_layout_document(ctx, doc, 595, 842, 11);
 
 		//Count the number of pages.
 		fz_try(ctx)
@@ -1162,6 +1182,9 @@ extern "C"
 			fz_drop_stream(ctx, str);
 			return ERR_CANNOT_OPEN_FILE;
 		}
+		
+		//Reflow the document to an A4 page size.
+		fz_layout_document(ctx, doc, 595, 842, 11);
 
 		//Count the number of pages.
 		fz_try(ctx)

@@ -179,7 +179,17 @@ namespace MuPDFCore
         /// <summary>
         /// FictionBook document.
         /// </summary>
-        FB2 = 11
+        FB2 = 11,
+
+        /// <summary>
+        /// Mobipocket e-book document.
+        /// </summary>
+        MOBI = 12,
+
+        /// <summary>
+        /// HTML document.
+        /// </summary>
+        HTML = 13,
     }
 
     /// <summary>
@@ -1225,6 +1235,19 @@ namespace MuPDFCore
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int DisposePage(IntPtr ctx, IntPtr page);
+
+        /// <summary>
+        /// Layout reflowable document types.
+        /// </summary>
+        /// <param name="ctx">The context to which the document belongs.</param>
+        /// <param name="doc">The document to layout.</param>
+        /// <param name="width">The page width.</param>
+        /// <param name="height">The page height.</param>
+        /// <param name="em">The default font size, in points.</param>
+        /// <param name="out_page_count">The number of pages in the document, after the layout.</param>
+        /// <returns>An integer detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int LayoutDocument(IntPtr ctx, IntPtr doc, float width, float height, float em, out int out_page_count);
 
         /// <summary>
         /// Create cloned contexts that can be used in multithreaded rendering.
