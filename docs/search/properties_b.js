@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['selection_0',['Selection',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a2c17cb9551f5d108e665c6ca74732ad2',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['selectionbrush_1',['SelectionBrush',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a57993b874fc88d1e1822eaf428865ff7',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['size_2',['Size',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html#a8f382bc8bdcab33f19c861c4bd99d5b4',1,'MuPDFCore::MuPDFStructuredTextCharacter']]],
-  ['storemaxsize_3',['StoreMaxSize',['../class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#a91a2d61cdeb597ecb06a720f0b60073b',1,'MuPDFCore::MuPDFContext']]],
-  ['storesize_4',['StoreSize',['../class_mu_p_d_f_core_1_1_mu_p_d_f_context.html#ae510f5503a854a0bfb163bc8d4485b21',1,'MuPDFCore::MuPDFContext']]],
-  ['structuredtextblocks_5',['StructuredTextBlocks',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html#a9459e8be380c45fc1a8d6c7baf38a64c',1,'MuPDFCore::MuPDFStructuredTextPage']]]
+  ['pagebackground_0',['PageBackground',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a32ecef50b26aa7c99dab390b49298b4e',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['pagenumber_1',['PageNumber',['../class_mu_p_d_f_core_1_1_mu_p_d_f_page.html#a620f0fac0d2db6973eddf87f2e2a291c',1,'MuPDFCore.MuPDFPage.PageNumber()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a10cc5f8912f189d0263b5765b3800510',1,'MuPDFCore.MuPDFRenderer.PDFRenderer.PageNumber()']]],
+  ['pages_2',['Pages',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ac691043a7c74ff979a4f80279a8e9f79',1,'MuPDFCore::MuPDFDocument']]],
+  ['pagesize_3',['PageSize',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#ad286c093a68049c0b1ba8e33e1c44103',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['pointereventhandlerstype_4',['PointerEventHandlersType',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a508408b971d2c433c8184442a5f5f439',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['prefix_5',['Prefix',['../class_mu_p_d_f_core_1_1_tesseract_language.html#a825c4fb8b8c02fe144e63de2ad52daca',1,'MuPDFCore::TesseractLanguage']]],
+  ['progress_6',['Progress',['../class_mu_p_d_f_core_1_1_o_c_r_progress_info.html#abf2eeecc2dfa45d7ce652567aca41932',1,'MuPDFCore::OCRProgressInfo']]]
 ];

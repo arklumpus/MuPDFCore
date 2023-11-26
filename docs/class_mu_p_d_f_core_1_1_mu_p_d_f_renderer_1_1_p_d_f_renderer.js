@@ -1,11 +1,6 @@
 var class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer =
 [
-    [ "PointerEventHandlers", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a0ccf2a6b6375010f521af4993d5a51ff", [
-      [ "Pan", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a0ccf2a6b6375010f521af4993d5a51ffaf6d4a17b27da35c2d90ce13801f36782", null ],
-      [ "Highlight", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a0ccf2a6b6375010f521af4993d5a51ffa0b90582f4589d84be89f5b847d4d1ed1", null ],
-      [ "PanHighlight", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a0ccf2a6b6375010f521af4993d5a51ffa73435a2b83ad16a63e6c3580c2ce9b13", null ],
-      [ "Custom", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a0ccf2a6b6375010f521af4993d5a51ffa90589c47f06eb971d548591f23c285af", null ]
-    ] ],
+    [ "PointerEventHandlers", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a0ccf2a6b6375010f521af4993d5a51ff", null ],
     [ "PDFRenderer", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a404edbc2007a610faa0c860325e716eb", null ],
     [ "Contain", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#af3695e65c81da6b9fb775127590a8ec5", null ],
     [ "Cover", "class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a72c36ddc32230db7507d158447d8eda5", null ],

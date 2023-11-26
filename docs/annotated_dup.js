@@ -2,7 +2,7 @@ var annotated_dup =
 [
     [ "Avalonia", "namespace_avalonia.html", [
       [ "Animation", "namespace_avalonia_1_1_animation.html", [
-        [ "RectTransition", "class_avalonia_1_1_animation_1_1_rect_transition.html", "class_avalonia_1_1_animation_1_1_rect_transition" ]
+        [ "RectTransition", "class_avalonia_1_1_animation_1_1_rect_transition.html", null ]
       ] ]
     ] ],
     [ "MuPDFCore", "namespace_mu_p_d_f_core.html", [

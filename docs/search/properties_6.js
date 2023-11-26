@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['language_0',['Language',['../class_mu_p_d_f_core_1_1_tesseract_language.html#ad72f06b070354601393980d454045de9',1,'MuPDFCore::TesseractLanguage']]],
-  ['length_1',['Length',['../class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html#a61da16042153125448a5829de6a4a134',1,'MuPDFCore::MuPDFPageCollection']]],
-  ['lines_2',['Lines',['../class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html#a29196f6d479c911325aa7a6a7acf306c',1,'MuPDFCore::MuPDFTextStructuredTextBlock']]]
+  ['height_0',['Height',['../struct_mu_p_d_f_core_1_1_rectangle.html#a5a06dd7d57268bdf22b5ce741b9dbf4e',1,'MuPDFCore.Rectangle.Height()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#a73d75f9e5e23910ee0a4078eec4980c9',1,'MuPDFCore.RoundedRectangle.Height()']]],
+  ['highlightbrush_1',['HighlightBrush',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#ac96346dddd3e288fb34d8ae34c48b69c',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['highlightedregions_2',['HighlightedRegions',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a78100c2074f6add556fe0b0e783af5c7',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]]
 ];

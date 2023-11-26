@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['origin_0',['Origin',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html#adcbf410d34faab1e4d146e00280ef9ab',1,'MuPDFCore::MuPDFStructuredTextCharacter']]]
+  ['language_0',['Language',['../class_mu_p_d_f_core_1_1_tesseract_language.html#ad72f06b070354601393980d454045de9',1,'MuPDFCore::TesseractLanguage']]],
+  ['length_1',['Length',['../class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html#a61da16042153125448a5829de6a4a134',1,'MuPDFCore::MuPDFPageCollection']]],
+  ['lines_2',['Lines',['../class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html#a29196f6d479c911325aa7a6a7acf306c',1,'MuPDFCore::MuPDFTextStructuredTextBlock']]]
 ];

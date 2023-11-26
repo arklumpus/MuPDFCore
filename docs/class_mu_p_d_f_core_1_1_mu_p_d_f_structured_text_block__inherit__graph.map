@@ -1,6 +1,6 @@
 <map id="MuPDFCore.MuPDFStructuredTextBlock" name="MuPDFCore.MuPDFStructuredTextBlock">
-<area shape="rect" id="node1" title="Represents a structured text block containing text or an image." alt="" coords="151,95,352,136"/>
-<area shape="rect" id="node3" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_image_structured_text_block.html" title="Represents a block containing a single image. The block contains a single line with a single characte..." alt="" coords="5,184,241,225"/>
-<area shape="rect" id="node4" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html" title="Represents a block containing multiple lines of text (typically a paragraph)." alt="" coords="266,184,493,225"/>
-<area shape="rect" id="node2" title=" " alt="" coords="142,5,361,47"/>
+<area shape="rect" id="node1" title="Represents a structured text block containing text or an image." alt="" coords="151,93,352,133"/>
+<area shape="rect" id="node3" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_image_structured_text_block.html" title="Represents a block containing a single image. The block contains a single line with a single characte..." alt="" coords="5,181,241,221"/>
+<area shape="rect" id="node4" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html" title="Represents a block containing multiple lines of text (typically a paragraph)." alt="" coords="266,181,493,221"/>
+<area shape="rect" id="node2" title=" " alt="" coords="142,5,361,45"/>
 </map>

@@ -1,5 +1,5 @@
 <map id="MuPDFCore.MuPDFPageCollection" name="MuPDFCore.MuPDFPageCollection">
-<area shape="rect" id="node1" title="A lazy collection of MuPDFPages. Each page is loaded from the document as it is requested for the fir..." alt="" coords="76,80,304,107"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,207,32"/>
-<area shape="rect" id="node3" title=" " alt="" coords="231,5,320,32"/>
+<area shape="rect" id="node1" title="A lazy collection of MuPDFPages. Each page is loaded from the document as it is requested for the fir..." alt="" coords="76,79,304,104"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,207,31"/>
+<area shape="rect" id="node3" title=" " alt="" coords="231,5,320,31"/>
 </map>

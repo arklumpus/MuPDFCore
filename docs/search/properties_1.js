@@ -1,9 +1,7 @@
 var searchData=
 [
-  ['character_0',['Character',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html#a30e8fdce0802137cab270c9a722c4f9e',1,'MuPDFCore::MuPDFStructuredTextCharacter']]],
-  ['characters_1',['Characters',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a233cea1dd53e602bafd0ace134317f7d',1,'MuPDFCore::MuPDFStructuredTextLine']]],
-  ['cliptopagebounds_2',['ClipToPageBounds',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a4e7f89e98170b4cb9e88e6bf63f2da57',1,'MuPDFCore::MuPDFDocument']]],
-  ['codepoint_3',['CodePoint',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html#aecf17f2804c689319da2df03d18fe59b',1,'MuPDFCore::MuPDFStructuredTextCharacter']]],
-  ['color_4',['Color',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html#a1f3e44ca6e663444030d7a87093336ee',1,'MuPDFCore::MuPDFStructuredTextCharacter']]],
-  ['count_5',['Count',['../class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html#afad08aeacd9f27416dd193809fc4fd75',1,'MuPDFCore.MuPDFPageCollection.Count()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html#aa69ccb2e2a5a88cbf4d39270fb32e8b6',1,'MuPDFCore.MuPDFStructuredTextPage.Count()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_block.html#a66bfcd689c26fa6e9a56090788a4058a',1,'MuPDFCore.MuPDFStructuredTextBlock.Count()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_image_structured_text_block.html#a3797a031d714664157af5a55a71fceda',1,'MuPDFCore.MuPDFImageStructuredTextBlock.Count()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html#aa087ecb3a419fa63a792d56fbdbcd8af',1,'MuPDFCore.MuPDFTextStructuredTextBlock.Count()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#ac3de50b0026368aac6c6d09aea7dc270',1,'MuPDFCore.MuPDFStructuredTextLine.Count()']]]
+  ['background_0',['Background',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a8043c46e4423cfeb51d84e2904a40c8e',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['boundingbox_1',['BoundingBox',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_block.html#aa1e181da9e5c6fca6d9809e77c7ec2eb',1,'MuPDFCore.MuPDFStructuredTextBlock.BoundingBox()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#adf8f67c74ecf5b018a6b8055320df712',1,'MuPDFCore.MuPDFStructuredTextLine.BoundingBox()']]],
+  ['boundingquad_2',['BoundingQuad',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html#aac566ccf1ed0ad8c261c8f8a9f642421',1,'MuPDFCore::MuPDFStructuredTextCharacter']]],
+  ['bounds_3',['Bounds',['../class_mu_p_d_f_core_1_1_mu_p_d_f_page.html#a7aacc4d27af15093db7cfc5cbb58b33f',1,'MuPDFCore::MuPDFPage']]]
 ];

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['zoomstep_0',['ZoomStep',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a831d88219b6638d7d2192d32b9119270',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]]
+  ['writeimage_0',['WriteImage',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ac0264349fe3b2ccc319f0978c448ff11',1,'MuPDFCore.MuPDFDocument.WriteImage(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations=true)'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ab42e60e523a9a3fefc665c6b800cb3ec',1,'MuPDFCore.MuPDFDocument.WriteImage(int pageNumber, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations=true)']]],
+  ['writeimageasjpeg_1',['WriteImageAsJPEG',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a189c3300d32338bb05c271a99ac554f8',1,'MuPDFCore.MuPDFDocument.WriteImageAsJPEG(int pageNumber, Rectangle region, double zoom, Stream outputStream, int quality, bool includeAnnotations=true)'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#aa98bf815e6ccd98faa09506c69940a07',1,'MuPDFCore.MuPDFDocument.WriteImageAsJPEG(int pageNumber, double zoom, Stream outputStream, int quality, bool includeAnnotations=true)']]]
 ];

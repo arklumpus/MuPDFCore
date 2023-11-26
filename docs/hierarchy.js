@@ -25,6 +25,9 @@ var hierarchy =
     [ "IEquatable", null, [
       [ "MuPDFCore.MuPDFStructuredTextAddress", "struct_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address.html", null ]
     ] ],
+    [ "InterpolatingTransitionBase", null, [
+      [ "Avalonia.Animation.RectTransition", "class_avalonia_1_1_animation_1_1_rect_transition.html", null ]
+    ] ],
     [ "IReadOnlyList", null, [
       [ "MuPDFCore.MuPDFPageCollection", "class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html", null ],
       [ "MuPDFCore.MuPDFStructuredTextBlock", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_block.html", [
@@ -46,8 +49,5 @@ var hierarchy =
     [ "MuPDFCore.RoundedSize", "struct_mu_p_d_f_core_1_1_rounded_size.html", null ],
     [ "MuPDFCore.Size", "struct_mu_p_d_f_core_1_1_size.html", null ],
     [ "MuPDFCore.TesseractLanguage", "class_mu_p_d_f_core_1_1_tesseract_language.html", null ],
-    [ "MuPDFCore.RenderProgress.ThreadRenderProgress", "struct_mu_p_d_f_core_1_1_render_progress_1_1_thread_render_progress.html", null ],
-    [ "Transition", null, [
-      [ "Avalonia.Animation.RectTransition", "class_avalonia_1_1_animation_1_1_rect_transition.html", null ]
-    ] ]
+    [ "MuPDFCore.RenderProgress.ThreadRenderProgress", "struct_mu_p_d_f_core_1_1_render_progress_1_1_thread_render_progress.html", null ]
 ];

@@ -1,9 +1,6 @@
 var class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line =
 [
-    [ "WritingModes", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a7c1d4154530c9ec4e6e1189d9f2a58bd", [
-      [ "Horizontal", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a7c1d4154530c9ec4e6e1189d9f2a58bdac1b5fa03ecdb95d4a45dd1c40b02527f", null ],
-      [ "Vertical", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a7c1d4154530c9ec4e6e1189d9f2a58bda06ce2a25e5d12c166a36f654dbea6012", null ]
-    ] ],
+    [ "WritingModes", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a7c1d4154530c9ec4e6e1189d9f2a58bd", null ],
     [ "GetEnumerator", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a8004d817c92e49ab868ba942fc4a0d14", null ],
     [ "ToString", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#ab20532e278f0c4d2a7652755f4d29a02", null ],
     [ "BoundingBox", "class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#adf8f67c74ecf5b018a6b8055320df712", null ],
