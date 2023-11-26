@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
-    <PackageId>MuPDFCore.NativeAssets.Linux-musl-x64</PackageId>
+    <PackageId>MuPDFCore.NativeAssets.Linux-musl-arm64</PackageId>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RuntimeIdentifiers>linux-musl-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>linux-musl-arm64</RuntimeIdentifiers>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Description>This package provides linux-musl-x64 native assets for MuPDFCore, a set of multiplatform .NET Core bindings for MuPDF.</Description>
-    <Version>1.8.0-a18</Version>
+    <Description>This package provides linux-musl-arm64 native assets for MuPDFCore, a set of multiplatform .NET Core bindings for MuPDF.</Description>
+    <Version>1.8.0</Version>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Giorgio Bianchini</Authors>
     <Company>University of Bristol</Company>
@@ -17,12 +17,14 @@
     <RepositoryUrl>https://github.com/arklumpus/MuPDFCore</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageOutputPath>..\NuGetPackages</PackageOutputPath>
+	<SignAssembly>True</SignAssembly>
+	<AssemblyOriginatorKeyFile>../../strong_name_key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\native\out\build\linux-musl-x64\MuPDFWrapper\libMuPDFWrapper.so">
+    <Content Include="..\..\native\out\build\linux-musl-arm64\MuPDFWrapper\libMuPDFWrapper.so">
       <Pack>true</Pack>
-      <PackagePath>runtimes/linux-musl-x64/native/</PackagePath>
+      <PackagePath>runtimes/linux-musl-arm64/native/MuPDFWrapper.so</PackagePath>
     </Content>
   </ItemGroup>
 
@@ -31,6 +33,5 @@
       <Pack>true</Pack>
       <PackagePath>.</PackagePath>
     </None>
-  </ItemGroup>
-  
+  </ItemGroup>  
 </Project>

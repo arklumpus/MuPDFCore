@@ -17,23 +17,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuPDFCoreTestHost", "MuPDFC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MuPDFCore.NativeAssets", "MuPDFCore.NativeAssets", "{5B21491A-31B8-4D9F-9ABF-EDAB1D1C9486}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win-x64", "MuPDFCore.NativeAssets\Win-x64\Win-x64.csproj", "{97BE2902-FA3A-4811-9406-B07ADB985F87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuPDFCore.NativeAssets.Win-x64", "MuPDFCore.NativeAssets\Win-x64\MuPDFCore.NativeAssets.Win-x64.csproj", "{97BE2902-FA3A-4811-9406-B07ADB985F87}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linux-arm64", "MuPDFCore.NativeAssets\Linux-arm64\Linux-arm64.csproj", "{C50D1F43-3B73-4D5E-900F-9342729595B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuPDFCore.NativeAssets.Linux-arm64", "MuPDFCore.NativeAssets\Linux-arm64\MuPDFCore.NativeAssets.Linux-arm64.csproj", "{C50D1F43-3B73-4D5E-900F-9342729595B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linux-musl-x64", "MuPDFCore.NativeAssets\Linux-musl-x64\Linux-musl-x64.csproj", "{791F368E-F5B9-40FF-9DDE-D6D00FDF5D63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuPDFCore.NativeAssets.Linux-musl-x64", "MuPDFCore.NativeAssets\Linux-musl-x64\MuPDFCore.NativeAssets.Linux-musl-x64.csproj", "{791F368E-F5B9-40FF-9DDE-D6D00FDF5D63}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linux-x64", "MuPDFCore.NativeAssets\Linux-x64\Linux-x64.csproj", "{2D5597FD-B6B4-4827-A455-84B3F2FE91C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuPDFCore.NativeAssets.Linux-x64", "MuPDFCore.NativeAssets\Linux-x64\MuPDFCore.NativeAssets.Linux-x64.csproj", "{2D5597FD-B6B4-4827-A455-84B3F2FE91C7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mac-arm64", "MuPDFCore.NativeAssets\Mac-arm64\Mac-arm64.csproj", "{67BF5DBB-9D0F-4924-A743-6B7EEA926BAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuPDFCore.NativeAssets.Mac-arm64", "MuPDFCore.NativeAssets\Mac-arm64\MuPDFCore.NativeAssets.Mac-arm64.csproj", "{67BF5DBB-9D0F-4924-A743-6B7EEA926BAD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mac-x64", "MuPDFCore.NativeAssets\Mac-x64\Mac-x64.csproj", "{CA705DE9-8EAB-48A0-A89C-9562C6F0F92B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuPDFCore.NativeAssets.Mac-x64", "MuPDFCore.NativeAssets\Mac-x64\MuPDFCore.NativeAssets.Mac-x64.csproj", "{CA705DE9-8EAB-48A0-A89C-9562C6F0F92B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Win-arm64", "MuPDFCore.NativeAssets\Win-arm64\Win-arm64.csproj", "{A9CC7C86-0963-4B47-9435-135FEBD7D119}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuPDFCore.NativeAssets.Win-arm64", "MuPDFCore.NativeAssets\Win-arm64\MuPDFCore.NativeAssets.Win-arm64.csproj", "{A9CC7C86-0963-4B47-9435-135FEBD7D119}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Win-x86", "MuPDFCore.NativeAssets\Win-x86\Win-x86.csproj", "{6F404B1C-4A68-463A-9E36-843570F0B56D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuPDFCore.NativeAssets.Win-x86", "MuPDFCore.NativeAssets\Win-x86\MuPDFCore.NativeAssets.Win-x86.csproj", "{6F404B1C-4A68-463A-9E36-843570F0B56D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linux-musl-arm64", "MuPDFCore.NativeAssets\Linux-musl-arm64\Linux-musl-arm64.csproj", "{8BC2E52F-71E1-4BAA-9DCD-90A3AD707B61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuPDFCore.NativeAssets.Linux-musl-arm64", "MuPDFCore.NativeAssets\Linux-musl-arm64\MuPDFCore.NativeAssets.Linux-musl-arm64.csproj", "{8BC2E52F-71E1-4BAA-9DCD-90A3AD707B61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
