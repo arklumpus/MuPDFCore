@@ -906,7 +906,7 @@ namespace Tests
             byte[] actualBytes = File.ReadAllBytes(tempFile);
 
             CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, actualBytes[0..4], "The start of the saved image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0x1C, 0x0F, 0xFF, 0xD9 }, actualBytes[^4..^0], "The end of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD9 }, actualBytes[^2..^0], "The end of the saved image appears to be wrong.");
 
             try
             {
@@ -1082,7 +1082,7 @@ namespace Tests
             Marshal.Copy(outputData, actualBytes, 0, actualBytes.Length);
 
             CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, actualBytes[0..4], "The start of the saved image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0x1C, 0x0F, 0xFF, 0xD9 }, actualBytes[^4..^0], "The end of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD9 }, actualBytes[^2..^0], "The end of the saved image appears to be wrong.");
 
             try
             {

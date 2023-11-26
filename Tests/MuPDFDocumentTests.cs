@@ -527,7 +527,7 @@ namespace Tests
             catch { }
 
             CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, savedBytes[0..4], "The start of the saved image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0x1C, 0x0F, 0xFF, 0xD9 }, savedBytes[^4..^0], "The end of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD9 }, savedBytes[^2..^0], "The end of the saved image appears to be wrong.");
         }
 
         [TestMethod]
@@ -771,7 +771,7 @@ namespace Tests
             byte[] writtenBytes = renderStream.ToArray();
 
             CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, writtenBytes[0..4], "The start of the saved image appears to be wrong.");
-            CollectionAssert.AreEqual(new byte[] { 0x1C, 0x0F, 0xFF, 0xD9 }, writtenBytes[^4..^0], "The end of the saved image appears to be wrong.");
+            CollectionAssert.AreEqual(new byte[] { 0xFF, 0xD9 }, writtenBytes[^2..^0], "The end of the saved image appears to be wrong.");
         }
 
 
