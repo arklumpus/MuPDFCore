@@ -624,7 +624,7 @@ namespace MuPDFCore
         /// Sets the document layout for reflowable document types (e.g., HTML, MOBI), so that the document is rendered to a single
         /// page, as tall as necessary. Does not have any effect for documents with a fixed layout (e.g., PDF).
         /// </summary>
-        /// <param name="width">The width of each page, in points. Must be &gt; 0.</param>
+        /// <param name="width">The width of the page, in points. Must be &gt; 0.</param>
         /// <param name="em">The default font size, in points.</param>
         public void LayoutSinglePage(float width, float em)
         {
