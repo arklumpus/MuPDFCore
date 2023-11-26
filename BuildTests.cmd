@@ -141,7 +141,7 @@ echo.
 echo Building with target [94mlinux-musl-arm64[0m
 
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-musl-arm64.pubxml /p:PlatformTarget=arm64
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-musl-arm64.pubxml
 cd ..
 
 echo.
