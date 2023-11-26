@@ -53,7 +53,7 @@ namespace MuPDFCore
 
         /// <summary>
         /// Sets the current anti-aliasing level. Changing this value will affect both
-        /// the <see cref="TextAntiAliasing"/> and the <see cref="GraphicsAntiAliasing"/>;
+        /// the <see cref="TextAntiAliasing"/> and the <see cref="GraphicsAntiAliasing"/>.
         /// </summary>
         public int AntiAliasing
         {
