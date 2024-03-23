@@ -1303,7 +1303,7 @@ namespace MuPDFCore.MuPDFRenderer
             //Take into account DPI scaling.
             double scale = (VisualRoot as ILayoutRoot)?.LayoutScaling ?? 1;
 
-            context.FillRectangle(Background, this.Bounds);
+            context.FillRectangle(Background, new Rect(this.Bounds.Size));
 
             //Page boundaries (used to draw the page background).
             double minX = Math.Max(PageSize.Left, DisplayArea.Left);
