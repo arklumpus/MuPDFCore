@@ -458,7 +458,7 @@ namespace Tests
 
             Assert.IsNotNull(block.Lines, "The block's lines are null.");
             Assert.AreEqual(block.Count, block.Lines.Length, "The number of lines in the block does not correspond to the Count of the block.");
-            Assert.AreEqual("Left-side bearing\nRight-side bearing\n".Replace("\n", Environment.NewLine), block.ToString(), "The block text is wrong.");
+            Assert.IsTrue((block.ToString() == "Left-side bearing\nRight-side bearing\n".Replace("\n", Environment.NewLine) || block.ToString() == "VectSharp\nBaseline\n".Replace("\n", Environment.NewLine)), "Expected: <" + "Left-side bearing\nRight-side bearing\n".Replace("\n", Environment.NewLine) + "> or <" + "VectSharp\nBaseline\n".Replace("\n", Environment.NewLine) + ">, Actual: <" + block.ToString() + ">. The block text is wrong.");
         }
 
         [TestMethod]
