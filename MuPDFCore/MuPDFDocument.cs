@@ -127,6 +127,24 @@ namespace MuPDFCore
         /// </summary>
         public DocumentRestrictions Restrictions { get; private set; }
 
+        private MuPDFOutline _outline = null;
+        /// <summary>
+        /// The document outline (table of contents). If this document does not have an outline, this object will be
+        /// empty, but not null. The outline is loaded from the document at the first access.
+        /// </summary>
+        public MuPDFOutline Outline
+        {
+            get
+            {
+                if (this._outline == null)
+                {
+                    this._outline = new MuPDFOutline(this.OwnerContext, this);
+                }
+
+                return this._outline;
+            }
+        }
+
         /// <summary>
         /// Create a new <see cref="MuPDFDocument"/> from data bytes accessible through the specified pointer.
         /// </summary>

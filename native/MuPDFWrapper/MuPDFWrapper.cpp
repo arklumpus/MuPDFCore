@@ -158,6 +158,16 @@ void unlock_mutex(void* user, int lock)
 
 extern "C"
 {
+	DLL_PUBLIC void DisposeOutline(fz_context* ctx, fz_outline* outline)
+	{
+		fz_drop_outline(ctx, outline);
+	}
+
+	DLL_PUBLIC fz_outline* LoadOutline(fz_context* ctx, fz_document* doc)
+	{
+		return fz_load_outline(ctx, doc);
+	}
+
 	DLL_PUBLIC int GetPermissions(fz_context* ctx, fz_document* doc)
 	{
 		int tbr = 0;

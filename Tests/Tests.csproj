@@ -11,6 +11,7 @@
     <None Remove="Data\Annotation.pdf" />
     <None Remove="Data\eng.traineddata" />
     <None Remove="Data\LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢.pdf" />
+    <None Remove="Data\mupdf_explored.pdf" />
     <None Remove="Data\Sample-owner.pdf" />
     <None Remove="Data\Sample-user-owner.pdf" />
     <None Remove="Data\Sample-user.pdf" />
@@ -29,6 +30,7 @@
     <EmbeddedResource Include="Data\LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Data\mupdf_explored.pdf" />
     <EmbeddedResource Include="Data\Sample-owner.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -54,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MuPDFCore" Version="1.9.0-a1" />
+    <PackageReference Include="MuPDFCore" Version="1.9.0-a2" />
   </ItemGroup>
 
 </Project>

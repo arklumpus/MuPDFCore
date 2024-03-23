@@ -133,6 +133,20 @@ struct fz_store
 extern "C"
 {
 	/// <summary>
+	/// Frees memory allocated by a document outline (table of contents).
+	/// </summary>
+	/// <param name="ctx"/>A context to hold the exception stack and the cached resources.</param>
+	/// <param name="outline"/>The document outline whose allocated memory should be released.</param>
+	DLL_PUBLIC void DisposeOutline(fz_context* ctx, fz_outline* outline);
+
+	/// <summary>
+	/// Loads the document outline (table of contents).
+	/// </summary>
+	/// <param name="ctx"/>A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc"/>The document whose outline should be loaded.</param>
+	DLL_PUBLIC fz_outline* LoadOutline(fz_context* ctx, fz_document* doc);
+
+	/// <summary>
 	/// Returns the current permissions for the document. Note that these are not actually enforced.
 	/// </summary>
 	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>

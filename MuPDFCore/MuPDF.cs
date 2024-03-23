@@ -1519,5 +1519,21 @@ namespace MuPDFCore
         /// <returns>An integer with bit 0 set if the document can be printed, bit 1 set if it can be copied, bit 2 set if it can be edited, and bit 3 set if it can be annotated.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int GetPermissions(IntPtr ctx, IntPtr doc);
+
+        /// <summary>
+        /// Loads the document outline (table of contents).
+        /// </summary>
+        /// <param name="ctx"/>A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc"/>The document whose outline should be loaded.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern IntPtr LoadOutline(IntPtr ctx, IntPtr doc);
+
+        /// <summary>
+        /// Frees memory allocated by a document outline (table of contents).
+        /// </summary>
+        /// <param name="ctx"/>A context to hold the exception stack and the cached resources.</param>
+        /// <param name="outline"/>The document outline whose allocated memory should be released.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void DisposeOutline(IntPtr ctx, IntPtr outline);
     }
 }

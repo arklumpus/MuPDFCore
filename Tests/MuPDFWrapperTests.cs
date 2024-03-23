@@ -303,10 +303,10 @@ namespace Tests
             catch { }
         }
 
-        private static (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) CreateSampleDocument()
+        private static (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) CreateSampleDocument(string resource = "Tests.Data.Sample.pdf")
         {
             IntPtr nativeContext = IntPtr.Zero;
-            Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(resource);
             IntPtr nativeDocument = IntPtr.Zero;
             IntPtr nativeStream = IntPtr.Zero;
             int pageCount = -1;
@@ -2074,6 +2074,50 @@ namespace Tests
                 _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
                 _ = NativeMethods.DisposePage(nativeContext, nativePage);
                 _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void LoadEmptyOutline()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument();
+
+            IntPtr outline = NativeMethods.LoadOutline(nativeContext, nativeDocument);
+
+            Assert.AreEqual(IntPtr.Zero, outline, "Loading the outline from a document without an outline did not return NULL.");
+
+            try
+            {
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                dataHandle.Free();
+                ms.Dispose();
+
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void LoadOutline()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument("Tests.Data.mupdf_explored.pdf");
+
+            IntPtr outline = NativeMethods.LoadOutline(nativeContext, nativeDocument);
+
+            Assert.AreNotEqual(IntPtr.Zero, outline, "Loading the outline from a document with an outline returned NULL.");
+
+            NativeMethods.DisposeOutline(nativeContext, outline);
+
+            try
+            {
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                dataHandle.Free();
+                ms.Dispose();
+
                 _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
                 _ = NativeMethods.DisposeContext(nativeContext);
             }
