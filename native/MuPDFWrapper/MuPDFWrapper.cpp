@@ -726,7 +726,7 @@ extern "C"
 				fz_write_pixmap_as_psd(ctx, out, pix);
 				break;
 			case OUT_JPEG:
-				fz_write_pixmap_as_jpeg(ctx, out, pix, quality);
+				fz_write_pixmap_as_jpeg(ctx, out, pix, quality, 1);
 				break;
 			}
 		}

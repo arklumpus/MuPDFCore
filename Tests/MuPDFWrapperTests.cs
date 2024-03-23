@@ -685,13 +685,13 @@ namespace Tests
 
             ulong preSize = NativeMethods.GetCurrentStoreSize(nativeContext);
 
-            int result = NativeMethods.ShrinkStore(nativeContext, (uint)50);
+            int result = NativeMethods.ShrinkStore(nativeContext, (uint)75);
             Assert.AreEqual(1, result, "ShrinkStore returned the wrong exit code.");
 
             ulong postSize = NativeMethods.GetCurrentStoreSize(nativeContext);
 
             Assert.IsTrue(postSize <= preSize, "The store has not been shrunk.");
-            Assert.IsTrue(postSize <= Math.Ceiling(preSize * 0.5), "The store has not been shrunk by the required amount.");
+            Assert.IsTrue(postSize <= Math.Ceiling(preSize * 0.75), "The store has not been shrunk by the required amount.");
 
             try
             {

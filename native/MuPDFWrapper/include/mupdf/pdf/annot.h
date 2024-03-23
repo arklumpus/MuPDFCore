@@ -429,6 +429,10 @@ int pdf_annot_has_interior_color(fz_context *ctx, pdf_annot *annot);
 int pdf_annot_has_line_ending_styles(fz_context *ctx, pdf_annot *annot);
 
 /*
+	Check to see if an annotation has quadding.
+*/
+int pdf_annot_has_quadding(fz_context *ctx, pdf_annot *annot);
+/*
 	Check to see if an annotation has a border.
 */
 int pdf_annot_has_border(fz_context *ctx, pdf_annot *annot);
@@ -465,6 +469,7 @@ fz_rect pdf_annot_rect(fz_context *ctx, pdf_annot *annot);
 
 /*
 	Retrieve the annotation border line width in points.
+	DEPRECATED: Use pdf_annot_border_width instead.
 */
 float pdf_annot_border(fz_context *ctx, pdf_annot *annot);
 
@@ -577,7 +582,8 @@ void pdf_set_annot_stamp_image(fz_context *ctx, pdf_annot *annot, fz_image *imag
 void pdf_set_annot_rect(fz_context *ctx, pdf_annot *annot, fz_rect rect);
 
 /*
-	Set the border width for an annotation, in points and remove any border effect.
+	Set the border width for an annotation, in points.
+	DEPRECATED: Use pdf_set_annot_border_width instead.
 */
 void pdf_set_annot_border(fz_context *ctx, pdf_annot *annot, float width);
 
@@ -738,7 +744,21 @@ void pdf_print_default_appearance(fz_context *ctx, char *buf, int nbuf, const ch
 void pdf_annot_default_appearance(fz_context *ctx, pdf_annot *annot, const char **font, float *size, int *n, float color[4]);
 void pdf_set_annot_default_appearance(fz_context *ctx, pdf_annot *annot, const char *font, float size, int n, const float *color);
 
+/*
+ * Request that an appearance stream should be generated for an annotation if none is present.
+ * It will be created in future calls to pdf_update_annot or pdf_update_page.
+ */
+void pdf_annot_request_synthesis(fz_context *ctx, pdf_annot *annot);
+
+/*
+ * Request that an appearance stream should be re-generated for an annotation
+ * the next time pdf_annot_update or pdf_page_update is called.
+ * You usually won't need to call this, because changing any annotation attributes
+ * via the pdf_annot functions will do so automatically.
+ * It will be created in future calls to pdf_update_annot or pdf_update_page.
+ */
 void pdf_annot_request_resynthesis(fz_context *ctx, pdf_annot *annot);
+
 int pdf_annot_needs_resynthesis(fz_context *ctx, pdf_annot *annot);
 void pdf_set_annot_resynthesised(fz_context *ctx, pdf_annot *annot);
 void pdf_dirty_annot(fz_context *ctx, pdf_annot *annot);

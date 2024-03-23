@@ -213,14 +213,14 @@ namespace Tests
 
             MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            MuPDFStructuredTextAddress address1 = new MuPDFStructuredTextAddress(1, 2, 3);
-            MuPDFStructuredTextAddress address2 = new MuPDFStructuredTextAddress(1, 2, 16);
-            MuPDFStructuredTextAddress address3 = new MuPDFStructuredTextAddress(1, 3, 21);
+            MuPDFStructuredTextAddress address1 = new MuPDFStructuredTextAddress(1, 0, 3);
+            MuPDFStructuredTextAddress address2 = new MuPDFStructuredTextAddress(20, 0, 16);
+            MuPDFStructuredTextAddress address3 = new MuPDFStructuredTextAddress(4, 0, 8);
             MuPDFStructuredTextAddress address4 = new MuPDFStructuredTextAddress(sTextPage.Count - 1, sTextPage[^1].Count - 1, sTextPage[^1][^1].Count - 1);
 
-            MuPDFStructuredTextAddress address1Iexp = new MuPDFStructuredTextAddress(1, 2, 4);
-            MuPDFStructuredTextAddress address2Iexp = new MuPDFStructuredTextAddress(1, 3, 0);
-            MuPDFStructuredTextAddress address3Iexp = new MuPDFStructuredTextAddress(2, 0, 0);
+            MuPDFStructuredTextAddress address1Iexp = new MuPDFStructuredTextAddress(1, 0, 4);
+            MuPDFStructuredTextAddress address2Iexp = new MuPDFStructuredTextAddress(20, 1, 0);
+            MuPDFStructuredTextAddress address3Iexp = new MuPDFStructuredTextAddress(5, 0, 0);
 
             MuPDFStructuredTextAddress? address1I = address1.Increment(sTextPage);
             MuPDFStructuredTextAddress? address2I = address2.Increment(sTextPage);
@@ -352,14 +352,14 @@ namespace Tests
 
             MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            IEnumerable<Quad> quads = sTextPage.GetHighlightQuads(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(0, 1, 2), new MuPDFStructuredTextAddress(0, 1, 9)), true);
+            IEnumerable<Quad> quads = sTextPage.GetHighlightQuads(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(1, 0, 9)), true);
             Assert.AreEqual(8, quads.Count(), "The highlight quads are in the wrong number.");
 
-            quads = sTextPage.GetHighlightQuads(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(0, 1, 2), new MuPDFStructuredTextAddress(0, 3, 2)), true);
+            quads = sTextPage.GetHighlightQuads(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(3, 0, 2)), true);
             Assert.AreEqual(12, quads.Count(), "The highlight quads are in the wrong number.");
 
-            quads = sTextPage.GetHighlightQuads(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(0, 1, 2), new MuPDFStructuredTextAddress(2, 0, 2)), true);
-            Assert.AreEqual(14, quads.Count(), "The highlight quads are in the wrong number.");
+            quads = sTextPage.GetHighlightQuads(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(4, 0, 2)), true);
+            Assert.AreEqual(13, quads.Count(), "The highlight quads are in the wrong number.");
         }
 
         [TestMethod]
@@ -374,13 +374,13 @@ namespace Tests
 
             MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            string text = sTextPage.GetText(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(0, 1, 2), new MuPDFStructuredTextAddress(0, 1, 9)));
+            string text = sTextPage.GetText(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(1, 0, 9)));
             Assert.AreEqual("mes-Bold", text, "The extracted text is wrong.");
 
-            text = sTextPage.GetText(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(0, 1, 2), new MuPDFStructuredTextAddress(0, 3, 2)));
+            text = sTextPage.GetText(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(3, 0, 2)));
             Assert.AreEqual("mes-Bold\nTimes-Italic\nTim".Replace("\n", Environment.NewLine), text, "The extracted text is wrong.");
 
-            text = sTextPage.GetText(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(0, 1, 2), new MuPDFStructuredTextAddress(2, 0, 2)));
+            text = sTextPage.GetText(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(8, 0, 2)));
             Assert.AreEqual("mes-Bold\nTimes-Italic\nTimes-BoldItalic\nHelvetica\nHelvetica-Bold\nHelvetica-Oblique\nHelvetica-BoldOblique\nCou".Replace("\n", Environment.NewLine), text, "The extracted text is wrong.");
         }
 
@@ -415,7 +415,7 @@ namespace Tests
 
             MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            MuPDFStructuredTextBlock block = sTextPage[0];
+            MuPDFStructuredTextBlock block = sTextPage[20];
 
             Assert.IsNotNull(block, "The block is null.");
             Assert.AreEqual(MuPDFStructuredTextBlock.Types.Text, block.Type, "The block type is wrong.");
@@ -423,7 +423,7 @@ namespace Tests
             Assert.IsTrue(block.BoundingBox.Y0 >= 0, "The block's top coordinate is out of range.");
             Assert.IsTrue(block.BoundingBox.X1 >= block.BoundingBox.X0, "The block's right coordinate is out of range.");
             Assert.IsTrue(block.BoundingBox.Y1 >= block.BoundingBox.Y0, "The block's bottom coordinate is out of range.");
-            Assert.AreEqual(4, block.Count, "The number of lines in the block is wrong.");
+            Assert.AreEqual(2, block.Count, "The number of lines in the block is wrong.");
 
             for (int i = 0; i < block.Count; i++)
             {
@@ -439,7 +439,7 @@ namespace Tests
                 index++;
             }
 
-            Assert.AreEqual(4, index, "The number of lines enumerated in the block is wrong.");
+            Assert.AreEqual(2, index, "The number of lines enumerated in the block is wrong.");
         }
 
         [TestMethod]
@@ -454,11 +454,11 @@ namespace Tests
 
             MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            MuPDFTextStructuredTextBlock block = (MuPDFTextStructuredTextBlock)sTextPage[0];
+            MuPDFTextStructuredTextBlock block = (MuPDFTextStructuredTextBlock)sTextPage[20];
 
             Assert.IsNotNull(block.Lines, "The block's lines are null.");
             Assert.AreEqual(block.Count, block.Lines.Length, "The number of lines in the block does not correspond to the Count of the block.");
-            Assert.AreEqual("Times-Roman\nTimes-Bold\nTimes-Italic\nTimes-BoldItalic\n".Replace("\n", Environment.NewLine), block.ToString(), "The block text is wrong.");
+            Assert.AreEqual("Left-side bearing\nRight-side bearing\n".Replace("\n", Environment.NewLine), block.ToString(), "The block text is wrong.");
         }
 
         [TestMethod]
@@ -473,7 +473,7 @@ namespace Tests
 
             MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            MuPDFStructuredTextLine line = sTextPage[1][2];
+            MuPDFStructuredTextLine line = sTextPage[6][0];
 
             Assert.IsNotNull(line, "The line is null.");
             Assert.AreEqual(MuPDFStructuredTextLine.WritingModes.Horizontal, line.WritingMode, "The line's writing mode is wrong.");
@@ -516,7 +516,7 @@ namespace Tests
 
             MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            MuPDFStructuredTextLine line = sTextPage[1][2];
+            MuPDFStructuredTextLine line = sTextPage[6][0];
 
             Assert.IsNotNull(line.Characters, "The line's characters are null.");
             Assert.AreEqual(line.Count, line.Characters.Length, "The number of characters in the line does not correspond to the Count of the line.");
@@ -536,7 +536,7 @@ namespace Tests
 
             MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            MuPDFStructuredTextCharacter chr = sTextPage[1][1][8];
+            MuPDFStructuredTextCharacter chr = sTextPage[5][0][8];
 
             Assert.IsNotNull(chr, "The character is null.");
 

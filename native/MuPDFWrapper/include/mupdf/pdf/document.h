@@ -403,6 +403,7 @@ struct pdf_document
 	fz_stream *file;
 
 	int version;
+	int is_fdf;
 	int64_t startxref;
 	int64_t file_size;
 	pdf_crypt *crypt;
@@ -715,6 +716,8 @@ typedef struct
 	char upwd_utf8[128]; /* User password. */
 	int do_snapshot; /* Do not use directly. Use the snapshot functions. */
 	int do_preserve_metadata; /* When cleaning, preserve metadata unchanged. */
+	int do_use_objstms; /* Use objstms if possible */
+	int compression_effort; /* 0 for default. 100 = max, 1 = min. */
 } pdf_write_options;
 
 FZ_DATA extern const pdf_write_options pdf_default_write_options;
@@ -803,6 +806,17 @@ void pdf_read_journal(fz_context *ctx, pdf_document *doc, fz_stream *stm);
 	of these objects will load them back into memory again.
 */
 void pdf_minimize_document(fz_context *ctx, pdf_document *doc);
+
+/*
+	Map a pdf object representing a structure tag through
+	an optional role_map and convert to an fz_structure.
+*/
+fz_structure pdf_structure_type(fz_context *ctx, pdf_obj *role_map, pdf_obj *tag);
+
+/*
+	Run the document structure to a device.
+*/
+void pdf_run_document_structure(fz_context *ctx, pdf_document *doc, fz_device *dev, fz_cookie *cookie);
 
 
 #endif
