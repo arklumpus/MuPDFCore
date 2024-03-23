@@ -10,10 +10,10 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.0.5" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
-    <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.5" />
-    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.8.0" />
+    <PackageReference Include="Avalonia" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.10" />
+    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.9.0-a3" />
     <PackageReference Include="VectSharp.PDF" Version="2.7.0" />
   </ItemGroup>
 </Project>

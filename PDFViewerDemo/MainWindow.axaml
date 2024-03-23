@@ -10,153 +10,170 @@
         x:Class="PDFViewerDemo.MainWindow"
         Title="PDF Viewer" Opened="WindowOpened" FontSize="16" Name="ParentWindow"
         Closed="WindowClosed" KeyDown="WindowKeyDown">
-  <Grid Margin="10">
-    <Grid.RowDefinitions>
-      <RowDefinition Height="1*" />
-      <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="1*" />
-      <ColumnDefinition Width="Auto" />
-    </Grid.ColumnDefinitions>
+	<Grid Margin="10" Name="MainGrid">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="200" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="1*" MinWidth="100" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
 
-    <!--The PDF renderer.-->
-    <mupdf:PDFRenderer Name="MuPDFRenderer" Background="#F0F0F0" PageBackground="White" PropertyChanged="RendererPropertyChanged" ZoomIncrement="1.75" ClipToBounds="True">
-      <!--Fancy transition so that we can zoom or pan around smoothly. Disabling this would result in better performance, though.-->
-      <mupdf:PDFRenderer.Transitions>
-        <Transitions>
-          <anim:RectTransition Property="DisplayArea" Duration="0:0:0:0.1" />
-        </Transitions>
-      </mupdf:PDFRenderer.Transitions>
-    </mupdf:PDFRenderer>
+		<!--Container for the document outline-->
+		<Grid Grid.Column="0" Margin="0, 0, 0, 0" Name="OutlineGrid">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="1*"/>
+			</Grid.RowDefinitions>
+			<TextBlock FontWeight="Bold">Outline</TextBlock>
+			<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
+				<StackPanel Name="OutlineContainer">
+				</StackPanel>
+			</ScrollViewer>
+		</Grid>
 
-    <!--Various controls-->
-    <ScrollViewer Grid.Column="1" Margin="10, 0, 0, 0" Padding="0,0,10,0" VerticalScrollBarVisibility="Visible">
-      <Grid Name="ControlsGrid">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="1*" />
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+		<GridSplitter Grid.Column="1" Width="10" Background="White" Name="OutlineGridSplitter"></GridSplitter>
 
-        <Button Grid.Row="0" Margin="0, 5, 0, 5" Click="OpenFileClicked">Open file...</Button>
+		<!--The PDF renderer.-->
+		<mupdf:PDFRenderer Name="MuPDFRenderer" Background="#F0F0F0" PageBackground="White" PropertyChanged="RendererPropertyChanged" ZoomIncrement="1.75" ClipToBounds="True" Grid.Column="2">
+			<!--Fancy transition so that we can zoom or pan around smoothly. Disabling this would result in better performance, though.-->
+			<mupdf:PDFRenderer.Transitions>
+				<Transitions>
+					<anim:RectTransition Property="DisplayArea" Duration="0:0:0:0.1" />
+				</Transitions>
+			</mupdf:PDFRenderer.Transitions>
+		</mupdf:PDFRenderer>
 
-        <!--Show the current page number. Bindings don't work anymore since Avalonia 11, furthermore updating it requires
+		<!--Various controls-->
+		<ScrollViewer Grid.Column="3" Margin="10, 0, 0, 0" Padding="0,0,10,0" VerticalScrollBarVisibility="Visible">
+			<Grid Name="ControlsGrid">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="1*" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+
+				<Button Grid.Row="0" Margin="0, 5, 0, 5" Click="OpenFileClicked">Open file...</Button>
+
+				<!--Show the current page number. Bindings don't work anymore since Avalonia 11, furthermore updating it requires
         a re-initialisation of the viewer, which is performed by the event handler.-->
-        <Grid Grid.Row="1" Margin="0, 5, 0, 5">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-          </Grid.ColumnDefinitions>
-          <TextBlock VerticalAlignment="Center" FontWeight="Bold">Page:</TextBlock>
-          <NumericUpDown Name="PageNumberBox" Grid.Column="1" FormatString="0" Minimum="1" Maximum="{Binding #ParentWindow.MaxPageNumber}" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" ValueChanged="PageNumberChanged"></NumericUpDown>
-          <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="10, 0, 5, 0">/</TextBlock>
-          <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0, 0, 0, 0" Text="{Binding #ParentWindow.MaxPageNumber}"></TextBlock>
-        </Grid>
+				<Grid Grid.Row="1" Margin="0, 5, 0, 5">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="1*"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<TextBlock VerticalAlignment="Center" FontWeight="Bold">Page:</TextBlock>
+					<NumericUpDown Name="PageNumberBox" Grid.Column="1" FormatString="0" Minimum="1" Maximum="{Binding #ParentWindow.MaxPageNumber}" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" ValueChanged="PageNumberChanged"></NumericUpDown>
+					<TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="10, 0, 5, 0">/</TextBlock>
+					<TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="0, 0, 0, 0" Text="{Binding #ParentWindow.MaxPageNumber}"></TextBlock>
+				</Grid>
 
-        <!--Navigator showing a thumbnail of the page and a rectangle representing the current DisplayArea.-->
-        <Canvas Grid.Row="2" Height="200" Width="200" ClipToBounds="True" VerticalAlignment="Top" Background="#F0F0F0" Name="NavigatorCanvas" PointerPressed="NavigatorPointerPressed" PointerReleased="NavigatorPointerReleased" PointerMoved="NavigatorPointerMoved">
-          <Canvas Name="PageAreaCanvas" Width="100" Height="100" Background="White">
-            <Image Name="PageAreaImage" Width="100" Height="100"></Image>
-          </Canvas>
-          <Rectangle Fill="#4077AADD" Stroke="#77AADD" StrokeThickness="2" Name="DisplayAreaRectangle" Width="50" Height="50"></Rectangle>
-        </Canvas>
+				<!--Navigator showing a thumbnail of the page and a rectangle representing the current DisplayArea.-->
+				<Canvas Grid.Row="2" Height="200" Width="200" ClipToBounds="True" VerticalAlignment="Top" Background="#F0F0F0" Name="NavigatorCanvas" PointerPressed="NavigatorPointerPressed" PointerReleased="NavigatorPointerReleased" PointerMoved="NavigatorPointerMoved">
+					<Canvas Name="PageAreaCanvas" Width="100" Height="100" Background="White">
+						<Image Name="PageAreaImage" Width="100" Height="100"></Image>
+					</Canvas>
+					<Rectangle Fill="#4077AADD" Stroke="#77AADD" StrokeThickness="2" Name="DisplayAreaRectangle" Width="50" Height="50"></Rectangle>
+				</Canvas>
 
-        <!--Show the current zoom value. Bindings don't work anymore since Avalonia 11.-->
-        <Grid Grid.Row="3" Margin="0, 5, 0, 5">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-          </Grid.ColumnDefinitions>
-          <TextBlock VerticalAlignment="Center" FontWeight="Bold">Zoom:</TextBlock>
-          <NumericUpDown Grid.Column="1" FormatString="\{0:P0\}" Minimum="0" Increment="0.1" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" Name="ZoomBox" ValueChanged="ZoomChanged"></NumericUpDown>
-        </Grid>
+				<!--Show the current zoom value. Bindings don't work anymore since Avalonia 11.-->
+				<Grid Grid.Row="3" Margin="0, 5, 0, 5">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="1*"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<TextBlock VerticalAlignment="Center" FontWeight="Bold">Zoom:</TextBlock>
+					<NumericUpDown Grid.Column="1" FormatString="\{0:P0\}" Minimum="0" Increment="0.1" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" Name="ZoomBox" ValueChanged="ZoomChanged"></NumericUpDown>
+				</Grid>
 
-        <Grid Grid.Row="4" Margin="0, 5, 0, 5">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
-          </Grid.ColumnDefinitions>
-          <!--Zoom the page so that it covers all the available space.-->
-          <Button Click="CoverClicked" Margin="0, 0, 10, 0">Cover</Button>
-          
-          <!--Fit the whole page in the available space.-->
-          <Button Click="ContainClicked" Grid.Column="1" Margin="10, 0, 0, 0">Contain</Button>
-        </Grid>
+				<Grid Grid.Row="4" Margin="0, 5, 0, 5">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="1*" />
+					</Grid.ColumnDefinitions>
+					<!--Zoom the page so that it covers all the available space.-->
+					<Button Click="CoverClicked" Margin="0, 0, 10, 0">Cover</Button>
 
-        <Button Grid.Row="5" Margin="0, 5, 0, 5" Click="CopyClicked">Copy selected text...</Button>
+					<!--Fit the whole page in the available space.-->
+					<Button Click="ContainClicked" Grid.Column="1" Margin="10, 0, 0, 0">Contain</Button>
+				</Grid>
 
-        <TextBox Grid.Row="6" Margin="0, 5, 0, 5" Watermark="Search regex..." Name="SearchBox"></TextBox>
+				<Button Grid.Row="5" Margin="0, 5, 0, 5" Click="CopyClicked">Copy selected text...</Button>
 
-        <Grid Grid.Row="7" Margin="0, 5, 0, 5">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
-          </Grid.ColumnDefinitions>
-          <!--Highlight all matches of the search regex.-->
-          <Button Click="SearchClicked" Margin="0, 0, 10, 0">Search</Button>
+				<TextBox Grid.Row="6" Margin="0, 5, 0, 5" Watermark="Search regex..." Name="SearchBox"></TextBox>
 
-          <!--Clear highlighted regions.-->
-          <Button Click="ClearClicked" Grid.Column="1" Margin="10, 0, 0, 0">Clear</Button>
-        </Grid>
+				<Grid Grid.Row="7" Margin="0, 5, 0, 5">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="1*" />
+					</Grid.ColumnDefinitions>
+					<!--Highlight all matches of the search regex.-->
+					<Button Click="SearchClicked" Margin="0, 0, 10, 0">Search</Button>
 
-        <!--Set the language for the OCR engine using Tesseract. Set to "None" to disable OCR.-->
-        <Grid Grid.Row="8" Margin="0, 5, 0, 5">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-          </Grid.ColumnDefinitions>
-          <TextBlock VerticalAlignment="Center" FontWeight="Bold">OCR language:</TextBlock>
-          <ComboBox Grid.Column="1" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" Name="OCRLanguageBox" SelectionChanged="OCRLanguageChanged"></ComboBox>
-        </Grid>
+					<!--Clear highlighted regions.-->
+					<Button Click="ClearClicked" Grid.Column="1" Margin="10, 0, 0, 0">Clear</Button>
+				</Grid>
 
-        <!--Show the number of rendering threads used by the renderer.-->
-        <StackPanel Orientation="Horizontal" Margin="0, 5, 0, 5" Grid.Row="10">
-          <TextBlock FontWeight="Bold">Rendering threads:</TextBlock>
-          <TextBlock Margin="10, 0, 0, 0" Text="{Binding #MuPDFRenderer.RenderThreadCount}"></TextBlock>
-        </StackPanel>
+				<!--Set the language for the OCR engine using Tesseract. Set to "None" to disable OCR.-->
+				<Grid Grid.Row="8" Margin="0, 5, 0, 5">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="1*"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<TextBlock VerticalAlignment="Center" FontWeight="Bold">OCR language:</TextBlock>
+					<ComboBox Grid.Column="1" VerticalAlignment="Center" Padding="10,0,10,0" Margin="10, 0, 0, 0" Name="OCRLanguageBox" SelectionChanged="OCRLanguageChanged"></ComboBox>
+				</Grid>
 
-        <!--Show the amount of memory used for cached assets (e.g. images, fonts...).-->
-        <Grid Grid.Row="11">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-          </Grid.RowDefinitions>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
-          </Grid.ColumnDefinitions>
-          <TextBlock FontWeight="Bold" Grid.ColumnSpan="2">Asset cache:</TextBlock>
-          <Grid Name="CacheFillGrid" Grid.Row="1" Height="18" Grid.ColumnSpan="2" Background="#F0F0F0" Margin="0, 10, 0, 10">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="0.5*" />
-              <ColumnDefinition Width="0.5*" />
-            </Grid.ColumnDefinitions>
-            <Canvas Name="CacheFillCanvas"></Canvas>
-          </Grid>
-          <!--Evict items from the cache until it is 50% as big as now.-->
-          <Button Grid.Row="2" Margin="0, 0, 10, 0" Click="ShrinkStoreClicked">Shrink</Button>
-          <!--Evict all items from the cache.-->
-          <Button Grid.Row="2" Grid.Column="1" Margin="10, 0, 0, 0" Click="ClearStoreClicked">Clear</Button>
-        </Grid>
+				<!--Show the number of rendering threads used by the renderer.-->
+				<StackPanel Orientation="Horizontal" Margin="0, 5, 0, 5" Grid.Row="10">
+					<TextBlock FontWeight="Bold">Rendering threads:</TextBlock>
+					<TextBlock Margin="10, 0, 0, 0" Text="{Binding #MuPDFRenderer.RenderThreadCount}"></TextBlock>
+				</StackPanel>
 
-      </Grid>
-    </ScrollViewer>
-  </Grid>
+				<!--Show the amount of memory used for cached assets (e.g. images, fonts...).-->
+				<Grid Grid.Row="11">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="1*" />
+					</Grid.ColumnDefinitions>
+					<TextBlock FontWeight="Bold" Grid.ColumnSpan="2">Asset cache:</TextBlock>
+					<Grid Name="CacheFillGrid" Grid.Row="1" Height="18" Grid.ColumnSpan="2" Background="#F0F0F0" Margin="0, 10, 0, 10">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.5*" />
+							<ColumnDefinition Width="0.5*" />
+						</Grid.ColumnDefinitions>
+						<Canvas Name="CacheFillCanvas"></Canvas>
+					</Grid>
+					<!--Evict items from the cache until it is 50% as big as now.-->
+					<Button Grid.Row="2" Margin="0, 0, 10, 0" Click="ShrinkStoreClicked">Shrink</Button>
+					<!--Evict all items from the cache.-->
+					<Button Grid.Row="2" Grid.Column="1" Margin="10, 0, 0, 0" Click="ClearStoreClicked">Clear</Button>
+				</Grid>
+
+			</Grid>
+		</ScrollViewer>
+	</Grid>
 </Window>

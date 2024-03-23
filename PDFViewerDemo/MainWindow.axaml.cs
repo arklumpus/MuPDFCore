@@ -341,6 +341,7 @@ namespace PDFViewerDemo
             Document = new MuPDFDocument(Context, ref ms, InputFileTypes.PDF);
 
             MaxPageNumber = 1;
+            UpdateOutline();
             await InitializeDocument(0);
 
             //Start the UI updater thread.
@@ -478,6 +479,7 @@ namespace PDFViewerDemo
                 }
 
                 MaxPageNumber = Document.Pages.Count;
+                UpdateOutline();
                 await InitializeDocument(0);
 
                 //Restore the DisplayArea.
@@ -576,6 +578,7 @@ namespace PDFViewerDemo
                 }
 
                 MaxPageNumber = Document.Pages.Count;
+                UpdateOutline();
                 await InitializeDocument(0);
 
                 if (!string.IsNullOrEmpty(localPath))
@@ -592,6 +595,87 @@ namespace PDFViewerDemo
                 }
             }
         }
+
+        private void UpdateOutline()
+        {
+            if (Document.Outline.Count > 0)
+            {
+                Controls outlineContainer = this.FindControl<StackPanel>("OutlineContainer").Children;
+
+                outlineContainer.Clear();
+                this.FindControl<Grid>("OutlineGrid").IsVisible = true;
+                this.FindControl<GridSplitter>("OutlineGridSplitter").IsVisible = true;
+                this.FindControl<Grid>("MainGrid").ColumnDefinitions[0].Width = new GridLength(200, GridUnitType.Pixel);
+
+                foreach (MuPDFOutlineItem item in Document.Outline.Items)
+                {
+                    outlineContainer.Add(BuildOutlineItem(item, 0));
+                }
+            }
+            else
+            {
+                this.FindControl<StackPanel>("OutlineContainer").Children.Clear();
+                this.FindControl<Grid>("OutlineGrid").IsVisible = false;
+                this.FindControl<GridSplitter>("OutlineGridSplitter").IsVisible = false;
+                this.FindControl<Grid>("MainGrid").ColumnDefinitions[0].Width = new GridLength(0, GridUnitType.Pixel);
+            }
+        }
+
+        private Control BuildOutlineItem(MuPDFOutlineItem item, int level)
+        {
+            if (item.Children.Count == 0)
+            {
+                TextBlock blockItem = new TextBlock() { Padding = new Thickness(Math.Min(21 * (level + 1), 42), 0, 5, 0), Text = item.Title, Cursor = new Cursor(StandardCursorType.Hand) };
+
+                int destination = item.Page;
+                
+                if (destination >= 0)
+                {
+                    blockItem.PointerPressed += async (s, e) =>
+                    {
+                        await InitializeDocument(destination);
+                    };
+
+                    blockItem.PointerEntered += (s, e) => blockItem.Background = new SolidColorBrush(Color.FromRgb(220, 220, 220));
+                    blockItem.PointerExited += (s, e) => blockItem.Background = null;
+                }
+
+                return blockItem;
+            }
+            else
+            {
+                Expander exp = new Expander() { Margin = new Thickness(Math.Min(21 * level, 21), 0, 0, 0) };
+                TextBlock blockItem = new TextBlock() { Text = item.Title, Cursor = new Cursor(StandardCursorType.Hand) };
+
+                int destination = item.Page;
+
+                if (destination >= 0)
+                {
+                    blockItem.PointerPressed += async (s, e) =>
+                    {
+                        await InitializeDocument(destination);
+                        e.Handled = true;
+                    };
+
+                    blockItem.PointerReleased += (s, e) => e.Handled = true;
+                    blockItem.PointerEntered += (s, e) => exp.Background = new SolidColorBrush(Color.FromRgb(220, 220, 220));
+                    blockItem.PointerExited += (s, e) => exp.Background = null;
+                }
+
+                exp.Header = blockItem;
+
+                StackPanel contents = new StackPanel();
+                exp.Content = contents;
+
+                foreach (MuPDFOutlineItem child in item.Children)
+                {
+                    contents.Children.Add(BuildOutlineItem(child, level + 1));
+                }
+
+                return exp;
+            }
+        }
+
 
         /// <summary>
         /// Invoked when the value of the NumericUpDown containing the page number is changed.
