@@ -57,7 +57,11 @@ namespace MuPDFCore
             ".epub",
             ".fb2",
             ".mobi",
-            ".html"
+            ".html",
+            ".txt",
+            ".docx",
+            ".pptx",
+            ".xlsx",
         };
 
         /// <summary>

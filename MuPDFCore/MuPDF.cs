@@ -190,6 +190,26 @@ namespace MuPDFCore
         /// HTML document.
         /// </summary>
         HTML = 13,
+
+        /// <summary>
+        /// Text document.
+        /// </summary>
+        TXT = 14,
+
+        /// <summary>
+        /// Microsoft Word document (only text is extracted).
+        /// </summary>
+        DOCX = 15,
+
+        /// <summary>
+        /// Microsoft Powerpoint document (only text is extracted).
+        /// </summary>
+        PPTX = 16,
+
+        /// <summary>
+        /// Microsoft Excel document (only text is extracted).
+        /// </summary>
+        XLSX = 17,
     }
 
     /// <summary>
