@@ -1571,7 +1571,7 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float _, float _, float _, float _) = CreateSampleDisplayList();
 
-            int result = NativeMethods.GetStructuredTextPage(nativeContext, nativeDisplayList, ref nativeSTextPage, ref sTextBlockCount);
+            int result = NativeMethods.GetStructuredTextPage(nativeContext, nativeDisplayList, 1, ref nativeSTextPage, ref sTextBlockCount);
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextPage returned the wrong exit code.");
             Assert.IsTrue(sTextBlockCount > 0, "The number of text blocks in the page is wrong.");
@@ -1598,7 +1598,7 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float _, float _, float _, float _) = CreateSampleDisplayList();
 
-            _ = NativeMethods.GetStructuredTextPage(nativeContext, nativeDisplayList, ref nativeSTextPage, ref sTextBlockCount);
+            _ = NativeMethods.GetStructuredTextPage(nativeContext, nativeDisplayList, 1, ref nativeSTextPage, ref sTextBlockCount);
 
             return (dataHandle, ms, nativeSTextPage, sTextBlockCount, nativeDisplayList, nativePage, nativeDocument, nativeStream, nativeContext);
         }
@@ -1679,8 +1679,15 @@ namespace Tests
                 float x1 = -1;
                 float y1 = -1;
                 int lineCount = -1;
+                IntPtr image = IntPtr.Zero;
+                float a = -1;
+                float b = -1;
+                float c = -1;
+                float d = -1;
+                float e = -1;
+                float f = -1;
 
-                int result = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount);
+                int result = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
 
                 Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextBlock returned the wrong exit code.");
                 Assert.IsTrue(x0 >= 0, "The " + i.ToString() + "th block's left coordinate is out of range.");
@@ -1688,6 +1695,17 @@ namespace Tests
                 Assert.IsTrue(x1 >= x0, "The " + i.ToString() + "th block's right coordinate is out of range.");
                 Assert.IsTrue(y1 >= y0, "The " + i.ToString() + "th block's bottom coordinate is out of range.");
                 Assert.IsTrue(type == 0 || type == 1, "The " + i.ToString() + "th block's type coordinate is wrong (" + type.ToString() + ").");
+
+                if (type == 1)
+                {
+                    Assert.AreNotEqual(IntPtr.Zero, image, "The " + i.ToString() + "th block's image pointer is NULL.");
+                    Assert.IsTrue(a >= 0, "The " + i.ToString() + "th block's transform matrix a component is out of range.");
+                    Assert.IsTrue(b >= 0, "The " + i.ToString() + "th block's transform matrix b component is out of range.");
+                    Assert.IsTrue(c >= 0, "The " + i.ToString() + "th block's transform matrix c component is out of range.");
+                    Assert.IsTrue(d >= 0, "The " + i.ToString() + "th block's transform matrix d component is out of range.");
+                    Assert.IsTrue(e >= 0, "The " + i.ToString() + "th block's transform matrix e component is out of range.");
+                    Assert.IsTrue(f >= 0, "The " + i.ToString() + "th block's transform matrix f component is out of range.");
+                }
             }
 
             try
@@ -1718,8 +1736,15 @@ namespace Tests
                 float x1 = -1;
                 float y1 = -1;
                 int lineCount = -1;
+                IntPtr image = IntPtr.Zero;
+                float a = -1;
+                float b = -1;
+                float c = -1;
+                float d = -1;
+                float e = -1;
+                float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount);
+                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
 
                 if (type == 0)
                 {
@@ -1767,8 +1792,15 @@ namespace Tests
                 float x1 = -1;
                 float y1 = -1;
                 int lineCount = -1;
+                IntPtr image = IntPtr.Zero;
+                float a = -1;
+                float b = -1;
+                float c = -1;
+                float d = -1;
+                float e = -1;
+                float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount);
+                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
 
                 if (type == 0)
                 {
@@ -1840,8 +1872,15 @@ namespace Tests
                 float x1 = -1;
                 float y1 = -1;
                 int lineCount = -1;
+                IntPtr image = IntPtr.Zero;
+                float a = -1;
+                float b = -1;
+                float c = -1;
+                float d = -1;
+                float e = -1;
+                float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount);
+                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
 
                 if (type == 0)
                 {
@@ -1916,8 +1955,15 @@ namespace Tests
                 float x1 = -1;
                 float y1 = -1;
                 int lineCount = -1;
+                IntPtr image = IntPtr.Zero;
+                float a = -1;
+                float b = -1;
+                float c = -1;
+                float d = -1;
+                float e = -1;
+                float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount);
+                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
 
                 if (type == 0)
                 {
@@ -1972,7 +2018,7 @@ namespace Tests
 
                         for (int k = 0; k < charCount; k++)
                         {
-                            int c = -1;
+                            int codePoint = -1;
                             int color = -1;
                             float originX = -1;
                             float originY = -1;
@@ -1985,8 +2031,10 @@ namespace Tests
                             float urY = -1;
                             float lrX = -1;
                             float lrY = -1;
+                            int bidi = -1;
+                            IntPtr font = IntPtr.Zero;
 
-                            int result = NativeMethods.GetStructuredTextChar(charPointers[k], ref c, ref color, ref originX, ref originY, ref size, ref llX, ref llY, ref ulX, ref ulY, ref urX, ref urY, ref lrX, ref lrY);
+                            int result = NativeMethods.GetStructuredTextChar(charPointers[k], ref codePoint, ref color, ref originX, ref originY, ref size, ref llX, ref llY, ref ulX, ref ulY, ref urX, ref urY, ref lrX, ref lrY, ref bidi, ref font);
 
                             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextChar returned the wrong exit code.");
 
@@ -2007,9 +2055,13 @@ namespace Tests
                             Assert.IsTrue(originX >= 0, "The x origin of the " + k.ToString() + "th character of the " + j.ToString() + "th line of the " + i.ToString() + "th block is out of range.");
                             Assert.IsTrue(originY >= 0, "The y origin of the " + k.ToString() + "th character of the " + j.ToString() + "th line of the " + i.ToString() + "th block is out of range.");
 
-                            Assert.IsTrue(c >= 0, "The code point of the " + k.ToString() + "th character of the " + j.ToString() + "th line of the " + i.ToString() + "th block is out of range.");
+                            Assert.IsTrue(codePoint >= 0, "The code point of the " + k.ToString() + "th character of the " + j.ToString() + "th line of the " + i.ToString() + "th block is out of range.");
 
                             Assert.IsTrue(color >= 0, "The colour of the " + k.ToString() + "th character of the " + j.ToString() + "th line of the " + i.ToString() + "th block is out of range.");
+
+                            Assert.IsTrue(bidi >= 0, "The text direction of the " + k.ToString() + "th character of the " + j.ToString() + "th line of the " + i.ToString() + "th block is out of range (" + bidi.ToString() + ").");
+
+                            Assert.AreNotEqual(IntPtr.Zero, font, "The font of the " + k.ToString() + "th character of the " + j.ToString() + "th line of the " + i.ToString() + "th block is NULL.");
                         }
 
                         try
@@ -2055,7 +2107,7 @@ namespace Tests
 
             int progressCount = 0;
 
-            int result = NativeMethods.GetStructuredTextPageWithOCR(nativeContext, nativeDisplayList, ref nativeSTextPage, ref sTextBlockCount, 1, x0, y0, x1, y1, "TESSDATA_PREFIX=" + prefix, "eng", prog => { progressCount++; return 0; } );
+            int result = NativeMethods.GetStructuredTextPageWithOCR(nativeContext, nativeDisplayList, 1, ref nativeSTextPage, ref sTextBlockCount, 1, x0, y0, x1, y1, "TESSDATA_PREFIX=" + prefix, "eng", prog => { progressCount++; return 0; } );
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextPage returned the wrong exit code.");
             Assert.IsTrue(sTextBlockCount > 0, "The number of text blocks in the page is wrong.");
