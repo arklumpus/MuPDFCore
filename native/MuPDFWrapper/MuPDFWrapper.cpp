@@ -158,6 +158,329 @@ void unlock_mutex(void* user, int lock)
 
 extern "C"
 {
+	DLL_PUBLIC int GetColorantName(fz_context* ctx, fz_colorspace* cs, int n, int length, char* out_name)
+	{
+		fz_try(ctx)
+		{
+			const char* name = fz_colorspace_colorant(ctx, cs, n);
+			strncpy(out_name, name, length);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_COLORSPACE_METADATA;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetColorantNameLength(fz_context* ctx, fz_colorspace* cs, int n, int* out_name_length)
+	{
+		fz_try(ctx)
+		{
+			*out_name_length = (int)strlen(fz_colorspace_colorant(ctx, cs, n));
+		}
+		fz_catch(ctx)
+		{
+			return ERR_COLORSPACE_METADATA;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetColorSpaceName(fz_context* ctx, fz_colorspace* cs, int length, char* out_name)
+	{
+		fz_try(ctx)
+		{
+			const char* name = fz_colorspace_name(ctx, cs);
+			strncpy(out_name, name, length);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_COLORSPACE_METADATA;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetColorSpaceData(fz_context* ctx, fz_colorspace* cs, int* out_cs_type, int* out_name_len, fz_colorspace** out_base_cs, int* out_lookup_size, unsigned char** out_lookup_table)
+	{
+		fz_try(ctx)
+		{
+			*out_cs_type = fz_colorspace_type(ctx, cs);
+			*out_name_len = (int)strlen(fz_colorspace_name(ctx, cs));
+
+			if (*out_cs_type == FZ_COLORSPACE_INDEXED)
+			{
+				*out_base_cs = fz_base_colorspace(ctx, cs);
+				*out_lookup_size = cs->u.indexed.high;
+				*out_lookup_table = cs ->u.indexed.lookup;
+			}
+			else if (*out_cs_type == FZ_COLORSPACE_SEPARATION)
+			{
+				*out_base_cs = cs->u.separation.base;
+				*out_lookup_size = fz_colorspace_n(ctx, cs);
+			}
+		}
+		fz_catch(ctx)
+		{
+			return ERR_COLORSPACE_METADATA;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int WriteRasterImage(fz_context* ctx, fz_image *image, int output_format, int quality, const fz_buffer** out_buffer, const unsigned char** out_data, uint64_t* out_length, int convert_to_rgb)
+	{
+		fz_pixmap* pix;
+		fz_output* out;
+		fz_buffer* buf;
+
+		fz_try(ctx)
+		{
+			buf = fz_new_buffer(ctx, 1024);
+			out = fz_new_output_with_buffer(ctx, buf);
+		}
+		fz_catch(ctx)
+		{
+			fz_drop_buffer(ctx, buf);
+			return ERR_CANNOT_CREATE_BUFFER;
+		}
+
+		//Render page to a pixmap.
+		fz_try(ctx)
+		{
+			pix = fz_get_unscaled_pixmap_from_image(ctx, image);
+		}
+		fz_catch(ctx)
+		{
+			fz_drop_output(ctx, out);
+			fz_drop_buffer(ctx, buf);
+			return ERR_CANNOT_RENDER;
+		}
+
+		if (convert_to_rgb > 0)
+		{
+			fz_colorspace* cs;
+
+			// Convert the pixmap to RGB.
+			fz_try(ctx)
+			{
+				cs = fz_device_rgb(ctx);
+				fz_pixmap* converted_pixmap = fz_convert_pixmap(ctx, pix, cs, cs, NULL, fz_default_color_params, 0);
+				fz_drop_pixmap(ctx, pix);
+				pix = converted_pixmap;
+			}
+			fz_always(ctx)
+			{
+				fz_drop_colorspace(ctx, cs);
+			}
+			fz_catch(ctx)
+			{
+				fz_drop_pixmap(ctx, pix);
+				return ERR_CANNOT_RENDER;
+			}
+		}
+
+		//Write the rendered pixmap to the output buffer in the specified format.
+		fz_try(ctx)
+		{
+			switch (output_format)
+			{
+			case OUT_PNM:
+				fz_write_pixmap_as_pnm(ctx, out, pix);
+				break;
+			case OUT_PAM:
+				fz_write_pixmap_as_pam(ctx, out, pix);
+				break;
+			case OUT_PNG:
+				fz_write_pixmap_as_png(ctx, out, pix);
+				break;
+			case OUT_PSD:
+				fz_write_pixmap_as_psd(ctx, out, pix);
+				break;
+			case OUT_JPEG:
+				fz_write_pixmap_as_jpeg(ctx, out, pix, quality, 1);
+				break;
+			}
+		}
+		fz_catch(ctx)
+		{
+			fz_drop_output(ctx, out);
+			fz_drop_buffer(ctx, buf);
+			fz_drop_pixmap(ctx, pix);
+			return ERR_CANNOT_SAVE;
+		}
+
+		fz_close_output(ctx, out);
+		fz_drop_output(ctx, out);
+		fz_drop_pixmap(ctx, pix);
+
+		*out_buffer = buf;
+		*out_data = buf->data;
+		*out_length = buf->len;
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int SaveRasterImage(fz_context *ctx, fz_image *image, const char* file_name, int output_format, int quality, int convert_to_rgb)
+	{
+		fz_pixmap* pix;
+
+		//Render page to a pixmap.
+		fz_try(ctx)
+		{
+			pix = fz_get_unscaled_pixmap_from_image(ctx, image);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_CANNOT_RENDER;
+		}
+
+		if (convert_to_rgb > 0)
+		{
+			fz_colorspace* cs;
+
+			// Convert the pixmap to RGB.
+			fz_try(ctx)
+			{
+				cs = fz_device_rgb(ctx);
+				fz_pixmap* converted_pixmap = fz_convert_pixmap(ctx, pix, cs, cs, NULL, fz_default_color_params, 0);
+				fz_drop_pixmap(ctx, pix);
+				pix = converted_pixmap;
+			}
+			fz_always(ctx)
+			{
+				fz_drop_colorspace(ctx, cs);
+			}
+			fz_catch(ctx)
+			{
+				fz_drop_pixmap(ctx, pix);
+				return ERR_CANNOT_RENDER;
+			}
+		}
+
+		//Save the rendered pixmap to the output file in the specified format.
+		fz_try(ctx)
+		{
+			switch (output_format)
+			{
+			case OUT_PNM:
+				fz_save_pixmap_as_pnm(ctx, pix, file_name);
+				break;
+			case OUT_PAM:
+				fz_save_pixmap_as_pam(ctx, pix, file_name);
+				break;
+			case OUT_PNG:
+				fz_save_pixmap_as_png(ctx, pix, file_name);
+				break;
+			case OUT_PSD:
+				fz_save_pixmap_as_psd(ctx, pix, file_name);
+				break;
+			case OUT_JPEG:
+				fz_save_pixmap_as_jpeg(ctx, pix, file_name, quality);
+				break;
+			}
+		}
+		fz_catch(ctx)
+		{
+			fz_drop_pixmap(ctx, pix);
+			return ERR_CANNOT_SAVE;
+		}
+
+		fz_drop_pixmap(ctx, pix);
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC void DisposePixmap(fz_context *ctx, fz_pixmap* pixmap)
+	{
+		fz_drop_pixmap(ctx, pixmap);
+	}
+
+	DLL_PUBLIC int LoadPixmapRGB(fz_context *ctx, fz_image *image, int color_format, fz_pixmap** out_pixmap, unsigned char** out_samples, int* count)
+	{
+		fz_pixmap* base_pixmap;
+		fz_colorspace* cs;
+		int alpha;
+
+		switch (color_format)
+		{
+		case COLOR_RGB:
+			cs = fz_device_rgb(ctx);
+			alpha = 0;
+			break;
+		case COLOR_RGBA:
+			cs = fz_device_rgb(ctx);
+			alpha = 1;
+			break;
+		case COLOR_BGR:
+			cs = fz_device_bgr(ctx);
+			alpha = 0;
+			break;
+		case COLOR_BGRA:
+			cs = fz_device_bgr(ctx);
+			alpha = 1;
+			break;
+		}
+
+		fz_try(ctx)
+		{
+			base_pixmap = fz_get_unscaled_pixmap_from_image(ctx, image);
+
+			*out_pixmap = fz_convert_pixmap(ctx, base_pixmap, cs, cs, NULL, fz_default_color_params, alpha);
+			
+			*out_samples = fz_pixmap_samples(ctx, *out_pixmap);
+			*count = fz_pixmap_height(ctx, *out_pixmap) * fz_pixmap_stride(ctx, *out_pixmap);
+
+			fz_drop_pixmap(ctx, base_pixmap);
+		}
+		fz_always(ctx)
+		{
+			fz_drop_colorspace(ctx, cs);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_CANNOT_RENDER;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int LoadPixmap(fz_context *ctx, fz_image *image, fz_pixmap** out_pixmap, unsigned char** out_samples, int* count)
+	{
+		fz_try(ctx)
+		{
+			*out_pixmap = fz_get_unscaled_pixmap_from_image(ctx, image);
+			*out_samples = fz_pixmap_samples(ctx, *out_pixmap);
+			*count = fz_pixmap_height(ctx, *out_pixmap) * fz_pixmap_stride(ctx, *out_pixmap);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_CANNOT_RENDER;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetImageMetadata(fz_context *ctx, fz_image *image, int* out_w, int* out_h, int* out_xres, int* out_yres, uint8_t* out_orientation, fz_colorspace** out_colorspace)
+	{
+		*out_w = image->w;
+		*out_h = image->h;
+		*out_colorspace = image->colorspace;
+
+		fz_try(ctx)
+		{
+			fz_image_resolution(image, out_xres, out_yres);
+			*out_orientation = fz_image_orientation(ctx, image);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_IMAGE_METADATA;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
 	DLL_PUBLIC void DisposeOutline(fz_context* ctx, fz_outline* outline)
 	{
 		fz_drop_outline(ctx, outline);
@@ -378,7 +701,7 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int GetStructuredTextBlock(fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count)
+	DLL_PUBLIC int GetStructuredTextBlock(fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* a, float* b, float* c, float* d, float* e, float* f)
 	{
 		*out_type = block->type;
 
@@ -390,6 +713,13 @@ extern "C"
 		if (block->type == FZ_STEXT_BLOCK_IMAGE)
 		{
 			*out_line_count = 0;
+			*out_image = block->u.i.image;
+			*a = block->u.i.transform.a;
+			*b = block->u.i.transform.b;
+			*c = block->u.i.transform.c;
+			*d = block->u.i.transform.d;
+			*e = block->u.i.transform.e;
+			*f = block->u.i.transform.f;
 		}
 		else if (block->type == FZ_STEXT_BLOCK_TEXT)
 		{
@@ -432,7 +762,7 @@ extern "C"
 		return (*((progressCallback*)progress_arg))(progress);
 	}
 
-	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int callback(int))
+	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, int preserve_images, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int callback(int))
 	{
 		if (prefix != NULL)
 		{
@@ -455,6 +785,11 @@ extern "C"
 
 		fz_var(page);
 		fz_var(device);
+
+		if (preserve_images > 0)
+		{
+			options.flags |= FZ_STEXT_PRESERVE_IMAGES;
+		}
 
 		fz_try(ctx)
 		{
@@ -512,7 +847,7 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int GetStructuredTextPage(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count)
+	DLL_PUBLIC int GetStructuredTextPage(fz_context* ctx, fz_display_list* list, int preserve_images, fz_stext_page** out_page, int* out_stext_block_count)
 	{
 		fz_stext_page* page;
 		fz_stext_options options;
@@ -525,6 +860,11 @@ extern "C"
 		fz_catch(ctx)
 		{
 			return ERR_CANNOT_CREATE_PAGE;
+		}
+
+		if (preserve_images > 0)
+		{
+			options.flags |= FZ_STEXT_PRESERVE_IMAGES;
 		}
 
 		fz_try(ctx)

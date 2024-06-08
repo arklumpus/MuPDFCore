@@ -106,14 +106,29 @@ namespace MuPDFCore
         ERR_CANNOT_CREATE_PAGE = 144,
 
         /// <summary>
-        /// An error occurred while populating the structured text page
+        /// An error occurred while populating the structured text page.
         /// </summary>
         ERR_CANNOT_POPULATE_PAGE = 145,
 
         /// <summary>
+        /// An error occurred while gathering image metadata.
+        /// </summary>
+        ERR_IMAGE_METADATA = 146,
+
+        /// <summary>
+        /// An error occurred while retrieving colour space information.
+        /// </summary>
+        ERR_COLORSPACE_METADATA = 147,
+
+        /// <summary>
         /// No error occurred. All is well.
         /// </summary>
-        EXIT_SUCCESS = 0
+        EXIT_SUCCESS = 0,
+
+        /// <summary>
+        /// Unknown error.
+        /// </summary>
+        UNKNOWN_ERROR = -1
     }
 
     /// <summary>
@@ -1426,9 +1441,16 @@ namespace MuPDFCore
         /// <param name="out_x1">The right coordinate in page units of the bounding box of the block.</param>
         /// <param name="out_y1">The bottom coordinate in page units of the bounding box of the block.</param>
         /// <param name="out_line_count">The number of lines in the block.</param>
+        /// <param name="out_image">If the block contains an image, this pointer will point to it.</param>
+        /// <param name="out_a">If the block contains an image, the first element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+        /// <param name="out_b">If the block contains an image, the second element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+        /// <param name="out_c">If the block contains an image, the third element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+        /// <param name="out_d">If the block contains an image, the fourth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+        /// <param name="out_e">If the block contains an image, the fifth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+        /// <param name="out_f">If the block contains an image, the sixth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextBlock(IntPtr block, ref int out_type, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1, ref int out_line_count);
+        internal static extern int GetStructuredTextBlock(IntPtr block, ref int out_type, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1, ref int out_line_count, ref IntPtr out_image, ref float out_a, ref float out_b, ref float out_c, ref float out_d, ref float out_e, ref float out_f);
 
         /// <summary>
         /// Get an array of structured text blocks from a structured text page.
@@ -1446,9 +1468,10 @@ namespace MuPDFCore
         /// <param name="list">The display list whose structured text representation is sought.</param>
         /// <param name="out_page">The address of the structured text page.</param>
         /// <param name="out_stext_block_count">The number of structured text blocks in the page.</param>
+        /// <param name="preserve_images">If this is set to 0, image blocks are generated; otherwise, they are discarded.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextPage(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref int out_stext_block_count);
+        internal static extern int GetStructuredTextPage(IntPtr ctx, IntPtr list, int preserve_images, ref IntPtr out_page, ref int out_stext_block_count);
 
         /// <summary>
         /// Delegate defining a callback function that is invoked by the unmanaged MuPDF library to indicate OCR progress.
@@ -1462,6 +1485,7 @@ namespace MuPDFCore
         /// </summary>
         /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
         /// <param name="list">The display list whose structured text representation is sought.</param>
+        /// <param name="preserve_images">If this is set to 0, image blocks are generated; otherwise, they are discarded.</param>
         /// <param name="out_page">The address of the structured text page.</param>
         /// <param name="out_stext_block_count">The number of structured text blocks in the page.</param>
         /// <param name="zoom">How much the specified region should be scaled when rendering. This determines the size in pixels of the image that is passed to Tesseract.</param>
@@ -1474,7 +1498,7 @@ namespace MuPDFCore
         /// <param name="callback">A progress callback function. This function will be called with an integer parameter ranging from 0 to 100 to indicate OCR progress, and should return 0 to continue or 1 to abort the OCR process.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextPageWithOCR(IntPtr ctx, IntPtr list, ref IntPtr out_page, ref int out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, string prefix, string language, [MarshalAs(UnmanagedType.FunctionPtr)] ProgressCallback callback);
+        internal static extern int GetStructuredTextPageWithOCR(IntPtr ctx, IntPtr list, int preserve_images, ref IntPtr out_page, ref int out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, string prefix, string language, [MarshalAs(UnmanagedType.FunctionPtr)] ProgressCallback callback);
 
         /// <summary>
         /// Free a native structured text page and its associated resources.
@@ -1543,17 +1567,142 @@ namespace MuPDFCore
         /// <summary>
         /// Loads the document outline (table of contents).
         /// </summary>
-        /// <param name="ctx"/>A context to hold the exception stack and the cached resources.</param>
-        /// <param name="doc"/>The document whose outline should be loaded.</param>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The document whose outline should be loaded.</param>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern IntPtr LoadOutline(IntPtr ctx, IntPtr doc);
 
         /// <summary>
         /// Frees memory allocated by a document outline (table of contents).
         /// </summary>
-        /// <param name="ctx"/>A context to hold the exception stack and the cached resources.</param>
-        /// <param name="outline"/>The document outline whose allocated memory should be released.</param>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="outline">The document outline whose allocated memory should be released.</param>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern void DisposeOutline(IntPtr ctx, IntPtr outline);
+
+        /// <summary>
+        /// Gathers metadata about an image.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="image">A pointer to the image.</param>
+        /// <param name="out_w">When this method returns, this variable will contain the width of the image.</param>
+        /// <param name="out_h">When this method returns, this variable will contain the height of the image.</param>
+        /// <param name="out_xres">When this method returns, this variable will contain the horizontal resolution of the image.</param>
+        /// <param name="out_yres">When this method returns, this variable will contain the vertical resolution of the image.</param>
+        /// <param name="out_orientation">When this method returns, this variable will contain the orientation of the image.</param>
+        /// <param name="out_colorspace">When this method returns, this variable will contain a pointer to the colour space of the image.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetImageMetadata(IntPtr ctx, IntPtr image, ref int out_w, ref int out_h, ref int out_xres, ref int out_yres, ref byte out_orientation, ref IntPtr out_colorspace);
+
+        /// <summary>
+        /// Write an image onto a stream in the specified format.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="image">A pointer to the image.</param>
+        /// <param name="output_format">The output format.</param>
+        /// <param name="quality">For JPEG output, the quality value.</param>
+        /// <param name="out_buffer">The address of the buffer on which the data has been written (only useful for disposing the buffer later).</param>
+        /// <param name="out_data">The address of the byte array where the data has been actually written.</param>
+        /// <param name="out_length">The length in bytes of the image data.</param>
+        /// <param name="convert_to_rgb">If this is 1, the image is converted to the RGB colour space before being exported.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int WriteRasterImage(IntPtr ctx, IntPtr image, int output_format, int quality, ref IntPtr out_buffer, ref IntPtr out_data, ref ulong out_length, int convert_to_rgb);
+
+        /// <summary>
+        /// Save an image to a file in the specified format.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="image">A pointer to the image.</param>
+        /// <param name="output_format">The output format.</param>
+        /// <param name="quality">For JPEG output, the quality value.</param>
+        /// <param name="file_name">The name of the output file.</param>
+        /// <param name="convert_to_rgb">If this is 1, the image is converted to the RGB colour space before being exported.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SaveRasterImage(IntPtr ctx, IntPtr image, string file_name, int output_format, int quality, int convert_to_rgb);
+
+        /// <summary>
+        /// Release the resources associated with a pixmap.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="pixmap">The pixmap to be released.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void DisposePixmap(IntPtr ctx, IntPtr pixmap);
+
+
+        /// <summary>
+        /// Load image data from an image onto a pixmap, after converting it to the specified pixel format.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="image">A pointer to the image.</param>
+        /// <param name="color_format">The <see cref="PixelFormats"/> to which the image should be converted.</param>
+        /// <param name="out_pixmap">When this method returns, this variable will contain a pointer to the pixmap.</param>
+        /// <param name="out_samples">When this method returns, this variable will contain a pointer to the image data.</param>
+        /// <param name="count">The size in bytes of the image data.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int LoadPixmapRGB(IntPtr ctx, IntPtr image, int color_format, ref IntPtr out_pixmap, ref IntPtr out_samples, ref int count);
+
+        /// <summary>
+        /// Load image data from an image onto a pixmap.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="image">A pointer to the image.</param>
+        /// <param name="out_pixmap">When this method returns, this variable will contain a pointer to the pixmap.</param>
+        /// <param name="out_samples">When this method returns, this variable will contain a pointer to the image data.</param>
+        /// <param name="count">The size in bytes of the image data.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int LoadPixmap(IntPtr ctx, IntPtr image, ref IntPtr out_pixmap, ref IntPtr out_samples, ref int count);
+
+        /// <summary>
+        /// Get the name of a colour space.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="cs">A pointer to the colour space.</param>
+        /// <param name="length">The length of the name.</param>
+        /// <param name="out_name">A pointer to a byte array where the name will be copied.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetColorSpaceName(IntPtr ctx, IntPtr cs, int length, IntPtr out_name);
+
+        /// <summary>
+        /// Get information about a colour space.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="cs">A pointer to the colour space.</param>
+        /// <param name="out_cs_type">The type of colour space (equivalent to <see cref="ColorSpaceType"/>).</param>
+        /// <param name="out_name_len">When this method returns, this variable will contain the length of the name of the colour space.</param>
+        /// <param name="out_base_cs">When this method returns, this variable will contain a pointer to the base colour space (for indexed colour spaces) or to the alternate colour space (for separations colour spaces).</param>
+        /// <param name="out_lookup_size">When this method returns, this variable will contain the number of colours used by the image (for indexed colour spaces) or the number of colourants (for separations colour spaces).</param>
+        /// <param name="out_lookup_table">When this method returns, this variable will contain a pointer to the colour lookup table (for indexed colour spaces).</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetColorSpaceData(IntPtr ctx, IntPtr cs, ref int out_cs_type, ref int out_name_len, ref IntPtr out_base_cs, ref int out_lookup_size, ref IntPtr out_lookup_table);
+
+        /// <summary>
+        /// Get the length of the name of a colourant.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="cs">A pointer to the colour space.</param>
+        /// <param name="n">The index of the colourant.</param>
+        /// <param name="out_name_length">When this method returns, this variable will contain the length of the name of the colourant.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetColorantNameLength(IntPtr ctx, IntPtr cs, int n, ref int out_name_length);
+
+        /// <summary>
+        /// Get the name of a colourant.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="cs">A pointer to the colour space.</param>
+        /// <param name="n">The index of the colourant.</param>
+        /// <param name="length">The length of the name of the colourant.</param>
+        /// <param name="out_name">A pointer to a byte array where the name will be copied.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetColorantName(IntPtr ctx, IntPtr cs, int n, int length, IntPtr out_name);
     }
 }

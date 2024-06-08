@@ -75,7 +75,7 @@ namespace MuPDFCore
 
             if (ocrLanguage != null)
             {
-                result = (ExitCodes)NativeMethods.GetStructuredTextPageWithOCR(context.NativeContext, list.NativeDisplayList, ref nativeStructuredPage, ref blockCount, (float)zoom, pageBounds.X0, pageBounds.Y0, pageBounds.X1, pageBounds.Y1, "TESSDATA_PREFIX=" + ocrLanguage.Prefix, ocrLanguage.Language, prog =>
+                result = (ExitCodes)NativeMethods.GetStructuredTextPageWithOCR(context.NativeContext, list.NativeDisplayList, 1, ref nativeStructuredPage, ref blockCount, (float)zoom, pageBounds.X0, pageBounds.Y0, pageBounds.X1, pageBounds.Y1, "TESSDATA_PREFIX=" + ocrLanguage.Prefix, ocrLanguage.Language, prog =>
                 {
                     progress?.Report(new OCRProgressInfo(prog / 100.0));
 
@@ -91,7 +91,7 @@ namespace MuPDFCore
             }
             else
             {
-                result = (ExitCodes)NativeMethods.GetStructuredTextPage(context.NativeContext, list.NativeDisplayList, ref nativeStructuredPage, ref blockCount);
+                result = (ExitCodes)NativeMethods.GetStructuredTextPage(context.NativeContext, list.NativeDisplayList, 1, ref nativeStructuredPage, ref blockCount);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -133,8 +133,16 @@ namespace MuPDFCore
                     float x1 = -1;
                     float y1 = -1;
                     int lineCount = -1;
+                    IntPtr imagePointer = IntPtr.Zero;
 
-                    result = (ExitCodes)NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount);
+                    float a = 0;
+                    float b = 0;
+                    float c = 0;
+                    float d = 0;
+                    float e = 0;
+                    float f = 0;
+
+                    result = (ExitCodes)NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref imagePointer, ref a, ref b, ref c, ref d, ref e, ref f);
 
                     switch (result)
                     {
@@ -149,7 +157,7 @@ namespace MuPDFCore
                     switch ((MuPDFStructuredTextBlock.Types)type)
                     {
                         case MuPDFStructuredTextBlock.Types.Image:
-                            this.StructuredTextBlocks[i] = new MuPDFImageStructuredTextBlock(bBox);
+                            this.StructuredTextBlocks[i] = new MuPDFImageStructuredTextBlock(context, bBox, imagePointer, a, b, c, d, e, f);
                             break;
                         case MuPDFStructuredTextBlock.Types.Text:
                             this.StructuredTextBlocks[i] = new MuPDFTextStructuredTextBlock(bBox, blockPointers[i], lineCount);
@@ -620,6 +628,16 @@ namespace MuPDFCore
         /// <inheritdoc/>
         public override int Count => 1;
 
+        /// <summary>
+        /// Transform matrix for the image. This maps the { { 0, 0 }, { 1, 1 } } square to the actual size, position, and rotation of the image in the document.
+        /// </summary>
+        public float[,] TransformMatrix { get; }
+
+        /// <summary>
+        /// The image contained in the block.
+        /// </summary>
+        public MuPDFImage Image { get; }
+
         private readonly MuPDFStructuredTextLine Line;
 
         /// <inheritdoc/>
@@ -638,9 +656,11 @@ namespace MuPDFCore
             }
         }
 
-        internal MuPDFImageStructuredTextBlock(Rectangle boundingBox) : base(boundingBox)
+        internal MuPDFImageStructuredTextBlock(MuPDFContext context, Rectangle boundingBox, IntPtr imagePointer, float a, float b, float c, float d, float e, float f) : base(boundingBox)
         {
             this.Line = new MuPDFStructuredTextLine(this.BoundingBox);
+            this.TransformMatrix = new float[,] { { a, b, 0 }, { c, d, 0 }, { e, f, 1 } };
+            this.Image = new MuPDFImage(imagePointer, context);
         }
 
         /// <inheritdoc/>

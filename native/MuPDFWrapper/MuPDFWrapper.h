@@ -18,7 +18,9 @@ enum
 	ERR_CANNOT_CREATE_WRITER = 142,
 	ERR_CANNOT_CLOSE_DOCUMENT = 143,
 	ERR_CANNOT_CREATE_PAGE = 144,
-	ERR_CANNOT_POPULATE_PAGE = 145
+	ERR_CANNOT_POPULATE_PAGE = 145,
+	ERR_IMAGE_METADATA = 146,
+	ERR_COLORSPACE_METADATA = 147
 };
 
 //Output raster image formats.
@@ -132,6 +134,120 @@ struct fz_store
 //Exported methods
 extern "C"
 {
+	/// <summary>
+	/// Get the name of a colourant.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="cs">A pointer to the colour space.</param>
+	/// <param name="n">The index of the colourant.</param>
+	/// <param name="length">The length of the name of the colourant.</param>
+	/// <param name="out_name">A pointer to a byte array where the name will be copied.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetColorantName(fz_context* ctx, fz_colorspace* cs, int n, int length, char* out_name);
+
+	/// <summary>
+	/// Get the length of the name of a colourant.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="cs">A pointer to the colour space.</param>
+	/// <param name="n">The index of the colourant.</param>
+	/// <param name="out_name_length">When this method returns, this variable will contain the length of the name of the colourant.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetColorantNameLength(fz_context* ctx, fz_colorspace* cs, int n, int* out_name_length);
+
+	/// <summary>
+	/// Get the name of a colour space.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="cs">A pointer to the colour space.</param>
+	/// <param name="length">The length of the name.</param>
+	/// <param name="out_name">A pointer to a byte array where the name will be copied.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetColorSpaceName(fz_context* ctx, fz_colorspace* cs, int length, char* out_name);
+
+	/// <summary>
+	/// Get information about a colour space.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="cs">A pointer to the colour space.</param>
+	/// <param name="out_cs_type">The type of colour space (equivalent to <see cref="ColorSpaceType"/>).</param>
+	/// <param name="out_name_len">When this method returns, this variable will contain the length of the name of the colour space.</param>
+	/// <param name="out_base_cs">When this method returns, this variable will contain a pointer to the base colour space (for indexed colour spaces) or to the alternate colour space (for separations colour spaces).</param>
+	/// <param name="out_lookup_size">When this method returns, this variable will contain the number of colours used by the image (for indexed colour spaces) or the number of colourants (for separations colour spaces).</param>
+	/// <param name="out_lookup_table">When this method returns, this variable will contain a pointer to the colour lookup table (for indexed colour spaces).</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetColorSpaceData(fz_context* ctx, fz_colorspace* cs, int* out_cs_type, int* out_name_len, fz_colorspace** out_base_cs, int* out_lookup_size, unsigned char** out_lookup_table);
+
+	/// <summary>
+	/// Write an image onto a stream in the specified format.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="image">A pointer to the image.</param>
+	/// <param name="output_format">The output format.</param>
+	/// <param name="quality">For JPEG output, the quality value.</param>
+	/// <param name="out_buffer">The address of the buffer on which the data has been written (only useful for disposing the buffer later).</param>
+	/// <param name="out_data">The address of the byte array where the data has been actually written.</param>
+	/// <param name="out_length">The length in bytes of the image data.</param>
+	/// <param name="convert_to_rgb">If this is 1, the image is converted to the RGB colour space before being exported.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int WriteRasterImage(fz_context* ctx, fz_image *image, int output_format, int quality, const fz_buffer** out_buffer, const unsigned char** out_data, uint64_t* out_length, int convert_to_rgb);
+
+	/// <summary>
+	/// Save an image to a file in the specified format.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="image">A pointer to the image.</param>
+	/// <param name="output_format">The output format.</param>
+	/// <param name="quality">For JPEG output, the quality value.</param>
+	/// <param name="file_name">The name of the output file.</param>
+	/// <param name="convert_to_rgb">If this is 1, the image is converted to the RGB colour space before being exported.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int SaveRasterImage(fz_context *ctx, fz_image *image, const char* file_name, int output_format, int quality, int convert_to_rgb);
+
+	/// <summary>
+	/// Release the resources associated with a pixmap.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="pixmap">The pixmap to be released.</param>
+	DLL_PUBLIC void DisposePixmap(fz_context *ctx, fz_pixmap* pixmap);
+
+	/// <summary>
+	/// Load image data from an image onto a pixmap, after converting it to the specified pixel format.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="image">A pointer to the image.</param>
+	/// <param name="color_format">The <see cref="PixelFormats"/> to which the image should be converted.</param>
+	/// <param name="out_pixmap">When this method returns, this variable will contain a pointer to the pixmap.</param>
+	/// <param name="out_samples">When this method returns, this variable will contain a pointer to the image data.</param>
+	/// <param name="count">The size in bytes of the image data.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int LoadPixmapRGB(fz_context *ctx, fz_image *image, int colorFormat, fz_pixmap** out_pixmap, unsigned char** out_samples, int* count);
+
+	/// <summary>
+	/// Load image data from an image onto a pixmap.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="image">A pointer to the image.</param>
+	/// <param name="out_pixmap">When this method returns, this variable will contain a pointer to the pixmap.</param>
+	/// <param name="out_samples">When this method returns, this variable will contain a pointer to the image data.</param>
+	/// <param name="count">The size in bytes of the image data.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int LoadPixmap(fz_context *ctx, fz_image *image, fz_pixmap** out_pixmap, unsigned char** out_samples, int* count);
+
+	/// <summary>
+	/// Gathers metadata about an image.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="image">A pointer to the image.</param>
+	/// <param name="out_w">When this method returns, this variable will contain the width of the image.</param>
+	/// <param name="out_h">When this method returns, this variable will contain the height of the image.</param>
+	/// <param name="out_xres">When this method returns, this variable will contain the horizontal resolution of the image.</param>
+	/// <param name="out_yres">When this method returns, this variable will contain the vertical resolution of the image.</param>
+	/// <param name="out_orientation">When this method returns, this variable will contain the orientation of the image.</param>
+	/// <param name="out_colorspace">When this method returns, this variable will contain a pointer to the colour space of the image.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetImageMetadata(fz_context *ctx, fz_image *image, int* out_w, int* out_h, int* out_xres, int* out_yres, uint8_t* out_orientation, fz_colorspace** out_colorspace);
+
 	/// <summary>
 	/// Frees memory allocated by a document outline (table of contents).
 	/// </summary>
@@ -257,7 +373,7 @@ extern "C"
 	/// <param name="out_y1">The bottom coordinate in page units of the bounding box of the block.</param>
 	/// <param name="out_line_count">The number of lines in the block.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextBlock(fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count);
+	DLL_PUBLIC int GetStructuredTextBlock(fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* a, float* b, float* c, float* d, float* e, float* f);
 
 	/// <summary>
 	/// Get an array of structured text blocks from a structured text page.
@@ -283,7 +399,7 @@ extern "C"
 	/// <param name="language">The name of the language model file to use for the OCR.</param>
 	/// <param name="callback">A progress callback function. This function will be called with an integer parameter ranging from 0 to 100 to indicate OCR progress, and should return 0 to continue or 1 to abort the OCR process.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int callback(int));
+	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, int preserve_images, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int callback(int));
 
 	/// <summary>
 	/// Get a structured text representation of a display list.
@@ -293,7 +409,7 @@ extern "C"
 	/// <param name="out_page">The address of the structured text page.</param>
 	/// <param name="out_stext_block_count">The number of structured text blocks in the page.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextPage(fz_context* ctx, fz_display_list* list, fz_stext_page** out_page, int* out_stext_block_count);
+	DLL_PUBLIC int GetStructuredTextPage(fz_context* ctx, fz_display_list* list, int preserve_images, fz_stext_page** out_page, int* out_stext_block_count);
 
 	/// <summary>
 	/// Free a native structured text page and its associated resources.
