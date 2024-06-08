@@ -121,6 +121,11 @@ namespace MuPDFCore
         ERR_COLORSPACE_METADATA = 147,
 
         /// <summary>
+        /// An error occurred while retrieving font metadata.
+        /// </summary>
+        ERR_FONT_METADATA = 148,
+
+        /// <summary>
         /// No error occurred. All is well.
         /// </summary>
         EXIT_SUCCESS = 0,
@@ -1393,9 +1398,11 @@ namespace MuPDFCore
         /// <param name="out_ur_y">The y coordinate of the upper right corner of the bounding quad.</param>
         /// <param name="out_lr_x">The x coordinate of the lower right corner of the bounding quad.</param>
         /// <param name="out_lr_y">The y coordinate of the lower right corner of the bounding quad.</param>
+        /// <param name="out_bidi">Even for LTR, odd for RTL.</param>
+        /// <param name="out_font">Font used to draw the character.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextChar(IntPtr character, ref int out_c, ref int out_color, ref float out_origin_x, ref float out_origin_y, ref float out_size, ref float out_ll_x, ref float out_ll_y, ref float out_ul_x, ref float out_ul_y, ref float out_ur_x, ref float out_ur_y, ref float out_lr_x, ref float out_lr_y);
+        internal static extern int GetStructuredTextChar(IntPtr character, ref int out_c, ref int out_color, ref float out_origin_x, ref float out_origin_y, ref float out_size, ref float out_ll_x, ref float out_ll_y, ref float out_ul_x, ref float out_ul_y, ref float out_ur_x, ref float out_ur_y, ref float out_lr_x, ref float out_lr_y, ref int out_bidi, ref IntPtr out_font);
 
         /// <summary>
         /// Get an array of structured text characters from a structured text line.
@@ -1704,5 +1711,50 @@ namespace MuPDFCore
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int GetColorantName(IntPtr ctx, IntPtr cs, int n, int length, IntPtr out_name);
+
+        /// <summary>
+        /// Get the Type3 procs for a font.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="out_t3_procs">When this method returns, this variable will contain a pointer to the Type3 procs for the font (if any).</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetT3Procs(IntPtr ctx, IntPtr font, ref IntPtr out_t3_procs);
+
+        /// <summary>
+        /// Get the FreeType FT_Face handle for a font.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="out_handle">When this method returns, this variable will contain a pointer to the FreeType FT_Face handle for the font (if any).</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetFTHandle(IntPtr ctx, IntPtr font, ref IntPtr out_handle);
+
+        /// <summary>
+        /// Get the name of a font.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="length">The length of the name of the font.</param>
+        /// <param name="out_name">A pointer to a byte array where the name will be copied.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetFontName(IntPtr ctx, IntPtr font, int length, IntPtr out_name);
+
+        /// <summary>
+        /// Get information about a font.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="font">The font.</param>
+        /// <param name="out_font_name_length">When this method returns, this variable will hold the number of characters in the font's name.</param>
+        /// <param name="out_bold">When this method returns, this variable will be 1 if the font is bold.</param>
+        /// <param name="out_italic">When this method returns, this variable will be 1 if the font is italic.</param>
+        /// <param name="out_serif">When this method returns, this variable will be 1 if the font has serifs (not very reliable).</param>
+        /// <param name="out_monospaced">When this method returns, this variable will be 1 if the font is monospaced.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetFontMetadata(IntPtr ctx, IntPtr font, ref int out_font_name_length, ref int out_bold, ref int out_italic, ref int out_serif, ref int out_monospaced);
     }
 }

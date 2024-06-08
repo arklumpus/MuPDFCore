@@ -160,7 +160,7 @@ namespace MuPDFCore
                             this.StructuredTextBlocks[i] = new MuPDFImageStructuredTextBlock(context, bBox, imagePointer, a, b, c, d, e, f);
                             break;
                         case MuPDFStructuredTextBlock.Types.Text:
-                            this.StructuredTextBlocks[i] = new MuPDFTextStructuredTextBlock(bBox, blockPointers[i], lineCount);
+                            this.StructuredTextBlocks[i] = new MuPDFTextStructuredTextBlock(context, bBox, blockPointers[i], lineCount);
                             break;
                     }
                 }
@@ -689,7 +689,7 @@ namespace MuPDFCore
         /// <inheritdoc/>
         public override MuPDFStructuredTextLine this[int index] => ((IReadOnlyList<MuPDFStructuredTextLine>)Lines)[index];
 
-        internal MuPDFTextStructuredTextBlock(Rectangle boundingBox, IntPtr blockPointer, int lineCount) : base(boundingBox)
+        internal MuPDFTextStructuredTextBlock(MuPDFContext context, Rectangle boundingBox, IntPtr blockPointer, int lineCount) : base(boundingBox)
         {
             IntPtr[] linePointers = new IntPtr[lineCount];
             GCHandle linesHandle = GCHandle.Alloc(linePointers, GCHandleType.Pinned);
@@ -734,7 +734,7 @@ namespace MuPDFCore
                     Rectangle bBox = new Rectangle(x0, y0, x1, y1);
                     PointF direction = new PointF(x, y);
 
-                    Lines[i] = new MuPDFStructuredTextLine(linePointers[i], (MuPDFStructuredTextLine.WritingModes)wmode, direction, bBox, charCount);
+                    Lines[i] = new MuPDFStructuredTextLine(context, linePointers[i], (MuPDFStructuredTextLine.WritingModes)wmode, direction, bBox, charCount);
                 }
             }
             finally
@@ -829,11 +829,11 @@ namespace MuPDFCore
             this.BoundingBox = boundingBox;
             this.Characters = new MuPDFStructuredTextCharacter[]
             {
-                new MuPDFStructuredTextCharacter(0, -1, new PointF(boundingBox.X0, boundingBox.Y1), new Quad(new PointF(boundingBox.X0, boundingBox.Y1), new PointF(boundingBox.X0, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y1)), 9)
+                new MuPDFStructuredTextCharacter(0, -1, new PointF(boundingBox.X0, boundingBox.Y1), new Quad(new PointF(boundingBox.X0, boundingBox.Y1), new PointF(boundingBox.X0, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y1)), 9, MuPDFStructuredTextCharacter.TextDirection.LeftToRight, null)
             };
         }
 
-        internal MuPDFStructuredTextLine(IntPtr linePointer, WritingModes writingMode, PointF direction, Rectangle boundingBox, int charCount)
+        internal MuPDFStructuredTextLine(MuPDFContext context, IntPtr linePointer, WritingModes writingMode, PointF direction, Rectangle boundingBox, int charCount)
         {
             this.WritingMode = writingMode;
             this.Direction = direction;
@@ -873,8 +873,10 @@ namespace MuPDFCore
                     float urY = -1;
                     float lrX = -1;
                     float lrY = -1;
+                    int bidi = -1;
+                    IntPtr font = IntPtr.Zero;
 
-                    result = (ExitCodes)NativeMethods.GetStructuredTextChar(charPointers[i], ref c, ref color, ref originX, ref originY, ref size, ref llX, ref llY, ref ulX, ref ulY, ref urX, ref urY, ref lrX, ref lrY);
+                    result = (ExitCodes)NativeMethods.GetStructuredTextChar(charPointers[i], ref c, ref color, ref originX, ref originY, ref size, ref llX, ref llY, ref ulX, ref ulY, ref urX, ref urY, ref lrX, ref lrY, ref bidi, ref font);
 
                     switch (result)
                     {
@@ -887,7 +889,9 @@ namespace MuPDFCore
                     Quad quad = new Quad(new PointF(llX, llY), new PointF(ulX, ulY), new PointF(urX, urY), new PointF(lrX, lrY));
                     PointF origin = new PointF(originX, originY);
 
-                    Characters[i] = new MuPDFStructuredTextCharacter(c, color, origin, quad, size);
+                    MuPDFFont muPDFFont = MuPDFFont.Resolve(context, font);
+
+                    Characters[i] = new MuPDFStructuredTextCharacter(c, color, origin, quad, size, bidi % 2 == 0 ? MuPDFStructuredTextCharacter.TextDirection.LeftToRight : MuPDFStructuredTextCharacter.TextDirection.RightToLeft, muPDFFont);
                     textBuilder.Append(Characters[i].Character);
                 }
 
@@ -926,6 +930,22 @@ namespace MuPDFCore
     public class MuPDFStructuredTextCharacter
     {
         /// <summary>
+        /// Text writing directions.
+        /// </summary>
+        public enum TextDirection
+        {
+            /// <summary>
+            /// Left to right.
+            /// </summary>
+            LeftToRight,
+
+            /// <summary>
+            /// Right to left.
+            /// </summary>
+            RightToLeft
+        }
+
+        /// <summary>
         /// The unicode code point of the character.
         /// </summary>
         public int CodePoint { get; }
@@ -955,7 +975,17 @@ namespace MuPDFCore
         /// </summary>
         public float Size { get; }
 
-        internal MuPDFStructuredTextCharacter(int codePoint, int color, PointF origin, Quad boundingQuad, float size)
+        /// <summary>
+        /// Text writing direction.
+        /// </summary>
+        public TextDirection Direction { get; }
+
+        /// <summary>
+        /// The font used to draw the character.
+        /// </summary>
+        public MuPDFFont Font { get; }
+
+        internal MuPDFStructuredTextCharacter(int codePoint, int color, PointF origin, Quad boundingQuad, float size, TextDirection direction, MuPDFFont font)
         {
             this.CodePoint = codePoint;
             this.Character = Char.ConvertFromUtf32(codePoint);
@@ -963,6 +993,8 @@ namespace MuPDFCore
             this.Origin = origin;
             this.BoundingQuad = boundingQuad;
             this.Size = size;
+            this.Direction = direction;
+            this.Font = font;
         }
 
         /// <summary>

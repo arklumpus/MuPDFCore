@@ -20,7 +20,8 @@ enum
 	ERR_CANNOT_CREATE_PAGE = 144,
 	ERR_CANNOT_POPULATE_PAGE = 145,
 	ERR_IMAGE_METADATA = 146,
-	ERR_COLORSPACE_METADATA = 147
+	ERR_COLORSPACE_METADATA = 147,
+	ERR_FONT_METADATA = 148
 };
 
 //Output raster image formats.
@@ -134,6 +135,47 @@ struct fz_store
 //Exported methods
 extern "C"
 {
+	/// <summary>
+	/// Get the Type3 procs for a font.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="font">The font.</param>
+	/// <param name="out_t3_procs">When this method returns, this variable will contain a pointer to the Type3 procs for the font (if any).</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetT3Procs(fz_context* ctx, fz_font* font, fz_buffer*** out_t3_procs);
+
+	/// <summary>
+	/// Get the FreeType FT_Face handle for a font.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="font">The font.</param>
+	/// <param name="out_handle">When this method returns, this variable will contain a pointer to the FreeType FT_Face handle for the font (if any).</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetFTHandle(fz_context* ctx, fz_font* font, void** out_handle);
+
+	/// <summary>
+	/// Get the name of a font.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="font">The font.</param>
+	/// <param name="length">The length of the name of the font.</param>
+	/// <param name="out_name">A pointer to a byte array where the name will be copied.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetFontName(fz_context* ctx, fz_font* font, int length, char* out_name);
+
+	/// <summary>
+	/// Get information about a font.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="font">The font.</param>
+	/// <param name="out_font_name_length">When this method returns, this variable will hold the number of characters in the font's name.</param>
+	/// <param name="out_bold">When this method returns, this variable will be 1 if the font is bold.</param>
+	/// <param name="out_italic">When this method returns, this variable will be 1 if the font is italic.</param>
+	/// <param name="out_serif">When this method returns, this variable will be 1 if the font has serifs (not very reliable).</param>
+	/// <param name="out_monospaced">When this method returns, this variable will be 1 if the font is monospaced.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetFontMetadata(fz_context* ctx, fz_font* font, int* out_font_name_length, int* out_bold, int* out_italic, int* out_serif, int* out_monospaced);
+
 	/// <summary>
 	/// Get the name of a colourant.
 	/// </summary>
@@ -328,8 +370,10 @@ extern "C"
 	/// <param name="out_ur_y">The y coordinate of the upper right corner of the bounding quad.</param>
 	/// <param name="out_lr_x">The x coordinate of the lower right corner of the bounding quad.</param>
 	/// <param name="out_lr_y">The y coordinate of the lower right corner of the bounding quad.</param>
+	/// <param name="out_bidi">Even for LTR, odd for RTL.</param>
+	/// <param name="out_font">Font used to draw the character.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextChar(fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y);
+	DLL_PUBLIC int GetStructuredTextChar(fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y, int* out_bidi, fz_font** out_font);
 
 	/// <summary>
 	/// Get an array of structured text characters from a structured text line.

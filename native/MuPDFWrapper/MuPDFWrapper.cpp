@@ -158,6 +158,67 @@ void unlock_mutex(void* user, int lock)
 
 extern "C"
 {
+	DLL_PUBLIC int GetT3Procs(fz_context* ctx, fz_font* font, fz_buffer*** out_t3_procs)
+	{
+		fz_try(ctx)
+		{
+			*out_t3_procs = fz_font_t3_procs(ctx, font);
+		}
+		fz_catch(ctx)
+		{			
+			return ERR_FONT_METADATA;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetFTHandle(fz_context* ctx, fz_font* font, void** out_handle)
+	{
+		fz_try(ctx)
+		{
+			*out_handle = fz_font_ft_face(ctx, font);
+		}
+		fz_catch(ctx)
+		{			
+			return ERR_FONT_METADATA;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetFontName(fz_context* ctx, fz_font* font, int length, char* out_name)
+	{
+		fz_try(ctx)
+		{
+			const char* name = fz_font_name(ctx, font);
+			strncpy(out_name, name, length);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_FONT_METADATA;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetFontMetadata(fz_context* ctx, fz_font* font, int* out_font_name_length, int* out_bold, int* out_italic, int* out_serif, int* out_monospaced)
+	{
+		fz_try(ctx)
+		{
+			*out_font_name_length = (int)strlen(fz_font_name(ctx, font));
+			*out_bold = fz_font_is_bold(ctx, font);
+			*out_italic = fz_font_is_italic(ctx, font);
+			*out_serif = fz_font_is_serif(ctx, font);
+			*out_monospaced = fz_font_is_monospaced(ctx, font);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_FONT_METADATA;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
 	DLL_PUBLIC int GetColorantName(fz_context* ctx, fz_colorspace* cs, int n, int length, char* out_name)
 	{
 		fz_try(ctx)
@@ -616,7 +677,7 @@ extern "C"
 	}
 
 
-	DLL_PUBLIC int GetStructuredTextChar(fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y)
+	DLL_PUBLIC int GetStructuredTextChar(fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y, int* out_bidi, fz_font** out_font)
 	{
 		*out_c = character->c;
 
@@ -638,6 +699,9 @@ extern "C"
 
 		*out_lr_x = character->quad.lr.x;
 		*out_lr_y = character->quad.lr.y;
+
+		*out_bidi = character->bidi;
+		*out_font = character->font;
 
 		return EXIT_SUCCESS;
 	}
