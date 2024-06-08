@@ -1149,7 +1149,7 @@ namespace MuPDFCore
                     break;
                 case ExitCodes.ERR_CANNOT_RENDER:
                     throw new MuPDFException("Cannot render page", result);
-                case ExitCodes.ERR_CANNOT_CREATE_CONTEXT:
+                case ExitCodes.ERR_CANNOT_CREATE_BUFFER:
                     throw new MuPDFException("Cannot create the output buffer", result);
                 default:
                     throw new MuPDFException("Unknown error", result);
@@ -1221,7 +1221,7 @@ namespace MuPDFCore
                     break;
                 case ExitCodes.ERR_CANNOT_RENDER:
                     throw new MuPDFException("Cannot render page", result);
-                case ExitCodes.ERR_CANNOT_CREATE_CONTEXT:
+                case ExitCodes.ERR_CANNOT_CREATE_BUFFER:
                     throw new MuPDFException("Cannot create the output buffer", result);
                 default:
                     throw new MuPDFException("Unknown error", result);
