@@ -1062,10 +1062,17 @@ namespace MuPDFCore.MuPDFRenderer
                     RenderDynamicCanvas();
                 }
             }
-            else if (e.Property == PDFRenderer.SelectionProperty && this.StructuredTextPage != null)
+            else if (e.Property == PDFRenderer.SelectionProperty)
             {
-                //Update the selection quads to reflect the new selection
-                this.SelectionQuads = this.StructuredTextPage.GetHighlightQuads(this.Selection, false).ToList();
+                if (this.StructuredTextPage != null)
+                {
+                    //Update the selection quads to reflect the new selection
+                    this.SelectionQuads = this.StructuredTextPage.GetHighlightQuads(this.Selection, false).ToList();
+                }
+                else
+                {
+                    this.SelectionQuads = null;
+                }
                 this.InvalidateVisual();
             }
             else if (e.Property == PDFRenderer.HighlightedRegionsProperty && this.StructuredTextPage != null)
