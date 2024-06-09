@@ -15,8 +15,11 @@
     <None Remove="Data\Sample-owner.pdf" />
     <None Remove="Data\Sample-user-owner.pdf" />
     <None Remove="Data\Sample-user.pdf" />
+    <None Remove="Data\Sample.CMYK.pdf" />
+    <None Remove="Data\Sample.Gray.pdf" />
     <None Remove="Data\Sample.pdf" />
     <None Remove="Data\Sample.png" />
+    <None Remove="Data\Sample.RGB.pdf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,12 +43,15 @@
     <EmbeddedResource Include="Data\Sample-user.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Data\Sample.CMYK.pdf" />
+    <EmbeddedResource Include="Data\Sample.Gray.pdf" />
     <EmbeddedResource Include="Data\Sample.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Sample.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Data\Sample.RGB.pdf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,7 +62,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MuPDFCore" Version="1.10.0-a1" />
+    <PackageReference Include="MuPDFCore" Version="1.10.0-a2" />
   </ItemGroup>
 
 </Project>

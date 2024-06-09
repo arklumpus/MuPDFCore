@@ -558,6 +558,70 @@ namespace Tests
             Assert.IsTrue(chr.BoundingQuad.LowerRight.Y >= 0, "The character's lower right y coordinate is out of range.");
             Assert.IsTrue(chr.BoundingQuad.Contains(chr.Origin), "The character's bounding quad does not contain the character's origin.");
             Assert.IsFalse(float.IsNaN(chr.Size), "The character's size is NaN.");
+
+            Assert.AreEqual(MuPDFStructuredTextCharacter.TextDirection.LeftToRight, chr.Direction, "The character's direction is wrong.");
+            Assert.IsNotNull(chr.Font, "The character's font is null.");
         }
+
+        [TestMethod]
+        public void MuPDFImageStructuredTextPageWithoutImages()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.CMYK.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+
+            Assert.AreEqual(0, sTextPage.Count, "The structured text page contains an unexpected block!");
+        }
+
+        [TestMethod]
+        public void MuPDFImageStructuredTextBlockMembers()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.CMYK.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+
+            Assert.IsInstanceOfType(sTextPage[0], typeof(MuPDFImageStructuredTextBlock), "The block does not contain an image!");
+
+            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+
+            Assert.IsNotNull(imageBlock.Image, "The image is null!");
+            Assert.IsNotNull(imageBlock.TransformMatrix, "The image transform matrix is null!");
+            Assert.AreEqual(3, imageBlock.TransformMatrix.GetLength(0), "The image transform matrix is not valid (L0)!");
+            Assert.AreEqual(3, imageBlock.TransformMatrix.GetLength(1), "The image transform matrix is not valid (L1)!");
+            Assert.AreEqual(0, imageBlock.TransformMatrix[0, 2], "The image transform matrix is not valid (02)!");
+            Assert.AreEqual(0, imageBlock.TransformMatrix[1, 2], "The image transform matrix is not valid (12)!");
+            Assert.AreEqual(1, imageBlock.TransformMatrix[2, 2], "The image transform matrix is not valid (22)!");
+
+            static (float x, float y) transform(float x, float y, float[,] matrix)
+            {
+                return (x * matrix[0, 0] + y * matrix[1, 0] + matrix[2, 0], x * matrix[0, 1] + y * matrix[1, 1] + matrix[2, 1]);
+            }
+
+            (float x, float y) p1 = transform(0, 0, imageBlock.TransformMatrix);
+            (float x, float y) p2 = transform(0, 1, imageBlock.TransformMatrix);
+            (float x, float y) p3 = transform(1, 0, imageBlock.TransformMatrix);
+            (float x, float y) p4 = transform(1, 1, imageBlock.TransformMatrix);
+
+            float minX = Math.Min(Math.Min(p1.x, p2.x), Math.Min(p3.x, p4.x));
+            float minY = Math.Min(Math.Min(p1.y, p2.y), Math.Min(p3.y, p4.y));
+            float maxX = Math.Max(Math.Max(p1.x, p2.x), Math.Max(p3.x, p4.x));
+            float maxY = Math.Max(Math.Max(p1.y, p2.y), Math.Max(p3.y, p4.y));
+
+            Assert.AreEqual(minX, imageBlock.BoundingBox.X0, 1e-5F, "The image transform matrix and the bounding box are not consistent (X0)!");
+            Assert.AreEqual(minY, imageBlock.BoundingBox.Y0, 1e-5F, "The image transform matrix and the bounding box are not consistent (Y0)!");
+            Assert.AreEqual(maxX, imageBlock.BoundingBox.X1, 1e-5F, "The image transform matrix and the bounding box are not consistent (X1)!");
+            Assert.AreEqual(maxY, imageBlock.BoundingBox.Y1, 1e-5F, "The image transform matrix and the bounding box are not consistent (Y1)!");
+        }
+
     }
 }

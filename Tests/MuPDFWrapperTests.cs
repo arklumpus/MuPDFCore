@@ -2,10 +2,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MuPDFCore;
 using System;
 using System.IO;
-using System.IO.Compression;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 
 #pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0230 // Use UTF-8 string literal
+
 namespace Tests
 {
     [TestClass]
@@ -850,7 +853,7 @@ namespace Tests
 
         [TestMethod]
         public void ImageSavingAsPSD()
-        {   
+        {
             string tempFile = Path.GetTempFileName();
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) = CreateSampleDisplayList();
@@ -2107,7 +2110,7 @@ namespace Tests
 
             int progressCount = 0;
 
-            int result = NativeMethods.GetStructuredTextPageWithOCR(nativeContext, nativeDisplayList, 1, ref nativeSTextPage, ref sTextBlockCount, 1, x0, y0, x1, y1, "TESSDATA_PREFIX=" + prefix, "eng", prog => { progressCount++; return 0; } );
+            int result = NativeMethods.GetStructuredTextPageWithOCR(nativeContext, nativeDisplayList, 1, ref nativeSTextPage, ref sTextBlockCount, 1, x0, y0, x1, y1, "TESSDATA_PREFIX=" + prefix, "eng", prog => { progressCount++; return 0; });
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextPage returned the wrong exit code.");
             Assert.IsTrue(sTextBlockCount > 0, "The number of text blocks in the page is wrong.");
@@ -2175,5 +2178,790 @@ namespace Tests
             }
             catch { }
         }
+
+        private static (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativePage, IntPtr nativeDisplayList, IntPtr nativeSTextPage, GCHandle blocksHandle, IntPtr image, IntPtr nativeContext) CreateSampleImage(string resource = "Tests.Data.Sample.RGB.pdf")
+        {
+            IntPtr nativeSTextPage = IntPtr.Zero;
+            int sTextBlockCount = -1;
+
+            IntPtr nativeDisplayList = IntPtr.Zero;
+
+            float x0 = -1;
+            float y0 = -1;
+            float x1 = -1;
+            float y1 = -1;
+
+            IntPtr nativePage = IntPtr.Zero;
+
+            float x = -1;
+            float y = -1;
+            float w = -1;
+            float h = -1;
+
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument(resource);
+
+            _ = NativeMethods.LoadPage(nativeContext, nativeDocument, 0, ref nativePage, ref x, ref y, ref w, ref h);
+
+            _ = NativeMethods.GetDisplayList(nativeContext, nativePage, 1, ref nativeDisplayList, ref x0, ref y0, ref x1, ref y1);
+
+            _ = NativeMethods.GetStructuredTextPage(nativeContext, nativeDisplayList, 1, ref nativeSTextPage, ref sTextBlockCount);
+
+            IntPtr[] blockPointers = new IntPtr[sTextBlockCount];
+            GCHandle blocksHandle = GCHandle.Alloc(blockPointers, GCHandleType.Pinned);
+
+            _ = NativeMethods.GetStructuredTextBlocks(nativeSTextPage, blocksHandle.AddrOfPinnedObject());
+
+            for (int i = 0; i < blockPointers.Length; i++)
+            {
+                int type = -1;
+                int lineCount = -1;
+                IntPtr image = IntPtr.Zero;
+                float a = -1;
+                float b = -1;
+                float c = -1;
+                float d = -1;
+                float e = -1;
+                float f = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+
+                if (type == 1)
+                {
+                    return (dataHandle, ms, nativeDocument, nativeStream, nativePage, nativeDisplayList, nativeSTextPage, blocksHandle, image, nativeContext);
+                }
+            }
+
+            throw new NotImplementedException();
+        }
+
+        [TestMethod]
+        public void GetImageMetadata()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativePage, IntPtr nativeDisplayList, IntPtr nativeSTextPage, GCHandle blocksHandle, IntPtr image, IntPtr nativeContext) = CreateSampleImage();
+
+            int w = -1;
+            int h = -1;
+            int xres = -1;
+            int yres = -1;
+            byte orientation = 255;
+            IntPtr colorspace = IntPtr.Zero;
+
+            int result = NativeMethods.GetImageMetadata(nativeContext, image, ref w, ref h, ref xres, ref yres, ref orientation, ref colorspace);
+
+            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetImageMetadata returned the wrong exit code.");
+            Assert.IsTrue(w > 0, "The image width is wrong.");
+            Assert.IsTrue(h > 0, "The image height is wrong.");
+            Assert.IsTrue(xres > 0, "The image horizontal resolution is wrong.");
+            Assert.IsTrue(yres > 0, "The image vertical resolution is wrong.");
+            Assert.IsTrue(orientation < 255, "The image orientation is wrong.");
+            Assert.AreNotEqual(IntPtr.Zero, colorspace, "The colour space pointer is NULL.");
+
+            try
+            {
+                blocksHandle.Free();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                ms.Dispose();
+                _ = NativeMethods.DisposeContext(nativeContext);
+                dataHandle.Free();
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void LoadPixmap_SampleRGB()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativePage, IntPtr nativeDisplayList, IntPtr nativeSTextPage, GCHandle blocksHandle, IntPtr image, IntPtr nativeContext) = CreateSampleImage("Tests.Data.Sample.RGB.pdf");
+
+            IntPtr pixmap = IntPtr.Zero;
+            IntPtr samples = IntPtr.Zero;
+            int sampleCount = 0;
+
+            int result = NativeMethods.LoadPixmap(nativeContext, image, ref pixmap, ref samples, ref sampleCount);
+
+            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "LoadPixmap returned the wrong exit code.");
+            Assert.AreNotEqual(IntPtr.Zero, pixmap, "The pixmap pointer is NULL.");
+            Assert.AreNotEqual(IntPtr.Zero, samples, "The data pointer is NULL.");
+            Assert.AreEqual(1024 * 800 * 3, sampleCount, "The number of pixel samples is wrong.");
+
+            try
+            {
+                NativeMethods.DisposePixmap(nativeContext, pixmap);
+                blocksHandle.Free();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                ms.Dispose();
+                _ = NativeMethods.DisposeContext(nativeContext);
+                dataHandle.Free();
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void LoadPixmap_SampleGray()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativePage, IntPtr nativeDisplayList, IntPtr nativeSTextPage, GCHandle blocksHandle, IntPtr image, IntPtr nativeContext) = CreateSampleImage("Tests.Data.Sample.Gray.pdf");
+
+            IntPtr pixmap = IntPtr.Zero;
+            IntPtr samples = IntPtr.Zero;
+            int sampleCount = 0;
+
+            int result = NativeMethods.LoadPixmap(nativeContext, image, ref pixmap, ref samples, ref sampleCount);
+
+            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "LoadPixmap returned the wrong exit code.");
+            Assert.AreNotEqual(IntPtr.Zero, pixmap, "The pixmap pointer is NULL.");
+            Assert.AreNotEqual(IntPtr.Zero, samples, "The data pointer is NULL.");
+            Assert.AreEqual(1024 * 800, sampleCount, "The number of pixel samples is wrong.");
+
+            try
+            {
+                NativeMethods.DisposePixmap(nativeContext, pixmap);
+                blocksHandle.Free();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                ms.Dispose();
+                _ = NativeMethods.DisposeContext(nativeContext);
+                dataHandle.Free();
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void LoadPixmap_SampleCMYK()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativePage, IntPtr nativeDisplayList, IntPtr nativeSTextPage, GCHandle blocksHandle, IntPtr image, IntPtr nativeContext) = CreateSampleImage("Tests.Data.Sample.CMYK.pdf");
+
+            IntPtr pixmap = IntPtr.Zero;
+            IntPtr samples = IntPtr.Zero;
+            int sampleCount = 0;
+
+            int result = NativeMethods.LoadPixmap(nativeContext, image, ref pixmap, ref samples, ref sampleCount);
+
+            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "LoadPixmap returned the wrong exit code.");
+            Assert.AreNotEqual(IntPtr.Zero, pixmap, "The pixmap pointer is NULL.");
+            Assert.AreNotEqual(IntPtr.Zero, samples, "The data pointer is NULL.");
+            Assert.AreEqual(1024 * 800 * 4, sampleCount, "The number of pixel samples is wrong.");
+
+            try
+            {
+                NativeMethods.DisposePixmap(nativeContext, pixmap);
+                blocksHandle.Free();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                ms.Dispose();
+                _ = NativeMethods.DisposeContext(nativeContext);
+                dataHandle.Free();
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void LoadPixmapRGB_SampleCMYK()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativePage, IntPtr nativeDisplayList, IntPtr nativeSTextPage, GCHandle blocksHandle, IntPtr image, IntPtr nativeContext) = CreateSampleImage("Tests.Data.Sample.CMYK.pdf");
+
+            IntPtr pixmap = IntPtr.Zero;
+            IntPtr samples = IntPtr.Zero;
+            int sampleCount = 0;
+
+            int result = NativeMethods.LoadPixmapRGB(nativeContext, image, 0, ref pixmap, ref samples, ref sampleCount);
+
+            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "LoadPixmapRGB returned the wrong exit code.");
+            Assert.AreNotEqual(IntPtr.Zero, pixmap, "The pixmap pointer is NULL.");
+            Assert.AreNotEqual(IntPtr.Zero, samples, "The data pointer is NULL.");
+            Assert.AreEqual(1024 * 800 * 3, sampleCount, "The number of pixel samples is wrong.");
+
+            try
+            {
+                NativeMethods.DisposePixmap(nativeContext, pixmap);
+                blocksHandle.Free();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                ms.Dispose();
+                _ = NativeMethods.DisposeContext(nativeContext);
+                dataHandle.Free();
+            }
+            catch { }
+        }
+
+
+        [TestMethod]
+        public void SaveRasterImage_SampleRGB()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativePage, IntPtr nativeDisplayList, IntPtr nativeSTextPage, GCHandle blocksHandle, IntPtr image, IntPtr nativeContext) = CreateSampleImage("Tests.Data.Sample.RGB.pdf");
+
+            string tempFile = Path.GetTempFileName();
+
+            for (int i = 0; i < 5; i++)
+            {
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
+
+                int result = NativeMethods.SaveRasterImage(nativeContext, image, tempFile, i, 90, 0);
+
+                Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveRasterImage (RGB, " + Enum.GetName((RasterOutputFileTypes)i) + ") returned the wrong exit code.");
+                Assert.IsTrue(File.Exists(tempFile), "The output file does not exist.");
+                Assert.IsTrue(new FileInfo(tempFile).Length > 1024, "The output file is too small.");
+            }
+
+            try
+            {
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
+
+                blocksHandle.Free();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                ms.Dispose();
+                _ = NativeMethods.DisposeContext(nativeContext);
+                dataHandle.Free();
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void SaveRasterImage_SampleGray()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativePage, IntPtr nativeDisplayList, IntPtr nativeSTextPage, GCHandle blocksHandle, IntPtr image, IntPtr nativeContext) = CreateSampleImage("Tests.Data.Sample.Gray.pdf");
+
+            string tempFile = Path.GetTempFileName();
+
+            for (int i = 0; i < 5; i++)
+            {
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
+
+                int result = NativeMethods.SaveRasterImage(nativeContext, image, tempFile, i, 90, 0);
+
+                Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveRasterImage (Gray, " + Enum.GetName((RasterOutputFileTypes)i) + ") returned the wrong exit code.");
+                Assert.IsTrue(File.Exists(tempFile), "The output file does not exist.");
+                Assert.IsTrue(new FileInfo(tempFile).Length > 1024, "The output file is too small.");
+            }
+
+            try
+            {
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
+
+                blocksHandle.Free();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                ms.Dispose();
+                _ = NativeMethods.DisposeContext(nativeContext);
+                dataHandle.Free();
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void SaveRasterImage_SampleCMYK()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativePage, IntPtr nativeDisplayList, IntPtr nativeSTextPage, GCHandle blocksHandle, IntPtr image, IntPtr nativeContext) = CreateSampleImage("Tests.Data.Sample.CMYK.pdf");
+
+            string tempFile = Path.GetTempFileName();
+
+            for (int i = 0; i < 5; i++)
+            {
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
+
+                int result = NativeMethods.SaveRasterImage(nativeContext, image, tempFile, i, 90, i == (int)RasterOutputFileTypes.PSD || i == (int)RasterOutputFileTypes.JPEG ? 0 : 1);
+
+                Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "SaveRasterImage (CMYK, " + Enum.GetName((RasterOutputFileTypes)i) + ") returned the wrong exit code.");
+                Assert.IsTrue(File.Exists(tempFile), "The output file does not exist.");
+                Assert.IsTrue(new FileInfo(tempFile).Length > 1024, "The output file is too small.");
+            }
+
+            try
+            {
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
+
+                blocksHandle.Free();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                ms.Dispose();
+                _ = NativeMethods.DisposeContext(nativeContext);
+                dataHandle.Free();
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void GetColorSpaceData()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativePage, IntPtr nativeDisplayList, IntPtr nativeSTextPage, GCHandle blocksHandle, IntPtr image, IntPtr nativeContext) = CreateSampleImage("Tests.Data.Sample.Gray.pdf");
+
+            int w = -1;
+            int h = -1;
+            int xres = -1;
+            int yres = -1;
+            byte orientation = 255;
+            IntPtr colorspace = IntPtr.Zero;
+
+            _ = NativeMethods.GetImageMetadata(nativeContext, image, ref w, ref h, ref xres, ref yres, ref orientation, ref colorspace);
+
+            int csType = -1;
+            int nameLength = -1;
+            IntPtr baseCs = IntPtr.Zero;
+            int lookupSize = -1;
+            IntPtr lookupTable = IntPtr.Zero;
+
+            int result = NativeMethods.GetColorSpaceData(nativeContext, colorspace, ref csType, ref nameLength, ref baseCs, ref lookupSize, ref lookupTable);
+
+            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetColorSpaceData returned the wrong exit code.");
+            Assert.IsTrue(csType > 0, "The colour space type is wrong.");
+            Assert.IsTrue(nameLength >= 0, "The colour space name length is wrong.");
+
+            try
+            {
+                blocksHandle.Free();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                ms.Dispose();
+                _ = NativeMethods.DisposeContext(nativeContext);
+                dataHandle.Free();
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void GetColorSpaceName()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativePage, IntPtr nativeDisplayList, IntPtr nativeSTextPage, GCHandle blocksHandle, IntPtr image, IntPtr nativeContext) = CreateSampleImage("Tests.Data.Sample.CMYK.pdf");
+
+            int w = -1;
+            int h = -1;
+            int xres = -1;
+            int yres = -1;
+            byte orientation = 255;
+            IntPtr colorspace = IntPtr.Zero;
+
+            _ = NativeMethods.GetImageMetadata(nativeContext, image, ref w, ref h, ref xres, ref yres, ref orientation, ref colorspace);
+
+            int csType = -1;
+            int nameLength = -1;
+            IntPtr baseCs = IntPtr.Zero;
+            int lookupSize = -1;
+            IntPtr lookupTable = IntPtr.Zero;
+
+            _ = NativeMethods.GetColorSpaceData(nativeContext, colorspace, ref csType, ref nameLength, ref baseCs, ref lookupSize, ref lookupTable);
+
+            byte[] nameBytes = new byte[nameLength];
+
+            GCHandle nameBytesHandle = GCHandle.Alloc(nameBytes, GCHandleType.Pinned);
+
+            int result = NativeMethods.GetColorSpaceName(nativeContext, colorspace, nameLength, nameBytesHandle.AddrOfPinnedObject());
+
+            nameBytesHandle.Free();
+
+            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetColorSpaceName returned the wrong exit code.");
+            CollectionAssert.AreEqual(Encoding.ASCII.GetBytes("DeviceCMYK"), nameBytes, "The colour space name length is wrong.");
+
+            try
+            {
+                blocksHandle.Free();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                ms.Dispose();
+                _ = NativeMethods.DisposeContext(nativeContext);
+                dataHandle.Free();
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void GetFontMetadata()
+        {
+            (GCHandle blocksHandle, GCHandle dataHandle, MemoryStream ms, IntPtr[] blockPointers, IntPtr nativeSTextPage, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext) = CreateSampleStructuredTextBlocks();
+
+            for (int i = 0; i < blockPointers.Length; i++)
+            {
+                int type = -1;
+                float x0 = -1;
+                float y0 = -1;
+                float x1 = -1;
+                float y1 = -1;
+                int lineCount = -1;
+                IntPtr image = IntPtr.Zero;
+                float a = -1;
+                float b = -1;
+                float c = -1;
+                float d = -1;
+                float e = -1;
+                float f = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+
+                if (type == 0)
+                {
+                    IntPtr[] linePointers = new IntPtr[lineCount];
+                    GCHandle linesHandle = GCHandle.Alloc(linePointers, GCHandleType.Pinned);
+
+                    _ = NativeMethods.GetStructuredTextLines(blockPointers[i], linesHandle.AddrOfPinnedObject());
+
+                    for (int j = 0; j < lineCount; j++)
+                    {
+                        int wmode = -1;
+                        x0 = -1;
+                        y0 = -1;
+                        x1 = -1;
+                        y1 = -1;
+
+                        float x = -1;
+                        float y = -1;
+
+                        int charCount = -1;
+
+                        _ = NativeMethods.GetStructuredTextLine(linePointers[j], ref wmode, ref x0, ref y0, ref x1, ref y1, ref x, ref y, ref charCount);
+
+                        IntPtr[] charPointers = new IntPtr[charCount];
+                        GCHandle charsHandle = GCHandle.Alloc(charPointers, GCHandleType.Pinned);
+
+                        _ = NativeMethods.GetStructuredTextChars(linePointers[j], charsHandle.AddrOfPinnedObject());
+
+                        for (int k = 0; k < charCount; k++)
+                        {
+                            int codePoint = -1;
+                            int color = -1;
+                            float originX = -1;
+                            float originY = -1;
+                            float size = -1;
+                            float llX = -1;
+                            float llY = -1;
+                            float ulX = -1;
+                            float ulY = -1;
+                            float urX = -1;
+                            float urY = -1;
+                            float lrX = -1;
+                            float lrY = -1;
+                            int bidi = -1;
+                            IntPtr font = IntPtr.Zero;
+
+                            _ = NativeMethods.GetStructuredTextChar(charPointers[k], ref codePoint, ref color, ref originX, ref originY, ref size, ref llX, ref llY, ref ulX, ref ulY, ref urX, ref urY, ref lrX, ref lrY, ref bidi, ref font);
+
+                            int fontNameLength = -1;
+                            int bold = -1;
+                            int italic = -1;
+                            int serif = -1;
+                            int monospaced = -1;
+
+                            int result = NativeMethods.GetFontMetadata(nativeContext, font, ref fontNameLength, ref bold, ref italic, ref serif, ref monospaced);
+
+                            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetFontMetadata returned the wrong exit code.");
+
+                            Assert.IsTrue(fontNameLength >= 0, "The font name length is wrong.");
+                            Assert.IsTrue(bold == 1 || bold == 0, "The font bold style is wrong.");
+                            Assert.IsTrue(italic == 1 || italic == 0, "The font italic style is wrong.");
+                            Assert.IsTrue(serif == 1 || serif == 0, "The font serif style is wrong.");
+                            Assert.IsTrue(monospaced == 1 || monospaced == 0, "The font monospaced style is wrong.");
+                        }
+
+                        try
+                        {
+                            charsHandle.Free();
+                        }
+                        catch { }
+                    }
+
+                    try
+                    {
+                        linesHandle.Free();
+                    }
+                    catch { }
+                }
+            }
+
+            try
+            {
+                blocksHandle.Free();
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+
+        [TestMethod]
+        public void GetFontName()
+        {
+            (GCHandle blocksHandle, GCHandle dataHandle, MemoryStream ms, IntPtr[] blockPointers, IntPtr nativeSTextPage, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext) = CreateSampleStructuredTextBlocks();
+
+            for (int i = 0; i < blockPointers.Length; i++)
+            {
+                int type = -1;
+                float x0 = -1;
+                float y0 = -1;
+                float x1 = -1;
+                float y1 = -1;
+                int lineCount = -1;
+                IntPtr image = IntPtr.Zero;
+                float a = -1;
+                float b = -1;
+                float c = -1;
+                float d = -1;
+                float e = -1;
+                float f = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+
+                if (type == 0)
+                {
+                    IntPtr[] linePointers = new IntPtr[lineCount];
+                    GCHandle linesHandle = GCHandle.Alloc(linePointers, GCHandleType.Pinned);
+
+                    _ = NativeMethods.GetStructuredTextLines(blockPointers[i], linesHandle.AddrOfPinnedObject());
+
+                    for (int j = 0; j < lineCount; j++)
+                    {
+                        int wmode = -1;
+                        x0 = -1;
+                        y0 = -1;
+                        x1 = -1;
+                        y1 = -1;
+
+                        float x = -1;
+                        float y = -1;
+
+                        int charCount = -1;
+
+                        _ = NativeMethods.GetStructuredTextLine(linePointers[j], ref wmode, ref x0, ref y0, ref x1, ref y1, ref x, ref y, ref charCount);
+
+                        IntPtr[] charPointers = new IntPtr[charCount];
+                        GCHandle charsHandle = GCHandle.Alloc(charPointers, GCHandleType.Pinned);
+
+                        _ = NativeMethods.GetStructuredTextChars(linePointers[j], charsHandle.AddrOfPinnedObject());
+
+                        for (int k = 0; k < charCount; k++)
+                        {
+                            int codePoint = -1;
+                            int color = -1;
+                            float originX = -1;
+                            float originY = -1;
+                            float size = -1;
+                            float llX = -1;
+                            float llY = -1;
+                            float ulX = -1;
+                            float ulY = -1;
+                            float urX = -1;
+                            float urY = -1;
+                            float lrX = -1;
+                            float lrY = -1;
+                            int bidi = -1;
+                            IntPtr font = IntPtr.Zero;
+
+                            _ = NativeMethods.GetStructuredTextChar(charPointers[k], ref codePoint, ref color, ref originX, ref originY, ref size, ref llX, ref llY, ref ulX, ref ulY, ref urX, ref urY, ref lrX, ref lrY, ref bidi, ref font);
+
+                            int fontNameLength = -1;
+                            int bold = -1;
+                            int italic = -1;
+                            int serif = -1;
+                            int monospaced = -1;
+
+                            _ = NativeMethods.GetFontMetadata(nativeContext, font, ref fontNameLength, ref bold, ref italic, ref serif, ref monospaced);
+
+                            byte[] fontNameBytes = new byte[fontNameLength];
+
+                            GCHandle fontNameBytesHandle = GCHandle.Alloc(fontNameBytes, GCHandleType.Pinned);
+                            int result = NativeMethods.GetFontName(nativeContext, font, fontNameLength, fontNameBytesHandle.AddrOfPinnedObject());
+                            fontNameBytesHandle.Free();
+
+                            string fontName = Encoding.ASCII.GetString(fontNameBytes);
+
+                            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetFontName returned the wrong exit code.");
+
+                            Assert.IsTrue(fontName.All(x => char.IsLetterOrDigit(x) || x == '+' || x == '-'), "The font name is wrong.");
+                        }
+
+                        try
+                        {
+                            charsHandle.Free();
+                        }
+                        catch { }
+                    }
+
+                    try
+                    {
+                        linesHandle.Free();
+                    }
+                    catch { }
+                }
+            }
+
+            try
+            {
+                blocksHandle.Free();
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void GetFontHandles()
+        {
+            (GCHandle blocksHandle, GCHandle dataHandle, MemoryStream ms, IntPtr[] blockPointers, IntPtr nativeSTextPage, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext) = CreateSampleStructuredTextBlocks();
+
+            for (int i = 0; i < blockPointers.Length; i++)
+            {
+                int type = -1;
+                float x0 = -1;
+                float y0 = -1;
+                float x1 = -1;
+                float y1 = -1;
+                int lineCount = -1;
+                IntPtr image = IntPtr.Zero;
+                float a = -1;
+                float b = -1;
+                float c = -1;
+                float d = -1;
+                float e = -1;
+                float f = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+
+                if (type == 0)
+                {
+                    IntPtr[] linePointers = new IntPtr[lineCount];
+                    GCHandle linesHandle = GCHandle.Alloc(linePointers, GCHandleType.Pinned);
+
+                    _ = NativeMethods.GetStructuredTextLines(blockPointers[i], linesHandle.AddrOfPinnedObject());
+
+                    for (int j = 0; j < lineCount; j++)
+                    {
+                        int wmode = -1;
+                        x0 = -1;
+                        y0 = -1;
+                        x1 = -1;
+                        y1 = -1;
+
+                        float x = -1;
+                        float y = -1;
+
+                        int charCount = -1;
+
+                        _ = NativeMethods.GetStructuredTextLine(linePointers[j], ref wmode, ref x0, ref y0, ref x1, ref y1, ref x, ref y, ref charCount);
+
+                        IntPtr[] charPointers = new IntPtr[charCount];
+                        GCHandle charsHandle = GCHandle.Alloc(charPointers, GCHandleType.Pinned);
+
+                        _ = NativeMethods.GetStructuredTextChars(linePointers[j], charsHandle.AddrOfPinnedObject());
+
+                        for (int k = 0; k < charCount; k++)
+                        {
+                            int codePoint = -1;
+                            int color = -1;
+                            float originX = -1;
+                            float originY = -1;
+                            float size = -1;
+                            float llX = -1;
+                            float llY = -1;
+                            float ulX = -1;
+                            float ulY = -1;
+                            float urX = -1;
+                            float urY = -1;
+                            float lrX = -1;
+                            float lrY = -1;
+                            int bidi = -1;
+                            IntPtr font = IntPtr.Zero;
+
+                            _ = NativeMethods.GetStructuredTextChar(charPointers[k], ref codePoint, ref color, ref originX, ref originY, ref size, ref llX, ref llY, ref ulX, ref ulY, ref urX, ref urY, ref lrX, ref lrY, ref bidi, ref font);
+
+                            IntPtr t3Procs = IntPtr.Zero;
+                            IntPtr FTHandle = IntPtr.Zero;
+
+                            int result = NativeMethods.GetFTHandle(nativeContext, font, ref FTHandle);
+                            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetFTHandle returned the wrong exit code.");
+
+                            result = NativeMethods.GetT3Procs(nativeContext, font, ref t3Procs);
+                            Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetT3Procs returned the wrong exit code.");
+
+                            Assert.IsTrue(t3Procs != IntPtr.Zero || FTHandle != IntPtr.Zero, "The font handles are both NULL.");
+                        }
+
+                        try
+                        {
+                            charsHandle.Free();
+                        }
+                        catch { }
+                    }
+
+                    try
+                    {
+                        linesHandle.Free();
+                    }
+                    catch { }
+                }
+            }
+
+            try
+            {
+                blocksHandle.Free();
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeStructuredTextPage(nativeContext, nativeSTextPage);
+                _ = NativeMethods.DisposeDisplayList(nativeContext, nativeDisplayList);
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
     }
 }
