@@ -1414,8 +1414,9 @@ namespace MuPDFCore
         /// </summary>
         /// <param name="pageNumber">The number of the page (starting at 0)</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <param name="preserveImages">Determines whether images within the document are included in <see cref="MuPDFImageStructuredTextBlock"/>s or not.</param>
         /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
-        public MuPDFStructuredTextPage GetStructuredTextPage(int pageNumber, bool includeAnnotations = true)
+        public MuPDFStructuredTextPage GetStructuredTextPage(int pageNumber, bool includeAnnotations = true, bool preserveImages = false)
         {
             if (this.EncryptionState == EncryptionState.Encrypted)
             {
@@ -1427,7 +1428,7 @@ namespace MuPDFCore
                 DisplayLists[pageNumber] = new MuPDFDisplayList(this.OwnerContext, this.Pages[pageNumber], includeAnnotations);
             }
 
-            return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], null, 1, new Rectangle());
+            return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], null, 1, new Rectangle(), preserveImages);
         }
 
         /// <summary>
@@ -1436,10 +1437,11 @@ namespace MuPDFCore
         /// <param name="pageNumber">The number of the page (starting at 0)</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <param name="preserveImages">Determines whether images within the document are included in <see cref="MuPDFImageStructuredTextBlock"/>s or not.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> used to cancel the operation. Providing a value other than the default is not supported on Windows x86 and will throw a runtime exception.</param>
         /// <param name="progress">An <see cref="IProgress{OCRProgressInfo}"/> used to report progress. Providing a value other than null is not supported on Windows x86 and will throw a runtime exception.</param>
         /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
-        public MuPDFStructuredTextPage GetStructuredTextPage(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
+        public MuPDFStructuredTextPage GetStructuredTextPage(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true, bool preserveImages = false, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
             if (this.EncryptionState == EncryptionState.Encrypted)
             {
@@ -1460,7 +1462,7 @@ namespace MuPDFCore
                 region = new Rectangle(region.X0 * 72 / this.ImageXRes, region.Y0 * 72 / this.ImageYRes, region.X1 * 72 / this.ImageXRes, region.Y1 * 72 / this.ImageYRes);
             }
 
-            return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], ocrLanguage, zoom, region, cancellationToken, progress);
+            return new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], ocrLanguage, zoom, region, preserveImages, cancellationToken, progress);
         }
 
         /// <summary>
@@ -1469,10 +1471,11 @@ namespace MuPDFCore
         /// <param name="pageNumber">The number of the page (starting at 0)</param>
         /// <param name="ocrLanguage">The language to use for optical character recognition (OCR). If this is null, no OCR is performed.</param>
         /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included. Otherwise, only the page contents are included.</param>
+        /// <param name="preserveImages">Determines whether images within the document are included in <see cref="MuPDFImageStructuredTextBlock"/>s or not.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> used to cancel the operation. Providing a value other than the default is not supported on Windows x86 and will throw a runtime exception.</param>
         /// <param name="progress">An <see cref="IProgress{OCRProgressInfo}"/> used to report progress. Providing a value other than null is not supported on Windows x86 and will throw a runtime exception.</param>
         /// <returns>A <see cref="MuPDFStructuredTextPage"/> containing a structured text representation of the page.</returns>
-        public async Task<MuPDFStructuredTextPage> GetStructuredTextPageAsync(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
+        public async Task<MuPDFStructuredTextPage> GetStructuredTextPageAsync(int pageNumber, TesseractLanguage ocrLanguage, bool includeAnnotations = true, bool preserveImages = false, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
             if (this.EncryptionState == EncryptionState.Encrypted)
             {
@@ -1493,7 +1496,7 @@ namespace MuPDFCore
                 region = new Rectangle(region.X0 * 72 / this.ImageXRes, region.Y0 * 72 / this.ImageYRes, region.X1 * 72 / this.ImageXRes, region.Y1 * 72 / this.ImageYRes);
             }
 
-            return await Task.Run(() => new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], ocrLanguage, zoom, region, cancellationToken, progress));
+            return await Task.Run(() => new MuPDFStructuredTextPage(this.OwnerContext, this.DisplayLists[pageNumber], ocrLanguage, zoom, region, preserveImages, cancellationToken, progress));
         }
 
         /// <summary>
@@ -1516,7 +1519,7 @@ namespace MuPDFCore
 
             for (int i = 0; i < this.Pages.Count; i++)
             {
-                MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, includeAnnotations);
+                MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, includeAnnotations, false);
                 foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
                 {
                     var numLines = textBlock.Count;
@@ -1563,7 +1566,7 @@ namespace MuPDFCore
 
             for (int i = 0; i < this.Pages.Count; i++)
             {
-                MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, ocrLanguage, includeAnnotations);
+                MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, ocrLanguage, includeAnnotations, false);
                 foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
                 {
                     var numLines = textBlock.Count;
@@ -1612,7 +1615,7 @@ namespace MuPDFCore
 
             for (int i = 0; i < this.Pages.Count; i++)
             {
-                MuPDFStructuredTextPage structuredTextPage = await this.GetStructuredTextPageAsync(i, ocrLanguage, includeAnnotations, cancellationToken, progress);
+                MuPDFStructuredTextPage structuredTextPage = await this.GetStructuredTextPageAsync(i, ocrLanguage, includeAnnotations, false, cancellationToken, progress);
                 foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
                 {
                     var numLines = textBlock.Count;
@@ -1661,7 +1664,7 @@ namespace MuPDFCore
         {
             int result = NativeMethods.UnlockWithPassword(this.OwnerContext.NativeContext, this.NativeDocument, password);
 
-            int pt = 0;
+            int pt;
 
             switch (result)
             {

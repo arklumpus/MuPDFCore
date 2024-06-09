@@ -60,7 +60,7 @@ namespace MuPDFCore
             }
         }
 
-        internal MuPDFStructuredTextPage(MuPDFContext context, MuPDFDisplayList list, TesseractLanguage ocrLanguage, double zoom, Rectangle pageBounds, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
+        internal MuPDFStructuredTextPage(MuPDFContext context, MuPDFDisplayList list, TesseractLanguage ocrLanguage, double zoom, Rectangle pageBounds, bool preserveImages, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
             if (ocrLanguage != null && RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && RuntimeInformation.ProcessArchitecture == Architecture.X86 && (cancellationToken != default || progress != null))
             {
@@ -75,7 +75,7 @@ namespace MuPDFCore
 
             if (ocrLanguage != null)
             {
-                result = (ExitCodes)NativeMethods.GetStructuredTextPageWithOCR(context.NativeContext, list.NativeDisplayList, 1, ref nativeStructuredPage, ref blockCount, (float)zoom, pageBounds.X0, pageBounds.Y0, pageBounds.X1, pageBounds.Y1, "TESSDATA_PREFIX=" + ocrLanguage.Prefix, ocrLanguage.Language, prog =>
+                result = (ExitCodes)NativeMethods.GetStructuredTextPageWithOCR(context.NativeContext, list.NativeDisplayList, preserveImages ? 1 : 0, ref nativeStructuredPage, ref blockCount, (float)zoom, pageBounds.X0, pageBounds.Y0, pageBounds.X1, pageBounds.Y1, "TESSDATA_PREFIX=" + ocrLanguage.Prefix, ocrLanguage.Language, prog =>
                 {
                     progress?.Report(new OCRProgressInfo(prog / 100.0));
 
@@ -91,7 +91,7 @@ namespace MuPDFCore
             }
             else
             {
-                result = (ExitCodes)NativeMethods.GetStructuredTextPage(context.NativeContext, list.NativeDisplayList, 1, ref nativeStructuredPage, ref blockCount);
+                result = (ExitCodes)NativeMethods.GetStructuredTextPage(context.NativeContext, list.NativeDisplayList, preserveImages ? 1 : 0, ref nativeStructuredPage, ref blockCount);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
