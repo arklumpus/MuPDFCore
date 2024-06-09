@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 #pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable IDE0056 // Use index operator
+#pragma warning disable IDE0230 // Use UTF-8 string literal
 
 namespace Tests
 {
