@@ -21,11 +21,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             Assert.AreEqual(96, image.XRes, "The image's horizontal resolution is wrong!");
             Assert.AreEqual(96, image.YRes, "The image's vertical resolution is wrong!");
@@ -45,11 +45,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             byte[] bytes = image.GetBytes();
 
@@ -69,11 +69,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             byte[] bytes = image.GetBytes();
 
@@ -94,11 +94,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             byte[] bytes = image.GetBytes();
 
@@ -118,11 +118,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             byte[] bytes = image.GetBytes(PixelFormats.RGBA);
 
@@ -143,11 +143,9 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
-
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
-
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImage image = imageBlock.Image;
 
             byte[] bytes = image.GetBytes(PixelFormats.RGB);
 
@@ -167,11 +165,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             byte[] bytes = image.GetBytes(PixelFormats.BGRA);
 
@@ -192,11 +190,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             using MemoryStream ms = new MemoryStream();
 
@@ -230,11 +228,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             using MemoryStream ms = new MemoryStream();
 
@@ -260,11 +258,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             using MemoryStream ms = new MemoryStream();
 
@@ -298,11 +296,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             using MemoryStream ms = new MemoryStream();
 
@@ -328,11 +326,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             using MemoryStream ms = new MemoryStream();
 
@@ -368,11 +366,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             using MemoryStream ms = new MemoryStream();
 
@@ -398,11 +396,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             string tempFile = Path.GetTempFileName();
             byte[] fileBytes;
@@ -453,11 +451,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
 
             string tempFile = Path.GetTempFileName();
@@ -495,11 +493,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             string tempFile = Path.GetTempFileName();
             byte[] fileBytes;
@@ -550,11 +548,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
 
             string tempFile = Path.GetTempFileName();
@@ -592,11 +590,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
             string tempFile = Path.GetTempFileName();
             byte[] fileBytes;
@@ -649,11 +647,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFImage image = imageBlock.Image;
 
 
             string tempFile = Path.GetTempFileName();

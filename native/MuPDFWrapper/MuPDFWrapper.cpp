@@ -158,6 +158,21 @@ void unlock_mutex(void* user, int lock)
 
 extern "C"
 {
+	DLL_PUBLIC void DisposeFont(fz_context* ctx, fz_font* font)
+	{
+		fz_drop_font(ctx, font);
+	}
+
+	DLL_PUBLIC void DisposeImage(fz_context* ctx, fz_image* image)
+	{
+		fz_drop_image(ctx, image);
+	}
+
+	DLL_PUBLIC void DisposeColorSpace(fz_context* ctx, fz_colorspace* cs)
+	{
+		fz_drop_colorspace(ctx, cs);
+	}
+
 	DLL_PUBLIC int GetT3Procs(fz_context* ctx, fz_font* font, fz_buffer*** out_t3_procs)
 	{
 		fz_try(ctx)
@@ -321,19 +336,17 @@ extern "C"
 
 		if (convert_to_rgb > 0)
 		{
-			fz_colorspace* cs;
-
 			// Convert the pixmap to RGB.
 			fz_try(ctx)
 			{
-				cs = fz_device_rgb(ctx);
+				fz_colorspace* cs = fz_device_rgb(ctx);
 				fz_pixmap* converted_pixmap = fz_convert_pixmap(ctx, pix, cs, cs, NULL, fz_default_color_params, 0);
-				fz_drop_pixmap(ctx, pix);
-				pix = converted_pixmap;
-			}
-			fz_always(ctx)
-			{
-				fz_drop_colorspace(ctx, cs);
+				
+				if (pix != converted_pixmap)
+				{
+					fz_drop_pixmap(ctx, pix);
+					pix = converted_pixmap;
+				}
 			}
 			fz_catch(ctx)
 			{
@@ -399,19 +412,16 @@ extern "C"
 
 		if (convert_to_rgb > 0)
 		{
-			fz_colorspace* cs;
-
 			// Convert the pixmap to RGB.
 			fz_try(ctx)
 			{
-				cs = fz_device_rgb(ctx);
+				fz_colorspace* cs = fz_device_rgb(ctx);
 				fz_pixmap* converted_pixmap = fz_convert_pixmap(ctx, pix, cs, cs, NULL, fz_default_color_params, 0);
-				fz_drop_pixmap(ctx, pix);
-				pix = converted_pixmap;
-			}
-			fz_always(ctx)
-			{
-				fz_drop_colorspace(ctx, cs);
+				if (pix != converted_pixmap)
+				{
+					fz_drop_pixmap(ctx, pix);
+					pix = converted_pixmap;
+				}
 			}
 			fz_catch(ctx)
 			{
@@ -504,6 +514,7 @@ extern "C"
 			return ERR_CANNOT_RENDER;
 		}
 
+		fz_keep_pixmap(ctx, *out_pixmap);
 		return EXIT_SUCCESS;
 	}
 
@@ -519,6 +530,8 @@ extern "C"
 		{
 			return ERR_CANNOT_RENDER;
 		}
+		
+		fz_keep_pixmap(ctx, *out_pixmap);
 
 		return EXIT_SUCCESS;
 	}
@@ -528,6 +541,7 @@ extern "C"
 		*out_w = image->w;
 		*out_h = image->h;
 		*out_colorspace = image->colorspace;
+		fz_keep_colorspace(ctx, image->colorspace);
 
 		fz_try(ctx)
 		{
@@ -677,7 +691,7 @@ extern "C"
 	}
 
 
-	DLL_PUBLIC int GetStructuredTextChar(fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y, int* out_bidi, fz_font** out_font)
+	DLL_PUBLIC int GetStructuredTextChar(fz_context* ctx, fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y, int* out_bidi, fz_font** out_font)
 	{
 		*out_c = character->c;
 
@@ -702,6 +716,7 @@ extern "C"
 
 		*out_bidi = character->bidi;
 		*out_font = character->font;
+		fz_keep_font(ctx, character->font);
 
 		return EXIT_SUCCESS;
 	}
@@ -765,7 +780,7 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int GetStructuredTextBlock(fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* a, float* b, float* c, float* d, float* e, float* f)
+	DLL_PUBLIC int GetStructuredTextBlock(fz_context* ctx, fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* a, float* b, float* c, float* d, float* e, float* f)
 	{
 		*out_type = block->type;
 
@@ -778,6 +793,7 @@ extern "C"
 		{
 			*out_line_count = 0;
 			*out_image = block->u.i.image;
+			fz_keep_image(ctx, block->u.i.image);
 			*a = block->u.i.transform.a;
 			*b = block->u.i.transform.b;
 			*c = block->u.i.transform.c;

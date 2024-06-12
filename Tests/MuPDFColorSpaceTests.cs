@@ -19,9 +19,9 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImage image = imageBlock.Image;
             MuPDFColorSpace colorSpace = image.ColorSpace;
 
             Assert.AreEqual(ColorSpaceType.RGB, colorSpace.Type, "The colour space type is wrong.");
@@ -40,9 +40,9 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImage image = imageBlock.Image;
             MuPDFColorSpace colorSpace = image.ColorSpace;
 
             Assert.AreEqual(ColorSpaceType.Gray, colorSpace.Type, "The colour space type is wrong.");
@@ -61,9 +61,9 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
-            MuPDFImage image = imageBlock.Image;
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImage image = imageBlock.Image;
             MuPDFColorSpace colorSpace = image.ColorSpace;
 
             Assert.AreEqual(ColorSpaceType.CMYK, colorSpace.Type, "The colour space type is wrong.");

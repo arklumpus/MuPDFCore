@@ -28,8 +28,10 @@ namespace MuPDFCore
     /// <summary>
     /// Represents a structured representation of the text contained in a page.
     /// </summary>
-    public class MuPDFStructuredTextPage : IReadOnlyList<MuPDFStructuredTextBlock>
+    public class MuPDFStructuredTextPage : IReadOnlyList<MuPDFStructuredTextBlock>, IDisposable
     {
+        private bool disposedValue;
+
         /// <summary>
         /// The blocks contained in the page.
         /// </summary>
@@ -59,6 +61,9 @@ namespace MuPDFCore
                 return StructuredTextBlocks[address.BlockIndex][address.LineIndex][address.CharacterIndex];
             }
         }
+
+        private IntPtr NativeContext { get; }
+        private IntPtr NativePointer { get; }
 
         internal MuPDFStructuredTextPage(MuPDFContext context, MuPDFDisplayList list, TesseractLanguage ocrLanguage, double zoom, Rectangle pageBounds, bool preserveImages, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
         {
@@ -142,7 +147,7 @@ namespace MuPDFCore
                     float e = 0;
                     float f = 0;
 
-                    result = (ExitCodes)NativeMethods.GetStructuredTextBlock(blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref imagePointer, ref a, ref b, ref c, ref d, ref e, ref f);
+                    result = (ExitCodes)NativeMethods.GetStructuredTextBlock(context.NativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref imagePointer, ref a, ref b, ref c, ref d, ref e, ref f);
 
                     switch (result)
                     {
@@ -157,10 +162,10 @@ namespace MuPDFCore
                     switch ((MuPDFStructuredTextBlock.Types)type)
                     {
                         case MuPDFStructuredTextBlock.Types.Image:
-                            this.StructuredTextBlocks[i] = new MuPDFImageStructuredTextBlock(context, bBox, imagePointer, a, b, c, d, e, f);
+                            this.StructuredTextBlocks[i] = new MuPDFImageStructuredTextBlock(context, this, bBox, imagePointer, a, b, c, d, e, f);
                             break;
                         case MuPDFStructuredTextBlock.Types.Text:
-                            this.StructuredTextBlocks[i] = new MuPDFTextStructuredTextBlock(context, bBox, blockPointers[i], lineCount);
+                            this.StructuredTextBlocks[i] = new MuPDFTextStructuredTextBlock(context, this, bBox, blockPointers[i], lineCount);
                             break;
                     }
                 }
@@ -170,7 +175,8 @@ namespace MuPDFCore
                 blocksHandle.Free();
             }
 
-            NativeMethods.DisposeStructuredTextPage(context.NativeContext, nativeStructuredPage);
+            this.NativeContext = context.NativeContext;
+            this.NativePointer = nativeStructuredPage;
         }
 
         /// <summary>
@@ -556,12 +562,48 @@ namespace MuPDFCore
         {
             return StructuredTextBlocks.GetEnumerator();
         }
+
+        /// <inheritdoc/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    if (this.StructuredTextBlocks != null)
+                    {
+                        for (int i = 0; i < this.StructuredTextBlocks.Length; i++)
+                        {
+                            this.StructuredTextBlocks?[i]?.Dispose();
+                        }
+                    }
+                }
+
+                NativeMethods.DisposeStructuredTextPage(this.NativeContext, this.NativePointer);
+                disposedValue = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose the <see cref="MuPDFStructuredTextPage"/>.
+        /// </summary>
+        ~MuPDFStructuredTextPage()
+        {
+            Dispose(disposing: false);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 
     /// <summary>
     /// Represents a structured text block containing text or an image.
     /// </summary>
-    public abstract class MuPDFStructuredTextBlock : IReadOnlyList<MuPDFStructuredTextLine>
+    public abstract class MuPDFStructuredTextBlock : IReadOnlyList<MuPDFStructuredTextLine>, IDisposable
     {
         /// <summary>
         /// Defines the type of the block.
@@ -595,6 +637,11 @@ namespace MuPDFCore
         public abstract int Count { get; }
 
         /// <summary>
+        /// The <see cref="MuPDFStructuredTextPage"/> that contains this <see cref="MuPDFStructuredTextBlock"/>.
+        /// </summary>
+        public MuPDFStructuredTextPage ParentPage { get; }
+
+        /// <summary>
         /// Gets the specified line from the block.
         /// </summary>
         /// <param name="index">The index of the line to extract.</param>
@@ -603,9 +650,10 @@ namespace MuPDFCore
 
         internal MuPDFStructuredTextBlock() { }
 
-        internal MuPDFStructuredTextBlock(Rectangle boundingBox)
+        internal MuPDFStructuredTextBlock(Rectangle boundingBox, MuPDFStructuredTextPage parentPage)
         {
             this.BoundingBox = boundingBox;
+            this.ParentPage = parentPage;
         }
 
         /// <inheritdoc/>
@@ -615,12 +663,15 @@ namespace MuPDFCore
         {
             return this.GetEnumerator();
         }
+
+        /// <inheritdoc/>
+        public abstract void Dispose();
     }
 
     /// <summary>
     /// Represents a block containing a single image. The block contains a single line with a single character.
     /// </summary>
-    public class MuPDFImageStructuredTextBlock : MuPDFStructuredTextBlock
+    public class MuPDFImageStructuredTextBlock : MuPDFStructuredTextBlock, IDisposable
     {
         /// <inheritdoc/>
         public override Types Type => Types.Image;
@@ -639,6 +690,7 @@ namespace MuPDFCore
         public MuPDFImage Image { get; }
 
         private readonly MuPDFStructuredTextLine Line;
+        private bool disposedValue;
 
         /// <inheritdoc/>
         public override MuPDFStructuredTextLine this[int index]
@@ -656,11 +708,11 @@ namespace MuPDFCore
             }
         }
 
-        internal MuPDFImageStructuredTextBlock(MuPDFContext context, Rectangle boundingBox, IntPtr imagePointer, float a, float b, float c, float d, float e, float f) : base(boundingBox)
+        internal MuPDFImageStructuredTextBlock(MuPDFContext context, MuPDFStructuredTextPage parentPage, Rectangle boundingBox, IntPtr imagePointer, float a, float b, float c, float d, float e, float f) : base(boundingBox, parentPage)
         {
-            this.Line = new MuPDFStructuredTextLine(this.BoundingBox);
+            this.Line = new MuPDFStructuredTextLine(this.BoundingBox, this);
             this.TransformMatrix = new float[,] { { a, b, 0 }, { c, d, 0 }, { e, f, 1 } };
-            this.Image = new MuPDFImage(imagePointer, context);
+            this.Image = new MuPDFImage(imagePointer, context, this);
         }
 
         /// <inheritdoc/>
@@ -668,13 +720,36 @@ namespace MuPDFCore
         {
             return ((IEnumerable<MuPDFStructuredTextLine>)new MuPDFStructuredTextLine[] { Line }).GetEnumerator();
         }
+
+        /// <inheritdoc/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this.Image?.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 
     /// <summary>
     /// Represents a block containing multiple lines of text (typically a paragraph).
     /// </summary>
-    public class MuPDFTextStructuredTextBlock : MuPDFStructuredTextBlock
+    public class MuPDFTextStructuredTextBlock : MuPDFStructuredTextBlock, IDisposable
     {
+        private bool disposedValue;
+
         /// <inheritdoc/>
         public override Types Type => Types.Text;
 
@@ -689,7 +764,7 @@ namespace MuPDFCore
         /// <inheritdoc/>
         public override MuPDFStructuredTextLine this[int index] => ((IReadOnlyList<MuPDFStructuredTextLine>)Lines)[index];
 
-        internal MuPDFTextStructuredTextBlock(MuPDFContext context, Rectangle boundingBox, IntPtr blockPointer, int lineCount) : base(boundingBox)
+        internal MuPDFTextStructuredTextBlock(MuPDFContext context, MuPDFStructuredTextPage parentPage, Rectangle boundingBox, IntPtr blockPointer, int lineCount) : base(boundingBox, parentPage)
         {
             IntPtr[] linePointers = new IntPtr[lineCount];
             GCHandle linesHandle = GCHandle.Alloc(linePointers, GCHandleType.Pinned);
@@ -734,7 +809,7 @@ namespace MuPDFCore
                     Rectangle bBox = new Rectangle(x0, y0, x1, y1);
                     PointF direction = new PointF(x, y);
 
-                    Lines[i] = new MuPDFStructuredTextLine(context, linePointers[i], (MuPDFStructuredTextLine.WritingModes)wmode, direction, bBox, charCount);
+                    Lines[i] = new MuPDFStructuredTextLine(context, this, linePointers[i], (MuPDFStructuredTextLine.WritingModes)wmode, direction, bBox, charCount);
                 }
             }
             finally
@@ -764,13 +839,42 @@ namespace MuPDFCore
 
             return text.ToString();
         }
+
+        /// <inheritdoc/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    if (this.Lines != null)
+                    {
+                        for (int i = 0; i < Lines.Length; i++)
+                        {
+                            this.Lines?[i]?.Dispose();
+                        }
+                    }
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 
     /// <summary>
     /// Represents a single line of text (i.e. characters that share a common baseline).
     /// </summary>
-    public class MuPDFStructuredTextLine : IReadOnlyList<MuPDFStructuredTextCharacter>
+    public class MuPDFStructuredTextLine : IReadOnlyList<MuPDFStructuredTextCharacter>, IDisposable
     {
+        private bool disposedValue;
+
         /// <summary>
         /// Defines the writing mode of the text.
         /// </summary>
@@ -808,6 +912,11 @@ namespace MuPDFCore
         public MuPDFStructuredTextCharacter[] Characters { get; }
 
         /// <summary>
+        /// The <see cref="MuPDFStructuredTextBlock"/> that contains this <see cref="MuPDFStructuredTextLine"/>.
+        /// </summary>
+        public MuPDFStructuredTextBlock ParentBlock { get; }
+
+        /// <summary>
         /// A string representation of the characters contained in the line.
         /// </summary>
         public string Text { get; }
@@ -824,20 +933,22 @@ namespace MuPDFCore
         /// <returns>The <see cref="MuPDFStructuredTextCharacter"/> with the specified <paramref name="index"/>.</returns>
         public MuPDFStructuredTextCharacter this[int index] => ((IReadOnlyList<MuPDFStructuredTextCharacter>)Characters)[index];
 
-        internal MuPDFStructuredTextLine(Rectangle boundingBox)
+        internal MuPDFStructuredTextLine(Rectangle boundingBox, MuPDFStructuredTextBlock parentBlock)
         {
             this.BoundingBox = boundingBox;
+            this.ParentBlock = parentBlock;
             this.Characters = new MuPDFStructuredTextCharacter[]
             {
-                new MuPDFStructuredTextCharacter(0, -1, new PointF(boundingBox.X0, boundingBox.Y1), new Quad(new PointF(boundingBox.X0, boundingBox.Y1), new PointF(boundingBox.X0, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y1)), 9, MuPDFStructuredTextCharacter.TextDirection.LeftToRight, null)
+                new MuPDFStructuredTextCharacter(this, 0, -1, new PointF(boundingBox.X0, boundingBox.Y1), new Quad(new PointF(boundingBox.X0, boundingBox.Y1), new PointF(boundingBox.X0, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y1)), 9, MuPDFStructuredTextCharacter.TextDirection.LeftToRight, null)
             };
         }
 
-        internal MuPDFStructuredTextLine(MuPDFContext context, IntPtr linePointer, WritingModes writingMode, PointF direction, Rectangle boundingBox, int charCount)
+        internal MuPDFStructuredTextLine(MuPDFContext context, MuPDFStructuredTextBlock parentBlock, IntPtr linePointer, WritingModes writingMode, PointF direction, Rectangle boundingBox, int charCount)
         {
             this.WritingMode = writingMode;
             this.Direction = direction;
             this.BoundingBox = boundingBox;
+            this.ParentBlock = parentBlock;
 
             IntPtr[] charPointers = new IntPtr[charCount];
             GCHandle charsHandle = GCHandle.Alloc(charPointers, GCHandleType.Pinned);
@@ -876,7 +987,7 @@ namespace MuPDFCore
                     int bidi = -1;
                     IntPtr font = IntPtr.Zero;
 
-                    result = (ExitCodes)NativeMethods.GetStructuredTextChar(charPointers[i], ref c, ref color, ref originX, ref originY, ref size, ref llX, ref llY, ref ulX, ref ulY, ref urX, ref urY, ref lrX, ref lrY, ref bidi, ref font);
+                    result = (ExitCodes)NativeMethods.GetStructuredTextChar(context.NativeContext, charPointers[i], ref c, ref color, ref originX, ref originY, ref size, ref llX, ref llY, ref ulX, ref ulY, ref urX, ref urY, ref lrX, ref lrY, ref bidi, ref font);
 
                     switch (result)
                     {
@@ -891,7 +1002,7 @@ namespace MuPDFCore
 
                     MuPDFFont muPDFFont = MuPDFFont.Resolve(context, font);
 
-                    Characters[i] = new MuPDFStructuredTextCharacter(c, color, origin, quad, size, bidi % 2 == 0 ? MuPDFStructuredTextCharacter.TextDirection.LeftToRight : MuPDFStructuredTextCharacter.TextDirection.RightToLeft, muPDFFont);
+                    Characters[i] = new MuPDFStructuredTextCharacter(this, c, color, origin, quad, size, bidi % 2 == 0 ? MuPDFStructuredTextCharacter.TextDirection.LeftToRight : MuPDFStructuredTextCharacter.TextDirection.RightToLeft, muPDFFont);
                     textBuilder.Append(Characters[i].Character);
                 }
 
@@ -922,13 +1033,42 @@ namespace MuPDFCore
         {
             return Characters.GetEnumerator();
         }
+
+        /// <inheritdoc/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    if (this.Characters != null)
+                    {
+                        for (int i = 0; i < this.Characters.Length; i++)
+                        {
+                            this.Characters?[i]?.Dispose();
+                        }
+                    }
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 
     /// <summary>
     /// Represents a single text character.
     /// </summary>
-    public class MuPDFStructuredTextCharacter
+    public class MuPDFStructuredTextCharacter : IDisposable
     {
+        private bool disposedValue;
+
         /// <summary>
         /// Text writing directions.
         /// </summary>
@@ -985,8 +1125,14 @@ namespace MuPDFCore
         /// </summary>
         public MuPDFFont Font { get; }
 
-        internal MuPDFStructuredTextCharacter(int codePoint, int color, PointF origin, Quad boundingQuad, float size, TextDirection direction, MuPDFFont font)
+        /// <summary>
+        /// The <see cref="MuPDFStructuredTextLine"/> that contains this <see cref="MuPDFStructuredTextCharacter"/>.
+        /// </summary>
+        public MuPDFStructuredTextLine ParentLine { get; }
+
+        internal MuPDFStructuredTextCharacter(MuPDFStructuredTextLine parentLine, int codePoint, int color, PointF origin, Quad boundingQuad, float size, TextDirection direction, MuPDFFont font)
         {
+            this.ParentLine = parentLine;
             this.CodePoint = codePoint;
             this.Character = Char.ConvertFromUtf32(codePoint);
             this.Color = color;
@@ -1004,6 +1150,27 @@ namespace MuPDFCore
         public override string ToString()
         {
             return this.Character;
+        }
+
+        /// <inheritdoc/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this.Font?.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 

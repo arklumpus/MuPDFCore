@@ -136,6 +136,27 @@ struct fz_store
 extern "C"
 {
 	/// <summary>
+	/// Release the resources associated with the specified font.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="font">The font.</param>
+	DLL_PUBLIC void DisposeFont(fz_context* ctx, fz_font* font);
+
+	/// <summary>
+	/// Release the resources associated with the specified image.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="image">The image.</param>
+	DLL_PUBLIC void DisposeImage(fz_context* ctx, fz_image* image);
+
+	/// <summary>
+	/// Release the resources associated with the specified colour space.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="cs">The colour space.</param>
+	DLL_PUBLIC void DisposeColorSpace(fz_context* ctx, fz_colorspace* cs);
+
+	/// <summary>
 	/// Get the Type3 procs for a font.
 	/// </summary>
 	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
@@ -373,7 +394,7 @@ extern "C"
 	/// <param name="out_bidi">Even for LTR, odd for RTL.</param>
 	/// <param name="out_font">Font used to draw the character.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextChar(fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y, int* out_bidi, fz_font** out_font);
+	DLL_PUBLIC int GetStructuredTextChar(fz_context* ctx, fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y, int* out_bidi, fz_font** out_font);
 
 	/// <summary>
 	/// Get an array of structured text characters from a structured text line.
@@ -417,7 +438,7 @@ extern "C"
 	/// <param name="out_y1">The bottom coordinate in page units of the bounding box of the block.</param>
 	/// <param name="out_line_count">The number of lines in the block.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextBlock(fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* a, float* b, float* c, float* d, float* e, float* f);
+	DLL_PUBLIC int GetStructuredTextBlock(fz_context* ctx, fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* a, float* b, float* c, float* d, float* e, float* f);
 
 	/// <summary>
 	/// Get an array of structured text blocks from a structured text page.

@@ -24,8 +24,10 @@ namespace MuPDFCore
     /// <summary>
     /// Represents an image embedded within a document.
     /// </summary>
-    public class MuPDFImage
+    public class MuPDFImage : IDisposable
     {
+        private bool disposedValue;
+
         /// <summary>
         /// Describes the orientation of the image (as encoded within the image file).
         /// </summary>
@@ -107,10 +109,15 @@ namespace MuPDFCore
         /// </summary>
         public MuPDFColorSpace ColorSpace { get; }
 
+        /// <summary>
+        /// The <see cref="MuPDFImageStructuredTextBlock"/> from which this image was obtained.
+        /// </summary>
+        public MuPDFImageStructuredTextBlock ParentBlock { get; }
+
         private IntPtr NativePointer { get; }
         private IntPtr NativeContext { get; }
 
-        internal MuPDFImage(IntPtr nativePointer, MuPDFContext context)
+        internal MuPDFImage(IntPtr nativePointer, MuPDFContext context, MuPDFImageStructuredTextBlock parent)
         {
             this.NativePointer = nativePointer;
             this.NativeContext = context.NativeContext;
@@ -142,6 +149,10 @@ namespace MuPDFCore
             this.Orientation = (ImageOrientation)orientation;
 
             this.ColorSpace = MuPDFColorSpace.Create(this.NativeContext, colorspace);
+
+            NativeMethods.DisposeColorSpace(this.NativeContext, colorspace);
+
+            this.ParentBlock = parent;
         }
 
         /// <summary>
@@ -154,6 +165,11 @@ namespace MuPDFCore
         /// <exception cref="ArgumentException">Thrown if attempting to export an image in a format that does not support the colour space of the image.</exception>
         public void Save(string fileName, RasterOutputFileTypes fileType, bool? convertToRGB = null)
         {
+            if (this.disposedValue)
+            {
+                throw new ObjectDisposedException("MuPDFImage", "The MuPDFImage object has already been disposed! Maybe you disposed the MuPDFStructuredTextPage that contained it?");
+            }
+
             if (this.ColorSpace.RootColorSpace.Type == ColorSpaceType.CMYK && (fileType == RasterOutputFileTypes.PNG || fileType == RasterOutputFileTypes.PNM))
             {
                 if (convertToRGB == false)
@@ -202,6 +218,11 @@ namespace MuPDFCore
         /// <exception cref="MuPDFException">Thrown if an error occurs while rendering the image or saving it.</exception>
         public void SaveAsJPEG(string fileName, int quality, bool? convertToRGB = null)
         {
+            if (this.disposedValue)
+            {
+                throw new ObjectDisposedException("MuPDFImage", "The MuPDFImage object has already been disposed! Maybe you disposed the MuPDFStructuredTextPage that contained it?");
+            }
+
             if (quality < 0 || quality > 100)
             {
                 throw new ArgumentOutOfRangeException(nameof(quality), quality, "The JPEG quality must range between 0 and 100 (inclusive)!");
@@ -243,6 +264,11 @@ namespace MuPDFCore
         /// <exception cref="MuPDFException">Thrown if an error occurs while rendering the image or saving it.</exception>
         public void Write(Stream outputStream, RasterOutputFileTypes fileType, bool? convertToRGB = null)
         {
+            if (this.disposedValue)
+            {
+                throw new ObjectDisposedException("MuPDFImage", "The MuPDFImage object has already been disposed! Maybe you disposed the MuPDFStructuredTextPage that contained it?");
+            }
+
             if (this.ColorSpace.RootColorSpace.Type == ColorSpaceType.CMYK && (fileType == RasterOutputFileTypes.PNG || fileType == RasterOutputFileTypes.PNM))
             {
                 if (convertToRGB == false)
@@ -308,6 +334,11 @@ namespace MuPDFCore
         /// <exception cref="MuPDFException">Thrown if an error occurs while rendering the image or saving it.</exception>
         public void WriteAsJPEG(Stream outputStream, int quality, bool? convertToRGB = null)
         {
+            if (this.disposedValue)
+            {
+                throw new ObjectDisposedException("MuPDFImage", "The MuPDFImage object has already been disposed! Maybe you disposed the MuPDFStructuredTextPage that contained it?");
+            }
+
             if (quality < 0 || quality > 100)
             {
                 throw new ArgumentOutOfRangeException(nameof(quality), quality, "The JPEG quality must range between 0 and 100 (inclusive)!");
@@ -364,11 +395,20 @@ namespace MuPDFCore
         /// <exception cref="MuPDFException">Thrown if an error occurs while rendering the image.</exception>
         public unsafe byte[] GetBytes(PixelFormats pixelFormat)
         {
+            if (this.disposedValue)
+            {
+                throw new ObjectDisposedException("MuPDFImage", "The MuPDFImage object has already been disposed! Maybe you disposed the MuPDFStructuredTextPage that contained it?");
+            }
+
             IntPtr pixmap = IntPtr.Zero;
             IntPtr samples = IntPtr.Zero;
             int sampleCount = 0;
 
+            Console.WriteLine("GetBytes: 0");
+
             ExitCodes result = (ExitCodes)NativeMethods.LoadPixmapRGB(this.NativeContext, this.NativePointer, (int)pixelFormat, ref pixmap, ref samples, ref sampleCount);
+
+            Console.WriteLine("GetBytes: 1");
 
             switch (result)
             {
@@ -383,6 +423,8 @@ namespace MuPDFCore
             bool renderedHasAlpha = sampleCount / (this.Width * this.Height) == 4;
 
             byte[] tbr;
+
+            Console.WriteLine("GetBytes: 2");
 
             if (!renderedHasAlpha && (pixelFormat == PixelFormats.RGBA || pixelFormat == PixelFormats.BGRA))
             {
@@ -407,7 +449,11 @@ namespace MuPDFCore
                 }
             }
 
+            Console.WriteLine("GetBytes: 3");
+
             NativeMethods.DisposePixmap(this.NativeContext, pixmap);
+
+            Console.WriteLine("GetBytes: 4");
 
             return tbr;
         }
@@ -419,6 +465,11 @@ namespace MuPDFCore
         /// <exception cref="MuPDFException">Thrown if an error occurs while rendering the image.</exception>
         public unsafe byte[] GetBytes()
         {
+            if (this.disposedValue)
+            {
+                throw new ObjectDisposedException("MuPDFImage", "The MuPDFImage object has already been disposed! Maybe you disposed the MuPDFStructuredTextPage that contained it?");
+            }
+
             IntPtr pixmap = IntPtr.Zero;
             IntPtr samples = IntPtr.Zero;
             int sampleCount = 0;
@@ -445,6 +496,31 @@ namespace MuPDFCore
             NativeMethods.DisposePixmap(this.NativeContext, pixmap);
 
             return tbr;
+        }
+
+        /// <inheritdoc/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                NativeMethods.DisposeImage(this.NativeContext, this.NativePointer);
+                disposedValue = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose the <see cref="MuPDFImage"/>.
+        /// </summary>
+        ~MuPDFImage()
+        {
+            Dispose(disposing: false);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

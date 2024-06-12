@@ -1384,6 +1384,7 @@ namespace MuPDFCore
         /// <summary>
         /// Get the contents of a structured text character.
         /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
         /// <param name="character">The address of the character.</param>
         /// <param name="out_c">Unicode code point of the character.</param>
         /// <param name="out_color">An sRGB hex representation of the colour of the character.</param>
@@ -1402,7 +1403,7 @@ namespace MuPDFCore
         /// <param name="out_font">Font used to draw the character.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextChar(IntPtr character, ref int out_c, ref int out_color, ref float out_origin_x, ref float out_origin_y, ref float out_size, ref float out_ll_x, ref float out_ll_y, ref float out_ul_x, ref float out_ul_y, ref float out_ur_x, ref float out_ur_y, ref float out_lr_x, ref float out_lr_y, ref int out_bidi, ref IntPtr out_font);
+        internal static extern int GetStructuredTextChar(IntPtr ctx, IntPtr character, ref int out_c, ref int out_color, ref float out_origin_x, ref float out_origin_y, ref float out_size, ref float out_ll_x, ref float out_ll_y, ref float out_ul_x, ref float out_ul_y, ref float out_ur_x, ref float out_ur_y, ref float out_lr_x, ref float out_lr_y, ref int out_bidi, ref IntPtr out_font);
 
         /// <summary>
         /// Get an array of structured text characters from a structured text line.
@@ -1441,6 +1442,7 @@ namespace MuPDFCore
         /// <summary>
         /// Get the contents of a structured text block.
         /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
         /// <param name="block">The address of the block.</param>
         /// <param name="out_type">An integer equivalent to <see cref="MuPDFStructuredTextBlock.Types"/> representing the type of the block.</param>
         /// <param name="out_x0">The left coordinate in page units of the bounding box of the block.</param>
@@ -1457,7 +1459,7 @@ namespace MuPDFCore
         /// <param name="out_f">If the block contains an image, the sixth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextBlock(IntPtr block, ref int out_type, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1, ref int out_line_count, ref IntPtr out_image, ref float out_a, ref float out_b, ref float out_c, ref float out_d, ref float out_e, ref float out_f);
+        internal static extern int GetStructuredTextBlock(IntPtr ctx, IntPtr block, ref int out_type, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1, ref int out_line_count, ref IntPtr out_image, ref float out_a, ref float out_b, ref float out_c, ref float out_d, ref float out_e, ref float out_f);
 
         /// <summary>
         /// Get an array of structured text blocks from a structured text page.
@@ -1756,5 +1758,29 @@ namespace MuPDFCore
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int GetFontMetadata(IntPtr ctx, IntPtr font, ref int out_font_name_length, ref int out_bold, ref int out_italic, ref int out_serif, ref int out_monospaced);
+
+        /// <summary>
+        /// Release the resources associated with the specified font.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="font">The font.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void DisposeFont(IntPtr ctx, IntPtr font);
+
+        /// <summary>
+        /// Release the resources associated with the specified image.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="image">The image.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void DisposeImage(IntPtr ctx, IntPtr image);
+
+        /// <summary>
+        /// Release the resources associated with the specified colour space.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="cs">The colour space.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void DisposeColorSpace(IntPtr ctx, IntPtr cs);
     }
 }

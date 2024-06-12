@@ -25,8 +25,10 @@ namespace MuPDFCore
     /// <summary>
     /// Represents a font.
     /// </summary>
-    public class MuPDFFont
+    public class MuPDFFont : IDisposable
     {
+        private bool disposedValue;
+
         /// <summary>
         /// Returns whether the font is bold or not.
         /// </summary>
@@ -55,17 +57,24 @@ namespace MuPDFCore
         private IntPtr NativeContext { get; }
         private IntPtr NativePointer { get; }
 
-        private static Dictionary<IntPtr, MuPDFFont> FontCache { get; } = new Dictionary<IntPtr, MuPDFFont>();
+        private static Dictionary<IntPtr, (MuPDFFont, int)> FontCache { get; } = new Dictionary<IntPtr, (MuPDFFont, int)>();
 
         internal static MuPDFFont Resolve(MuPDFContext context, IntPtr nativePointer)
         {
-            if (!FontCache.TryGetValue(nativePointer, out MuPDFFont font))
+            (MuPDFFont font, int referenceCount) item;
+
+            if (!FontCache.TryGetValue(nativePointer, out item) || item.font.disposedValue)
             {
-                font = new MuPDFFont(context, nativePointer);
-                FontCache[nativePointer] = font;
+                item = (new MuPDFFont(context, nativePointer), 1);
+                FontCache[nativePointer] = item;
+            }
+            else
+            {
+                item = (item.font, item.referenceCount + 1);
+                FontCache[nativePointer] = item;
             }
 
-            return font;
+            return item.font;
         }
 
         private unsafe MuPDFFont(MuPDFContext context, IntPtr nativePointer)
@@ -94,7 +103,7 @@ namespace MuPDFCore
             {
                 result = (ExitCodes)NativeMethods.GetFontName(context.NativeContext, nativePointer, nameLength, (IntPtr)fontNamePtr);
             }
-            
+
             switch (result)
             {
                 case ExitCodes.EXIT_SUCCESS:
@@ -113,19 +122,6 @@ namespace MuPDFCore
 
             this.NativeContext = context.NativeContext;
             this.NativePointer = nativePointer;
-
-            Console.WriteLine("New font: {1}{2}{3}{4} {0}", this.Name, bold, italic, serif, monospaced);
-
-            try
-            {
-                IntPtr freeType = this.GetFreeTypeHandle();
-                IntPtr type3 = this.GetType3Handle();
-                Console.WriteLine("Handles: {0}   {1}", freeType, type3);
-            }
-            catch (MuPDFException)
-            {
-                Console.WriteLine("Handle error!");
-            }
         }
 
         /// <summary>
@@ -135,6 +131,11 @@ namespace MuPDFCore
         /// <exception cref="MuPDFException">Thrown if an error occurs while accessing the FreeType handle for the font.</exception>
         public IntPtr GetFreeTypeHandle()
         {
+            if (disposedValue)
+            {
+                throw new ObjectDisposedException("MuPDFFont", "The MuPDFFont object has already been disposed! Maybe you disposed the MuPDFStructuredTextPage that contained it?");
+            }
+
             IntPtr tbr = IntPtr.Zero;
 
             ExitCodes result = (ExitCodes)NativeMethods.GetFTHandle(this.NativeContext, this.NativePointer, ref tbr);
@@ -159,6 +160,11 @@ namespace MuPDFCore
         /// <exception cref="MuPDFException">Thrown if an error occurs while accessing the Type3 font procs.</exception>
         public IntPtr GetType3Handle()
         {
+            if (disposedValue)
+            {
+                throw new ObjectDisposedException("MuPDFFont", "The MuPDFFont object has already been disposed! Maybe you disposed the MuPDFStructuredTextPage that contained it?");
+            }
+
             IntPtr tbr = IntPtr.Zero;
 
             ExitCodes result = (ExitCodes)NativeMethods.GetT3Procs(this.NativeContext, this.NativePointer, ref tbr);
@@ -174,6 +180,44 @@ namespace MuPDFCore
             }
 
             return tbr;
+        }
+
+        /// <inheritdoc/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                (MuPDFFont font, int referenceCount) item;
+                if (FontCache.TryGetValue(this.NativePointer, out item))
+                {
+                    if (item.referenceCount <= 1)
+                    {
+                        NativeMethods.DisposeFont(this.NativeContext, this.NativePointer);
+                        FontCache.Remove(this.NativePointer);
+                        disposedValue = true;
+                    }
+                    else
+                    {
+                        item = (item.font, item.referenceCount - 1);
+                        FontCache[this.NativePointer] = item;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Dispose the font object.
+        /// </summary>
+        ~MuPDFFont()
+        {
+            Dispose(disposing: false);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

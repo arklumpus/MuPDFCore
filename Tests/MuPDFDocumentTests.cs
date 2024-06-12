@@ -1161,7 +1161,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
             Assert.IsNotNull(sTextPage, "The structured text page is null.");
             Assert.IsTrue(sTextPage.Count > 0, "The structured text page is empty.");
@@ -1178,7 +1178,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PNG);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, new TesseractLanguage("eng.traineddata"));
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, new TesseractLanguage("eng.traineddata"));
 
             Assert.IsNotNull(sTextPage, "The structured text page is null.");
             Assert.IsTrue(sTextPage.Count > 0, "The structured text page is empty.");
@@ -1194,9 +1194,9 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPageWithAnnotation = document.GetStructuredTextPage(0, true);
+            using MuPDFStructuredTextPage sTextPageWithAnnotation = document.GetStructuredTextPage(0, true);
             document.ClearCache();
-            MuPDFStructuredTextPage sTextPageWithoutAnnotation = document.GetStructuredTextPage(0, false);
+            using MuPDFStructuredTextPage sTextPageWithoutAnnotation = document.GetStructuredTextPage(0, false);
 
             Assert.IsTrue(sTextPageWithAnnotation.Count > sTextPageWithoutAnnotation.Count, "The structured text page with annotations does not have more elements than the one without annotations.");
         }
@@ -1212,7 +1212,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PNG);
 
-            MuPDFStructuredTextPage sTextPage = await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"));
+            using MuPDFStructuredTextPage sTextPage = await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"));
 
             Assert.IsNotNull(sTextPage, "The structured text page is null.");
             Assert.IsTrue(sTextPage.Count > 0, "The structured text page is empty.");
@@ -1237,7 +1237,7 @@ namespace Tests
             }
             else
             {
-                MuPDFStructuredTextPage sTextPage = await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"), progress: new Progress<OCRProgressInfo>(prog => progressCount++));
+                using MuPDFStructuredTextPage sTextPage = await document.GetStructuredTextPageAsync(0, new TesseractLanguage("eng.traineddata"), progress: new Progress<OCRProgressInfo>(prog => progressCount++));
 
                 Assert.IsNotNull(sTextPage, "The structured text page is null.");
                 Assert.IsTrue(sTextPage.Count > 0, "The structured text page is empty.");

@@ -211,7 +211,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
             MuPDFStructuredTextAddress address1 = new MuPDFStructuredTextAddress(1, 0, 3);
             MuPDFStructuredTextAddress address2 = new MuPDFStructuredTextAddress(20, 0, 16);
@@ -247,7 +247,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
             Assert.IsNotNull(sTextPage, "The structured text page is null.");
             Assert.IsNotNull(sTextPage.StructuredTextBlocks, "The structured text page contents are null.");
@@ -280,7 +280,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
             MuPDFStructuredTextAddress? address = new MuPDFStructuredTextAddress(0, 0, 0);
 
@@ -304,13 +304,13 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
             MuPDFStructuredTextAddress? address = sTextPage.GetHitAddress(hitPoint, false);
 
             Assert.IsNotNull(address, "The hit test did not return a point.");
 
-            MuPDFStructuredTextCharacter chr = sTextPage[address.Value];
+            using MuPDFStructuredTextCharacter chr = sTextPage[address.Value];
 
             Assert.IsTrue(chr.BoundingQuad.Contains(hitPoint), "The matched character does not contain the hit point.");
             Assert.AreEqual("v", chr.Character, "The hit test matched the wrong character.");
@@ -328,13 +328,13 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
             MuPDFStructuredTextAddress? address = sTextPage.GetClosestHitAddress(hitPoint, false);
 
             Assert.IsNotNull(address, "The hit test did not return a point.");
 
-            MuPDFStructuredTextCharacter chr = sTextPage[address.Value];
+            using MuPDFStructuredTextCharacter chr = sTextPage[address.Value];
 
             Assert.IsFalse(chr.BoundingQuad.Contains(hitPoint), "The matched character contains the hit point.");
             Assert.IsTrue(chr.Character == "v" || chr.Character == "l", "The hit test matched the wrong character.");
@@ -350,7 +350,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
             IEnumerable<Quad> quads = sTextPage.GetHighlightQuads(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(1, 0, 9)), true);
             Assert.AreEqual(8, quads.Count(), "The highlight quads are in the wrong number.");
@@ -372,7 +372,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
             string text = sTextPage.GetText(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(1, 0, 9)));
             Assert.AreEqual("mes-Bold", text, "The extracted text is wrong.");
@@ -394,7 +394,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
             IEnumerable<MuPDFStructuredTextAddressSpan> result = sTextPage.Search(new System.Text.RegularExpressions.Regex("Helvetica"));
             Assert.AreEqual(4, result.Count(), "The search results are wrong.");
@@ -413,9 +413,9 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            MuPDFStructuredTextBlock block = sTextPage[20];
+            using MuPDFStructuredTextBlock block = sTextPage[20];
 
             Assert.IsNotNull(block, "The block is null.");
             Assert.AreEqual(MuPDFStructuredTextBlock.Types.Text, block.Type, "The block type is wrong.");
@@ -452,9 +452,9 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            MuPDFTextStructuredTextBlock block = (MuPDFTextStructuredTextBlock)sTextPage[20];
+            using MuPDFTextStructuredTextBlock block = (MuPDFTextStructuredTextBlock)sTextPage[20];
 
             Assert.IsNotNull(block.Lines, "The block's lines are null.");
             Assert.AreEqual(block.Count, block.Lines.Length, "The number of lines in the block does not correspond to the Count of the block.");
@@ -471,9 +471,9 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            MuPDFStructuredTextLine line = sTextPage[6][0];
+            using MuPDFStructuredTextLine line = sTextPage[6][0];
 
             Assert.IsNotNull(line, "The line is null.");
             Assert.AreEqual(MuPDFStructuredTextLine.WritingModes.Horizontal, line.WritingMode, "The line's writing mode is wrong.");
@@ -514,9 +514,9 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            MuPDFStructuredTextLine line = sTextPage[6][0];
+            using MuPDFStructuredTextLine line = sTextPage[6][0];
 
             Assert.IsNotNull(line.Characters, "The line's characters are null.");
             Assert.AreEqual(line.Count, line.Characters.Length, "The number of characters in the line does not correspond to the Count of the line.");
@@ -534,9 +534,9 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            MuPDFStructuredTextCharacter chr = sTextPage[5][0][8];
+            using MuPDFStructuredTextCharacter chr = sTextPage[5][0][8];
 
             Assert.IsNotNull(chr, "The character is null.");
 
@@ -566,16 +566,16 @@ namespace Tests
         [TestMethod]
         public void MuPDFImageStructuredTextPageWithoutImages()
         {
-            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.CMYK.pdf");
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Annotation.pdf");
             MemoryStream pdfStream = new MemoryStream();
             pdfDataStream.CopyTo(pdfStream);
 
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            Assert.AreEqual(0, sTextPage.Count, "The structured text page contains an unexpected block!");
+            Assert.AreEqual(2, sTextPage.Count, "The structured text page contains an unexpected block!");
         }
 
         [TestMethod]
@@ -588,11 +588,11 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
 
             Assert.IsInstanceOfType(sTextPage[0], typeof(MuPDFImageStructuredTextBlock), "The block does not contain an image!");
 
-            MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
+            using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
 
             Assert.IsNotNull(imageBlock.Image, "The image is null!");
             Assert.IsNotNull(imageBlock.TransformMatrix, "The image transform matrix is null!");

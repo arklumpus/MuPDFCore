@@ -1519,24 +1519,26 @@ namespace MuPDFCore
 
             for (int i = 0; i < this.Pages.Count; i++)
             {
-                MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, includeAnnotations, false);
-                foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
+                using (MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, includeAnnotations, false))
                 {
-                    var numLines = textBlock.Count;
-                    for (var j = 0; j < numLines; j++)
+                    foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
                     {
-                        if (!string.IsNullOrWhiteSpace(textBlock[j].Text))
+                        var numLines = textBlock.Count;
+                        for (var j = 0; j < numLines; j++)
                         {
-                            if (started)
+                            if (!string.IsNullOrWhiteSpace(textBlock[j].Text))
                             {
-                                text.Append(separator);
-                            }
-                            else
-                            {
-                                started = true;
-                            }
+                                if (started)
+                                {
+                                    text.Append(separator);
+                                }
+                                else
+                                {
+                                    started = true;
+                                }
 
-                            text.Append(textBlock[j].Text);
+                                text.Append(textBlock[j].Text);
+                            }
                         }
                     }
                 }
@@ -1566,24 +1568,26 @@ namespace MuPDFCore
 
             for (int i = 0; i < this.Pages.Count; i++)
             {
-                MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, ocrLanguage, includeAnnotations, false);
-                foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
+                using (MuPDFStructuredTextPage structuredTextPage = this.GetStructuredTextPage(i, ocrLanguage, includeAnnotations, false))
                 {
-                    var numLines = textBlock.Count;
-                    for (var j = 0; j < numLines; j++)
+                    foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
                     {
-                        if (!string.IsNullOrWhiteSpace(textBlock[j].Text))
+                        var numLines = textBlock.Count;
+                        for (var j = 0; j < numLines; j++)
                         {
-                            if (started)
+                            if (!string.IsNullOrWhiteSpace(textBlock[j].Text))
                             {
-                                text.Append(separator);
-                            }
-                            else
-                            {
-                                started = true;
-                            }
+                                if (started)
+                                {
+                                    text.Append(separator);
+                                }
+                                else
+                                {
+                                    started = true;
+                                }
 
-                            text.Append(textBlock[j].Text);
+                                text.Append(textBlock[j].Text);
+                            }
                         }
                     }
                 }
@@ -1615,24 +1619,26 @@ namespace MuPDFCore
 
             for (int i = 0; i < this.Pages.Count; i++)
             {
-                MuPDFStructuredTextPage structuredTextPage = await this.GetStructuredTextPageAsync(i, ocrLanguage, includeAnnotations, false, cancellationToken, progress);
-                foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
+                using (MuPDFStructuredTextPage structuredTextPage = await this.GetStructuredTextPageAsync(i, ocrLanguage, includeAnnotations, false, cancellationToken, progress))
                 {
-                    var numLines = textBlock.Count;
-                    for (var j = 0; j < numLines; j++)
+                    foreach (MuPDFStructuredTextBlock textBlock in structuredTextPage.StructuredTextBlocks)
                     {
-                        if (!string.IsNullOrWhiteSpace(textBlock[j].Text))
+                        var numLines = textBlock.Count;
+                        for (var j = 0; j < numLines; j++)
                         {
-                            if (started)
+                            if (!string.IsNullOrWhiteSpace(textBlock[j].Text))
                             {
-                                text.Append(separator);
-                            }
-                            else
-                            {
-                                started = true;
-                            }
+                                if (started)
+                                {
+                                    text.Append(separator);
+                                }
+                                else
+                                {
+                                    started = true;
+                                }
 
-                            text.Append(textBlock[j].Text);
+                                text.Append(textBlock[j].Text);
+                            }
                         }
                     }
                 }
