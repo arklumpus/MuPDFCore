@@ -581,7 +581,7 @@ namespace MuPDFCore.MuPDFRenderer
             }
 
             //Create the structured text representation.
-            this.StructuredTextPage = await Document.GetStructuredTextPageAsync(pageNumber, ocrLanguage, includeAnnotations, ocrCancellationToken, ocrProgress);
+            this.StructuredTextPage = await Document.GetStructuredTextPageAsync(pageNumber, ocrLanguage, includeAnnotations, false, ocrCancellationToken, ocrProgress);
 
             //Create the multithreaded renderer.
             Renderer = Document.GetMultiThreadedRenderer(pageNumber, threadCount, includeAnnotations);
