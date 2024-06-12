@@ -404,11 +404,7 @@ namespace MuPDFCore
             IntPtr samples = IntPtr.Zero;
             int sampleCount = 0;
 
-            Console.WriteLine("GetBytes: 0");
-
             ExitCodes result = (ExitCodes)NativeMethods.LoadPixmapRGB(this.NativeContext, this.NativePointer, (int)pixelFormat, ref pixmap, ref samples, ref sampleCount);
-
-            Console.WriteLine("GetBytes: 1");
 
             switch (result)
             {
@@ -423,8 +419,6 @@ namespace MuPDFCore
             bool renderedHasAlpha = sampleCount / (this.Width * this.Height) == 4;
 
             byte[] tbr;
-
-            Console.WriteLine("GetBytes: 2");
 
             if (!renderedHasAlpha && (pixelFormat == PixelFormats.RGBA || pixelFormat == PixelFormats.BGRA))
             {
@@ -449,11 +443,7 @@ namespace MuPDFCore
                 }
             }
 
-            Console.WriteLine("GetBytes: 3");
-
             NativeMethods.DisposePixmap(this.NativeContext, pixmap);
-
-            Console.WriteLine("GetBytes: 4");
 
             return tbr;
         }
