@@ -31,6 +31,13 @@ dotnet pack -c Release
 cd ..
 
 echo.
+echo Building [94mlinux-loongarch64[0m package...
+
+cd Linux-loongarch64
+dotnet pack -c Release 
+cd ..
+
+echo.
 echo Building [94mmacOS-arm64[0m package...
 
 cd Mac-arm64
