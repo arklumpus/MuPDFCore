@@ -41,6 +41,11 @@ if(UNIX AND NOT APPLE)
 			target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/linux-musl-arm64/libmupdf-third.a")
 		endif()
 	endif()
+
+	if (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "loongarch64")
+		target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/linux-loongarch64/libmupdf.a")
+		target_link_libraries(MuPDFWrapper "${CMAKE_CURRENT_SOURCE_DIR}/lib/linux-loongarch64/libmupdf-third.a")
+	endif()
 endif()
 
 if (APPLE)
