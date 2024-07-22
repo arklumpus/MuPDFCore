@@ -62,7 +62,7 @@ namespace MuPDFCore
             }
         }
 
-        private IntPtr NativeContext { get; }
+        private MuPDFContext OwnerContext { get; }
         private IntPtr NativePointer { get; }
 
         internal MuPDFStructuredTextPage(MuPDFContext context, MuPDFDisplayList list, TesseractLanguage ocrLanguage, double zoom, Rectangle pageBounds, bool preserveImages, CancellationToken cancellationToken = default, IProgress<OCRProgressInfo> progress = null)
@@ -97,6 +97,11 @@ namespace MuPDFCore
             else
             {
                 result = (ExitCodes)NativeMethods.GetStructuredTextPage(context.NativeContext, list.NativeDisplayList, preserveImages ? 1 : 0, ref nativeStructuredPage, ref blockCount);
+            }
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                this.disposedValue = true;
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -174,8 +179,8 @@ namespace MuPDFCore
             {
                 blocksHandle.Free();
             }
-
-            this.NativeContext = context.NativeContext;
+            
+            this.OwnerContext = context;
             this.NativePointer = nativeStructuredPage;
         }
 
@@ -579,7 +584,12 @@ namespace MuPDFCore
                     }
                 }
 
-                NativeMethods.DisposeStructuredTextPage(this.NativeContext, this.NativePointer);
+                if (OwnerContext.disposedValue)
+                {
+                    throw new LifetimeManagementException<MuPDFStructuredTextPage, MuPDFContext>(this, OwnerContext, this.NativePointer, OwnerContext.NativeContext);
+                }
+
+                NativeMethods.DisposeStructuredTextPage(this.OwnerContext.NativeContext, this.NativePointer);
                 disposedValue = true;
             }
         }
@@ -1000,7 +1010,7 @@ namespace MuPDFCore
                     Quad quad = new Quad(new PointF(llX, llY), new PointF(ulX, ulY), new PointF(urX, urY), new PointF(lrX, lrY));
                     PointF origin = new PointF(originX, originY);
 
-                    MuPDFFont muPDFFont = MuPDFFont.Resolve(context, font);
+                    MuPDFFont muPDFFont = context.Resolve(font);
 
                     Characters[i] = new MuPDFStructuredTextCharacter(this, c, color, origin, quad, size, bidi % 2 == 0 ? MuPDFStructuredTextCharacter.TextDirection.LeftToRight : MuPDFStructuredTextCharacter.TextDirection.RightToLeft, muPDFFont);
                     textBuilder.Append(Characters[i].Character);

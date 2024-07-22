@@ -103,6 +103,11 @@ namespace MuPDFCore
         {
             if (!disposedValue)
             {
+                if (OwnerContext.disposedValue)
+                {
+                    throw new LifetimeManagementException<MuPDFPage, MuPDFContext>(this, OwnerContext, this.NativePage, OwnerContext.NativeContext);
+                }
+
                 NativeMethods.DisposePage(OwnerContext.NativeContext, NativePage);
                 disposedValue = true;
             }

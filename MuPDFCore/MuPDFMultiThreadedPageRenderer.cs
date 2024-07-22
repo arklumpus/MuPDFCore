@@ -362,7 +362,7 @@ namespace MuPDFCore
                 RenderingThreads = new RenderingThread[threadCount];
                 for (int i = 0; i < threadCount; i++)
                 {
-                    Contexts[i] = new MuPDFContext(contexts[i]);
+                    Contexts[i] = new MuPDFContext(context, contexts[i]);
                     RenderingThreads[i] = new RenderingThread();
                 }
             }

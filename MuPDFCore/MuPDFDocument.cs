@@ -1746,6 +1746,11 @@ namespace MuPDFCore
                     DataHolder?.Dispose();
                 }
 
+                if (OwnerContext.disposedValue)
+                {
+                    throw new LifetimeManagementException<MuPDFDocument, MuPDFContext>(this, OwnerContext, this.NativeDocument, OwnerContext.NativeContext);
+                }
+
                 NativeMethods.DisposeDocument(OwnerContext.NativeContext, NativeDocument);
 
                 if (NativeStream != IntPtr.Zero)

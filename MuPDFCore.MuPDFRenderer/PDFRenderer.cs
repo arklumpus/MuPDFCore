@@ -621,6 +621,19 @@ namespace MuPDFCore.MuPDFRenderer
         public void ReleaseResources()
         {
             IsViewerInitialized = false;
+            try
+            {
+                this.StructuredTextPage?.Dispose();
+            }
+            catch (LifetimeManagementException<MuPDFStructuredTextPage, MuPDFContext> e)
+            {
+                throw new LifetimeManagementException<MuPDFStructuredTextPage, MuPDFContext>(e, "If you are manually disposing the MuPDFContext accessed by this PDFRenderer control, please ensure that this happens after the control has been removed from the logical tree, e.g. in the Window.Closed event handler rather than Window.Closing.");
+            }
+            catch (LifetimeManagementException<MuPDFFont, MuPDFContext> e)
+            {
+                throw new LifetimeManagementException<MuPDFFont, MuPDFContext>(e, "If you are manually disposing the MuPDFContext accessed by this PDFRenderer control, please ensure that this happens after the control has been removed from the logical tree, e.g. in the Window.Closed event handler rather than Window.Closing.");
+            }
+
             this.Renderer?.Dispose();
             this.StructuredTextPage = null;
             this.Selection = null;

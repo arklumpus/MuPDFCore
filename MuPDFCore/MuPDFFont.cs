@@ -27,7 +27,7 @@ namespace MuPDFCore
     /// </summary>
     public class MuPDFFont : IDisposable
     {
-        private bool disposedValue;
+        internal bool disposedValue;
 
         /// <summary>
         /// Returns whether the font is bold or not.
@@ -54,30 +54,10 @@ namespace MuPDFCore
         /// </summary>
         public string Name { get; }
 
-        private IntPtr NativeContext { get; }
+        private MuPDFContext OwnerContext { get; }
         private IntPtr NativePointer { get; }
 
-        private static Dictionary<IntPtr, (MuPDFFont, int)> FontCache { get; } = new Dictionary<IntPtr, (MuPDFFont, int)>();
-
-        internal static MuPDFFont Resolve(MuPDFContext context, IntPtr nativePointer)
-        {
-            (MuPDFFont font, int referenceCount) item;
-
-            if (!FontCache.TryGetValue(nativePointer, out item) || item.font.disposedValue)
-            {
-                item = (new MuPDFFont(context, nativePointer), 1);
-                FontCache[nativePointer] = item;
-            }
-            else
-            {
-                item = (item.font, item.referenceCount + 1);
-                FontCache[nativePointer] = item;
-            }
-
-            return item.font;
-        }
-
-        private unsafe MuPDFFont(MuPDFContext context, IntPtr nativePointer)
+        internal unsafe MuPDFFont(MuPDFContext context, IntPtr nativePointer)
         {
             int nameLength = 0;
             int bold = -1;
@@ -120,7 +100,7 @@ namespace MuPDFCore
             this.IsMonospaced = monospaced != 0;
             this.Name = Encoding.ASCII.GetString(fontName);
 
-            this.NativeContext = context.NativeContext;
+            this.OwnerContext = context;
             this.NativePointer = nativePointer;
         }
 
@@ -138,7 +118,7 @@ namespace MuPDFCore
 
             IntPtr tbr = IntPtr.Zero;
 
-            ExitCodes result = (ExitCodes)NativeMethods.GetFTHandle(this.NativeContext, this.NativePointer, ref tbr);
+            ExitCodes result = (ExitCodes)NativeMethods.GetFTHandle(this.OwnerContext.NativeContext, this.NativePointer, ref tbr);
 
             switch (result)
             {
@@ -167,7 +147,7 @@ namespace MuPDFCore
 
             IntPtr tbr = IntPtr.Zero;
 
-            ExitCodes result = (ExitCodes)NativeMethods.GetT3Procs(this.NativeContext, this.NativePointer, ref tbr);
+            ExitCodes result = (ExitCodes)NativeMethods.GetT3Procs(this.OwnerContext.NativeContext, this.NativePointer, ref tbr);
 
             switch (result)
             {
@@ -187,19 +167,27 @@ namespace MuPDFCore
         {
             if (!disposedValue)
             {
-                (MuPDFFont font, int referenceCount) item;
-                if (FontCache.TryGetValue(this.NativePointer, out item))
+                if (OwnerContext.disposedValue)
                 {
-                    if (item.referenceCount <= 1)
+                    throw new LifetimeManagementException<MuPDFFont, MuPDFContext>(this, OwnerContext, this.NativePointer, OwnerContext.NativeContext);
+                }
+
+                lock (OwnerContext.FontCacheLock)
+                {
+                    (MuPDFFont font, int referenceCount) item;
+                    if (OwnerContext.FontCache.TryGetValue(this.NativePointer, out item))
                     {
-                        NativeMethods.DisposeFont(this.NativeContext, this.NativePointer);
-                        FontCache.Remove(this.NativePointer);
-                        disposedValue = true;
-                    }
-                    else
-                    {
-                        item = (item.font, item.referenceCount - 1);
-                        FontCache[this.NativePointer] = item;
+                        if (item.referenceCount <= 1)
+                        {
+                            NativeMethods.DisposeFont(this.OwnerContext.NativeContext, this.NativePointer);
+                            OwnerContext.FontCache.Remove(this.NativePointer);
+                            disposedValue = true;
+                        }
+                        else
+                        {
+                            item = (item.font, item.referenceCount - 1);
+                            OwnerContext.FontCache[this.NativePointer] = item;
+                        }
                     }
                 }
             }

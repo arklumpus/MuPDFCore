@@ -115,12 +115,12 @@ namespace MuPDFCore
         public MuPDFImageStructuredTextBlock ParentBlock { get; }
 
         private IntPtr NativePointer { get; }
-        private IntPtr NativeContext { get; }
+        private MuPDFContext OwnerContext { get; }
 
         internal MuPDFImage(IntPtr nativePointer, MuPDFContext context, MuPDFImageStructuredTextBlock parent)
         {
             this.NativePointer = nativePointer;
-            this.NativeContext = context.NativeContext;
+            this.OwnerContext = context;
 
             int w = 0;
             int h = 0;
@@ -148,9 +148,9 @@ namespace MuPDFCore
 
             this.Orientation = (ImageOrientation)orientation;
 
-            this.ColorSpace = MuPDFColorSpace.Create(this.NativeContext, colorspace);
+            this.ColorSpace = MuPDFColorSpace.Create(OwnerContext.NativeContext, colorspace);
 
-            NativeMethods.DisposeColorSpace(this.NativeContext, colorspace);
+            NativeMethods.DisposeColorSpace(OwnerContext.NativeContext, colorspace);
 
             this.ParentBlock = parent;
         }
@@ -193,7 +193,7 @@ namespace MuPDFCore
                 }
             }
 
-            ExitCodes result = (ExitCodes)NativeMethods.SaveRasterImage(this.NativeContext, this.NativePointer, fileName, (int)fileType, 90, convertToRGB == true ? 1 : 0);
+            ExitCodes result = (ExitCodes)NativeMethods.SaveRasterImage(OwnerContext.NativeContext, this.NativePointer, fileName, (int)fileType, 90, convertToRGB == true ? 1 : 0);
 
             switch (result)
             {
@@ -240,7 +240,7 @@ namespace MuPDFCore
                 }
             }
 
-            ExitCodes result = (ExitCodes)NativeMethods.SaveRasterImage(this.NativeContext, this.NativePointer, fileName, (int)RasterOutputFileTypes.JPEG, quality, convertToRGB == true ? 1 : 0);
+            ExitCodes result = (ExitCodes)NativeMethods.SaveRasterImage(OwnerContext.NativeContext, this.NativePointer, fileName, (int)RasterOutputFileTypes.JPEG, quality, convertToRGB == true ? 1 : 0);
 
             switch (result)
             {
@@ -296,7 +296,7 @@ namespace MuPDFCore
             IntPtr outputData = IntPtr.Zero;
             ulong outputDataLength = 0;
 
-            ExitCodes result = (ExitCodes)NativeMethods.WriteRasterImage(this.NativeContext, this.NativePointer, (int)fileType, 90, ref outputBuffer, ref outputData, ref outputDataLength, convertToRGB == true ? 1 : 0);
+            ExitCodes result = (ExitCodes)NativeMethods.WriteRasterImage(OwnerContext.NativeContext, this.NativePointer, (int)fileType, 90, ref outputBuffer, ref outputData, ref outputDataLength, convertToRGB == true ? 1 : 0);
 
             switch (result)
             {
@@ -321,7 +321,7 @@ namespace MuPDFCore
                 outputDataLength -= (ulong)bytesToCopy;
             }
 
-            NativeMethods.DisposeBuffer(this.NativeContext, outputBuffer);
+            NativeMethods.DisposeBuffer(OwnerContext.NativeContext, outputBuffer);
         }
 
         /// <summary>
@@ -360,7 +360,7 @@ namespace MuPDFCore
             IntPtr outputData = IntPtr.Zero;
             ulong outputDataLength = 0;
 
-            ExitCodes result = (ExitCodes)NativeMethods.WriteRasterImage(this.NativeContext, this.NativePointer, (int)RasterOutputFileTypes.JPEG, quality, ref outputBuffer, ref outputData, ref outputDataLength, convertToRGB == true ? 1 : 0);
+            ExitCodes result = (ExitCodes)NativeMethods.WriteRasterImage(OwnerContext.NativeContext, this.NativePointer, (int)RasterOutputFileTypes.JPEG, quality, ref outputBuffer, ref outputData, ref outputDataLength, convertToRGB == true ? 1 : 0);
 
             switch (result)
             {
@@ -385,7 +385,7 @@ namespace MuPDFCore
                 outputDataLength -= (ulong)bytesToCopy;
             }
 
-            NativeMethods.DisposeBuffer(this.NativeContext, outputBuffer);
+            NativeMethods.DisposeBuffer(OwnerContext.NativeContext, outputBuffer);
         }
 
         /// <summary>
@@ -404,7 +404,7 @@ namespace MuPDFCore
             IntPtr samples = IntPtr.Zero;
             int sampleCount = 0;
 
-            ExitCodes result = (ExitCodes)NativeMethods.LoadPixmapRGB(this.NativeContext, this.NativePointer, (int)pixelFormat, ref pixmap, ref samples, ref sampleCount);
+            ExitCodes result = (ExitCodes)NativeMethods.LoadPixmapRGB(OwnerContext.NativeContext, this.NativePointer, (int)pixelFormat, ref pixmap, ref samples, ref sampleCount);
 
             switch (result)
             {
@@ -443,7 +443,7 @@ namespace MuPDFCore
                 }
             }
 
-            NativeMethods.DisposePixmap(this.NativeContext, pixmap);
+            NativeMethods.DisposePixmap(OwnerContext.NativeContext, pixmap);
 
             return tbr;
         }
@@ -464,7 +464,7 @@ namespace MuPDFCore
             IntPtr samples = IntPtr.Zero;
             int sampleCount = 0;
 
-            ExitCodes result = (ExitCodes)NativeMethods.LoadPixmap(this.NativeContext, this.NativePointer, ref pixmap, ref samples, ref sampleCount);
+            ExitCodes result = (ExitCodes)NativeMethods.LoadPixmap(OwnerContext.NativeContext, this.NativePointer, ref pixmap, ref samples, ref sampleCount);
 
             switch (result)
             {
@@ -483,7 +483,7 @@ namespace MuPDFCore
                 Buffer.MemoryCopy((byte*)samples, ptr, sampleCount, sampleCount);
             }
 
-            NativeMethods.DisposePixmap(this.NativeContext, pixmap);
+            NativeMethods.DisposePixmap(OwnerContext.NativeContext, pixmap);
 
             return tbr;
         }
@@ -493,7 +493,12 @@ namespace MuPDFCore
         {
             if (!disposedValue)
             {
-                NativeMethods.DisposeImage(this.NativeContext, this.NativePointer);
+                if (OwnerContext.disposedValue)
+                {
+                    throw new LifetimeManagementException<MuPDFImage, MuPDFContext>(this, OwnerContext, this.NativePointer, OwnerContext.NativeContext);
+                }
+
+                NativeMethods.DisposeImage(OwnerContext.NativeContext, this.NativePointer);
                 disposedValue = true;
             }
         }

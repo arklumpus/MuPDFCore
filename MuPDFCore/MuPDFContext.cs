@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace MuPDFCore
 {
@@ -24,6 +25,11 @@ namespace MuPDFCore
     /// </summary>
     public class MuPDFContext : IDisposable
     {
+        /// <summary>
+        /// Parent context for cloned contexts.
+        /// </summary>
+        private MuPDFContext ParentContext { get; } = null;
+
         /// <summary>
         /// A pointer to the native context object.
         /// </summary>
@@ -37,6 +43,31 @@ namespace MuPDFCore
             get
             {
                 return (long)NativeMethods.GetCurrentStoreSize(this.NativeContext);
+            }
+        }
+
+        private object fontCacheLock = new object();
+        private Dictionary<IntPtr, (MuPDFFont, int)> fontCache = new Dictionary<IntPtr, (MuPDFFont, int)>();
+
+        /// <summary>
+        /// Font cache dictionary.
+        /// </summary>
+        internal Dictionary<IntPtr, (MuPDFFont, int)> FontCache
+        {
+            get
+            {
+                return this.ParentContext == null ? fontCache : this.ParentContext.FontCache;
+            }
+        }
+
+        /// <summary>
+        /// Font cache dictionary lock.
+        /// </summary>
+        internal object FontCacheLock
+        {
+            get
+            {
+                return this.ParentContext == null ? fontCacheLock : this.ParentContext.FontCacheLock;
             }
         }
 
@@ -137,10 +168,12 @@ namespace MuPDFCore
         /// <summary>
         /// Wrap an existing pointer to a native MuPDF context object.
         /// </summary>
+        /// <param name="parentContext">The parent context for cloned contexts.</param>
         /// <param name="nativeContext">The pointer to the native context that should be used.</param>
-        internal MuPDFContext(IntPtr nativeContext)
+        internal MuPDFContext(MuPDFContext parentContext, IntPtr nativeContext)
         {
             this.NativeContext = nativeContext;
+            this.ParentContext = parentContext;
         }
 
         /// <summary>
@@ -167,16 +200,47 @@ namespace MuPDFCore
             }
         }
 
-        private bool disposedValue;
+        /// <summary>
+        /// Resolve a font from the font cache, or create a new font object.
+        /// </summary>
+        /// <param name="nativePointer">The pointer to the font.</param>
+        /// <returns>The cached font instance, or a new font object.</returns>
+        internal MuPDFFont Resolve(IntPtr nativePointer)
+        {
+            lock (FontCacheLock)
+            {
+                (MuPDFFont font, int referenceCount) item;
+
+                if (!this.FontCache.TryGetValue(nativePointer, out item) || item.font.disposedValue)
+                {
+                    item = (new MuPDFFont(this, nativePointer), 1);
+                    this.FontCache[nativePointer] = item;
+                }
+                else
+                {
+                    item = (item.font, item.referenceCount + 1);
+                    this.FontCache[nativePointer] = item;
+                }
+
+                return item.font;
+            }
+        }
+
+        internal bool disposedValue;
 
         ///<inheritdoc/>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
-                if (disposing)
+                if (disposing && this.ParentContext == null)
                 {
-                    // TODO: eliminare lo stato gestito (oggetti gestiti)
+                    lock (fontCacheLock)
+                    {
+                        this.fontCache.Clear();
+                    }
+
+                    this.fontCache = null;
                 }
 
                 NativeMethods.DisposeContext(NativeContext);

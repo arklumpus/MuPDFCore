@@ -552,6 +552,47 @@ namespace MuPDFCore
     }
 
     /// <summary>
+    /// The exception that is thrown when the lifetime of disposable objects is not managed properly.
+    /// </summary>
+    public class LifetimeManagementException<T1, T2> : Exception
+    {
+        /// <inheritdoc/>
+        public override string Message { get; }
+
+        /// <summary>
+        /// The object whose disposal caused the exception.
+        /// </summary>
+        public T1 Disposing { get; }
+
+        /// <summary>
+        /// The object that had already been disposed.
+        /// </summary>
+        public T2 Owner { get; }
+
+        private IntPtr DisposingPtr { get; }
+        private IntPtr OwnerPtr { get; }
+
+        internal LifetimeManagementException(T1 disposing, T2 owner, IntPtr disposingPtr, IntPtr ownerPtr) : base()
+        {
+            this.Message = "The current " + typeof(T1).Name + " instance (" + disposingPtr.ToString("X") + ") was disposed after its owner " + typeof(T2).Name + " instance (" + ownerPtr.ToString("X") + ") had already been disposed.\n" +
+                "This may happen if the " + typeof(T1).Name + " instance has not been properly disposed. Please ensure that all instances of classes implementing IDisposable are properly disposed in the correct order (e.g., by wrapping them in using statements).";
+
+            this.Disposing = disposing;
+            this.Owner = owner;
+        }
+
+        /// <summary>
+        /// Create a new <see cref="LifetimeManagementException{T1, T2}"/> by appending the specified message to the original exception message.
+        /// </summary>
+        /// <param name="baseException">The original <see cref="LifetimeManagementException{T1, T2}"/>.</param>
+        /// <param name="appendedMessage">The message to be appended to the original exception message.</param>
+        public LifetimeManagementException(LifetimeManagementException<T1, T2> baseException, string appendedMessage) : this(baseException.Disposing, baseException.Owner, baseException.DisposingPtr, baseException.OwnerPtr)
+        {
+            this.Message += "\n" + appendedMessage;
+        }
+    }
+
+    /// <summary>
     /// A class to simplify passing a string to the MuPDF C library with the correct encoding.
     /// </summary>
     internal class UTF8EncodedString : IDisposable
