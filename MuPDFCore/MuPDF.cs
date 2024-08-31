@@ -281,7 +281,27 @@ namespace MuPDFCore
         /// <summary>
         /// Comic book archive format.
         /// </summary>
-        CBZ = 2
+        CBZ = 2,
+
+        /// <summary>
+        /// HTML format.
+        /// </summary>
+        HTML = 5,
+
+        /// <summary>
+        /// XHTML format.
+        /// </summary>
+        XHTML = 6,
+
+        /// <summary>
+        /// Text format.
+        /// </summary>
+        TXT = 7,
+
+        /// <summary>
+        /// Structured text XML format.
+        /// </summary>
+        StructuredText = 8,
     };
 
     /// <summary>
@@ -1394,9 +1414,10 @@ namespace MuPDFCore
         /// <param name="file_name">The name of file that will hold the writer's output, UTF-8 encoded.</param>
         /// <param name="format">An integer equivalent to <see cref="DocumentOutputFileTypes"/> specifying the output format.</param>
         /// <param name="out_document_writer">A pointer to the new document writer object.</param>
+        /// <param name="options">Options for the document writer.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int CreateDocumentWriter(IntPtr ctx, IntPtr file_name, int format, ref IntPtr out_document_writer);
+        internal static extern int CreateDocumentWriter(IntPtr ctx, IntPtr file_name, int format, IntPtr options, ref IntPtr out_document_writer);
 
         /// <summary>
         /// Render (part of) a display list as a page in the specified document writer.

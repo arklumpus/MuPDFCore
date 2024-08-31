@@ -1033,7 +1033,7 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int CreateDocumentWriter(fz_context* ctx, const char* file_name, int format, const fz_document_writer** out_document_writer)
+	DLL_PUBLIC int CreateDocumentWriter(fz_context* ctx, const char* file_name, int format, const char* options, const fz_document_writer** out_document_writer)
 	{
 		fz_document_writer* writ;
 
@@ -1042,25 +1042,31 @@ extern "C"
 			switch (format)
 			{
 			case OUT_DOC_PDF:
-				writ = fz_new_document_writer(ctx, file_name, "pdf", NULL);
+				writ = fz_new_document_writer(ctx, file_name, "pdf", options);
 				break;
 			case OUT_DOC_SVG:
-				writ = fz_new_document_writer(ctx, file_name, "svg", NULL);
+				writ = fz_new_document_writer(ctx, file_name, "svg", options);
 				break;
 			case OUT_DOC_CBZ:
-				writ = fz_new_document_writer(ctx, file_name, "cbz", NULL);
+				writ = fz_new_document_writer(ctx, file_name, "cbz", options);
 				break;
 			case OUT_DOC_DOCX:
-				writ = fz_new_document_writer(ctx, file_name, "docx", NULL);
+				writ = fz_new_document_writer(ctx, file_name, "docx", options);
 				break;
 			case OUT_DOC_ODT:
-				writ = fz_new_document_writer(ctx, file_name, "odt", NULL);
+				writ = fz_new_document_writer(ctx, file_name, "odt", options);
 				break;
 			case OUT_DOC_HTML:
-				writ = fz_new_document_writer(ctx, file_name, "html", NULL);
+				writ = fz_new_document_writer(ctx, file_name, "html", options);
 				break;
 			case OUT_DOC_XHTML:
-				writ = fz_new_document_writer(ctx, file_name, "xhtml", NULL);
+				writ = fz_new_document_writer(ctx, file_name, "xhtml", options);
+				break;
+			case OUT_DOC_TXT:
+				writ = fz_new_document_writer(ctx, file_name, "text", options);
+				break;
+			case OUT_DOC_STEXT:
+				writ = fz_new_document_writer(ctx, file_name, "stext", options);
 				break;
 			}
 		}

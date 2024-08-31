@@ -43,7 +43,9 @@ enum
 	OUT_DOC_DOCX = 3,
 	OUT_DOC_ODT = 4,
 	OUT_DOC_HTML = 5,
-	OUT_DOC_XHTML = 6
+	OUT_DOC_XHTML = 6,
+	OUT_DOC_TXT = 7,
+	OUT_DOC_STEXT = 8
 };
 
 //Colour formats
@@ -513,8 +515,9 @@ extern "C"
 	/// <param name="file_name">The name of file that will hold the writer's output.</param>
 	/// <param name="format">An integer specifying the output format.</param>
 	/// <param name="out_document_writer">A pointer to the new document writer object.</param>
+	/// <param name="options">Options for the document writer.</param>
 	/// <returns>An integer detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int CreateDocumentWriter(fz_context* ctx, const char* file_name, int format, const fz_document_writer** out_document_writer);
+	DLL_PUBLIC int CreateDocumentWriter(fz_context* ctx, const char* file_name, int format, const char* options, const fz_document_writer** out_document_writer);
 
 	/// <summary>
 	/// Write (part of) a display list to an image buffer in the specified format.

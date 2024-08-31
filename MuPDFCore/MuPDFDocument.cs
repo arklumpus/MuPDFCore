@@ -27,7 +27,7 @@ namespace MuPDFCore
     /// <summary>
     /// A wrapper over a MuPDF document object, which contains possibly multiple pages.
     /// </summary>
-    public class MuPDFDocument : IDisposable
+    public partial class MuPDFDocument : IDisposable
     {
         /// <summary>
         /// If the document is an image, the horizontal resolution of the image. Otherwise, 72.
@@ -72,7 +72,7 @@ namespace MuPDFCore
         /// <summary>
         /// The context that owns this document.
         /// </summary>
-        private readonly MuPDFContext OwnerContext;
+        internal readonly MuPDFContext OwnerContext;
 
         /// <summary>
         /// A pointer to the native document object.
@@ -102,7 +102,7 @@ namespace MuPDFCore
         /// <summary>
         /// An array of <see cref="MuPDFDisplayList"/>, one for each page in the document.
         /// </summary>
-        private MuPDFDisplayList[] DisplayLists;
+        internal MuPDFDisplayList[] DisplayLists;
 
         /// <summary>
         /// The pages contained in the document.
@@ -1279,135 +1279,6 @@ namespace MuPDFCore
             Rectangle region = this.Pages[pageNumber].Bounds;
             WriteImageAsJPEG(pageNumber, region, zoom, outputStream, quality, includeAnnotations);
         }
-
-        /// <summary>
-        /// Create a new document containing the specified (parts of) pages from other documents.
-        /// </summary>
-        /// <param name="context">The context that was used to open the documents.</param>
-        /// <param name="fileName">The output file name.</param>
-        /// <param name="fileType">The output file format.</param>
-        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
-        /// <param name="pages">The pages to include in the document. The "page" element specifies the page, the "region" element the area of the page that should be included in the document, and the "zoom" element how much the region should be scaled.</param>
-        public static void CreateDocument(MuPDFContext context, string fileName, DocumentOutputFileTypes fileType, bool includeAnnotations = true, params (MuPDFPage page, Rectangle region, float zoom)[] pages)
-        {
-            if (fileType == DocumentOutputFileTypes.SVG && pages.Length > 1)
-            {
-                //Actually, you can, but the library creates multiple files appending numbers after each name (e.g. page1.svg, page2.svg, ...), which is ugly and may have unintended consequences.
-                //If you really want to do this, you can call this method multiple times.
-                throw new ArgumentException("You cannot create an SVG document with more than one page!", nameof(pages));
-            }
-
-            string originalFileName = fileName;
-
-            if (fileType == DocumentOutputFileTypes.SVG)
-            {
-                //For SVG documents, the library annoyingly alters the output file name, appending a "1" just before the extension (e.g. document.svg -> document1.svg). Since users may not be expecting this, it is best to render to a temporary file and then move it to the specified location.
-                fileName = Path.GetTempFileName();
-            }
-
-            IntPtr documentWriter = IntPtr.Zero;
-
-            ExitCodes result;
-
-            // Encode the file name in UTF-8 in unmanaged memory.
-            using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
-            {
-                //Initialise document writer.
-                result = (ExitCodes)NativeMethods.CreateDocumentWriter(context.NativeContext, encodedFileName.Address, (int)fileType, ref documentWriter);
-            }
-
-            switch (result)
-            {
-                case ExitCodes.EXIT_SUCCESS:
-                    break;
-                case ExitCodes.ERR_CANNOT_CREATE_WRITER:
-                    throw new MuPDFException("Cannot create the document writer", result);
-                default:
-                    throw new MuPDFException("Unknown error", result);
-            }
-
-            //Write pages.
-            for (int i = 0; i < pages.Length; i++)
-            {
-                MuPDFDocument doc = pages[i].page.OwnerDocument;
-                int pageNum = pages[i].page.PageNumber;
-
-                if (doc.DisplayLists[pageNum] == null)
-                {
-                    doc.DisplayLists[pageNum] = new MuPDFDisplayList(doc.OwnerContext, doc.Pages[pageNum], includeAnnotations);
-                }
-
-                Rectangle region = pages[i].region;
-                double zoom = pages[i].zoom;
-
-                if (pages[i].page.OwnerDocument.ImageXRes != 72 || pages[i].page.OwnerDocument.ImageYRes != 72)
-                {
-                    zoom *= Math.Sqrt(pages[i].page.OwnerDocument.ImageXRes * pages[i].page.OwnerDocument.ImageYRes) / 72;
-                    region = new Rectangle(region.X0 * 72 / pages[i].page.OwnerDocument.ImageXRes, region.Y0 * 72 / pages[i].page.OwnerDocument.ImageYRes, region.X1 * 72 / pages[i].page.OwnerDocument.ImageXRes, region.Y1 * 72 / pages[i].page.OwnerDocument.ImageYRes);
-                }
-
-                result = (ExitCodes)NativeMethods.WriteSubDisplayListAsPage(context.NativeContext, doc.DisplayLists[pageNum].NativeDisplayList, region.X0, region.Y0, region.X1, region.Y1, (float)zoom, documentWriter);
-
-                switch (result)
-                {
-                    case ExitCodes.EXIT_SUCCESS:
-                        break;
-                    case ExitCodes.ERR_CANNOT_RENDER:
-                        throw new MuPDFException("Cannot render page " + i.ToString(), result);
-                    default:
-                        throw new MuPDFException("Unknown error", result);
-                }
-            }
-
-            //Close and dispose the document writer.
-            result = (ExitCodes)NativeMethods.FinalizeDocumentWriter(context.NativeContext, documentWriter);
-
-            switch (result)
-            {
-                case ExitCodes.EXIT_SUCCESS:
-                    break;
-                case ExitCodes.ERR_CANNOT_CLOSE_DOCUMENT:
-                    throw new MuPDFException("Cannot finalise the document", result);
-                default:
-                    throw new MuPDFException("Unknown error", result);
-            }
-
-            if (fileType == DocumentOutputFileTypes.SVG)
-            {
-                //Move the temporary file to the location specified by the user.
-                //The library has altered the temporary file name by appending a "1" before the extension.
-                string tempFileName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName) + "1" + Path.GetExtension(fileName));
-
-                //Overwrite existing file.
-                if (File.Exists(originalFileName))
-                {
-                    File.Delete(originalFileName);
-                }
-
-                File.Move(tempFileName, originalFileName);
-            }
-        }
-
-        /// <summary>
-        /// Create a new document containing the specified pages from other documents.
-        /// </summary>
-        /// <param name="context">The context that was used to open the documents.</param>
-        /// <param name="fileName">The output file name.</param>
-        /// <param name="fileType">The output file format.</param>
-        /// <param name="pages">The pages to include in the document.</param>
-        /// <param name="includeAnnotations">If this is <see langword="true" />, annotations (e.g. signatures) are included in the display list that is generated. Otherwise, only the page contents are included.</param>
-        public static void CreateDocument(MuPDFContext context, string fileName, DocumentOutputFileTypes fileType, bool includeAnnotations = true, params MuPDFPage[] pages)
-        {
-            (MuPDFPage, Rectangle, float)[] boundedPages = new (MuPDFPage, Rectangle, float)[pages.Length];
-
-            for (int i = 0; i < pages.Length; i++)
-            {
-                boundedPages[i] = (pages[i], pages[i].Bounds, 1);
-            }
-
-            CreateDocument(context, fileName, fileType, includeAnnotations, boundedPages);
-        }
-
 
         /// <summary>
         /// Creates a new <see cref="MuPDFStructuredTextPage"/> from the specified page. This contains information about the text layout that can be used for highlighting and searching. The reading order is taken from the order the text is drawn in the source file, so may not be accurate.
