@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2022 Artifex Software, Inc.
+// Copyright (C) 2004-2024 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -149,6 +149,15 @@ fz_output *fz_new_output(fz_context *ctx, int bufsiz, void *state, fz_output_wri
 	overwriting it.
 */
 fz_output *fz_new_output_with_path(fz_context *, const char *filename, int append);
+
+/**
+	Open an output stream that writes to a
+	given FILE *.
+
+	file: The file pointers to write to. NULL is interpreted as effectively
+	meaning /dev/null or similar.
+*/
+fz_output *fz_new_output_with_file_ptr(fz_context *ctx, FILE *file);
 
 /**
 	Open an output stream that appends
@@ -327,10 +336,27 @@ void fz_write_bits(fz_context *ctx, fz_output *out, unsigned int data, int num_b
 void fz_write_bits_sync(fz_context *ctx, fz_output *out);
 
 /**
+	Copy the stream contents to the output.
+*/
+void fz_write_stream(fz_context *ctx, fz_output *out, fz_stream *in);
+
+/**
 	Our customised 'printf'-like string formatter.
 	Takes %c, %d, %s, %u, %x, %X as usual.
-	Modifiers are not supported except for zero-padding ints (e.g.
-	%02d, %03u, %04x, etc).
+	The only modifiers supported are:
+	1) zero-padding ints (e.g. %02d, %03u, %04x, etc).
+	2) ' to indicate that ' should be inserted into
+		integers as thousands separators.
+	3) , to indicate that , should be inserted into
+		integers as thousands separators.
+	4) _ to indicate that , should be inserted into
+		integers as thousands separators.
+	Posix chooses the thousand separator in a locale
+	specific way - we do not. We always apply it every
+	3 characters for the positive part of integers, so
+	other styles, such as Indian (123,456,78) are not
+	supported.
+
 	%g output in "as short as possible hopefully lossless
 	non-exponent" form, see fz_ftoa for specifics.
 	%f and %e output as usual.

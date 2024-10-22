@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2021 Artifex Software, Inc.
+// Copyright (C) 2004-2024 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -207,7 +207,8 @@ typedef enum
 	PDF_SIGNATURE_ERROR_SELF_SIGNED,
 	PDF_SIGNATURE_ERROR_SELF_SIGNED_IN_CHAIN,
 	PDF_SIGNATURE_ERROR_NOT_TRUSTED,
-	PDF_SIGNATURE_ERROR_UNKNOWN
+	PDF_SIGNATURE_ERROR_NOT_SIGNED,
+	PDF_SIGNATURE_ERROR_UNKNOWN,
 } pdf_signature_error;
 
 /* Increment the reference count for a signer object */

@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2023 Artifex Software, Inc.
+// Copyright (C) 2004-2024 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -202,6 +202,26 @@ pdf_document *pdf_specifics(fz_context *ctx, fz_document *doc);
 pdf_document *pdf_document_from_fz_document(fz_context *ctx, fz_document *ptr);
 pdf_page *pdf_page_from_fz_page(fz_context *ctx, fz_page *ptr);
 
+/*
+	Get a pdf_document handle from an fz_document handle.
+
+	This is superfically similar to pdf_document_from_fz_document
+	(and the older pdf_specifics).
+
+	For fz_documents that are actually pdf_documents, this will return
+	a kept version of the same pointer, just cast differently.
+
+	For fz_documents that have a pdf_document representation internally,
+	then you may get a kept version of a different pointer.
+
+	For fz_documents that have no pdf_document representation internally,
+	this will return NULL.
+
+	Note that this returns a kept pointer that the caller is responsible
+	for freeing, unlike pdf_specifics or pdf_document_from_fz_document.
+*/
+pdf_document *fz_new_pdf_document_from_fz_document(fz_context *ctx, fz_document *ptr);
+
 int pdf_needs_password(fz_context *ctx, pdf_document *doc);
 
 /*
@@ -218,7 +238,7 @@ int pdf_needs_password(fz_context *ctx, pdf_document *doc);
 int pdf_authenticate_password(fz_context *ctx, pdf_document *doc, const char *pw);
 
 int pdf_has_permission(fz_context *ctx, pdf_document *doc, fz_permission p);
-int pdf_lookup_metadata(fz_context *ctx, pdf_document *doc, const char *key, char *ptr, int size);
+int pdf_lookup_metadata(fz_context *ctx, pdf_document *doc, const char *key, char *ptr, size_t size);
 
 fz_outline *pdf_load_outline(fz_context *ctx, pdf_document *doc);
 
@@ -248,12 +268,24 @@ typedef struct
 } pdf_layer_config;
 
 /*
-	Fetch the name (and optionally creator) of the given layer config.
+	Fetch the name (and optionally creator) of the default layer config.
 
 	doc: The document in question.
 
-	config_num: A value in the 0..n-1 range, where n is the
-	value returned from pdf_count_layer_configs.
+	info: Pointer to structure to fill in. Pointers within
+	this structure may be set to NULL if no information is
+	available.
+*/
+void pdf_default_layer_config_info(fz_context *ctx, pdf_document *doc, pdf_layer_config *info);
+
+/*
+	Fetch the name (and optionally creator) of the given alternative layer config.
+
+	doc: The document in question.
+
+	config_num: A value in the -1..n-1 range, where n is the
+	value returned from pdf_count_layer_configs. If this is
+	-1, information is returned about the default layer config.
 
 	info: Pointer to structure to fill in. Pointers within
 	this structure may be set to NULL if no information is
@@ -262,14 +294,24 @@ typedef struct
 void pdf_layer_config_info(fz_context *ctx, pdf_document *doc, int config_num, pdf_layer_config *info);
 
 /*
+	Set the current configuration to default layer configuration.
+	This updates the visibility of the optional content groups
+	within the document.
+
+	doc: The document in question.
+*/
+void pdf_select_default_layer_config(fz_context *ctx, pdf_document *doc);
+
+/*
 	Set the current configuration.
 	This updates the visibility of the optional content groups
 	within the document.
 
 	doc: The document in question.
 
-	config_num: A value in the 0..n-1 range, where n is the
-	value returned from pdf_count_layer_configs.
+	config_num: A value in the -1..n-1 range, where n is the
+	value returned from pdf_count_layer_configs. If this is
+	-1, the default layer configuration is selected.
 */
 void pdf_select_layer_config(fz_context *ctx, pdf_document *doc, int config_num);
 
@@ -818,5 +860,36 @@ fz_structure pdf_structure_type(fz_context *ctx, pdf_obj *role_map, pdf_obj *tag
 */
 void pdf_run_document_structure(fz_context *ctx, pdf_document *doc, fz_device *dev, fz_cookie *cookie);
 
+/*
+	Return the count of the associated files on a document.
+	Note, that this is the count of files associated at the document
+	level and does not necessarily include files associated at other
+	levels.
+*/
+int pdf_count_document_associated_files(fz_context *ctx, pdf_document *doc);
+
+/*
+	Return a borrowed pointer to the PDF object that represents a
+	given associated file on a document.
+
+	Indexed from 0 to count-1.
+*/
+pdf_obj *pdf_document_associated_file(fz_context *ctx, pdf_document *doc, int idx);
+
+/*
+	Return the count of the associated files on a given page.
+	Note, that this is the count of files associated at the page
+	level and does not necessarily include files associated at other
+	levels.
+*/
+int pdf_count_page_associated_files(fz_context *ctx, pdf_page *page);
+
+/*
+	Return a borrowed pointer to the PDF object that represents a
+	given associated file on a page.
+
+	Indexed from 0 to count-1.
+*/
+pdf_obj *pdf_page_associated_file(fz_context *ctx, pdf_page *page, int idx);
 
 #endif

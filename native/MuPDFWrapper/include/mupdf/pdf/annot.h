@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2023 Artifex Software, Inc.
+// Copyright (C) 2004-2024 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -473,6 +473,11 @@ int pdf_annot_has_icon_name(fz_context *ctx, pdf_annot *annot);
 int pdf_annot_has_open(fz_context *ctx, pdf_annot *annot);
 
 /*
+	Check to see if an annotation has a popup annotation.
+*/
+int pdf_annot_has_popup(fz_context *ctx, pdf_annot *annot);
+
+/*
 	Check to see if an annotation has author data.
 */
 int pdf_annot_has_author(fz_context *ctx, pdf_annot *annot);
@@ -483,7 +488,10 @@ int pdf_annot_has_author(fz_context *ctx, pdf_annot *annot);
 int pdf_annot_flags(fz_context *ctx, pdf_annot *annot);
 
 /*
-	Retrieve the annotation bounds in doc space.
+	Retrieve the annotation design rectangle in doc space.
+	Note: This is NOT the same as the bounding rectangle.
+	The design rectangle is the bounding rectangle adjusted
+	by the RD padding.
 */
 fz_rect pdf_annot_rect(fz_context *ctx, pdf_annot *annot);
 
@@ -597,7 +605,7 @@ void pdf_set_annot_flags(fz_context *ctx, pdf_annot *annot, int flags);
 void pdf_set_annot_stamp_image(fz_context *ctx, pdf_annot *annot, fz_image *image);
 
 /*
-	Set the bounding box for an annotation, in doc space.
+	Set the design rectangle for an annotation, in doc space.
 */
 void pdf_set_annot_rect(fz_context *ctx, pdf_annot *annot, fz_rect rect);
 
@@ -740,6 +748,18 @@ int pdf_annot_is_standard_stamp(fz_context *ctx, pdf_annot *annot);
 void pdf_annot_line(fz_context *ctx, pdf_annot *annot, fz_point *a, fz_point *b);
 void pdf_set_annot_line(fz_context *ctx, pdf_annot *annot, fz_point a, fz_point b);
 
+float pdf_annot_line_leader(fz_context *ctx, pdf_annot *annot);
+float pdf_annot_line_leader_extension(fz_context *ctx, pdf_annot *annot);
+float pdf_annot_line_leader_offset(fz_context *ctx, pdf_annot *annot);
+void pdf_set_annot_line_leader(fz_context *ctx, pdf_annot *annot, float ll);
+void pdf_set_annot_line_leader_extension(fz_context *ctx, pdf_annot *annot, float lle);
+void pdf_set_annot_line_leader_offset(fz_context *ctx, pdf_annot *annot, float llo);
+
+int pdf_annot_line_caption(fz_context *ctx, pdf_annot *annot);
+void pdf_set_annot_line_caption(fz_context *ctx, pdf_annot *annot, int cap);
+fz_point pdf_annot_line_caption_offset(fz_context *ctx, pdf_annot *annot);
+void pdf_set_annot_line_caption_offset(fz_context *ctx, pdf_annot *annot, fz_point offset);
+
 int pdf_annot_vertex_count(fz_context *ctx, pdf_annot *annot);
 fz_point pdf_annot_vertex(fz_context *ctx, pdf_annot *annot, int i);
 
@@ -763,8 +783,18 @@ int pdf_annot_has_intent(fz_context *ctx, pdf_annot *annot);
 enum pdf_intent pdf_annot_intent(fz_context *ctx, pdf_annot *annot);
 void pdf_set_annot_intent(fz_context *ctx, pdf_annot *annot, enum pdf_intent it);
 
+int pdf_annot_has_callout(fz_context *ctx, pdf_annot *annot);
+enum pdf_line_ending pdf_annot_callout_style(fz_context *ctx, pdf_annot *annot);
+void pdf_set_annot_callout_style(fz_context *ctx, pdf_annot *annot, enum pdf_line_ending style);
+void pdf_annot_callout_line(fz_context *ctx, pdf_annot *annot, fz_point callout[3], int *n);
+void pdf_set_annot_callout_line(fz_context *ctx, pdf_annot *annot, fz_point callout[3], int n);
+fz_point pdf_annot_callout_point(fz_context *ctx, pdf_annot *annot);
+void pdf_set_annot_callout_point(fz_context *ctx, pdf_annot *annot, fz_point p);
+
+void pdf_parse_default_appearance_unmapped(fz_context *ctx, const char *da, char *font_name, int font_name_len, float *size, int *n, float color[4]);
 void pdf_parse_default_appearance(fz_context *ctx, const char *da, const char **font, float *size, int *n, float color[4]);
 void pdf_print_default_appearance(fz_context *ctx, char *buf, int nbuf, const char *font, float size, int n, const float *color);
+void pdf_annot_default_appearance_unmapped(fz_context *ctx, pdf_annot *annot, char *font_name, int font_name_len, float *size, int *n, float color[4]);
 void pdf_annot_default_appearance(fz_context *ctx, pdf_annot *annot, const char **font, float *size, int *n, float color[4]);
 void pdf_set_annot_default_appearance(fz_context *ctx, pdf_annot *annot, const char *font, float size, int n, const float *color);
 
@@ -868,23 +898,32 @@ fz_stext_page *pdf_new_stext_page_from_annot(fz_context *ctx, pdf_annot *annot, 
 
 fz_layout_block *pdf_layout_text_widget(fz_context *ctx, pdf_annot *annot);
 
-typedef struct pdf_embedded_file_params pdf_embedded_file_params;
+/*
+	Historical alias for pdf_filespec_params;
+*/
+typedef struct pdf_filespec_params pdf_embedded_file_params;
 
 /*
 	Parameters for and embedded file. Obtained through
 	pdf_get_embedded_file_params(). The creation and
 	modification date fields are < 0 if unknown.
 */
-struct pdf_embedded_file_params {
+typedef struct pdf_filespec_params {
 	const char *filename;
 	const char *mimetype;
 	int size;
 	int64_t created;
 	int64_t modified;
-};
+} pdf_filespec_params;
 
 /*
 	Check if pdf object is a file specification.
+*/
+int pdf_is_filespec(fz_context *ctx, pdf_obj *fs);
+
+/*
+	Check if pdf object is a file specification where the data
+	is embedded within the file.
 */
 int pdf_is_embedded_file(fz_context *ctx, pdf_obj *fs);
 
@@ -898,8 +937,13 @@ int pdf_is_embedded_file(fz_context *ctx, pdf_obj *fs);
 pdf_obj *pdf_add_embedded_file(fz_context *ctx, pdf_document *doc, const char *filename, const char *mimetype, fz_buffer *contents, int64_t created, int64_t modifed, int add_checksum);
 
 /*
-	Obtain parameters for embedded file: name, size,
+	Obtain parameters for a filespec: name, size,
 	creation and modification dates cnad MIME type.
+*/
+void pdf_get_filespec_params(fz_context *ctx, pdf_obj *fs, pdf_filespec_params *out);
+
+/*
+	Historical alias for pdf_get_filespec_params.
 */
 void pdf_get_embedded_file_params(fz_context *ctx, pdf_obj *fs, pdf_embedded_file_params *out);
 
@@ -918,6 +962,24 @@ int pdf_verify_embedded_file_checksum(fz_context *ctx, pdf_obj *fs);
 
 pdf_obj *pdf_lookup_dest(fz_context *ctx, pdf_document *doc, pdf_obj *needle);
 fz_link *pdf_load_link_annots(fz_context *ctx, pdf_document *, pdf_page *, pdf_obj *annots, int pagenum, fz_matrix page_ctm);
+
+/*
+	Checks whether a PDF link annotation is actually a
+	SetOCGState action.
+*/
+int pdf_is_link_set_ocg_state(fz_link* link);
+
+/*
+	Activates the SetOCGState action specified by a PDF
+	link annotations.
+*/
+void pdf_activate_link_set_ocg_state(fz_context *ctx, pdf_document *doc, fz_link *link);
+
+/*
+	Checks whether a link is hidden because its OCG is
+	not visible.
+*/
+int pdf_is_link_hidden(fz_context *ctx, const char *usage, fz_link* link);
 
 void pdf_annot_MK_BG(fz_context *ctx, pdf_annot *annot, int *n, float color[4]);
 void pdf_annot_MK_BC(fz_context *ctx, pdf_annot *annot, int *n, float color[4]);

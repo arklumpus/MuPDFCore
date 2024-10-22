@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2021 Artifex Software, Inc.
+// Copyright (C) 2004-2024 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -47,7 +47,9 @@ extern "C" {
 #include "mupdf/pdf/javascript.h"
 
 #include "mupdf/pdf/clean.h"
+#include "mupdf/pdf/recolor.h"
 #include "mupdf/pdf/image-rewriter.h"
+#include "mupdf/pdf/zugferd.h"
 
 
 #ifdef __cplusplus

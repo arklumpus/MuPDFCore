@@ -1,4 +1,4 @@
-// Copyright (C) 2023-2024 Artifex Software, Inc.
+// Copyright (C) 2024 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -20,34 +20,30 @@
 // Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
 // CA 94129, USA, for further information.
 
-// This header allows people to easily build HTML-based document handlers.
+#ifndef MUPDF_PDF_ZUGFERD_H
+#define MUPDF_PDF_ZUGFERD_H
 
-#ifndef MUPDF_HTML_HTML_H
-#define MUPDF_HTML_HTML_H
+#include "mupdf/pdf/document.h"
 
-#include "mupdf/fitz/system.h"
-#include "mupdf/fitz/context.h"
-#include "mupdf/fitz/document.h"
-
-/*
-	HTML types required
-*/
-typedef struct fz_html_s fz_html;
-typedef struct fz_html_font_set_s fz_html_font_set;
-
-typedef struct
+enum pdf_zugferd_profile
 {
-	const char *format_name;
-	fz_buffer *(*convert_to_html)(fz_context *ctx, fz_html_font_set *set, fz_buffer *buf, fz_archive *dir, const char *user_css);
-	int try_xml;
-	int try_html5;
-	int patch_mobi;
-} fz_htdoc_format_t;
+	PDF_NOT_ZUGFERD = 0,
+	/* ZUGFeRD 1.0 */
+	PDF_ZUGFERD_COMFORT,
+	PDF_ZUGFERD_BASIC,
+	PDF_ZUGFERD_EXTENDED,
+	/* ZUGFeRD 2.01 */
+	PDF_ZUGFERD_BASIC_WL,
+	PDF_ZUGFERD_MINIMUM,
+	/* ZUGFeRD 2.2 */
+	PDF_ZUGFERD_XRECHNUNG,
+	PDF_ZUGFERD_UNKNOWN
+};
 
-fz_document *fz_htdoc_open_document_with_buffer(fz_context *ctx, fz_archive *dir, fz_buffer *buf, const fz_htdoc_format_t *format);
+enum pdf_zugferd_profile pdf_zugferd_profile(fz_context *ctx, pdf_document *doc, float *version);
 
-fz_document *fz_htdoc_open_document_with_stream_and_dir(fz_context *ctx, fz_stream *stm, fz_archive *dir, const fz_htdoc_format_t *format);
+fz_buffer *pdf_zugferd_xml(fz_context *ctx, pdf_document *doc);
 
+const char *pdf_zugferd_profile_to_string(fz_context *ctx, enum pdf_zugferd_profile profile);
 
-
-#endif /* MUPDF_HTML_HTML_H */
+#endif

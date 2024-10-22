@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2023 Artifex Software, Inc.
+// Copyright (C) 2004-2024 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -32,6 +32,7 @@
 #include "mupdf/fitz/link.h"
 #include "mupdf/fitz/outline.h"
 #include "mupdf/fitz/separation.h"
+#include "mupdf/fitz/archive.h"
 
 typedef struct fz_document_handler fz_document_handler;
 typedef struct fz_page fz_page;
@@ -216,7 +217,7 @@ typedef int (fz_document_lookup_metadata_fn)(fz_context *ctx, fz_document *doc, 
 	a document's metadata. See fz_set_metadata for more
 	information.
 */
-typedef int (fz_document_set_metadata_fn)(fz_context *ctx, fz_document *doc, const char *key, const char *value);
+typedef void (fz_document_set_metadata_fn)(fz_context *ctx, fz_document *doc, const char *key, const char *value);
 
 /**
 	Return output intent color space if it exists
@@ -232,6 +233,13 @@ typedef void (fz_document_output_accelerator_fn)(fz_context *ctx, fz_document *d
 	Send document structure to device
 */
 typedef void (fz_document_run_structure_fn)(fz_context *ctx, fz_document *doc, fz_device *dev, fz_cookie *cookie);
+
+/**
+	Get a handle to this document as PDF.
+
+	Returns a borrowed handle.
+*/
+typedef fz_document *(fz_document_as_pdf_fn)(fz_context *ctx, fz_document *doc);
 
 /**
 	Type for a function to make
@@ -322,6 +330,8 @@ typedef void (fz_page_delete_link_fn)(fz_context *ctx, fz_page *page, fz_link *l
 	Function type to open a
 	document from a file.
 
+	handler: the document handler in use.
+
 	stream: fz_stream to read document data from. Must be
 	seekable for formats that require it.
 
@@ -332,13 +342,19 @@ typedef void (fz_page_delete_link_fn)(fz_context *ctx, fz_page *page, fz_link *l
 	associated content from (like images for an html stream
 	will be loaded from this). Maybe NULL. May be ignored.
 
+	recognize_state: NULL, or a state pointer passed back from the call
+	to recognise_content_fn. Ownership does not pass in. The
+	caller remains responsible for freeing state.
+
 	Pointer to opened document. Throws exception in case of error.
 */
-typedef fz_document *(fz_document_open_fn)(fz_context *ctx, fz_stream *stream, fz_stream *accel, fz_archive *dir);
+typedef fz_document *(fz_document_open_fn)(fz_context *ctx, const fz_document_handler *handler, fz_stream *stream, fz_stream *accel, fz_archive *dir, void *recognize_state);
 
 /**
 	Recognize a document type from
 	a magic string.
+
+	handler: the handler in use.
 
 	magic: string to recognise - typically a filename or mime
 	type.
@@ -347,21 +363,46 @@ typedef fz_document *(fz_document_open_fn)(fz_context *ctx, fz_stream *stream, f
 	(fully recognized) based on how certain the recognizer
 	is that this is of the required type.
 */
-typedef int (fz_document_recognize_fn)(fz_context *ctx, const char *magic);
+typedef int (fz_document_recognize_fn)(fz_context *ctx, const fz_document_handler *handler, const char *magic);
+
+typedef void (fz_document_recognize_state_free_fn)(fz_context *ctx, void *state);
 
 /**
 	Recognize a document type from stream contents.
+
+	handler: the handler in use.
 
 	stream: stream contents to recognise (may be NULL if document is
 	a directory).
 
 	dir: directory context from which stream is loaded.
 
+	recognize_state: pointer to retrieve opaque state that may be used
+	by the open routine, or NULL.
+
+	free_recognize_state: pointer to retrieve a function pointer to
+	free the opaque state, or NULL.
+
+	Note: state and free_state should either both be NULL or
+	both be non-NULL!
+
 	Returns a number between 0 (not recognized) and 100
 	(fully recognized) based on how certain the recognizer
 	is that this is of the required type.
 */
-typedef int (fz_document_recognize_content_fn)(fz_context *ctx, fz_stream *stream, fz_archive *dir);
+typedef int (fz_document_recognize_content_fn)(fz_context *ctx, const fz_document_handler *handler, fz_stream *stream, fz_archive *dir, void **recognize_state, fz_document_recognize_state_free_fn **free_recognize_state);
+
+/**
+	Finalise a document handler.
+
+	This will be called on shutdown for a document handler to
+	release resources. This should cope with being called with NULL.
+
+	opaque: The value previously returned by the init call.
+*/
+typedef void (fz_document_handler_fin_fn)(fz_context *ctx, const fz_document_handler *handler);
+
+
 
 /**
 	Type for a function to be called when processing an already opened page.
@@ -372,13 +413,14 @@ typedef void *(fz_process_opened_page_fn)(fz_context *ctx, fz_page *page, void *
 /**
 	Register a handler for a document type.
 
-	handler: The handler to register.
+	handler: The handler to register. This must live on for the duration of the
+	use of this handler. It will be passed back to the handler for calls so
+	the caller can use it to retrieve state.
 */
 void fz_register_document_handler(fz_context *ctx, const fz_document_handler *handler);
 
 /**
-	Register handlers
-	for all the standard document types supported in
+	Register handlers for all the standard document types supported in
 	this build.
 */
 void fz_register_document_handlers(fz_context *ctx);
@@ -839,14 +881,6 @@ void fz_run_page_widgets(fz_context *ctx, fz_page *page, fz_device *dev, fz_matr
 fz_page *fz_keep_page(fz_context *ctx, fz_page *page);
 
 /**
-	Increment the reference count for the page. Returns the same
-	pointer. Must only be used when the alloc lock is already taken.
-
-	Never throws exceptions.
-*/
-fz_page *fz_keep_page_locked(fz_context *ctx, fz_page *page);
-
-/**
 	Decrements the reference count for the page. When the reference
 	count hits 0, the page and its references are freed.
 
@@ -1037,6 +1071,7 @@ struct fz_document
 	fz_document_output_intent_fn *get_output_intent;
 	fz_document_output_accelerator_fn *output_accelerator;
 	fz_document_run_structure_fn *run_structure;
+	fz_document_as_pdf_fn *as_pdf;
 	int did_layout;
 	int is_reflowable;
 
@@ -1052,11 +1087,15 @@ struct fz_document
 
 struct fz_document_handler
 {
+	/* These fields are initialised by the handler when it is registered. */
 	fz_document_recognize_fn *recognize;
 	fz_document_open_fn *open;
 	const char **extensions;
 	const char **mimetypes;
 	fz_document_recognize_content_fn *recognize_content;
+	int wants_dir;
+	int wants_file;
+	fz_document_handler_fin_fn *fin;
 };
 
 #endif

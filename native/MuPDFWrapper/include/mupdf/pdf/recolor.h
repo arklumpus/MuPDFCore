@@ -1,4 +1,4 @@
-// Copyright (C) 2023-2024 Artifex Software, Inc.
+// Copyright (C) 2024 Artifex Software, Inc.
 //
 // This file is part of MuPDF.
 //
@@ -20,34 +20,30 @@
 // Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
 // CA 94129, USA, for further information.
 
-// This header allows people to easily build HTML-based document handlers.
+#ifndef MUPDF_PDF_RECOLOR_H
+#define MUPDF_PDF_RECOLOR_H
 
-#ifndef MUPDF_HTML_HTML_H
-#define MUPDF_HTML_HTML_H
-
-#include "mupdf/fitz/system.h"
-#include "mupdf/fitz/context.h"
-#include "mupdf/fitz/document.h"
-
-/*
-	HTML types required
-*/
-typedef struct fz_html_s fz_html;
-typedef struct fz_html_font_set_s fz_html_font_set;
+#include "mupdf/pdf/document.h"
 
 typedef struct
 {
-	const char *format_name;
-	fz_buffer *(*convert_to_html)(fz_context *ctx, fz_html_font_set *set, fz_buffer *buf, fz_archive *dir, const char *user_css);
-	int try_xml;
-	int try_html5;
-	int patch_mobi;
-} fz_htdoc_format_t;
+	/* For gray, use num_comp = 1.
+	 * For rgb, use num_comp = 3.
+	 * For cmyk use num_comp = 4.
+	 * All other values reserved. */
+	int num_comp;
+} pdf_recolor_options;
 
-fz_document *fz_htdoc_open_document_with_buffer(fz_context *ctx, fz_archive *dir, fz_buffer *buf, const fz_htdoc_format_t *format);
+/*
+	Recolor a given document page.
 
-fz_document *fz_htdoc_open_document_with_stream_and_dir(fz_context *ctx, fz_stream *stm, fz_archive *dir, const fz_htdoc_format_t *format);
+	All other values reserved.
+*/
+void pdf_recolor_page(fz_context *ctx, pdf_document *doc, int pagenum, const pdf_recolor_options *opts);
 
+/*
+	Remove output intents from a document.
+*/
+void pdf_remove_output_intents(fz_context *ctx, pdf_document *doc);
 
-
-#endif /* MUPDF_HTML_HTML_H */
+#endif
