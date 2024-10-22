@@ -126,6 +126,11 @@ namespace MuPDFCore
         ERR_FONT_METADATA = 148,
 
         /// <summary>
+        /// The document pointer cannot be converted to a PDF pointer.
+        /// </summary>
+        ERR_CANNOT_CONVERT_TO_PDF = 149,
+
+        /// <summary>
         /// No error occurred. All is well.
         /// </summary>
         EXIT_SUCCESS = 0,
@@ -696,7 +701,7 @@ namespace MuPDFCore
 
         private static string PipeName;
         private static bool CleanupRegistered = false;
-        private static object CleanupLock = new object();
+        private static readonly object CleanupLock = new object();
 
         /// <summary>
         /// This event is invoked when <see cref="RedirectOutput"/> has been called and the native MuPDF library writes to the standard output stream.
@@ -725,6 +730,7 @@ namespace MuPDFCore
 
             if (!CleanupRegistered)
             {
+                CleanupRegistered = true;
                 AppDomain.CurrentDomain.ProcessExit += (s, e) =>
                 {
                     ResetOutput();
@@ -1844,5 +1850,188 @@ namespace MuPDFCore
         /// <param name="cs">The colour space.</param>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern void DisposeColorSpace(IntPtr ctx, IntPtr cs);
+
+        /// <summary>
+        /// Set the state of an optional content group "UI" element.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="ui_index">The index of the optional content group "UI" element.</param>
+        /// <param name="state">The state to set (<c>0</c> to uncheck the element, <c>1</c> to check it, or <c>2</c> to toggle it).</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void SetOptionalContentGroupUIState(IntPtr ctx, IntPtr doc, int ui_index, int state);
+
+        /// <summary>
+        /// Get the state of an optional content group "UI" element.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="ui_index">The index of the optional content group "UI" element.</param>
+        /// <returns>If the optional content group is disabled, this method will return <c>0</c>, otherwise a value different from <c>0</c>.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ReadOptionalContentGroupUIState(IntPtr ctx, IntPtr doc, int ui_index);
+
+        /// <summary>
+        /// Get information about the optional content group "UI" elements.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="count">The number of optional content group "UI" elements.</param>
+        /// <param name="out_labels">A pointer to an array that can hold <paramref name="count"/> <see langword="string"/>s, whose length can be obtained using <see cref="ReadOptionalContentGroupUILabelLengths"/></param>
+        /// <param name="out_depths">A pointer to an array that can hold <paramref name="count"/> <see langword="int"/>s, which will be filled when this method returns.</param>
+        /// <param name="out_types">A pointer to an array that can hold <paramref name="count"/> <see langword="int"/>s, which will be filled when this method returns.</param>
+        /// <param name="out_locked">A pointer to an array that can hold <paramref name="count"/> <see langword="int"/>s, which will be filled when this method returns.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void ReadOptionalContentGroupUIs(IntPtr ctx, IntPtr doc, int count, IntPtr out_labels, IntPtr out_depths, IntPtr out_types, IntPtr out_locked);
+
+        /// <summary>
+        /// Get the lengths of the optional content group "UI" labels.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="count">The number of optional content group "UI" elements.</param>
+        /// <param name="out_lengths">A pointer to an array that can hold <paramref name="count"/> <see cref="int"/>s, which will be filled when this method returns.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void ReadOptionalContentGroupUILabelLengths(IntPtr ctx, IntPtr doc, int count, IntPtr out_lengths);
+
+        /// <summary>
+        /// Get the number of optional content group "UI" elements.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <returns>The number of optional content group "UI" elements.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int CountOptionalContentGroupConfigUI(IntPtr ctx, IntPtr doc);
+
+        /// <summary>
+        /// Set the state of an optional content group.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="index">The index of the optional content group.</param>
+        /// <param name="state">The state to set (<c>0</c> for disabled, any other value for enabled)</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void SetOptionalContentGroupState(IntPtr ctx, IntPtr doc, int index, int state);
+
+        /// <summary>
+        /// Get the state of an optional content group.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="index">The index of the optional content group.</param>
+        /// <returns>If the optional content group is disabled, this method will return <c>0</c>, otherwise a value different from <c>0</c>.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetOptionalContentGroupState(IntPtr ctx, IntPtr doc, int index);
+
+        /// <summary>
+        /// Get the optional content group names.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="count">The number of optional content groups.</param>
+        /// <param name="out_names">A pointer to an array that can hold <paramref name="count"/> <see langword="string" />s, whose length can be obtained using <see cref="GetOptionalContentGroupNameLengths"/></param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void GetOptionalContentGroups(IntPtr ctx, IntPtr doc, int count, IntPtr out_names);
+
+        /// <summary>
+        /// Get the lengths of the optional content group names.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="count">The number of optional content groups.</param>
+        /// <param name="out_lengths">A pointer to an array that can hold <paramref name="count"/> <see cref="int"/>s, which will be filled when this method returns.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void GetOptionalContentGroupNameLengths(IntPtr ctx, IntPtr doc, int count, IntPtr out_lengths);
+
+        /// <summary>
+        /// Get the number of optional content groups defined in the document.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <returns>The number of optional content groups defined in the document.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int CountOptionalContentGroups(IntPtr ctx, IntPtr doc);
+
+        /// <summary>
+        /// Activate an alternative optional content group configuration.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="configuration_index">The index of the optional content group configuration to activate.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void EnableOCGConfig(IntPtr ctx, IntPtr doc, int configuration_index);
+
+        /// <summary>
+        /// Activate the default optional content group configuration.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void EnableDefaultOCGConfig(IntPtr ctx, IntPtr doc);
+
+        /// <summary>
+        /// Get the name and creator of an alternative optional content group configuration.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="configuration_index">The index of the alternative optional content group configuration.</param>
+        /// <param name="name_length">The length of the name of optional content group configuration.</param>
+        /// <param name="creator_length">The length of the creator of optional content group configuration.</param>
+        /// <param name="out_name">A pointer to a byte array where the name will be copied.</param>
+        /// <param name="out_creator">A pointer to a byte array where the creator will be copied.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void ReadOCGConfig(IntPtr ctx, IntPtr doc, int configuration_index, int name_length, int creator_length, IntPtr out_name, IntPtr out_creator);
+
+        /// <summary>
+        /// Get the length of the name and creator of an alternative optional content group configuration.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="configuration_index">The index of the alternative optional content group configuration.</param>
+        /// <param name="out_name_length">When this method returns, this variable will contain the length of the name of the optional content group configuration.</param>
+        /// <param name="out_creator_length">When this method returns, this variable will contain the length of the creator of the optional content group configuration.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void ReadOCGConfigNameLength(IntPtr ctx, IntPtr doc, int configuration_index, ref int out_name_length, ref int out_creator_length);
+
+        /// <summary>
+        /// Get the number of alternative optional content group configurations.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <returns>The number of alternative optional content group configurations.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int CountAlternativeOCGConfigs(IntPtr ctx, IntPtr doc);
+
+        /// <summary>
+        /// Get the name and creator of the default optional content group configuration.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="name_length">The length of the name of the default optional content group configuration.</param>
+        /// <param name="creator_length">The length of the creator of the default optional content group configuration.</param>
+        /// <param name="out_name">A pointer to a byte array where the name will be copied.</param>
+        /// <param name="out_creator">A pointer to a byte array where the creator will be copied.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void ReadDefaultOCGConfig(IntPtr ctx, IntPtr doc, int name_length, int creator_length, IntPtr out_name, IntPtr out_creator);
+
+        /// <summary>
+        /// Get the length of the name and creator of the default optional content group configuration.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="out_name_length">When this method returns, this variable will contain the length of the name of the default optional content group configuration.</param>
+        /// <param name="out_creator_length">When this method returns, this variable will contain the length of the creator of the default optional content group configuration.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void ReadDefaultOCGConfigNameLength(IntPtr ctx, IntPtr doc, ref int out_name_length, ref int out_creator_length);
+
+        /// <summary>
+        /// Cast a MuPDF document to a MuPDF PDF document.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The document to convert.</param>
+        /// <param name="out_pdf_doc">The casted PDF document, or <see cref="IntPtr.Zero"/> if the document cannot be cast.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetPDFDocument(IntPtr ctx, IntPtr doc, ref IntPtr out_pdf_doc);
     }
 }

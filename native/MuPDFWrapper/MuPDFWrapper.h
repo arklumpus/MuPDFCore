@@ -21,7 +21,8 @@ enum
 	ERR_CANNOT_POPULATE_PAGE = 145,
 	ERR_IMAGE_METADATA = 146,
 	ERR_COLORSPACE_METADATA = 147,
-	ERR_FONT_METADATA = 148
+	ERR_FONT_METADATA = 148,
+	ERR_CANNOT_CONVERT_TO_PDF = 149
 };
 
 //Output raster image formats.
@@ -134,9 +135,191 @@ struct fz_store
 	int scavenging;
 };
 
+// Copied from pdf-layer.c
+struct pdf_ocg_descriptor
+{
+	int current;
+	int num_configs;
+
+	int len;
+	void *ocgs;
+
+	void *intent;
+	const char *usage;
+
+	int num_ui_entries;
+	void *ui;
+};
+
+
 //Exported methods
 extern "C"
 {
+	/// <summary>
+	/// Set the state of an optional content group "UI" element.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="ui_index">The index of the optional content group "UI" element.</param>
+	/// <param name="state">The state to set (<c>0</c> to uncheck the element, <c>1</c> to check it, or <c>2</c> to toggle it).</param>
+	DLL_PUBLIC void SetOptionalContentGroupUIState(fz_context* ctx, pdf_document *doc, int ui_index, int state);
+
+	/// <summary>
+	/// Get the state of an optional content group "UI" element.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="ui_index">The index of the optional content group "UI" element.</param>
+	/// <returns>If the optional content group is disabled, this method will return <c>0</c>, otherwise a value different from <c>0</c>.</returns>
+	DLL_PUBLIC int ReadOptionalContentGroupUIState(fz_context* ctx, pdf_document *doc, int ui_index);
+
+	/// <summary>
+	/// Get information about the optional content group "UI" elements.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="count">The number of optional content group "UI" elements.</param>
+	/// <param name="out_labels">A pointer to an array that can hold <paramref name="count"/> <see langword="string"/>s, whose length can be obtained using <see cref="ReadOptionalContentGroupUILabelLengths"/></param>
+	/// <param name="out_depths">A pointer to an array that can hold <paramref name="count"/> <see langword="int"/>s, which will be filled when this method returns.</param>
+	/// <param name="out_types">A pointer to an array that can hold <paramref name="count"/> <see langword="int"/>s, which will be filled when this method returns.</param>
+	/// <param name="out_locked">A pointer to an array that can hold <paramref name="count"/> <see langword="int"/>s, which will be filled when this method returns.</param>
+	DLL_PUBLIC void ReadOptionalContentGroupUIs(fz_context* ctx, pdf_document *doc, int count, char** out_labels, int* out_depths, int* out_types, int* out_locked);
+
+	/// <summary>
+	/// Get the lengths of the optional content group "UI" labels.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="count">The number of optional content group "UI" elements.</param>
+	/// <param name="out_lengths">A pointer to an array that can hold <paramref name="count"/> <see cref="int"/>s, which will be filled when this method returns.</param>
+	DLL_PUBLIC void ReadOptionalContentGroupUILabelLengths(fz_context* ctx, pdf_document *doc, int count, int* out_lengths);
+
+	/// <summary>
+	/// Get the number of optional content group "UI" elements.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <returns>The number of optional content group "UI" elements.</returns>
+	DLL_PUBLIC int CountOptionalContentGroupConfigUI(fz_context *ctx, pdf_document *doc);
+
+	/// <summary>
+	/// Set the state of an optional content group.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="index">The index of the optional content group.</param>
+	/// <param name="state">The state to set (<c>0</c> for disabled, any other value for enabled)</param>
+	DLL_PUBLIC void SetOptionalContentGroupState(fz_context* ctx, pdf_document *doc, int index, int state);
+
+	/// <summary>
+	/// Get the state of an optional content group.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="index">The index of the optional content group.</param>
+	/// <returns>If the optional content group is disabled, this method will return <c>0</c>, otherwise a value different from <c>0</c>.</returns>
+	DLL_PUBLIC int GetOptionalContentGroupState(fz_context* ctx, pdf_document *doc, int index);
+
+	/// <summary>
+	/// Get the optional content group names.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="count">The number of optional content groups.</param>
+	/// <param name="out_names">A pointer to an array that can hold <paramref name="count"/> <see langword="string" />s, whose length can be obtained using <see cref="GetOptionalContentGroupNameLengths"/></param>
+	DLL_PUBLIC void GetOptionalContentGroups(fz_context* ctx, pdf_document *doc, int count, char** out_names);
+
+	/// <summary>
+	/// Get the lengths of the optional content group names.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="count">The number of optional content groups.</param>
+	/// <param name="out_lengths">A pointer to an array that can hold <paramref name="count"/> <see cref="int"/>s, which will be filled when this method returns.</param>
+	DLL_PUBLIC void GetOptionalContentGroupNameLengths(fz_context* ctx, pdf_document *doc, int count, int* out_lengths);
+
+	/// <summary>
+	/// Get the number of optional content groups defined in the document.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <returns>The number of optional content groups defined in the document.</returns>
+	DLL_PUBLIC int CountOptionalContentGroups(fz_context* ctx, pdf_document *doc);
+
+	/// <summary>
+	/// Activate an alternative optional content group configuration.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="configuration_index">The index of the optional content group configuration to activate.</param>
+	DLL_PUBLIC void EnableOCGConfig(fz_context* ctx, pdf_document *doc, int configuration_index);
+
+	/// <summary>
+	/// Activate the default optional content group configuration.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	DLL_PUBLIC void EnableDefaultOCGConfig(fz_context* ctx, pdf_document *doc);
+
+	/// <summary>
+	/// Get the name and creator of an alternative optional content group configuration.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="configuration_index">The index of the alternative optional content group configuration.</param>
+	/// <param name="name_length">The length of the name of optional content group configuration.</param>
+	/// <param name="creator_length">The length of the creator of optional content group configuration.</param>
+	/// <param name="out_name">A pointer to a byte array where the name will be copied.</param>
+	/// <param name="out_creator">A pointer to a byte array where the creator will be copied.</param>
+	DLL_PUBLIC void ReadOCGConfig(fz_context* ctx, pdf_document *doc, int configuration_index, int name_length, int creator_length, char* out_name, char* out_creator);
+
+	/// <summary>
+	/// Get the length of the name and creator of an alternative optional content group configuration.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="configuration_index">The index of the alternative optional content group configuration.</param>
+	/// <param name="out_name_length">When this method returns, this variable will contain the length of the name of the optional content group configuration.</param>
+	/// <param name="out_creator_length">When this method returns, this variable will contain the length of the creator of the optional content group configuration.</param>
+	DLL_PUBLIC void ReadOCGConfigNameLength(fz_context* ctx, pdf_document *doc, int configuration_index, int* out_name_length, int* out_creator_length);
+
+	/// <summary>
+	/// Get the number of alternative optional content group configurations.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <returns>The number of alternative optional content group configurations.</returns>
+	DLL_PUBLIC int CountAlternativeOCGConfigs(fz_context* ctx, pdf_document* doc);
+
+	/// <summary>
+	/// Get the name and creator of the default optional content group configuration.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="name_length">The length of the name of the default optional content group configuration.</param>
+	/// <param name="creator_length">The length of the creator of the default optional content group configuration.</param>
+	/// <param name="out_name">A pointer to a byte array where the name will be copied.</param>
+	/// <param name="out_creator">A pointer to a byte array where the creator will be copied.</param>
+	DLL_PUBLIC void ReadDefaultOCGConfig(fz_context* ctx, pdf_document *doc, int name_length, int creator_length, char* out_name, char* out_creator);
+
+	/// <summary>
+	/// Get the length of the name and creator of the default optional content group configuration.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The PDF document.</param>
+	/// <param name="out_name_length">When this method returns, this variable will contain the length of the name of the default optional content group configuration.</param>
+	/// <param name="out_creator_length">When this method returns, this variable will contain the length of the creator of the default optional content group configuration.</param>
+	DLL_PUBLIC void ReadDefaultOCGConfigNameLength(fz_context* ctx, pdf_document *doc, int* out_name_length, int* out_creator_length);
+
+	/// <summary>
+	/// Cast a MuPDF document to a MuPDF PDF document.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The document to convert.</param>
+	/// <param name="out_pdf_doc">The casted PDF document, or <see cref="IntPtr.Zero"/> if the document cannot be cast.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetPDFDocument(fz_context* ctx, fz_document* doc, const pdf_document** out_pdf_doc);
+
 	/// <summary>
 	/// Release the resources associated with the specified font.
 	/// </summary>
@@ -631,7 +814,7 @@ extern "C"
 	/// <param name="page">The page to free.</param>
 	/// <returns>An integer detailing whether any errors occurred.</returns>
 	DLL_PUBLIC int DisposePage(fz_context* ctx, fz_page* page);
-	
+
 	/// <summary>
 	/// Layout reflowable document types.
 	/// </summary>
@@ -697,7 +880,7 @@ extern "C"
 	/// <param name="graphics_aa">The graphics antialiasing level. Ignored if &lt; 0.</param>
 	/// <param name="text_aa">The text antialiasing level. Ignored if &lt; 0.</param>
 	DLL_PUBLIC void SetAALevel(fz_context* ctx, int aa, int graphics_aa, int text_aa);
-	
+
 	/// <summary>
 	/// Get the current antialiasing levels.
 	/// </summary>

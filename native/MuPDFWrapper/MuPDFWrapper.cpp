@@ -1,6 +1,11 @@
 ﻿#include <mupdf/fitz.h>
 #include <mupdf/fitz/display-list.h>
 #include <mupdf/fitz/store.h>
+extern "C"
+{
+	#include <mupdf/pdf/page.h>
+	#include <mupdf/pdf/document.h>
+}
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -158,6 +163,194 @@ void unlock_mutex(void* user, int lock)
 
 extern "C"
 {
+	DLL_PUBLIC void SetOptionalContentGroupUIState(fz_context* ctx, pdf_document *doc, int ui_index, int state)
+	{
+		if (state == 0)
+		{
+			pdf_deselect_layer_config_ui(ctx, doc, ui_index);
+		}
+		else if (state == 1)
+		{
+			pdf_select_layer_config_ui(ctx, doc, ui_index);
+		}
+		else if (state == 2)
+		{
+			pdf_toggle_layer_config_ui(ctx, doc, ui_index);
+		}
+	}
+
+	DLL_PUBLIC int ReadOptionalContentGroupUIState(fz_context* ctx, pdf_document *doc, int ui_index)
+	{
+		pdf_layer_config_ui ui;
+		pdf_layer_config_ui_info(ctx, doc, ui_index, &ui);
+		return ui.selected;
+	}
+
+	DLL_PUBLIC void ReadOptionalContentGroupUIs(fz_context* ctx, pdf_document *doc, int count, char** out_labels, int* out_depths, int* out_types, int* out_locked)
+	{
+		pdf_layer_config_ui ui;
+
+		for (int i = 0; i < count; i++)
+		{
+			pdf_layer_config_ui_info(ctx, doc, i, &ui);
+
+			strncpy(out_labels[i], ui.text, strlen(ui.text));
+			printf(ui.text);
+			printf(" ");
+			printf("%d", ui.depth);
+			printf("\n");
+
+			out_depths[i] = ui.depth;
+			out_types[i] = ui.type;
+			out_locked[i] = ui.locked;
+		}
+	}
+
+	DLL_PUBLIC void ReadOptionalContentGroupUILabelLengths(fz_context* ctx, pdf_document *doc, int count, int* out_lengths)
+	{
+		pdf_layer_config_ui ui;
+
+		for (int i = 0; i < count; i++)
+		{
+			pdf_layer_config_ui_info(ctx, doc, i, &ui);
+			out_lengths[i] = (int)strlen(ui.text);
+		}
+	}
+
+	DLL_PUBLIC int CountOptionalContentGroupConfigUI(fz_context *ctx, pdf_document *doc)
+	{
+		return pdf_count_layer_config_ui(ctx, doc);
+	}
+
+	DLL_PUBLIC void SetOptionalContentGroupState(fz_context* ctx, pdf_document *doc, int index, int state)
+	{
+		pdf_enable_layer(ctx, doc, index, state);
+	}
+
+	DLL_PUBLIC int GetOptionalContentGroupState(fz_context* ctx, pdf_document *doc, int index)
+	{
+		return pdf_layer_is_enabled(ctx, doc, index);
+	}
+
+	DLL_PUBLIC void GetOptionalContentGroups(fz_context* ctx, pdf_document *doc, int count, char** out_names)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			const char* name = pdf_layer_name(ctx, doc, i);
+
+			strncpy(out_names[i], name, strlen(name));
+		}
+	}
+
+	DLL_PUBLIC void GetOptionalContentGroupNameLengths(fz_context* ctx, pdf_document *doc, int count, int* out_lengths)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			const char* name = pdf_layer_name(ctx, doc, i);
+			out_lengths[i] = (int)strlen(name);
+		}
+	}
+
+	DLL_PUBLIC int CountOptionalContentGroups(fz_context* ctx, pdf_document *doc)
+	{
+		return pdf_count_layers(ctx, doc);
+	}
+
+	DLL_PUBLIC void EnableOCGConfig(fz_context* ctx, pdf_document *doc, int configuration_index)
+	{
+		pdf_select_layer_config(ctx, doc, configuration_index);
+	}
+
+	DLL_PUBLIC void EnableDefaultOCGConfig(fz_context* ctx, pdf_document *doc)
+	{
+		pdf_select_default_layer_config(ctx, doc);
+	}
+
+	DLL_PUBLIC void ReadOCGConfig(fz_context* ctx, pdf_document *doc, int configuration_index, int name_length, int creator_length, char* out_name, char* out_creator)
+	{
+		pdf_layer_config info;
+		pdf_layer_config_info(ctx, doc, configuration_index, &info);
+
+		if (name_length > 0)
+		{
+			strncpy(out_name, info.name, name_length);
+		}
+
+		if (creator_length > 0)
+		{
+			strncpy(out_creator, info.creator, creator_length);
+		}
+	}
+
+	DLL_PUBLIC void ReadOCGConfigNameLength(fz_context* ctx, pdf_document *doc, int configuration_index, int* out_name_length, int* out_creator_length)
+	{
+		pdf_layer_config info;
+		pdf_layer_config_info(ctx, doc, configuration_index, &info);
+
+		*out_name_length = (int)strlen(info.name);
+		*out_creator_length = (int)strlen(info.creator);
+	}
+
+	DLL_PUBLIC int CountAlternativeOCGConfigs(fz_context* ctx, pdf_document* doc)
+	{
+		return pdf_count_layer_configs(ctx, doc);
+	}
+
+	DLL_PUBLIC void ReadDefaultOCGConfig(fz_context* ctx, pdf_document *doc, int name_length, int creator_length, char* out_name, char* out_creator)
+	{
+		pdf_layer_config info;
+		pdf_default_layer_config_info(ctx, doc, &info);
+
+		if (name_length > 0)
+		{
+			strncpy(out_name, info.name, name_length);
+		}
+
+		if (creator_length > 0)
+		{
+			strncpy(out_creator, info.creator, creator_length);
+		}
+	}
+
+	DLL_PUBLIC void ReadDefaultOCGConfigNameLength(fz_context* ctx, pdf_document *doc, int* out_name_length, int* out_creator_length)
+	{
+		pdf_layer_config info;
+		pdf_default_layer_config_info(ctx, doc, &info);
+
+		if (info.name != nullptr)
+		{
+			*out_name_length = (int)strlen(info.name);
+		}
+		else
+		{
+			*out_name_length = 0;
+		}
+
+		if (info.creator != nullptr)
+		{
+			*out_creator_length = (int)strlen(info.creator);
+		}
+		else
+		{
+			*out_creator_length = 0;
+		}
+	}
+
+	DLL_PUBLIC int GetPDFDocument(fz_context* ctx, fz_document* doc, const pdf_document** out_pdf_doc)
+	{
+		pdf_document* pdfDoc = fz_new_pdf_document_from_fz_document(ctx, doc);
+
+		if (pdfDoc == nullptr)
+		{
+			return ERR_CANNOT_CONVERT_TO_PDF;
+		}
+		else
+		{
+			*out_pdf_doc = pdfDoc;
+			return EXIT_SUCCESS;
+		}
+	}
+
 	DLL_PUBLIC void DisposeFont(fz_context* ctx, fz_font* font)
 	{
 		fz_drop_font(ctx, font);

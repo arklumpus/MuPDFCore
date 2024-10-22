@@ -21,6 +21,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace MuPDFCore
 {
@@ -78,6 +79,12 @@ namespace MuPDFCore
         /// A pointer to the native document object.
         /// </summary>
         internal readonly IntPtr NativeDocument;
+
+        /// <summary>
+        /// A pointer to a native document object, cast to the PDF type.
+        /// This may be <see cref="IntPtr.Zero"/> if the document is not a PDF document.
+        /// </summary>
+        internal readonly IntPtr NativePDFDocument;
 
         /// <summary>
         /// A pointer to the native stream that was used to create this document (if any).
@@ -146,6 +153,28 @@ namespace MuPDFCore
                 }
 
                 return this._outline;
+            }
+        }
+
+        private bool _optionalContentGroupsDataLoaded = false;
+        private MuPDFOptionalContentGroupData _optionalContentGroupData = null;
+
+        /// <summary>
+        /// Contains information about optional content groups (aka layers). If this document does not
+        /// contain any optional content groups, this object will be null. The optional content group
+        /// data is loaded from the document at the first access.
+        /// </summary>
+        public MuPDFOptionalContentGroupData OptionalContentGroupData
+        {
+            get
+            {
+                if (!_optionalContentGroupsDataLoaded)
+                {
+                    _optionalContentGroupData = MuPDFOptionalContentGroupData.Load(this);
+                    _optionalContentGroupsDataLoaded = true;
+                }
+
+                return _optionalContentGroupData;
             }
         }
 
@@ -257,6 +286,21 @@ namespace MuPDFCore
 
             Pages = new MuPDFPageCollection(context, this, PageCount);
             DisplayLists = new MuPDFDisplayList[PageCount];
+
+            IntPtr pdfDocument = IntPtr.Zero;
+            result = (ExitCodes)NativeMethods.GetPDFDocument(context.NativeContext, this.NativeDocument, ref pdfDocument);
+
+            switch (result)
+            {
+                case ExitCodes.EXIT_SUCCESS:
+                    this.NativePDFDocument = pdfDocument;
+                    break;
+                case ExitCodes.ERR_CANNOT_CONVERT_TO_PDF:
+                    this.NativePDFDocument = IntPtr.Zero;
+                    break;
+                default:
+                    throw new MuPDFException("Unknown error", result);
+            }
         }
 
         /// <summary>
@@ -359,6 +403,21 @@ namespace MuPDFCore
 
             Pages = new MuPDFPageCollection(context, this, PageCount);
             DisplayLists = new MuPDFDisplayList[PageCount];
+
+            IntPtr pdfDocument = IntPtr.Zero;
+            result = (ExitCodes)NativeMethods.GetPDFDocument(context.NativeContext, this.NativeDocument, ref pdfDocument);
+
+            switch (result)
+            {
+                case ExitCodes.EXIT_SUCCESS:
+                    this.NativePDFDocument = pdfDocument;
+                    break;
+                case ExitCodes.ERR_CANNOT_CONVERT_TO_PDF:
+                    this.NativePDFDocument = IntPtr.Zero;
+                    break;
+                default:
+                    throw new MuPDFException("Unknown error", result);
+            }
         }
 
         /// <summary>
@@ -467,6 +526,21 @@ namespace MuPDFCore
 
             Pages = new MuPDFPageCollection(context, this, PageCount);
             DisplayLists = new MuPDFDisplayList[PageCount];
+
+            IntPtr pdfDocument = IntPtr.Zero;
+            result = (ExitCodes)NativeMethods.GetPDFDocument(context.NativeContext, this.NativeDocument, ref pdfDocument);
+
+            switch (result)
+            {
+                case ExitCodes.EXIT_SUCCESS:
+                    this.NativePDFDocument = pdfDocument;
+                    break;
+                case ExitCodes.ERR_CANNOT_CONVERT_TO_PDF:
+                    this.NativePDFDocument = IntPtr.Zero;
+                    break;
+                default:
+                    throw new MuPDFException("Unknown error", result);
+            }
         }
 
         /// <summary>
@@ -600,6 +674,21 @@ namespace MuPDFCore
 
             Pages = new MuPDFPageCollection(context, this, PageCount);
             DisplayLists = new MuPDFDisplayList[PageCount];
+
+            IntPtr pdfDocument = IntPtr.Zero;
+            result = (ExitCodes)NativeMethods.GetPDFDocument(context.NativeContext, this.NativeDocument, ref pdfDocument);
+
+            switch (result)
+            {
+                case ExitCodes.EXIT_SUCCESS:
+                    this.NativePDFDocument = pdfDocument;
+                    break;
+                case ExitCodes.ERR_CANNOT_CONVERT_TO_PDF:
+                    this.NativePDFDocument = IntPtr.Zero;
+                    break;
+                default:
+                    throw new MuPDFException("Unknown error", result);
+            }
         }
 
         /// <summary>
@@ -1620,6 +1709,11 @@ namespace MuPDFCore
                 if (OwnerContext.disposedValue)
                 {
                     throw new LifetimeManagementException<MuPDFDocument, MuPDFContext>(this, OwnerContext, this.NativeDocument, OwnerContext.NativeContext);
+                }
+
+                if (NativePDFDocument != IntPtr.Zero && NativePDFDocument != NativeDocument)
+                {
+                    NativeMethods.DisposeDocument(OwnerContext.NativeContext, NativePDFDocument);
                 }
 
                 NativeMethods.DisposeDocument(OwnerContext.NativeContext, NativeDocument);
