@@ -28,11 +28,18 @@ namespace MuPDFCore
 
         internal static MuPDFOptionalContentGroupData Load(MuPDFDocument ownerDocument)
         {
-            MuPDFOptionalContentGroupData tbr = new MuPDFOptionalContentGroupData(ownerDocument);
-
-            if (tbr.DefaultConfiguration != null || tbr.AlternativeConfigurations.Length > 0 || tbr.OptionalContentGroups.Length > 0)
+            if (ownerDocument.NativePDFDocument != IntPtr.Zero)
             {
-                return tbr;
+                MuPDFOptionalContentGroupData tbr = new MuPDFOptionalContentGroupData(ownerDocument);
+
+                if (tbr.DefaultConfiguration != null || tbr.AlternativeConfigurations.Length > 0 || tbr.OptionalContentGroups.Length > 0)
+                {
+                    return tbr;
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
@@ -178,7 +185,8 @@ namespace MuPDFCore
                     labels[i] = Encoding.ASCII.GetString(labelBytes[i]);
                 }
 
-                TemporaryUIItem rootItem = new TemporaryUIItem(null, -1, -1, 0, -1, null);
+                TemporaryUIItem superRootItem = new TemporaryUIItem(null, -1, -1, -1, -1, null);
+                TemporaryUIItem rootItem = new TemporaryUIItem(null, -1, -1, 0, -1, superRootItem);
                 TemporaryUIItem currItem = rootItem;
 
                 for (int i = 0; i < uiCount; i++)
@@ -206,6 +214,17 @@ namespace MuPDFCore
                         currItem = temp;
                     }
                 }
+
+                for (int i= 0; i < superRootItem.Children.Count; i++)
+                {
+                    if (superRootItem.Children[i] != rootItem)
+                    {
+                        superRootItem.Children[i].Parent = rootItem;
+                        rootItem.Children.Add(superRootItem.Children[i]);
+                    }
+                }
+
+                rootItem.Parent = null;
 
                 this.UI = new MuPDFOptionalContentGroupUIItem[rootItem.Children.Count];
 
@@ -330,6 +349,7 @@ namespace MuPDFCore
             {
                 NativeMethods.EnableOCGConfig(this.OwnerDocument.OwnerContext.NativeContext, this.OwnerDocument.NativePDFDocument, this.Index);
             }
+            this.OwnerDocument.ClearCache();
         }
     }
 
@@ -358,6 +378,7 @@ namespace MuPDFCore
             set
             {
                 NativeMethods.SetOptionalContentGroupState(this.OwnerDocument.OwnerContext.NativeContext, this.OwnerDocument.NativePDFDocument, this.Index, value ? 1 : 0);
+                OwnerDocument.ClearCache();
             }
         }
 
@@ -402,7 +423,11 @@ namespace MuPDFCore
         public virtual bool IsEnabled
         {
             get => NativeMethods.ReadOptionalContentGroupUIState(this.OwnerDocument.OwnerContext.NativeContext, this.OwnerDocument.NativePDFDocument, this.Index) != 0;
-            set => NativeMethods.SetOptionalContentGroupUIState(this.OwnerDocument.OwnerContext.NativeContext, this.OwnerDocument.NativeDocument, this.Index, value ? 1 : 0);
+            set
+            {
+                NativeMethods.SetOptionalContentGroupUIState(this.OwnerDocument.OwnerContext.NativeContext, this.OwnerDocument.NativeDocument, this.Index, value ? 1 : 0);
+                OwnerDocument.ClearCache();
+            }
         }
 
         /// <summary>
@@ -420,6 +445,7 @@ namespace MuPDFCore
         public virtual void Toggle()
         {
             NativeMethods.SetOptionalContentGroupUIState(this.OwnerDocument.OwnerContext.NativeContext, this.OwnerDocument.NativeDocument, this.Index, 2);
+            OwnerDocument.ClearCache();
         }
 
         internal MuPDFOptionalContentGroupSelectableUIItem(string label, MuPDFOptionalContentGroupUIItem[] children, bool isLocked, int index, MuPDFDocument ownerDocument) : base(label, children)
