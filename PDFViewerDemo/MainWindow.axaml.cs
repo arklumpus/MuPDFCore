@@ -20,6 +20,8 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using Avalonia.Platform.Storage;
 using MuPDFCore.StructuredText;
+using System.Text.Json.Serialization;
+using System.Reflection.Emit;
 
 namespace PDFViewerDemo
 {
@@ -338,7 +340,8 @@ namespace PDFViewerDemo
             Document = new MuPDFDocument(Context, ref ms, InputFileTypes.PDF);
 
             MaxPageNumber = 1;
-            UpdateOutline();
+            CurrentOptionalContentGroupConfiguration = Document.OptionalContentGroupData?.DefaultConfiguration;
+            UpdateLeftControlPanel();
             await InitializeDocument(0);
 
             //Start the UI updater thread.
@@ -476,7 +479,8 @@ namespace PDFViewerDemo
                 }
 
                 MaxPageNumber = Document.Pages.Count;
-                UpdateOutline();
+                CurrentOptionalContentGroupConfiguration = Document.OptionalContentGroupData?.DefaultConfiguration;
+                UpdateLeftControlPanel();
                 await InitializeDocument(0);
 
                 //Restore the DisplayArea.
@@ -575,7 +579,8 @@ namespace PDFViewerDemo
                 }
 
                 MaxPageNumber = Document.Pages.Count;
-                UpdateOutline();
+                CurrentOptionalContentGroupConfiguration = Document.OptionalContentGroupData?.DefaultConfiguration;
+                UpdateLeftControlPanel();
                 await InitializeDocument(0);
 
                 if (!string.IsNullOrEmpty(localPath))
@@ -593,28 +598,67 @@ namespace PDFViewerDemo
             }
         }
 
-        private void UpdateOutline()
+        private void UpdateLeftControlPanel()
+        {
+            bool outlineVisible = UpdateOutline();
+            bool ocgVisible = UpdateOCGs();
+
+            if (outlineVisible)
+            {
+                this.FindControl<Grid>("OutlineGrid").IsVisible = true;
+                this.FindControl<Grid>("LeftPanelGrid").RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
+            }
+            else
+            {
+                this.FindControl<Grid>("LeftPanelGrid").RowDefinitions[0].Height = new GridLength(0, GridUnitType.Pixel);
+                this.FindControl<StackPanel>("OutlineContainer").Children.Clear();
+                this.FindControl<Grid>("OutlineGrid").IsVisible = false;
+            }
+
+            if (ocgVisible)
+            {
+                this.FindControl<Grid>("OCGGrid").IsVisible = true;
+                this.FindControl<Grid>("LeftPanelGrid").RowDefinitions[1].Height = new GridLength(1, GridUnitType.Star);
+            }
+            else
+            {
+                this.FindControl<Grid>("LeftPanelGrid").RowDefinitions[1].Height = new GridLength(0, GridUnitType.Pixel);
+                this.FindControl<StackPanel>("OCGContainer").Children.Clear();
+                this.FindControl<Grid>("OCGGrid").IsVisible = false;
+            }
+
+            if (outlineVisible || ocgVisible)
+            {
+                this.FindControl<GridSplitter>("LeftPanelGridSplitter").IsVisible = true;
+                this.FindControl<Grid>("MainGrid").ColumnDefinitions[0].Width = new GridLength(200, GridUnitType.Pixel);
+                this.FindControl<GridSplitter>("LeftPanelVerticalGridSplitter").IsVisible = outlineVisible && ocgVisible;
+            }
+            else
+            {
+                this.FindControl<GridSplitter>("LeftPanelGridSplitter").IsVisible = false;
+                this.FindControl<GridSplitter>("LeftPanelVerticalGridSplitter").IsVisible = false;
+                this.FindControl<Grid>("MainGrid").ColumnDefinitions[0].Width = new GridLength(0, GridUnitType.Pixel);
+            }
+        }
+
+        private bool UpdateOutline()
         {
             if (Document.Outline.Count > 0)
             {
                 Controls outlineContainer = this.FindControl<StackPanel>("OutlineContainer").Children;
 
                 outlineContainer.Clear();
-                this.FindControl<Grid>("OutlineGrid").IsVisible = true;
-                this.FindControl<GridSplitter>("OutlineGridSplitter").IsVisible = true;
-                this.FindControl<Grid>("MainGrid").ColumnDefinitions[0].Width = new GridLength(200, GridUnitType.Pixel);
 
                 foreach (MuPDFOutlineItem item in Document.Outline.Items)
                 {
                     outlineContainer.Add(BuildOutlineItem(item, 0));
                 }
+
+                return true;
             }
             else
             {
-                this.FindControl<StackPanel>("OutlineContainer").Children.Clear();
-                this.FindControl<Grid>("OutlineGrid").IsVisible = false;
-                this.FindControl<GridSplitter>("OutlineGridSplitter").IsVisible = false;
-                this.FindControl<Grid>("MainGrid").ColumnDefinitions[0].Width = new GridLength(0, GridUnitType.Pixel);
+                return false;
             }
         }
 
@@ -625,7 +669,7 @@ namespace PDFViewerDemo
                 TextBlock blockItem = new TextBlock() { Padding = new Thickness(Math.Min(21 * (level + 1), 42), 0, 5, 0), Text = item.Title, Cursor = new Cursor(StandardCursorType.Hand) };
 
                 int destination = item.Page;
-                
+
                 if (destination >= 0)
                 {
                     blockItem.PointerPressed += async (s, e) =>
@@ -673,6 +717,174 @@ namespace PDFViewerDemo
             }
         }
 
+        private List<(MuPDFOptionalContentGroupSelectableUIItem ocgUI, CheckBox box, List<MuPDFOptionalContentGroupSelectableUIItem> parents)> OptionalContentGroupUIElements = new List<(MuPDFOptionalContentGroupSelectableUIItem ocgUI, CheckBox box, List<MuPDFOptionalContentGroupSelectableUIItem> parents)>();
+        private bool UpdatingOCGUIElements = false;
+        private MuPDFOptionalContentGroupConfiguration CurrentOptionalContentGroupConfiguration = null;
+
+        private bool UpdateOCGs()
+        {
+            if (CurrentOptionalContentGroupConfiguration?.UI?.Length > 0 || Document.OptionalContentGroupData?.DefaultConfiguration != null || Document.OptionalContentGroupData?.AlternativeConfigurations?.Length > 0)
+            {
+                if (Document.OptionalContentGroupData?.DefaultConfiguration != null || Document.OptionalContentGroupData?.AlternativeConfigurations?.Length > 0)
+                {
+                    List<Control> configurations = new List<Control>();
+                    Control selectedItem = null;
+
+                    if (Document.OptionalContentGroupData?.DefaultConfiguration != null)
+                    {
+                        StackPanel pnl = new StackPanel() { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Left };
+
+                        TextBlock defaultBlk = new TextBlock() { Text = "(D)", Foreground = new SolidColorBrush(Color.FromRgb(128, 128, 128)), Margin = new Thickness(0, 0, 5, 0), FontSize = this.FontSize };
+                        pnl.Children.Add(defaultBlk);
+
+                        TextBlock nameBlk = new TextBlock() { Text = Document.OptionalContentGroupData.DefaultConfiguration.Name, Margin = new Thickness(0, 0, 5, 0), FontSize = this.FontSize };
+                        pnl.Children.Add(nameBlk);
+
+                        TextBlock creatorBlk = new TextBlock() { Text = "(Creator: " + Document.OptionalContentGroupData.DefaultConfiguration.Creator + ")", Foreground = new SolidColorBrush(Color.FromRgb(128, 128, 128)), FontSize = this.FontSize };
+                        pnl.Children.Add(creatorBlk);
+
+                        configurations.Add(pnl);
+
+                        pnl.Tag = Document.OptionalContentGroupData.DefaultConfiguration;
+
+                        if (CurrentOptionalContentGroupConfiguration == Document.OptionalContentGroupData.DefaultConfiguration)
+                        {
+                            selectedItem = pnl;
+                        }
+                    }
+
+                    if (Document.OptionalContentGroupData?.AlternativeConfigurations?.Length != null)
+                    {
+                        for (int i = 0; i < Document.OptionalContentGroupData.AlternativeConfigurations.Length; i++)
+                        {
+                            StackPanel pnl = new StackPanel() { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Left };
+
+                            TextBlock nameBlk = new TextBlock() { Text = Document.OptionalContentGroupData.AlternativeConfigurations[i].Name, Margin = new Thickness(0, 0, 5, 0), FontSize = this.FontSize };
+                            pnl.Children.Add(nameBlk);
+
+                            TextBlock creatorBlk = new TextBlock() { Text = "(" + Document.OptionalContentGroupData.AlternativeConfigurations[i].Creator + ")", Foreground = new SolidColorBrush(Color.FromRgb(128, 128, 128)), FontSize = this.FontSize };
+                            pnl.Children.Add(creatorBlk);
+
+                            configurations.Add(pnl);
+
+                            pnl.Tag = Document.OptionalContentGroupData.AlternativeConfigurations[i];
+
+                            if (CurrentOptionalContentGroupConfiguration == Document.OptionalContentGroupData.AlternativeConfigurations[i])
+                            {
+                                selectedItem = pnl;
+                            }
+                        }
+                    }
+
+                    UpdatingOCGUIElements = true;
+                    this.FindControl<ComboBox>("OCGConfigurationsBox").ItemsSource = configurations;
+                    this.FindControl<ComboBox>("OCGConfigurationsBox").SelectedItem = selectedItem;
+                    UpdatingOCGUIElements = false;
+                }
+
+                if (CurrentOptionalContentGroupConfiguration?.UI?.Length > 0)
+                {
+                    Controls ocgContainer = this.FindControl<StackPanel>("OCGContainer").Children;
+                    ocgContainer.Clear();
+                    OptionalContentGroupUIElements.Clear();
+
+                    foreach (MuPDFOptionalContentGroupUIItem item in Document.OptionalContentGroupData.DefaultConfiguration.UI)
+                    {
+                        ocgContainer.Add(BuildOCGItem(item, 0, new List<MuPDFOptionalContentGroupSelectableUIItem>()));
+                    }
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private Control BuildOCGItem(MuPDFOptionalContentGroupUIItem item, int level, List<MuPDFOptionalContentGroupSelectableUIItem> parents)
+        {
+            int actualLevel = item.Children.Length > 0 ? 0 : level;
+
+            Control label = null;
+
+            if (item is MuPDFOptionalContentGroupLabel)
+            {
+                label = new TextBlock() { Text = item.Label, Padding = new Thickness(Math.Min(21 * (actualLevel), 42), 0, 5, 0) };
+            }
+            else if (item is MuPDFOptionalContentGroupCheckbox cbx)
+            {
+                CheckBox cb = new CheckBox() { Content = cbx.Label, IsChecked = cbx.IsEnabled, IsEnabled = !cbx.IsLocked, Margin = new Thickness(Math.Min(21 * (actualLevel), 42), 0, 5, 0) };
+                label = cb;
+                OptionalContentGroupUIElements.Add((cbx, cb, parents));
+                
+                cb.Click += async (s, e) =>
+                {
+                    if (!UpdatingOCGUIElements)
+                    {
+                        Rect displayArea = this.FindControl<PDFRenderer>("MuPDFRenderer").DisplayArea;
+                        cbx.IsEnabled = cb.IsChecked == true;
+                        await InitializeDocument(this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber);
+                        this.FindControl<PDFRenderer>("MuPDFRenderer").SetDisplayAreaNow(displayArea);
+
+                        for (int i = 0; i < OptionalContentGroupUIElements.Count; i++)
+                        {
+                            OptionalContentGroupUIElements[i].box.IsEnabled = !OptionalContentGroupUIElements[i].parents.Any(x => !x.IsEnabled);
+                        }
+                    }
+                };
+            }
+            else if (item is MuPDFOptionalContentGroupRadioButton rbx)
+            {
+                CheckBox rb = new CheckBox() { Content = rbx.Label, IsChecked = rbx.IsEnabled, IsEnabled = !rbx.IsLocked, Margin = new Thickness(Math.Min(21 * (actualLevel), 42), 0, 5, 0), CornerRadius = new CornerRadius(9) };
+                label = rb;
+                OptionalContentGroupUIElements.Add((rbx, rb, parents));
+
+                rb.Click += async (s, e) =>
+                {
+                    if (!UpdatingOCGUIElements)
+                    {
+                        Rect displayArea = this.FindControl<PDFRenderer>("MuPDFRenderer").DisplayArea;
+                        rbx.IsEnabled = rb.IsChecked == true;
+                        await InitializeDocument(this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber);
+                        this.FindControl<PDFRenderer>("MuPDFRenderer").SetDisplayAreaNow(displayArea);
+
+                        UpdatingOCGUIElements = true;
+                        for (int i = 0; i < OptionalContentGroupUIElements.Count; i++)
+                        {
+                            OptionalContentGroupUIElements[i].box.IsEnabled = !OptionalContentGroupUIElements[i].parents.Any(x => !x.IsEnabled);
+                            OptionalContentGroupUIElements[i].box.IsChecked = OptionalContentGroupUIElements[i].ocgUI.IsEnabled;
+                        }
+                        UpdatingOCGUIElements = false;
+                    }
+                };
+            }
+
+            if (label != null && item.Children.Length > 0)
+            {
+                List<MuPDFOptionalContentGroupSelectableUIItem> parentList = new List<MuPDFOptionalContentGroupSelectableUIItem>(parents);
+                
+                if (item is MuPDFOptionalContentGroupSelectableUIItem selUi)
+                {
+                    parentList.Add(selUi);
+                }                
+
+                StackPanel childContainer = new StackPanel();
+
+                for (int i = 0; i < item.Children.Length; i++)
+                {
+                    childContainer.Children.Add(BuildOCGItem(item.Children[i], level + 1, parentList));
+                }
+
+                Expander exp = new Expander() { Header = label, Content = childContainer };
+
+                return exp;
+            }
+            else
+            {
+                return label;
+            }
+        }
 
         /// <summary>
         /// Invoked when the value of the NumericUpDown containing the page number is changed.
@@ -1075,6 +1287,58 @@ namespace PDFViewerDemo
         private void ClearClicked(object sender, RoutedEventArgs e)
         {
             this.FindControl<PDFRenderer>("MuPDFRenderer").HighlightedRegions = null;
+        }
+
+        /// <summary>
+        /// Invoked when the "Apply" button is clicked to apply an optional content group (layer) configuration.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void ApplyOCGConfiguration_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (this.CurrentOptionalContentGroupConfiguration != null)
+            {
+                Rect displayArea = this.FindControl<PDFRenderer>("MuPDFRenderer").DisplayArea;
+                this.CurrentOptionalContentGroupConfiguration.Activate();
+
+                await InitializeDocument(this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber);
+                this.FindControl<PDFRenderer>("MuPDFRenderer").SetDisplayAreaNow(displayArea);
+
+                UpdatingOCGUIElements = true;
+                for (int i = 0; i < OptionalContentGroupUIElements.Count; i++)
+                {
+                    OptionalContentGroupUIElements[i].box.IsEnabled = !OptionalContentGroupUIElements[i].parents.Any(x => !x.IsEnabled);
+                    OptionalContentGroupUIElements[i].box.IsChecked = OptionalContentGroupUIElements[i].ocgUI.IsEnabled;
+                }
+                UpdatingOCGUIElements = false;
+            }
+        }
+
+        private async void OCGConfigurationComboBox_SelectionChanged(object sender, Avalonia.Controls.SelectionChangedEventArgs e)
+        {
+            if (!UpdatingOCGUIElements)
+            {
+                MuPDFOptionalContentGroupConfiguration config = ((Control)((ComboBox)sender)?.SelectedItem)?.Tag as MuPDFOptionalContentGroupConfiguration;
+
+                if (config != null)
+                {
+                    this.CurrentOptionalContentGroupConfiguration = config;
+
+                    Rect displayArea = this.FindControl<PDFRenderer>("MuPDFRenderer").DisplayArea;
+                    config.Activate();
+
+                    await InitializeDocument(this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber);
+                    this.FindControl<PDFRenderer>("MuPDFRenderer").SetDisplayAreaNow(displayArea);
+
+                    UpdatingOCGUIElements = true;
+                    for (int i = 0; i < OptionalContentGroupUIElements.Count; i++)
+                    {
+                        OptionalContentGroupUIElements[i].box.IsEnabled = !OptionalContentGroupUIElements[i].parents.Any(x => !x.IsEnabled);
+                        OptionalContentGroupUIElements[i].box.IsChecked = OptionalContentGroupUIElements[i].ocgUI.IsEnabled;
+                    }
+                    UpdatingOCGUIElements = false;
+                }
+            }
         }
     }
 }

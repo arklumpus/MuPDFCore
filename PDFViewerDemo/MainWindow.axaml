@@ -22,20 +22,55 @@
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 
-		<!--Container for the document outline-->
-		<Grid Grid.Column="0" Margin="0, 0, 0, 0" Name="OutlineGrid">
+		<!--Container for the document outline and optional content groups (layers)-->
+		<Grid Grid.Column="0" Margin="0, 0, 0, 0" Name="LeftPanelGrid">
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="1*"/>
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
-			<TextBlock FontWeight="Bold">Outline</TextBlock>
-			<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
-				<StackPanel Name="OutlineContainer">
-				</StackPanel>
-			</ScrollViewer>
+
+			<!--Container for the document outline-->
+			<Grid Grid.Row="0" Margin="0, 0, 0, 0" Name="OutlineGrid">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="1*"/>
+				</Grid.RowDefinitions>
+				<TextBlock FontWeight="Bold">Outline</TextBlock>
+				<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+					<StackPanel Name="OutlineContainer">
+					</StackPanel>
+				</ScrollViewer>
+			</Grid>
+
+			<GridSplitter Grid.Row="1" Width="10" Background="White" Name="LeftPanelVerticalGridSplitter" ResizeDirection="Rows"></GridSplitter>
+
+			<!--Container for the optional content group (layers) interface-->
+			<Grid Grid.Row="2" Margin="0, 0, 0, 0" Name="OCGGrid">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="1*"/>
+				</Grid.RowDefinitions>
+				<TextBlock FontWeight="Bold">Optional content groups</TextBlock>
+				<Grid Grid.Row="1" Margin="0, 5, 0, 5">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="1*"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock VerticalAlignment="Center">Configuration:</TextBlock>
+					<Button Grid.Column="1" Margin="5, 0, 0, 0" Click="ApplyOCGConfiguration_Click">Apply</Button>
+				</Grid>
+				<ComboBox Grid.Row="2" Margin="0, 5, 0, 5" HorizontalAlignment="Stretch" Padding="2" Name="OCGConfigurationsBox" HorizontalContentAlignment="Left" SelectionChanged="OCGConfigurationComboBox_SelectionChanged"/>
+				<ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+					<StackPanel Name="OCGContainer">
+					</StackPanel>
+				</ScrollViewer>
+			</Grid>
+
 		</Grid>
 
-		<GridSplitter Grid.Column="1" Width="10" Background="White" Name="OutlineGridSplitter"></GridSplitter>
+		<GridSplitter Grid.Column="1" Width="10" Background="White" Name="LeftPanelGridSplitter"></GridSplitter>
 
 		<!--The PDF renderer.-->
 		<mupdf:PDFRenderer Name="MuPDFRenderer" Background="#F0F0F0" PageBackground="White" PropertyChanged="RendererPropertyChanged" ZoomIncrement="1.75" ClipToBounds="True" Grid.Column="2">
