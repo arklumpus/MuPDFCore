@@ -195,10 +195,6 @@ extern "C"
 			pdf_layer_config_ui_info(ctx, doc, i, &ui);
 
 			strncpy(out_labels[i], ui.text, strlen(ui.text));
-			printf(ui.text);
-			printf(" ");
-			printf("%d", ui.depth);
-			printf("\n");
 
 			out_depths[i] = ui.depth;
 			out_types[i] = ui.type;
@@ -973,7 +969,67 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int GetStructuredTextBlock(fz_context* ctx, fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* a, float* b, float* c, float* d, float* e, float* f)
+	DLL_PUBLIC void GetStructStructuredTextBlockRawStructure(fz_stext_struct* struct_block, int raw_length, char* out_raw)
+	{
+		strncpy(out_raw, struct_block->raw, raw_length);
+	}
+
+	DLL_PUBLIC int GetStructStructuredTextBlock(fz_stext_struct* struct_block, int* out_raw_length, fz_structure* out_standard, fz_stext_struct** out_parent, fz_stext_block** out_blocks)
+	{
+		*out_raw_length = (int)strlen(struct_block->raw);
+		*out_standard = struct_block->standard;
+		*out_parent = struct_block->parent;
+
+		fz_stext_block* curr_block = struct_block->first_block;
+
+		int count = 0;
+
+		while (curr_block != nullptr)
+		{
+			out_blocks[count] = curr_block;
+			count++;
+			curr_block = curr_block->next;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int CountStructStructuredTextBlockChildren(fz_stext_struct* struct_block)
+	{
+		fz_stext_block* curr_block = struct_block->first_block;
+
+		int count = 0;
+
+		while (curr_block != nullptr)
+		{
+			count++;
+			curr_block = curr_block->next;
+		}
+
+		return count;
+	}
+
+	DLL_PUBLIC int GetGridStructuredTextBlock(fz_stext_block* block, int xs_len, int ys_len, int* out_x_max_uncertainty, int* out_y_max_uncertainty, float* out_x_pos, float* out_y_pos, int* out_x_uncertainty, int* out_y_uncertainty)
+	{
+		*out_x_max_uncertainty = block->u.b.xs->max_uncertainty;
+		*out_y_max_uncertainty = block->u.b.ys->max_uncertainty;
+
+		for (int i = 0; i < xs_len; i++)
+		{
+			out_x_pos[i] = block->u.b.xs->list[i].pos;
+			out_x_uncertainty[i] = block->u.b.xs->list[i].uncertainty;
+		}
+
+		for (int i = 0; i < ys_len; i++)
+		{
+			out_y_pos[i] = block->u.b.ys->list[i].pos;
+			out_y_uncertainty[i] = block->u.b.ys->list[i].uncertainty;
+		}
+
+		return EXIT_SUCCESS;
+	}
+
+	DLL_PUBLIC int GetStructuredTextBlock(fz_context* ctx, fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* out_a, float* out_b, float* out_c, float* out_d, float* out_e, float* out_f, uint8_t* out_stroked, uint8_t* out_rgba_r, uint8_t* out_rgba_g, uint8_t* out_rgba_b, uint8_t* out_rgba_a, int* out_xs_len, int* out_ys_len, fz_stext_struct** out_down, int* out_index)
 	{
 		*out_type = block->type;
 
@@ -987,12 +1043,12 @@ extern "C"
 			*out_line_count = 0;
 			*out_image = block->u.i.image;
 			fz_keep_image(ctx, block->u.i.image);
-			*a = block->u.i.transform.a;
-			*b = block->u.i.transform.b;
-			*c = block->u.i.transform.c;
-			*d = block->u.i.transform.d;
-			*e = block->u.i.transform.e;
-			*f = block->u.i.transform.f;
+			*out_a = block->u.i.transform.a;
+			*out_b = block->u.i.transform.b;
+			*out_c = block->u.i.transform.c;
+			*out_d = block->u.i.transform.d;
+			*out_e = block->u.i.transform.e;
+			*out_f = block->u.i.transform.f;
 		}
 		else if (block->type == FZ_STEXT_BLOCK_TEXT)
 		{
@@ -1007,6 +1063,27 @@ extern "C"
 			}
 
 			*out_line_count = count;
+		}
+		else if (block->type == FZ_STEXT_BLOCK_VECTOR)
+		{
+			*out_line_count = 0;
+			*out_stroked = block->u.v.stroked;
+			*out_rgba_r = block->u.v.rgba[0];
+			*out_rgba_g = block->u.v.rgba[1];
+			*out_rgba_b = block->u.v.rgba[2];
+			*out_rgba_a = block->u.v.rgba[3];
+		}
+		else if (block->type == FZ_STEXT_BLOCK_GRID)
+		{
+			*out_line_count = 0;
+			*out_xs_len = block->u.b.xs->len;
+			*out_ys_len = block->u.b.ys->len;
+		}
+		else if (block->type == FZ_STEXT_BLOCK_STRUCT)
+		{
+			*out_line_count = 0;
+			*out_down = block->u.s.down;
+			*out_index = block->u.s.index;
 		}
 
 		return EXIT_SUCCESS;
@@ -1035,7 +1112,7 @@ extern "C"
 		return (*((progressCallback*)progress_arg))(progress);
 	}
 
-	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, int preserve_images, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int callback(int))
+	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, int flags, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int callback(int))
 	{
 		if (prefix != NULL)
 		{
@@ -1059,10 +1136,7 @@ extern "C"
 		fz_var(page);
 		fz_var(device);
 
-		if (preserve_images > 0)
-		{
-			options.flags |= FZ_STEXT_PRESERVE_IMAGES;
-		}
+		options.flags = 0;
 
 		fz_try(ctx)
 		{
@@ -1120,7 +1194,7 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int GetStructuredTextPage(fz_context* ctx, fz_display_list* list, int preserve_images, fz_stext_page** out_page, int* out_stext_block_count)
+	DLL_PUBLIC int GetStructuredTextPage(fz_context* ctx, fz_display_list* list, int flags, fz_stext_page** out_page, int* out_stext_block_count)
 	{
 		fz_stext_page* page;
 		fz_stext_options options;
@@ -1135,10 +1209,7 @@ extern "C"
 			return ERR_CANNOT_CREATE_PAGE;
 		}
 
-		if (preserve_images > 0)
-		{
-			options.flags |= FZ_STEXT_PRESERVE_IMAGES;
-		}
+		options.flags = flags;
 
 		fz_try(ctx)
 		{

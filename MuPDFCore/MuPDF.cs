@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+using MuPDFCore.StructuredText;
 using System;
 using System.IO;
 using System.IO.Pipes;
@@ -1508,6 +1509,51 @@ namespace MuPDFCore
         internal static extern int GetStructuredTextLines(IntPtr block, IntPtr out_lines);
 
         /// <summary>
+        /// Get the raw structure type of a structural element block.
+        /// </summary>
+        /// <param name="struct_block">A pointer to the structural element block.</param>
+        /// <param name="raw_length">The length of the block's raw structure type, as returned by <see cref="GetStructStructuredTextBlock"/>.</param>
+        /// <param name="out_raw">A pointer to a byte array that will be filled with the characters corresponding to the block's raw structure type.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void GetStructStructuredTextBlockRawStructure(IntPtr struct_block, int raw_length, IntPtr out_raw);
+
+        /// <summary>
+        /// Get information about a structural element block.
+        /// </summary>
+        /// <param name="struct_block">A pointer to the structural element block.</param>
+        /// <param name="out_raw_length">When this method returns, this variable will contain the length of the block's raw structure type.</param>
+        /// <param name="out_standard">When this method returns, this variable will contain the block's standard structure type.</param>
+        /// <param name="out_parent">When this method returns, this variable will contain a pointer to the block's structural parent (but this seems to always return <see cref="IntPtr.Zero"/>).</param>
+        /// <param name="out_blocks">A pointer to an array of pointers that will be filled with the addresses of the childrens of this block.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetStructStructuredTextBlock(IntPtr struct_block, ref int out_raw_length, ref int out_standard, ref IntPtr out_parent, IntPtr out_blocks);
+
+        /// <summary>
+        /// Count the number of children within a structural element block.
+        /// </summary>
+        /// <param name="struct_block">A pointer to the structural element block.</param>
+        /// <returns>The number of children within a structural element block.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int CountStructStructuredTextBlockChildren(IntPtr struct_block);
+
+        /// <summary>
+        /// Get information about a grid block.
+        /// </summary>
+        /// <param name="block">A pointer to the grid block.</param>
+        /// <param name="xs_len">The number of X grid lines, as returned by <see cref="GetStructuredTextBlock"/>.</param>
+        /// <param name="ys_len">The number of Y grid lines, as returned by <see cref="GetStructuredTextBlock"/>.</param>
+        /// <param name="out_x_max_uncertainty">When this method returns, this variable will contain the maximum X uncertainty.</param>
+        /// <param name="out_y_max_uncertainty">When this method returns, this variable will contain the maximum Y uncertainty.</param>
+        /// <param name="out_x_pos">A pointer to an array of <see cref="float"/>s, which will be filled by this method.</param>
+        /// <param name="out_y_pos">A pointer to an array of <see cref="float"/>s, which will be filled by this method.</param>
+        /// <param name="out_x_uncertainty">A pointer to an array of <see cref="int"/>s, which will be filled by this method.</param>
+        /// <param name="out_y_uncertainty">A pointer to an array of <see cref="int"/>s, which will be filled by this method.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetGridStructuredTextBlock(IntPtr block, int xs_len, int ys_len, ref int out_x_max_uncertainty, ref int out_y_max_uncertainty, IntPtr out_x_pos, IntPtr out_y_pos, IntPtr out_x_uncertainty, IntPtr out_y_uncertainty);
+
+        /// <summary>
         /// Get the contents of a structured text block.
         /// </summary>
         /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
@@ -1525,9 +1571,18 @@ namespace MuPDFCore
         /// <param name="out_d">If the block contains an image, the fourth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
         /// <param name="out_e">If the block contains an image, the fifth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
         /// <param name="out_f">If the block contains an image, the sixth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+        /// <param name="out_stroked">If the block contains vector graphics, whether the graphics is stroked.</param>
+        /// <param name="out_rgba_r">If the block contains stroked vector graphics, the R component of the stroke colour.</param>
+        /// <param name="out_rgba_g">If the block contains stroked vector graphics, the G component of the stroke colour.</param>
+        /// <param name="out_rgba_b">If the block contains stroked vector graphics, the B component of the stroke colour.</param>
+        /// <param name="out_rgba_a">If the block contains stroked vector graphics, the A component of the stroke colour.</param>
+        /// <param name="out_xs_len">If the block contains "grid" lines, the number of X grid lines.</param>
+        /// <param name="out_ys_len">If the block contains "grid" lines, the number of Y grid lines.</param>
+        /// <param name="out_down">If the block is a structural element block, a pointer to the structural block contents.</param>
+        /// <param name="out_index">If the block is a structural element block, the index of the block within the current level of the tree.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextBlock(IntPtr ctx, IntPtr block, ref int out_type, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1, ref int out_line_count, ref IntPtr out_image, ref float out_a, ref float out_b, ref float out_c, ref float out_d, ref float out_e, ref float out_f);
+        internal static extern int GetStructuredTextBlock(IntPtr ctx, IntPtr block, ref int out_type, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1, ref int out_line_count, ref IntPtr out_image, ref float out_a, ref float out_b, ref float out_c, ref float out_d, ref float out_e, ref float out_f, ref byte out_stroked, ref byte out_rgba_r, ref byte out_rgba_g, ref byte out_rgba_b, ref byte out_rgba_a, ref int out_xs_len, ref int out_ys_len, ref IntPtr out_down, ref int out_index);
 
         /// <summary>
         /// Get an array of structured text blocks from a structured text page.
@@ -1545,10 +1600,10 @@ namespace MuPDFCore
         /// <param name="list">The display list whose structured text representation is sought.</param>
         /// <param name="out_page">The address of the structured text page.</param>
         /// <param name="out_stext_block_count">The number of structured text blocks in the page.</param>
-        /// <param name="preserve_images">If this is set to 0, image blocks are generated; otherwise, they are discarded.</param>
+        /// <param name="flags">An integer equivalent to <see cref="StructuredText.StructuredTextFlags"/>, specifying flags for the structured text creation.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextPage(IntPtr ctx, IntPtr list, int preserve_images, ref IntPtr out_page, ref int out_stext_block_count);
+        internal static extern int GetStructuredTextPage(IntPtr ctx, IntPtr list, int flags, ref IntPtr out_page, ref int out_stext_block_count);
 
         /// <summary>
         /// Delegate defining a callback function that is invoked by the unmanaged MuPDF library to indicate OCR progress.
@@ -1562,7 +1617,7 @@ namespace MuPDFCore
         /// </summary>
         /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
         /// <param name="list">The display list whose structured text representation is sought.</param>
-        /// <param name="preserve_images">If this is set to 0, image blocks are generated; otherwise, they are discarded.</param>
+        /// <param name="flags">An integer equivalent to <see cref="StructuredText.StructuredTextFlags"/>, specifying flags for the structured text creation.</param>
         /// <param name="out_page">The address of the structured text page.</param>
         /// <param name="out_stext_block_count">The number of structured text blocks in the page.</param>
         /// <param name="zoom">How much the specified region should be scaled when rendering. This determines the size in pixels of the image that is passed to Tesseract.</param>
@@ -1575,7 +1630,7 @@ namespace MuPDFCore
         /// <param name="callback">A progress callback function. This function will be called with an integer parameter ranging from 0 to 100 to indicate OCR progress, and should return 0 to continue or 1 to abort the OCR process.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextPageWithOCR(IntPtr ctx, IntPtr list, int preserve_images, ref IntPtr out_page, ref int out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, string prefix, string language, [MarshalAs(UnmanagedType.FunctionPtr)] ProgressCallback callback);
+        internal static extern int GetStructuredTextPageWithOCR(IntPtr ctx, IntPtr list, int flags, ref IntPtr out_page, ref int out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, string prefix, string language, [MarshalAs(UnmanagedType.FunctionPtr)] ProgressCallback callback);
 
         /// <summary>
         /// Free a native structured text page and its associated resources.

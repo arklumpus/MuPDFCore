@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.IO;
+using MuPDFCore.StructuredText;
 
 namespace MuPDFCore
 {

@@ -613,8 +613,50 @@ extern "C"
 	DLL_PUBLIC int GetStructuredTextLines(fz_stext_block* block, fz_stext_line** out_lines);
 
 	/// <summary>
+	/// Get the raw structure type of a structural element block.
+	/// </summary>
+	/// <param name="struct_block">A pointer to the structural element block.</param>
+	/// <param name="raw_length">The length of the block's raw structure type, as returned by <see cref="GetStructStructuredTextBlock"/>.</param>
+	/// <param name="out_raw">A pointer to a byte array that will be filled with the characters corresponding to the block's raw structure type.</param>
+	DLL_PUBLIC void GetStructStructuredTextBlockRawStructure(fz_stext_struct* struct_block, int raw_length, char* out_raw);
+
+	/// <summary>
+	/// Get information about a structural element block.
+	/// </summary>
+	/// <param name="struct_block">A pointer to the structural element block.</param>
+	/// <param name="out_raw_length">When this method returns, this variable will contain the length of the block's raw structure type.</param>
+	/// <param name="out_standard">When this method returns, this variable will contain the block's standard structure type.</param>
+	/// <param name="out_parent">When this method returns, this variable will contain a pointer to the block's structural parent (but this seems to always return <see cref="IntPtr.Zero"/>).</param>
+	/// <param name="out_blocks">A pointer to an array of pointers that will be filled with the addresses of the childrens of this block.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetStructStructuredTextBlock(fz_stext_struct* struct_block, int* out_raw_length, fz_structure* out_standard, fz_stext_struct** out_parent, fz_stext_block** out_blocks);
+
+	/// <summary>
+	/// Count the number of children within a structural element block.
+	/// </summary>
+	/// <param name="struct_block">A pointer to the structural element block.</param>
+	/// <returns>The number of children within a structural element block.</returns>
+	DLL_PUBLIC int CountStructStructuredTextBlockChildren(fz_stext_struct* struct_block);
+
+	/// <summary>
+	/// Get information about a grid block.
+	/// </summary>
+	/// <param name="block">A pointer to the grid block.</param>
+	/// <param name="xs_len">The number of X grid lines, as returned by <see cref="GetStructuredTextBlock"/>.</param>
+	/// <param name="ys_len">The number of Y grid lines, as returned by <see cref="GetStructuredTextBlock"/>.</param>
+	/// <param name="out_x_max_uncertainty">When this method returns, this variable will contain the maximum X uncertainty.</param>
+	/// <param name="out_y_max_uncertainty">When this method returns, this variable will contain the maximum Y uncertainty.</param>
+	/// <param name="out_x_pos">A pointer to an array of <see cref="float"/>s, which will be filled by this method.</param>
+	/// <param name="out_y_pos">A pointer to an array of <see cref="float"/>s, which will be filled by this method.</param>
+	/// <param name="out_x_uncertainty">A pointer to an array of <see cref="int"/>s, which will be filled by this method.</param>
+	/// <param name="out_y_uncertainty">A pointer to an array of <see cref="int"/>s, which will be filled by this method.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetGridStructuredTextBlock(fz_stext_block* block, int xs_len, int ys_len, int* out_x_max_uncertainty, int* out_y_max_uncertainty, float* out_x_pos, float* out_y_pos, int* out_x_uncertainty, int* out_y_uncertainty);
+
+	/// <summary>
 	/// Get the contents of a structured text block.
 	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
 	/// <param name="block">The address of the block.</param>
 	/// <param name="out_type">An integer equivalent to <see cref="MuPDFStructuredTextBlock.Types"/> representing the type of the block.</param>
 	/// <param name="out_x0">The left coordinate in page units of the bounding box of the block.</param>
@@ -622,8 +664,24 @@ extern "C"
 	/// <param name="out_x1">The right coordinate in page units of the bounding box of the block.</param>
 	/// <param name="out_y1">The bottom coordinate in page units of the bounding box of the block.</param>
 	/// <param name="out_line_count">The number of lines in the block.</param>
+	/// <param name="out_image">If the block contains an image, this pointer will point to it.</param>
+	/// <param name="out_a">If the block contains an image, the first element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+	/// <param name="out_b">If the block contains an image, the second element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+	/// <param name="out_c">If the block contains an image, the third element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+	/// <param name="out_d">If the block contains an image, the fourth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+	/// <param name="out_e">If the block contains an image, the fifth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+	/// <param name="out_f">If the block contains an image, the sixth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
+	/// <param name="out_stroked">If the block contains vector graphics, whether the graphics is stroked.</param>
+	/// <param name="out_rgba_r">If the block contains stroked vector graphics, the R component of the stroke colour.</param>
+	/// <param name="out_rgba_g">If the block contains stroked vector graphics, the G component of the stroke colour.</param>
+	/// <param name="out_rgba_b">If the block contains stroked vector graphics, the B component of the stroke colour.</param>
+	/// <param name="out_rgba_a">If the block contains stroked vector graphics, the A component of the stroke colour.</param>
+	/// <param name="out_xs_len">If the block contains "grid" lines, the number of X grid lines.</param>
+	/// <param name="out_ys_len">If the block contains "grid" lines, the number of Y grid lines.</param>
+	/// <param name="out_down">If the block is a structural element block, a pointer to the structural block contents.</param>
+	/// <param name="out_index">If the block is a structural element block, the index of the block within the current level of the tree.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextBlock(fz_context* ctx, fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* a, float* b, float* c, float* d, float* e, float* f);
+	DLL_PUBLIC int GetStructuredTextBlock(fz_context* ctx, fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* out_a, float* out_b, float* out_c, float* out_d, float* out_e, float* out_f, uint8_t* out_stroked, uint8_t* out_rgba_r, uint8_t* out_rgba_g, uint8_t* out_rgba_b, uint8_t* out_rgba_a, int* out_xs_len, int* out_ys_len, fz_stext_struct** out_down, int* out_index);
 
 	/// <summary>
 	/// Get an array of structured text blocks from a structured text page.
@@ -638,6 +696,7 @@ extern "C"
 	/// </summary>
 	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
 	/// <param name="list">The display list whose structured text representation is sought.</param>
+	/// <param name="flags">An integer equivalent to <see cref="StructuredText.StructuredTextFlags"/>, specifying flags for the structured text creation.</param>
 	/// <param name="out_page">The address of the structured text page.</param>
 	/// <param name="out_stext_block_count">The number of structured text blocks in the page.</param>
 	/// <param name="zoom">How much the specified region should be scaled when rendering. This determines the size in pixels of the image that is passed to Tesseract.</param>
@@ -649,17 +708,18 @@ extern "C"
 	/// <param name="language">The name of the language model file to use for the OCR.</param>
 	/// <param name="callback">A progress callback function. This function will be called with an integer parameter ranging from 0 to 100 to indicate OCR progress, and should return 0 to continue or 1 to abort the OCR process.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, int preserve_images, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int callback(int));
+	DLL_PUBLIC int GetStructuredTextPageWithOCR(fz_context* ctx, fz_display_list* list, int flags, fz_stext_page** out_page, int* out_stext_block_count, float zoom, float x0, float y0, float x1, float y1, char* prefix, char* language, int callback(int));
 
 	/// <summary>
 	/// Get a structured text representation of a display list.
 	/// </summary>
 	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
 	/// <param name="list">The display list whose structured text representation is sought.</param>
+	/// <param name="flags">An integer equivalent to <see cref="StructuredText.StructuredTextFlags"/>, specifying flags for the structured text creation.</param>
 	/// <param name="out_page">The address of the structured text page.</param>
 	/// <param name="out_stext_block_count">The number of structured text blocks in the page.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextPage(fz_context* ctx, fz_display_list* list, int preserve_images, fz_stext_page** out_page, int* out_stext_block_count);
+	DLL_PUBLIC int GetStructuredTextPage(fz_context* ctx, fz_display_list* list, int flags, fz_stext_page** out_page, int* out_stext_block_count);
 
 	/// <summary>
 	/// Free a native structured text page and its associated resources.

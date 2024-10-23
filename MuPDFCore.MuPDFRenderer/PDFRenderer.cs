@@ -25,6 +25,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using MuPDFCore.StructuredText;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -581,7 +582,7 @@ namespace MuPDFCore.MuPDFRenderer
             }
 
             //Create the structured text representation.
-            this.StructuredTextPage = await Document.GetStructuredTextPageAsync(pageNumber, ocrLanguage, includeAnnotations, false, ocrCancellationToken, ocrProgress);
+            this.StructuredTextPage = await Document.GetStructuredTextPageAsync(pageNumber, ocrLanguage, includeAnnotations, StructuredTextFlags.None, ocrCancellationToken, ocrProgress);
 
             //Create the multithreaded renderer.
             Renderer = Document.GetMultiThreadedRenderer(pageNumber, threadCount, includeAnnotations);

@@ -1,8 +1,6 @@
 ﻿using Avalonia;
-using Avalonia.Animation;
 using Avalonia.Controls;
 using MuPDFCore.MuPDFRenderer;
-using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -14,8 +12,6 @@ using Avalonia.Threading;
 using MuPDFCore;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +19,7 @@ using VectSharp.PDF;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Avalonia.Platform.Storage;
+using MuPDFCore.StructuredText;
 
 namespace PDFViewerDemo
 {
