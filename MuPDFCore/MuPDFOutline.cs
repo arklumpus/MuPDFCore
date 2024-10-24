@@ -34,6 +34,8 @@ namespace MuPDFCore
         /// </summary>
         public IReadOnlyList<MuPDFOutlineItem> Items { get; }
 
+        internal MuPDFDocument OwnerDocument { get; }
+
         /// <summary>
         /// Load the outline for a document.
         /// </summary>
@@ -41,11 +43,12 @@ namespace MuPDFCore
         /// <param name="document">The document whose outline should be loaded.</param>
         internal MuPDFOutline(MuPDFContext context, MuPDFDocument document) 
         {
+            this.OwnerDocument = document;
             IntPtr outline = NativeMethods.LoadOutline(context.NativeContext, document.NativeDocument);
 
             if (outline != IntPtr.Zero)
             {
-                this.Items = MuPDFOutlineItem.TraverseOutline(outline).ToArray();
+                this.Items = MuPDFOutlineItem.TraverseOutline(outline, this).ToArray();
                 NativeMethods.DisposeOutline(context.NativeContext, outline);
             }
             else
@@ -95,9 +98,27 @@ namespace MuPDFCore
         public int Chapter { get; }
 
         /// <summary>
-        /// The page number of an internal link, or -1 for external links or links with no destination.
+        /// The page number of an internal link, relative to the specified <see cref="Chapter"/>, or -1 for external links or links with no destination.
         /// </summary>
         public int Page { get; }
+
+        private int? CachedPageNumber = null;
+
+        /// <summary>
+        /// The overall page number of an internal link. This is determined on first access, and it might cause a large number of chapters to be laid out to determine it.
+        /// </summary>
+        public int PageNumber
+        {
+            get
+            {
+                if (CachedPageNumber == null)
+                {
+                    CachedPageNumber = NativeMethods.GetPageNumber(this.OwnerOutline.OwnerDocument.OwnerContext.NativeContext, this.OwnerOutline.OwnerDocument.NativeDocument, this.Chapter, this.Page);
+                }
+
+                return CachedPageNumber.Value;
+            }
+        }
 
         /// <summary>
         /// The location on the page of the item pointed to by this outline item.
@@ -108,6 +129,8 @@ namespace MuPDFCore
         /// The sub items of this outline item (may be empty, but will not be null).
         /// </summary>
         public IReadOnlyList<MuPDFOutlineItem> Children { get; private set; }
+
+        internal MuPDFOutline OwnerOutline { get; }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct fz_outline
@@ -153,7 +176,8 @@ namespace MuPDFCore
         /// </summary>
         /// <param name="nativeOutlineItem">The pointer to the native outline item.</param>
         /// <param name="next">A pointer to the next item in the outline. This will be <see cref="IntPtr.Zero"/> for the last item.</param>
-        private unsafe MuPDFOutlineItem(IntPtr nativeOutlineItem, out IntPtr next)
+        /// <param name="ownerOutline">The <see cref="MuPDFOutline"/> that contains the current item.</param>
+        private unsafe MuPDFOutlineItem(IntPtr nativeOutlineItem, out IntPtr next, MuPDFOutline ownerOutline)
         {
             fz_outline nativeItem = Marshal.PtrToStructure<fz_outline>(nativeOutlineItem);
 
@@ -165,12 +189,13 @@ namespace MuPDFCore
             this.Chapter = nativeItem.chapter;
             this.Page = nativeItem.page;
             this.Location = new PointF(nativeItem.x, nativeItem.y);
+            this.OwnerOutline = ownerOutline;
 
             next = nativeItem.next;
 
             if (nativeItem.down != IntPtr.Zero)
             {
-                this.Children = TraverseOutline(nativeItem.down).ToArray();
+                this.Children = TraverseOutline(nativeItem.down, ownerOutline).ToArray();
             }
             else
             {
@@ -182,14 +207,15 @@ namespace MuPDFCore
         /// Recursively traverse the outline, loading information about all the items.
         /// </summary>
         /// <param name="firstOutlineItem">The first item in the outline.</param>
+        /// <param name="ownerOutline">The <see cref="MuPDFOutline"/> that contains the current item.</param>
         /// <returns>A collection of <see cref="MuPDFOutlineItem"/> containing all the information in the outline.</returns>
-        internal static IEnumerable<MuPDFOutlineItem> TraverseOutline(IntPtr firstOutlineItem)
+        internal static IEnumerable<MuPDFOutlineItem> TraverseOutline(IntPtr firstOutlineItem, MuPDFOutline ownerOutline)
         {
             IntPtr currOutlineItem = firstOutlineItem;
 
             while (currOutlineItem != IntPtr.Zero)
             {
-                MuPDFOutlineItem item = new MuPDFOutlineItem(currOutlineItem, out IntPtr next);
+                MuPDFOutlineItem item = new MuPDFOutlineItem(currOutlineItem, out IntPtr next, ownerOutline);
                 yield return item;
                 currOutlineItem = next;
             }

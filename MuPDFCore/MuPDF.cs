@@ -1635,8 +1635,8 @@ namespace MuPDFCore
         /// <summary>
         /// Free a native structured text page and its associated resources.
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="page"></param>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="page">The structured text page to free.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int DisposeStructuredTextPage(IntPtr ctx, IntPtr page);
@@ -2088,5 +2088,88 @@ namespace MuPDFCore
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int GetPDFDocument(IntPtr ctx, IntPtr doc, ref IntPtr out_pdf_doc);
+
+        /// <summary>
+        /// Activate a SetOCGState link, thus hiding/showing some optional content groups.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The PDF document.</param>
+        /// <param name="link">The link to activate.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void ActivateLinkSetOCGState(IntPtr ctx, IntPtr doc, IntPtr link);
+
+        /// <summary>
+        /// Get an absolute page number from a chapter number and page number.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The document.</param>
+        /// <param name="chapter">The chapter number.</param>
+        /// <param name="page">The page number within the chapter.</param>
+        /// <returns>The absolute page number.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetPageNumber(IntPtr ctx, IntPtr doc, int chapter, int page);
+
+        /// <summary>
+        /// Check whether a link is visible or not.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="usage">Usage string. Not sure if anything other than <c>"View"</c> works.</param>
+        /// <param name="link">The link.</param>
+        /// <returns><c>0</c> if the link is visible, any other value if it is hidden.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int IsLinkHidden(IntPtr ctx, string usage, IntPtr link);
+
+        /// <summary>
+        /// Gather information about a link.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The document that contains the link.</param>
+        /// <param name="link">The link.</param>
+        /// <param name="uri_length">The length of the link's Uri, as determined by <see cref="LoadLinks"/></param>
+        /// <param name="isPDF">Set this to <c>1</c> if the document is a PDF document, or to <c>0</c> otherwise.</param>
+        /// <param name="out_x0">When this method returns, this variable will contain the left coordinate of the link's active rectangle.</param>
+        /// <param name="out_y0">When this method returns, this variable will contain the top coordinate of the link's active rectangle.</param>
+        /// <param name="out_x1">When this method returns, this variable will contain the right coordinate of the link's active rectangle.</param>
+        /// <param name="out_y1">When this method returns, this variable will contain the bottom coordinate of the link's active rectangle.</param>
+        /// <param name="out_uri">A pointer to an array of <see cref="byte"/>s that will be filled with the link's Uri.</param>
+        /// <param name="out_is_external">When this method returns, this variable will be <c>0</c> if the link is not an external link, and a different value otherwise.</param>
+        /// <param name="out_is_setocgstate">When this method returns, this variable will be <c>0</c> if the link is not a SetOCGState link, and a different value otherwise.</param>
+        /// <param name="out_dest_type">If the link is an internal link, when this method returns, this variable will contain the destination type of the internal link.</param>
+        /// <param name="out_dest_x">If the link is an internal link, when this method returns, this variable will contain the X coordinate of the internal link target.</param>
+        /// <param name="out_dest_y">If the link is an internal link, when this method returns, this variable will contain the Y coordinate of the internal link target.</param>
+        /// <param name="out_dest_w">If the link is an internal link, when this method returns, this variable will contain the width of the internal link target.</param>
+        /// <param name="out_dest_h">If the link is an internal link, when this method returns, this variable will contain the height of the internal link target.</param>
+        /// <param name="out_dest_zoom">If the link is an internal link, when this method returns, this variable will contain the zoom of the internal link target.</param>
+        /// <param name="out_dest_page">If the link is an internal link, when this method returns, this variable will contain the destination page of the internal link.</param>
+        /// <param name="out_dest_chapter">If the link is an internal link, when this method returns, this variable will contain the destination chapter of the internal link.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void LoadLink(IntPtr ctx, IntPtr doc, IntPtr link, int uri_length, int isPDF, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1, IntPtr out_uri, ref int out_is_external, ref int out_is_setocgstate, ref int out_dest_type, ref float out_dest_x, ref float out_dest_y, ref float out_dest_w, ref float out_dest_h, ref float out_dest_zoom, ref int out_dest_page, ref int out_dest_chapter);
+
+        /// <summary>
+        /// Free resources associated with a link collection.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="firstLink">The first link in the collection.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void DisposeLinks(IntPtr ctx, IntPtr firstLink);
+
+        /// <summary>
+        /// Load links from a page.
+        /// </summary>
+        /// <param name="firstLink">The first link in the page.</param>
+        /// <param name="out_links">A pointer to an array of <see cref="IntPtr"/>s that will be filled by this method.</param>
+        /// <param name="out_uri_lengths">A pointer to an array of <see cref="int"/>s that will be filled by this method (these represent the lengths of the links' Uris).</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void LoadLinks(IntPtr firstLink, IntPtr out_links, IntPtr out_uri_lengths);
+
+        /// <summary>
+        /// Count the number of links in the page and return a pointer to the first link.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="page">A pointer to the page from which links should be extracted.</param>
+        /// <param name="out_firstLink">When this method returns, this variable will contain a pointer to the first link in the page.</param>
+        /// <returns>The number of links contained in the page.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int CountLinks(IntPtr ctx, IntPtr page, ref IntPtr out_firstLink);
     }
 }

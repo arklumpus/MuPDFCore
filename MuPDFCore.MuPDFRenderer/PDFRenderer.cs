@@ -1113,6 +1113,34 @@ namespace MuPDFCore.MuPDFRenderer
         /// <param name="e"></param>
         private void ControlPointerPressed(object sender, PointerPressedEventArgs e)
         {
+            if (this.ActivateLinks)
+            {
+                if (this.Document.Pages[this.PageNumber].Links?.Count > 0)
+                {
+                    Point point = e.GetPosition(this);
+
+                    MuPDFLinks links = this.Document.Pages[this.PageNumber].Links;
+
+                    foreach (MuPDFLink link in links)
+                    {
+                        if (link.IsVisible)
+                        {
+                            Point topLeft = new Point((link.ActiveArea.X0 - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (link.ActiveArea.Y0 - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+                            Point bottomRight = new Point((link.ActiveArea.X1 - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (link.ActiveArea.Y1 - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+
+                            Rect rect = new Rect(topLeft, bottomRight);
+
+                            if (rect.Contains(point))
+                            {
+                                LinkClicked?.Invoke(this, new MupdfLinkClickedEventArgs(link.Destination));
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+
             if (PointerEventHandlersType == PointerEventHandlers.Pan)
             {
                 if (e.GetCurrentPoint(this).Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed)
@@ -1289,6 +1317,33 @@ namespace MuPDFCore.MuPDFRenderer
                 {
                     this.Cursor = new Cursor(StandardCursorType.Arrow);
                 }
+
+                if (this.ActivateLinks)
+                {
+                    if (this.Document.Pages[this.PageNumber].Links?.Count > 0)
+                    {
+                        Point point = e.GetPosition(this);
+
+                        MuPDFLinks links = this.Document.Pages[this.PageNumber].Links;
+
+                        foreach (MuPDFLink link in links)
+                        {
+                            if (link.IsVisible)
+                            {
+                                Point topLeft = new Point((link.ActiveArea.X0 - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (link.ActiveArea.Y0 - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+                                Point bottomRight = new Point((link.ActiveArea.X1 - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (link.ActiveArea.Y1 - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+
+                                Rect rect = new Rect(topLeft, bottomRight);
+
+                                if (rect.Contains(point))
+                                {
+                                    this.Cursor = new Cursor(StandardCursorType.Hand);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -1424,6 +1479,25 @@ namespace MuPDFCore.MuPDFRenderer
                     }
 
                     context.DrawGeometry(this.SelectionBrush, null, selectionGeometry);
+                }
+
+                if (this.DrawLinks)
+                {
+                    if (this.Document.Pages[this.PageNumber].Links?.Count > 0)
+                    {
+                        MuPDFLinks links = this.Document.Pages[this.PageNumber].Links;
+
+                        foreach (MuPDFLink link in links)
+                        {
+                            if (link.IsVisible)
+                            {
+                                Point topLeft = new Point((link.ActiveArea.X0 - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (link.ActiveArea.Y0 - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+                                Point bottomRight = new Point((link.ActiveArea.X1 - this.DisplayArea.Left) * this.Bounds.Width / this.DisplayArea.Width, (link.ActiveArea.Y1 - this.DisplayArea.Top) * this.Bounds.Height / this.DisplayArea.Height);
+
+                                context.DrawRectangle(this.LinkBrush, this.LinkPen, new Rect(topLeft, bottomRight));
+                            }
+                        }
+                    }
                 }
             }
         }

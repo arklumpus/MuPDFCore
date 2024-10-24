@@ -36,6 +36,24 @@ namespace MuPDFCore
         /// </summary>
         public int PageNumber { get; }
 
+        private MuPDFLinks CachedLinks = null;
+
+        /// <summary>
+        /// The links contained within the <see cref="MuPDFPage"/>. This collection is populated on first access.
+        /// </summary>
+        public MuPDFLinks Links
+        {
+            get
+            {
+                if (CachedLinks == null)
+                {
+                    CachedLinks = new MuPDFLinks(this);
+                }
+
+                return CachedLinks;
+            }
+        }
+
         /// <summary>
         /// A pointer to the native page object.
         /// </summary>
@@ -106,6 +124,11 @@ namespace MuPDFCore
                 if (OwnerContext.disposedValue)
                 {
                     throw new LifetimeManagementException<MuPDFPage, MuPDFContext>(this, OwnerContext, this.NativePage, OwnerContext.NativeContext);
+                }
+
+                if (disposing)
+                {
+                    this.Links.Dispose();
                 }
 
                 NativeMethods.DisposePage(OwnerContext.NativeContext, NativePage);

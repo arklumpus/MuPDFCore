@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="450" Height="150"
+        x:Class="PDFViewerDemo.LinkDialogWindow"
+        Title="Message" FontSize="16" WindowStartupLocation="CenterOwner">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="1*"/>
+		</Grid.RowDefinitions>
+
+		<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+			<TextBlock TextWrapping="Wrap" TextAlignment="Center">Do you really want to open the following external link?</TextBlock>
+			<TextBlock TextWrapping="Wrap" Name="LinkContainer" TextAlignment="Center" Foreground="Blue" Margin="0, 5, 0, 0">https://test</TextBlock>
+		</StackPanel>
+		<CheckBox HorizontalAlignment="Center" Grid.Row="1" Name="DoNotAskBox" Margin="0, 10, 0, 10">Do not ask again</CheckBox>
+		<Grid Grid.Row="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="10"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="1*"/>
+			</Grid.ColumnDefinitions>
+			<Button Grid.Column="1" Width="100" VerticalAlignment="Center" Click="YesButtonClicked">Yes</Button>
+			<Button Grid.Column="3" Width="100" VerticalAlignment="Center" Click="NoButtonClicked">No</Button>
+		</Grid>
+	</Grid>
+</Window>

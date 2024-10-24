@@ -52,6 +52,11 @@ namespace PDFViewerDemo
         }
 
         /// <summary>
+        /// Whether a confirmation should be sought from the user before opening external links or not.
+        /// </summary>
+        public bool AskBeforeOpeningLiks { get; set; } = true;
+
+        /// <summary>
         /// The <see cref="MuPDFContext"/> holding the cache and exception stack.
         /// </summary>
         private MuPDFContext Context;
@@ -668,7 +673,7 @@ namespace PDFViewerDemo
             {
                 TextBlock blockItem = new TextBlock() { Padding = new Thickness(Math.Min(21 * (level + 1), 42), 0, 5, 0), Text = item.Title, Cursor = new Cursor(StandardCursorType.Hand) };
 
-                int destination = item.Page;
+                int destination = item.PageNumber;
 
                 if (destination >= 0)
                 {
@@ -688,7 +693,7 @@ namespace PDFViewerDemo
                 Expander exp = new Expander() { Margin = new Thickness(Math.Min(21 * level, 21), 0, 0, 0) };
                 TextBlock blockItem = new TextBlock() { Text = item.Title, Cursor = new Cursor(StandardCursorType.Hand) };
 
-                int destination = item.Page;
+                int destination = item.PageNumber;
 
                 if (destination >= 0)
                 {
@@ -817,7 +822,7 @@ namespace PDFViewerDemo
                 CheckBox cb = new CheckBox() { Content = cbx.Label, IsChecked = cbx.IsEnabled, IsEnabled = !cbx.IsLocked, Margin = new Thickness(Math.Min(21 * (actualLevel), 42), 0, 5, 0) };
                 label = cb;
                 OptionalContentGroupUIElements.Add((cbx, cb, parents));
-                
+
                 cb.Click += async (s, e) =>
                 {
                     if (!UpdatingOCGUIElements)
@@ -863,11 +868,11 @@ namespace PDFViewerDemo
             if (label != null && item.Children.Length > 0)
             {
                 List<MuPDFOptionalContentGroupSelectableUIItem> parentList = new List<MuPDFOptionalContentGroupSelectableUIItem>(parents);
-                
+
                 if (item is MuPDFOptionalContentGroupSelectableUIItem selUi)
                 {
                     parentList.Add(selUi);
-                }                
+                }
 
                 StackPanel childContainer = new StackPanel();
 
@@ -1338,6 +1343,59 @@ namespace PDFViewerDemo
                     }
                     UpdatingOCGUIElements = false;
                 }
+            }
+        }
+
+        private async void PDFRenderer_LinkClicked(object sender, MuPDFCore.MuPDFRenderer.MupdfLinkClickedEventArgs e)
+        {
+            switch (e.LinkDestination.Type)
+            {
+                case MuPDFLinkDestination.DestinationType.SetOCGState:
+                    {
+                        Rect displayArea = this.FindControl<PDFRenderer>("MuPDFRenderer").DisplayArea;
+                        ((MuPDFSetOCGStateLinkDestination)e.LinkDestination).Activate();
+
+                        await InitializeDocument(this.FindControl<PDFRenderer>("MuPDFRenderer").PageNumber);
+                        this.FindControl<PDFRenderer>("MuPDFRenderer").SetDisplayAreaNow(displayArea);
+
+                        UpdatingOCGUIElements = true;
+                        for (int i = 0; i < OptionalContentGroupUIElements.Count; i++)
+                        {
+                            OptionalContentGroupUIElements[i].box.IsEnabled = !OptionalContentGroupUIElements[i].parents.Any(x => !x.IsEnabled);
+                            OptionalContentGroupUIElements[i].box.IsChecked = OptionalContentGroupUIElements[i].ocgUI.IsEnabled;
+                        }
+                        UpdatingOCGUIElements = false;
+                    }
+                    break;
+
+                case MuPDFLinkDestination.DestinationType.External:
+                    bool openLink = !this.AskBeforeOpeningLiks;
+                    string uri = ((MuPDFExternalLinkDestination)e.LinkDestination).Uri;
+                    if (!openLink)
+                    {
+                        LinkDialogWindow dialog = new LinkDialogWindow(uri);
+                        await dialog.ShowDialog(this);
+                        openLink = dialog.Result;
+                        if (openLink && dialog.DoNotAskAgain)
+                        {
+                            this.AskBeforeOpeningLiks = false;
+                        }
+                    }
+                    
+                    if (openLink)
+                    {
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+                        {
+                            FileName = uri,
+                            UseShellExecute = true
+                        });
+                    }
+
+                    break;
+
+                case MuPDFLinkDestination.DestinationType.Internal:
+                    await InitializeDocument(((MuPDFInternalLinkDestination)e.LinkDestination).PageNumber);
+                    break;
             }
         }
     }

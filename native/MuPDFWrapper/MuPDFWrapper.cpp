@@ -5,6 +5,7 @@ extern "C"
 {
 	#include <mupdf/pdf/page.h>
 	#include <mupdf/pdf/document.h>
+	#include <mupdf/pdf/annot.h>
 }
 
 #include <stdio.h>
@@ -163,6 +164,92 @@ void unlock_mutex(void* user, int lock)
 
 extern "C"
 {
+	DLL_PUBLIC int GetPageNumber(fz_context *ctx, fz_document *doc, int chapter, int page)
+	{
+		return fz_page_number_from_location(ctx, doc, fz_make_location(chapter, page));
+	}
+
+	DLL_PUBLIC void ActivateLinkSetOCGState(fz_context *ctx, pdf_document *doc, fz_link *link)
+	{
+		pdf_activate_link_set_ocg_state(ctx, doc, link);
+	}
+
+	DLL_PUBLIC int IsLinkHidden(fz_context *ctx, const char *usage, fz_link* link)
+	{
+		return pdf_is_link_hidden(ctx, usage, link);
+	}
+
+	DLL_PUBLIC void LoadLink(fz_context* ctx, fz_document* doc, fz_link* link, int uri_length, int isPDF, float* out_x0, float* out_y0, float* out_x1, float* out_y1, char* out_uri, int* out_is_external, int* out_is_setocgstate, int* out_dest_type, float* out_dest_x, float* out_dest_y,float* out_dest_w, float* out_dest_h, float* out_dest_zoom, int* out_dest_chapter, int* out_dest_page)
+	{
+		*out_x0 = link->rect.x0;
+		*out_y0 = link->rect.y0;
+		*out_x1 = link->rect.x1;
+		*out_y1 = link->rect.y1;
+		strncpy(out_uri, link->uri, uri_length);
+
+		int isExternal = fz_is_external_link(ctx, link->uri);
+		*out_is_external = isExternal;
+
+		int isSetOCGState = 0;
+
+		if (isPDF)
+		{
+			isSetOCGState = pdf_is_link_set_ocg_state(link);
+		}
+
+		*out_is_setocgstate = isSetOCGState;
+
+		if (!isExternal && !isSetOCGState)
+		{
+			fz_link_dest destination = fz_resolve_link_dest(ctx, doc, link->uri);
+
+			*out_dest_type = destination.type;
+			*out_dest_x = destination.x;
+			*out_dest_y = destination.y;
+			*out_dest_w = destination.w;
+			*out_dest_h = destination.h;
+			*out_dest_zoom = destination.zoom;
+
+			*out_dest_chapter = destination.loc.chapter;
+			*out_dest_page = destination.loc.page;
+		}
+	}
+
+	DLL_PUBLIC void DisposeLinks(fz_context* ctx, fz_link* firstLink)
+	{
+		fz_drop_link(ctx, firstLink);
+	}
+
+	DLL_PUBLIC void LoadLinks(fz_link* firstLink, fz_link** out_links, int* out_uri_lengths)
+	{
+		fz_link* currLink = firstLink;
+		int count = 0;
+		while (currLink != nullptr)
+		{
+			out_links[count] = currLink;
+			out_uri_lengths[count] = (int)strlen(currLink->uri);
+			count++;
+			currLink = currLink->next;
+		}
+	}
+
+	DLL_PUBLIC int CountLinks(fz_context* ctx, fz_page *page, fz_link** out_firstLink)
+	{
+		fz_link* firstLink = fz_load_links(ctx, page);
+
+		*out_firstLink = firstLink;
+
+		fz_link* currLink = firstLink;
+		int count = 0;
+		while (currLink != nullptr)
+		{
+			count++;
+			currLink = currLink->next;
+		}
+
+		return count;
+	}
+
 	DLL_PUBLIC void SetOptionalContentGroupUIState(fz_context* ctx, pdf_document *doc, int ui_index, int state)
 	{
 		if (state == 0)

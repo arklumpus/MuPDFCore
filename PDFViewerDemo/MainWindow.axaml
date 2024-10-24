@@ -73,7 +73,7 @@
 		<GridSplitter Grid.Column="1" Width="10" Background="White" Name="LeftPanelGridSplitter"></GridSplitter>
 
 		<!--The PDF renderer.-->
-		<mupdf:PDFRenderer Name="MuPDFRenderer" Background="#F0F0F0" PageBackground="White" PropertyChanged="RendererPropertyChanged" ZoomIncrement="1.75" ClipToBounds="True" Grid.Column="2">
+		<mupdf:PDFRenderer Name="MuPDFRenderer" Background="#F0F0F0" PageBackground="White" PropertyChanged="RendererPropertyChanged" ZoomIncrement="1.75" ClipToBounds="True" Grid.Column="2" LinkClicked="PDFRenderer_LinkClicked">
 			<!--Fancy transition so that we can zoom or pan around smoothly. Disabling this would result in better performance, though.-->
 			<mupdf:PDFRenderer.Transitions>
 				<Transitions>

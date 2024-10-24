@@ -17,7 +17,6 @@
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Layout;
 using Avalonia.Media;
 using MuPDFCore.StructuredText;
 using System;
@@ -222,7 +221,7 @@ namespace MuPDFCore.MuPDFRenderer
             }
 
             set
-            {                
+            {
                 double actualZoom = value / _Zoom;
 
                 double currZoomX = FixedArea.Width / DisplayArea.Width * actualZoom;
@@ -272,7 +271,7 @@ namespace MuPDFCore.MuPDFRenderer
         /// </summary>
         public static readonly StyledProperty<PointerEventHandlers> PointerEventHandlerTypeProperty = AvaloniaProperty.Register<PDFRenderer, PointerEventHandlers>(nameof(PointerEventHandlersType), PointerEventHandlers.PanHighlight);
         /// <summary>
-        /// Whether the default handlers for pointer events (which are used for panning around the page) should be enabled. If this is false, you will have to implement your own way to pan around the document by changing the <see cref="DisplayArea"/>.
+        /// Determines which default handlers for pointer events (which are used for panning around the page) should be enabled. If this is <see cref="PointerEventHandlers.Custom"/>, you will have to implement your own way to pan around the document by changing the <see cref="DisplayArea"/>.
         /// </summary>
         public PointerEventHandlers PointerEventHandlersType
         {
@@ -343,6 +342,83 @@ namespace MuPDFCore.MuPDFRenderer
         {
             get { return GetValue(HighlightBrushProperty); }
             set { SetValue(HighlightBrushProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the <see cref="LinkBrush"/> property.
+        /// </summary>
+        public static readonly StyledProperty<IBrush> LinkBrushProperty = AvaloniaProperty.Register<PDFRenderer, IBrush>(nameof(LinkBrush), null);
+        /// <summary>
+        /// The colour used to highlight links in the document.
+        /// </summary>
+        public IBrush LinkBrush
+        {
+            get { return GetValue(LinkBrushProperty); }
+            set { SetValue(LinkBrushProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the <see cref="LinkPen"/> property.
+        /// </summary>
+        public static readonly StyledProperty<IPen> LinkPenProperty = AvaloniaProperty.Register<PDFRenderer, IPen>(nameof(LinkPen), new Pen(Color.FromRgb(0, 0, 255).ToUInt32()));
+        /// <summary>
+        /// The colour used to highlight links in the document.
+        /// </summary>
+        public IPen LinkPen
+        {
+            get { return GetValue(LinkPenProperty); }
+            set { SetValue(LinkPenProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the <see cref="DrawLinks"/> property.
+        /// </summary>
+        public static readonly StyledProperty<bool> DrawLinksProperty = AvaloniaProperty.Register<PDFRenderer, bool>(nameof(DrawLinks), true);
+        /// <summary>
+        /// Determines whether links are highlighted on the document.
+        /// </summary>
+        public bool DrawLinks
+        {
+            get { return GetValue(DrawLinksProperty); }
+            set { SetValue(DrawLinksProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the <see cref="ActivateLinks"/> property.
+        /// </summary>
+        public static readonly StyledProperty<bool> ActivateLinksProperty = AvaloniaProperty.Register<PDFRenderer, bool>(nameof(ActivateLinks), true);
+        /// <summary>
+        /// Determines whether links on the document can be clicked.
+        /// </summary>
+        public bool ActivateLinks
+        {
+            get { return GetValue(ActivateLinksProperty); }
+            set { SetValue(ActivateLinksProperty, value); }
+        }
+
+        /// <summary>
+        /// Fired when the user clicks on a link within the document.
+        /// </summary>
+        public event EventHandler<MupdfLinkClickedEventArgs> LinkClicked;
+    }
+
+    /// <summary>
+    /// <see cref="EventArgs"/> for the <see cref="PDFRenderer.LinkClicked"/> event.
+    /// </summary>
+    public class MupdfLinkClickedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// The link destination.
+        /// </summary>
+        public MuPDFLinkDestination LinkDestination { get; }
+
+        /// <summary>
+        /// Create a new <see cref="MupdfLinkClickedEventArgs"/> instance.
+        /// </summary>
+        /// <param name="linkDestination">The link destination.</param>
+        public MupdfLinkClickedEventArgs(MuPDFLinkDestination linkDestination)
+        {
+            LinkDestination = linkDestination;
         }
     }
 }
