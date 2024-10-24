@@ -931,6 +931,19 @@ extern "C"
 	DLL_PUBLIC int DisposeDisplayList(fz_context* ctx, fz_display_list* list);
 
 	/// <summary>
+	/// Get the specified bounding box from a page.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="page">The page whose bounding box should be extracted.</param>
+	/// <param name="box">An integer equivalent to <see cref="BoxType"/> specifying the box to extract.</param>
+	/// <param name="out_x">When this method returns, this variable will contain the left coordinate of the bounding box.</param>
+	/// <param name="out_y">When this method returns, this variable will contain the top coordinate of the bounding box.</param>
+	/// <param name="out_w">When this method returns, this variable will contain the width of the bounding box.</param>
+	/// <param name="out_h">When this method returns, this variable will contain the height of the bounding box.</param>
+	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+	DLL_PUBLIC int GetPageBox(fz_context* ctx, fz_page* page, fz_box_type box, float* out_x, float* out_y, float* out_w, float* out_h);
+
+	/// <summary>
 	/// Load a page from a document.
 	/// </summary>
 	/// <param name="ctx">The context to which the document belongs.</param>

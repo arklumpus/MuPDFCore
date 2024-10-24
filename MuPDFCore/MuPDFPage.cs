@@ -18,6 +18,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace MuPDFCore
 {
@@ -98,8 +99,13 @@ namespace MuPDFCore
 
             ExitCodes result = (ExitCodes)NativeMethods.LoadPage(context.NativeContext, document.NativeDocument, number, ref NativePage, ref x, ref y, ref w, ref h);
 
-            this.Bounds = new Rectangle(Math.Round(x * document.ImageXRes / 72.0 * 1000) / 1000, Math.Round(y * document.ImageYRes / 72.0 * 1000) / 1000, Math.Round(w * document.ImageXRes / 72.0 * 1000) / 1000, Math.Round(h * document.ImageYRes / 72.0 * 1000) / 1000);
-            this.OriginalBounds = new Rectangle(x, y, w, h);
+            double sX = Math.Round(x * document.ImageXRes / 72.0 * 1000) / 1000;
+            double sY = Math.Round(y * document.ImageYRes / 72.0 * 1000) / 1000;
+            double sW = Math.Round(w * document.ImageXRes / 72.0 * 1000) / 1000;
+            double sH = Math.Round(h * document.ImageYRes / 72.0 * 1000) / 1000;
+
+            this.Bounds = new Rectangle(sX, sY, sX + sW, sY + sH);
+            this.OriginalBounds = new Rectangle(x, y, x + w, y + h);
 
             switch (result)
             {
@@ -114,6 +120,46 @@ namespace MuPDFCore
             }
         }
 
+        /// <summary>
+        /// Gets the specified bounding box from the page.
+        /// </summary>
+        /// <param name="boxType">The type of bounding box to get.</param>
+        /// <param name="rescale">If this is <see langword="true"/>, the bounding box is rescaled so that it is expressed in the same resolution units as the underlying document. If this is <see langword="true"/>, the raw value is returned (at 72 dpi).</param>
+        /// <returns>A <see cref="Rectangle"/> corresponding to the specified bounding box.</returns>
+        /// <exception cref="MuPDFException">Thrown if the bounding box cannot be computed or if another error occurs.</exception>
+        public Rectangle GetBoundingBox(BoxType boxType, bool rescale = true)
+        {
+            float x = 0;
+            float y = 0;
+            float w = 0;
+            float h = 0;
+
+            ExitCodes result = (ExitCodes)NativeMethods.GetPageBox(this.OwnerContext.NativeContext, this.NativePage, (int)boxType, ref x, ref y, ref w, ref h);
+
+            switch (result)
+            {
+                case ExitCodes.EXIT_SUCCESS:
+                    break;
+                case ExitCodes.ERR_CANNOT_COMPUTE_BOUNDS:
+                    throw new MuPDFException("Cannot compute bounds", result);
+                default:
+                    throw new MuPDFException("Unknown error", result);
+            }
+
+            if (rescale)
+            {
+                double sX = Math.Round(x * this.OwnerDocument.ImageXRes / 72.0 * 1000) / 1000;
+                double sY = Math.Round(y * this.OwnerDocument.ImageYRes / 72.0 * 1000) / 1000;
+                double sW = Math.Round(w * this.OwnerDocument.ImageXRes / 72.0 * 1000) / 1000;
+                double sH = Math.Round(h * this.OwnerDocument.ImageYRes / 72.0 * 1000) / 1000;
+
+                return new Rectangle(sX, sY, sX + sW, sY + sH);
+            }
+            else
+            {
+                return new Rectangle(x, y, x + w, y + h);
+            }
+        }
         private bool disposedValue;
 
         ///<inheritdoc/>
@@ -125,7 +171,6 @@ namespace MuPDFCore
                 {
                     throw new LifetimeManagementException<MuPDFPage, MuPDFContext>(this, OwnerContext, this.NativePage, OwnerContext.NativeContext);
                 }
-
                 if (disposing)
                 {
                     this.Links.Dispose();

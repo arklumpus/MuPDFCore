@@ -1764,6 +1764,27 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
+	DLL_PUBLIC int GetPageBox(fz_context* ctx, fz_page* page, fz_box_type box, float* out_x, float* out_y, float* out_w, float* out_h)
+	{
+		fz_rect bounds;
+
+		fz_try(ctx)
+		{
+			bounds = fz_bound_page_box(ctx, page, box);
+		}
+		fz_catch(ctx)
+		{
+			return ERR_CANNOT_COMPUTE_BOUNDS;
+		}
+
+		*out_x = bounds.x0;
+		*out_y = bounds.y0;
+		*out_w = bounds.x1 - bounds.x0;
+		*out_h = bounds.y1 - bounds.y0;
+
+		return EXIT_SUCCESS;
+	}
+
 	DLL_PUBLIC int LoadPage(fz_context* ctx, fz_document* doc, int page_number, const fz_page** out_page, float* out_x, float* out_y, float* out_w, float* out_h)
 	{
 		fz_page* page;

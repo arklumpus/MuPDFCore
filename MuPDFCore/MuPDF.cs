@@ -431,6 +431,42 @@ namespace MuPDFCore
     }
 
     /// <summary>
+    /// Types of bounding boxes.
+    /// </summary>
+    public enum BoxType
+    {
+        /// <summary>
+        /// Media box.
+        /// </summary>
+        MediaBox,
+
+        /// <summary>
+        /// Crop box.
+        /// </summary>
+        CropBox,
+
+        /// <summary>
+        /// Bleed box.
+        /// </summary>
+        BleedBox,
+
+        /// <summary>
+        /// Trim box.
+        /// </summary>
+        TrimBox,
+
+        /// <summary>
+        /// Art box.
+        /// </summary>
+        ArtBox,
+
+        /// <summary>
+        /// Unknown box type.
+        /// </summary>
+        UnknownBox
+    }
+
+    /// <summary>
     /// A struct to hold information about the current rendering process and to abort rendering as needed.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
@@ -1319,6 +1355,20 @@ namespace MuPDFCore
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int RenderSubDisplayList(IntPtr ctx, IntPtr list, float x0, float y0, float x1, float y1, float zoom, int colorFormat, IntPtr pixel_storage, IntPtr cookie);
+
+        /// <summary>
+        /// Get the specified bounding box from a page.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="page">The page whose bounding box should be extracted.</param>
+        /// <param name="box">An integer equivalent to <see cref="BoxType"/> specifying the box to extract.</param>
+        /// <param name="out_x">When this method returns, this variable will contain the left coordinate of the bounding box.</param>
+        /// <param name="out_y">When this method returns, this variable will contain the top coordinate of the bounding box.</param>
+        /// <param name="out_w">When this method returns, this variable will contain the width of the bounding box.</param>
+        /// <param name="out_h">When this method returns, this variable will contain the height of the bounding box.</param>
+        /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetPageBox(IntPtr ctx, IntPtr page, int box, ref float out_x, ref float out_y, ref float out_w, ref float out_h);
 
         /// <summary>
         /// Load a page from a document.
