@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MuPDFCore;
 using System.IO;
+using MuPDFCore.StructuredText;
 
 #pragma warning disable IDE0090 // Use 'new(...)'
 
@@ -19,7 +20,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, flags: StructuredTextFlags.PreserveImages);
             using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
             using MuPDFImage image = imageBlock.Image;
             MuPDFColorSpace colorSpace = image.ColorSpace;
@@ -40,7 +41,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, flags: StructuredTextFlags.PreserveImages);
             using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
             using MuPDFImage image = imageBlock.Image;
             MuPDFColorSpace colorSpace = image.ColorSpace;
@@ -61,7 +62,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, flags: StructuredTextFlags.PreserveImages);
             using MuPDFImageStructuredTextBlock imageBlock = (MuPDFImageStructuredTextBlock)sTextPage[0];
             using MuPDFImage image = imageBlock.Image;
             MuPDFColorSpace colorSpace = image.ColorSpace;

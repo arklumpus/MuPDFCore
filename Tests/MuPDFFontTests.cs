@@ -2,6 +2,7 @@
 using MuPDFCore;
 using System;
 using System.IO;
+using MuPDFCore.StructuredText;
 
 #pragma warning disable IDE0090 // Use 'new(...)'
 

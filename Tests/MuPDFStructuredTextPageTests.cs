@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MuPDFCore.StructuredText;
 
 #pragma warning disable IDE0090 // Use 'new(...)'
 
@@ -588,7 +589,7 @@ namespace Tests
             using MuPDFContext context = new MuPDFContext();
             using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
 
-            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, preserveImages: true);
+            using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0, flags: StructuredTextFlags.PreserveImages);
 
             Assert.IsInstanceOfType(sTextPage[0], typeof(MuPDFImageStructuredTextBlock), "The block does not contain an image!");
 

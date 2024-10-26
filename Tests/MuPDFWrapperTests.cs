@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MuPDFCore;
+using MuPDFCore.StructuredText;
 using System;
 using System.IO;
 using System.Linq;
@@ -434,7 +435,7 @@ namespace Tests
             catch { }
         }
 
-        private static (GCHandle dataHandle, MemoryStream ms, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x, float y, float w, float h) CreateSamplePage()
+        private static (GCHandle dataHandle, MemoryStream ms, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x, float y, float w, float h) CreateSamplePage(string resource = "Tests.Data.Sample.pdf")
         {
             IntPtr nativePage = IntPtr.Zero;
 
@@ -443,7 +444,7 @@ namespace Tests
             float w = -1;
             float h = -1;
 
-            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument();
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument(resource);
 
             _ = NativeMethods.LoadPage(nativeContext, nativeDocument, 0, ref nativePage, ref x, ref y, ref w, ref h);
 
@@ -1143,8 +1144,9 @@ namespace Tests
             int result;
 
             using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            using (UTF8EncodedString encodedOptions = new UTF8EncodedString(new PDFCreationOptions().GetOptionString()))
             {
-                result = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 0, ref documentWriter);
+                result = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 0, encodedOptions.Address, ref documentWriter);
             }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "CreateDocumentWriter for PDF returned the wrong exit code.");
@@ -1176,8 +1178,9 @@ namespace Tests
             int result;
 
             using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            using (UTF8EncodedString encodedOptions = new UTF8EncodedString(new SVGCreationOptions().GetOptionString()))
             {
-                result = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 1, ref documentWriter);
+                result = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 1, encodedOptions.Address, ref documentWriter);
             }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "CreateDocumentWriter for SVG returned the wrong exit code.");
@@ -1209,8 +1212,9 @@ namespace Tests
             int result;
 
             using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            using (UTF8EncodedString encodedOptions = new UTF8EncodedString(new CBZCreationOptions().GetOptionString()))
             {
-                result = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 2, ref documentWriter);
+                result = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 2, encodedOptions.Address, ref documentWriter);
             }
 
             Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "CreateDocumentWriter for CBZ returned the wrong exit code.");
@@ -1238,8 +1242,9 @@ namespace Tests
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
 
             using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            using (UTF8EncodedString encodedOptions = new UTF8EncodedString(new PDFCreationOptions().GetOptionString()))
             {
-                _ = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 0, ref documentWriter);
+                _ = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 0, encodedOptions.Address, ref documentWriter);
             }
 
             return (documentWriter, fileName);
@@ -1253,8 +1258,9 @@ namespace Tests
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
 
             using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            using (UTF8EncodedString encodedOptions = new UTF8EncodedString(new SVGCreationOptions().GetOptionString()))
             {
-                _ = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 1, ref documentWriter);
+                _ = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 1, encodedOptions.Address, ref documentWriter);
             }
 
             return (documentWriter, fileName);
@@ -1268,8 +1274,9 @@ namespace Tests
             _ = NativeMethods.CreateContext(256 << 20, ref nativeContext);
 
             using (UTF8EncodedString encodedFileName = new UTF8EncodedString(fileName))
+            using (UTF8EncodedString encodedOptions = new UTF8EncodedString(new CBZCreationOptions().GetOptionString()))
             {
-                _ = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 2, ref documentWriter);
+                _ = NativeMethods.CreateDocumentWriter(nativeContext, encodedFileName.Address, 2, encodedOptions.Address, ref documentWriter);
             }
 
             return (documentWriter, fileName);
@@ -1690,7 +1697,18 @@ namespace Tests
                 float e = -1;
                 float f = -1;
 
-                int result = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+                byte stroked = 0;
+                byte rgba_r = 0;
+                byte rgba_g = 0;
+                byte rgba_b = 0;
+                byte rgba_a = 0;
+
+                int xs_len = -1;
+                int ys_len = -1;
+                IntPtr down = IntPtr.Zero;
+                int index = -1;
+
+                int result = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index); ;
 
                 Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextBlock returned the wrong exit code.");
                 Assert.IsTrue(x0 >= 0, "The " + i.ToString() + "th block's left coordinate is out of range.");
@@ -1747,7 +1765,18 @@ namespace Tests
                 float e = -1;
                 float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+                byte stroked = 0;
+                byte rgba_r = 0;
+                byte rgba_g = 0;
+                byte rgba_b = 0;
+                byte rgba_a = 0;
+
+                int xs_len = -1;
+                int ys_len = -1;
+                IntPtr down = IntPtr.Zero;
+                int index = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -1803,7 +1832,18 @@ namespace Tests
                 float e = -1;
                 float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+                byte stroked = 0;
+                byte rgba_r = 0;
+                byte rgba_g = 0;
+                byte rgba_b = 0;
+                byte rgba_a = 0;
+
+                int xs_len = -1;
+                int ys_len = -1;
+                IntPtr down = IntPtr.Zero;
+                int index = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -1883,7 +1923,18 @@ namespace Tests
                 float e = -1;
                 float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+                byte stroked = 0;
+                byte rgba_r = 0;
+                byte rgba_g = 0;
+                byte rgba_b = 0;
+                byte rgba_a = 0;
+
+                int xs_len = -1;
+                int ys_len = -1;
+                IntPtr down = IntPtr.Zero;
+                int index = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -1966,7 +2017,18 @@ namespace Tests
                 float e = -1;
                 float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+                byte stroked = 0;
+                byte rgba_r = 0;
+                byte rgba_g = 0;
+                byte rgba_b = 0;
+                byte rgba_a = 0;
+
+                int xs_len = -1;
+                int ys_len = -1;
+                IntPtr down = IntPtr.Zero;
+                int index = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -2204,7 +2266,7 @@ namespace Tests
 
             _ = NativeMethods.GetDisplayList(nativeContext, nativePage, 1, ref nativeDisplayList, ref x0, ref y0, ref x1, ref y1);
 
-            _ = NativeMethods.GetStructuredTextPage(nativeContext, nativeDisplayList, 1, ref nativeSTextPage, ref sTextBlockCount);
+            _ = NativeMethods.GetStructuredTextPage(nativeContext, nativeDisplayList, (int)StructuredTextFlags.PreserveImages, ref nativeSTextPage, ref sTextBlockCount);
 
             IntPtr[] blockPointers = new IntPtr[sTextBlockCount];
             GCHandle blocksHandle = GCHandle.Alloc(blockPointers, GCHandleType.Pinned);
@@ -2223,7 +2285,18 @@ namespace Tests
                 float e = -1;
                 float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+                byte stroked = 0;
+                byte rgba_r = 0;
+                byte rgba_g = 0;
+                byte rgba_b = 0;
+                byte rgba_a = 0;
+
+                int xs_len = -1;
+                int ys_len = -1;
+                IntPtr down = IntPtr.Zero;
+                int index = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 1)
                 {
@@ -2633,7 +2706,18 @@ namespace Tests
                 float e = -1;
                 float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+                byte stroked = 0;
+                byte rgba_r = 0;
+                byte rgba_g = 0;
+                byte rgba_b = 0;
+                byte rgba_a = 0;
+
+                int xs_len = -1;
+                int ys_len = -1;
+                IntPtr down = IntPtr.Zero;
+                int index = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -2751,7 +2835,18 @@ namespace Tests
                 float e = -1;
                 float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+                byte stroked = 0;
+                byte rgba_r = 0;
+                byte rgba_g = 0;
+                byte rgba_b = 0;
+                byte rgba_a = 0;
+
+                int xs_len = -1;
+                int ys_len = -1;
+                IntPtr down = IntPtr.Zero;
+                int index = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -2872,7 +2967,18 @@ namespace Tests
                 float e = -1;
                 float f = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f);
+                byte stroked = 0;
+                byte rgba_r = 0;
+                byte rgba_g = 0;
+                byte rgba_b = 0;
+                byte rgba_a = 0;
+
+                int xs_len = -1;
+                int ys_len = -1;
+                IntPtr down = IntPtr.Zero;
+                int index = -1;
+
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {

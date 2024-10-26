@@ -2,10 +2,10 @@
 using MuPDFCore;
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using MuPDFCore.StructuredText;
 
 #pragma warning disable IDE0090 // Use 'new(...)'
 #pragma warning disable IDE0056 // Use index operator
@@ -1089,6 +1089,12 @@ namespace Tests
 
             string tempFile = Path.GetTempFileName();
 
+            try
+            {
+                File.Delete(tempFile);
+            }
+            catch { }
+
             Assert.ThrowsException<ArgumentException>(() => MuPDFDocument.CreateDocument(context, tempFile, DocumentOutputFileTypes.SVG, true, new (MuPDFPage page, Rectangle region, float zoom)[]
             {
                 (document1.Pages[0], new Rectangle(100, 100, 500, 500), (float)Math.Sqrt(2)),
@@ -1099,6 +1105,8 @@ namespace Tests
             {
                 (document1.Pages[0], new Rectangle(100, 100, 500, 500), (float)Math.Sqrt(2))
             });
+
+
 
             Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
 
