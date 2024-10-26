@@ -1213,6 +1213,16 @@ namespace MuPDFCore
                     throw new ArgumentException("You cannot create an SVG document with more than one page!", nameof(pages));
                 }
 
+                string originalFileName = fileName;
+
+                //For SVG documents, the library annoyingly alters the output file name, appending a "1" just before the extension (e.g. document.svg -> document1.svg). Since users may not be expecting this, it is best to render to a temporary file and then move it to the specified location.
+                if (fileType == DocumentOutputFileTypes.SVG)
+                {
+                    fileName = Path.GetTempFileName();
+
+                    File.Delete(fileName);
+                }
+
                 IntPtr documentWriter = IntPtr.Zero;
                 ExitCodes result;
 
@@ -1282,6 +1292,21 @@ namespace MuPDFCore
                         throw new MuPDFException("Cannot finalise the document", result);
                     default:
                         throw new MuPDFException("Unknown error", result);
+                }
+
+                if (fileType == DocumentOutputFileTypes.SVG)
+                {
+                    //Move the temporary file to the location specified by the user.
+                    //The library has altered the temporary file name by appending a "1" before the extension.
+                    string tempFileName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName) + "1" + Path.GetExtension(fileName));
+
+                    //Overwrite existing file.
+                    if (File.Exists(originalFileName))
+                    {
+                        File.Delete(originalFileName);
+                    }
+
+                    File.Move(tempFileName, originalFileName);
                 }
             }
 
@@ -1376,24 +1401,7 @@ namespace MuPDFCore
             {
                 options = options ?? new SVGCreationOptions();
                 string optionString = options.GetOptionString();
-
-                string originalFileName = fileName;
-                //For SVG documents, the library annoyingly alters the output file name, appending a "1" just before the extension (e.g. document.svg -> document1.svg). Since users may not be expecting this, it is best to render to a temporary file and then move it to the specified location.
-                fileName = Path.GetTempFileName();
-
                 CreateDocument(context, fileName, DocumentOutputFileTypes.SVG, new (MuPDFPage, Rectangle, float)[] { (page, region, zoom) }, optionString, options.IncludeAnnotations);
-
-                //Move the temporary file to the location specified by the user.
-                //The library has altered the temporary file name by appending a "1" before the extension.
-                string tempFileName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName) + "1" + Path.GetExtension(fileName));
-
-                //Overwrite existing file.
-                if (File.Exists(originalFileName))
-                {
-                    File.Delete(originalFileName);
-                }
-
-                File.Move(tempFileName, originalFileName);
             }
 
             /// <summary>
