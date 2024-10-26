@@ -1712,7 +1712,7 @@ namespace MuPDFCore
                     throw new LifetimeManagementException<MuPDFDocument, MuPDFContext>(this, OwnerContext, this.NativeDocument, OwnerContext.NativeContext);
                 }
 
-                if (NativePDFDocument != IntPtr.Zero && NativePDFDocument != NativeDocument)
+                if (NativePDFDocument != IntPtr.Zero)
                 {
                     NativeMethods.DisposeDocument(OwnerContext.NativeContext, NativePDFDocument);
                 }
