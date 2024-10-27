@@ -124,7 +124,7 @@ namespace MuPDFCore
         /// Gets the specified bounding box from the page.
         /// </summary>
         /// <param name="boxType">The type of bounding box to get.</param>
-        /// <param name="rescale">If this is <see langword="true"/>, the bounding box is rescaled so that it is expressed in the same resolution units as the underlying document. If this is <see langword="true"/>, the raw value is returned (at 72 dpi).</param>
+        /// <param name="rescale">If this is <see langword="true"/>, the bounding box is rescaled so that it is expressed in the same resolution units as the underlying document. If this is <see langword="false"/>, the raw value is returned (at 72 dpi).</param>
         /// <returns>A <see cref="Rectangle"/> corresponding to the specified bounding box.</returns>
         /// <exception cref="MuPDFException">Thrown if the bounding box cannot be computed or if another error occurs.</exception>
         public Rectangle GetBoundingBox(BoxType boxType, bool rescale = true)
