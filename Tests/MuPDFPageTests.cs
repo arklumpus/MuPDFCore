@@ -2,6 +2,7 @@
 using MuPDFCore;
 using System;
 using System.IO;
+using System.Linq;
 
 #pragma warning disable IDE0090 // Use 'new(...)'
 
@@ -153,6 +154,114 @@ namespace Tests
                 Assert.AreEqual(index, page.PageNumber, "The page number for page " + index.ToString() + " is wrong.");
                 index++;
             }
+        }
+
+        [TestMethod]
+        public void MuPDFPageBoxes()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.PageBoxes.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            Rectangle rect = document.Pages[0].GetBoundingBox(BoxType.MediaBox);
+            Assert.AreEqual(new Rectangle(-2, -2, 97, 95), rect, "The MediaBox is incorrect");
+
+            rect = document.Pages[0].GetBoundingBox(BoxType.CropBox);
+            Assert.AreEqual(new Rectangle(0, 0, 95, 93), rect, "The CropBox is incorrect");
+
+            rect = document.Pages[0].GetBoundingBox(BoxType.TrimBox);
+            Assert.AreEqual(new Rectangle(2, 2, 93, 91), rect, "The TrimBox is incorrect");
+
+            rect = document.Pages[0].GetBoundingBox(BoxType.ArtBox);
+            Assert.AreEqual(new Rectangle(4, 4, 91, 89), rect, "The ArtBox is incorrect");
+
+            rect = document.Pages[0].GetBoundingBox(BoxType.BleedBox);
+            Assert.AreEqual(new Rectangle(6, 6, 89, 87), rect, "The BleedBox is incorrect");
+
+            rect = document.Pages[0].GetBoundingBox(BoxType.UnknownBox);
+            Assert.AreEqual(new Rectangle(0, 0, 95, 93), rect, "The UnknownBox is incorrect");
+        }
+
+        [TestMethod]
+        public void MuPDFPageNoLinks()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            Assert.AreEqual(0, document.Pages[0].Links.Count, "A page without links has a non-empty links array.");
+        }
+
+        [TestMethod]
+        public void MuPDFPageLinks()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.VectSharp.Markdown.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            string[] expectedLinkUris = new string[]
+            {
+                "https://commonmark.org/",
+                "https://commonmark.org/",
+                "https://github.com/xoofx/markdig",
+                "https://github.com/xoofx/markdig",
+                "https://github.com/arklumpus/highlight",
+                "https://github.com/arklumpus/highlight",
+                "https://www.nuget.org/packages/VectSharp.Markdown/",
+                "https://www.nuget.org/packages/VectSharp.Markdown/",
+                "https://www.nuget.org/packages/VectSharp.Markdown/",
+                "https://www.nuget.org/packages/VectSharp.MuPDFUtils/",
+                "https://www.nuget.org/packages/VectSharp.MuPDFUtils/"
+            };
+
+            Assert.AreEqual(11, document.Pages[0].Links.Count, "The number of links in the page is wrong.");
+            CollectionAssert.AreEqual(Enumerable.Repeat(MuPDFLinkDestination.DestinationType.External, document.Pages[0].Links.Count).ToArray(), document.Pages[0].Links.Select(x => x.Destination.Type).ToArray(), "The link destination types are wrong.");
+            CollectionAssert.AreEqual(expectedLinkUris, document.Pages[0].Links.Select(x => ((MuPDFExternalLinkDestination)x.Destination).Uri).ToArray(), "The link destinations are wrong.");
+        }
+
+        [TestMethod]
+        public void MuPDFPageOCGLinks()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.NoughtsCrosses.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            bool[] expectedVisibles = new bool[]
+            {
+                false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false
+            };
+
+            Assert.AreEqual(36, document.Pages[0].Links.Count, "The number of links in the page is wrong.");
+            CollectionAssert.AreEqual(Enumerable.Repeat(MuPDFLinkDestination.DestinationType.SetOCGState, document.Pages[0].Links.Count).ToArray(), document.Pages[0].Links.Select(x => x.Destination.Type).ToArray(), "The link destination types are wrong.");
+            CollectionAssert.AreEqual(expectedVisibles, document.Pages[0].Links.Select(x => x.IsVisible).ToArray(), "The link visibilities are wrong.");
+
+            ((MuPDFSetOCGStateLinkDestination)document.Pages[0].Links[1].Destination).Activate();
+
+            expectedVisibles = new bool[]
+            {
+                false, false, false, true, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false
+            };
+            CollectionAssert.AreEqual(expectedVisibles, document.Pages[0].Links.Select(x => x.IsVisible).ToArray(), "The link visibilities are wrong.");
+
+            document.OptionalContentGroupData.DefaultConfiguration.Activate();
+
+            expectedVisibles = new bool[]
+            {
+                false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false
+            };
+            CollectionAssert.AreEqual(expectedVisibles, document.Pages[0].Links.Select(x => x.IsVisible).ToArray(), "The link visibilities are wrong.");
         }
     }
 }

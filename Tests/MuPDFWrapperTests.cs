@@ -2,8 +2,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MuPDFCore;
 using MuPDFCore.StructuredText;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -523,7 +525,7 @@ namespace Tests
             catch { }
         }
 
-        private static (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) CreateSampleDisplayList()
+        private static (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x0, float y0, float x1, float y1) CreateSampleDisplayList(string resource = "Tests.Data.Sample.pdf")
         {
             IntPtr nativeDisplayList = IntPtr.Zero;
 
@@ -532,7 +534,7 @@ namespace Tests
             float x1 = -1;
             float y1 = -1;
 
-            (GCHandle dataHandle, MemoryStream ms, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float _, float _, float _, float _) = CreateSamplePage();
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float _, float _, float _, float _) = CreateSamplePage(resource);
 
             _ = NativeMethods.GetDisplayList(nativeContext, nativePage, 1, ref nativeDisplayList, ref x0, ref y0, ref x1, ref y1);
 
@@ -1608,7 +1610,7 @@ namespace Tests
 
             (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float _, float _, float _, float _) = CreateSampleDisplayList();
 
-            _ = NativeMethods.GetStructuredTextPage(nativeContext, nativeDisplayList, 1, ref nativeSTextPage, ref sTextBlockCount);
+            _ = NativeMethods.GetStructuredTextPage(nativeContext, nativeDisplayList, (int)StructuredTextFlags.PreserveImages, ref nativeSTextPage, ref sTextBlockCount);
 
             return (dataHandle, ms, nativeSTextPage, sTextBlockCount, nativeDisplayList, nativePage, nativeDocument, nativeStream, nativeContext);
         }
@@ -1708,7 +1710,7 @@ namespace Tests
                 IntPtr down = IntPtr.Zero;
                 int index = -1;
 
-                int result = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index); ;
+                int result = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
 
                 Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextBlock returned the wrong exit code.");
                 Assert.IsTrue(x0 >= 0, "The " + i.ToString() + "th block's left coordinate is out of range.");
@@ -3069,5 +3071,824 @@ namespace Tests
             catch { }
         }
 
+        [TestMethod]
+        public void GetPageBox()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x, float y, float w, float h) = CreateSamplePage("Tests.Data.Sample.PageBoxes.pdf");
+
+            ExitCodes result = (ExitCodes)NativeMethods.GetPageBox(nativeContext, nativePage, (int)BoxType.MediaBox, ref x, ref y, ref w, ref h);
+            Assert.AreEqual(ExitCodes.EXIT_SUCCESS, result, "GetPageBox (MediaBox) returned an error code: " + result.ToString() + "(" + ((int)result).ToString() + ").");
+            Assert.AreEqual(-2, x, "The MediaBox X is incorrect.");
+            Assert.AreEqual(-2, y, "The MediaBox Y is incorrect.");
+            Assert.AreEqual(99, w, "The MediaBox W is incorrect.");
+            Assert.AreEqual(97, h, "The MediaBox H is incorrect.");
+
+            result = (ExitCodes)NativeMethods.GetPageBox(nativeContext, nativePage, (int)BoxType.CropBox, ref x, ref y, ref w, ref h);
+            Assert.AreEqual(ExitCodes.EXIT_SUCCESS, result, "GetPageBox (CropBox) returned an error code: " + result.ToString() + "(" + ((int)result).ToString() + ").");
+            Assert.AreEqual(0, x, "The CropBox X is incorrect.");
+            Assert.AreEqual(0, y, "The CropBox Y is incorrect.");
+            Assert.AreEqual(95, w, "The CropBox W is incorrect.");
+            Assert.AreEqual(93, h, "The CropBox H is incorrect.");
+
+            result = (ExitCodes)NativeMethods.GetPageBox(nativeContext, nativePage, (int)BoxType.TrimBox, ref x, ref y, ref w, ref h);
+            Assert.AreEqual(ExitCodes.EXIT_SUCCESS, result, "GetPageBox (TrimBox) returned an error code: " + result.ToString() + "(" + ((int)result).ToString() + ").");
+            Assert.AreEqual(2, x, "The TrimBox X is incorrect.");
+            Assert.AreEqual(2, y, "The TrimBox Y is incorrect.");
+            Assert.AreEqual(91, w, "The TrimBox W is incorrect.");
+            Assert.AreEqual(89, h, "The TrimBox H is incorrect.");
+
+            result = (ExitCodes)NativeMethods.GetPageBox(nativeContext, nativePage, (int)BoxType.ArtBox, ref x, ref y, ref w, ref h);
+            Assert.AreEqual(ExitCodes.EXIT_SUCCESS, result, "GetPageBox (ArtBox) returned an error code: " + result.ToString() + "(" + ((int)result).ToString() + ").");
+            Assert.AreEqual(4, x, "The ArtBox X is incorrect.");
+            Assert.AreEqual(4, y, "The ArtBox Y is incorrect.");
+            Assert.AreEqual(87, w, "The ArtBox W is incorrect.");
+            Assert.AreEqual(85, h, "The ArtBox H is incorrect.");
+
+            result = (ExitCodes)NativeMethods.GetPageBox(nativeContext, nativePage, (int)BoxType.BleedBox, ref x, ref y, ref w, ref h);
+            Assert.AreEqual(ExitCodes.EXIT_SUCCESS, result, "GetPageBox (BleedBox) returned an error code: " + result.ToString() + "(" + ((int)result).ToString() + ").");
+            Assert.AreEqual(6, x, "The BleedBox X is incorrect.");
+            Assert.AreEqual(6, y, "The BleedBox Y is incorrect.");
+            Assert.AreEqual(83, w, "The BleedBox W is incorrect.");
+            Assert.AreEqual(81, h, "The BleedBox H is incorrect.");
+
+            result = (ExitCodes)NativeMethods.GetPageBox(nativeContext, nativePage, (int)BoxType.UnknownBox, ref x, ref y, ref w, ref h);
+            Assert.AreEqual(ExitCodes.EXIT_SUCCESS, result, "GetPageBox (UnknownBox) returned an error code: " + result.ToString() + "(" + ((int)result).ToString() + ").");
+            Assert.AreEqual(0, x, "The UnknownBox X is incorrect.");
+            Assert.AreEqual(0, y, "The UnknownBox Y is incorrect.");
+            Assert.AreEqual(95, w, "The UnknownBox W is incorrect.");
+            Assert.AreEqual(93, h, "The UnknownBox H is incorrect.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void GetPDFDocument()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument();
+            IntPtr pdfDoc = IntPtr.Zero;
+
+            ExitCodes result = (ExitCodes)NativeMethods.GetPDFDocument(nativeContext, nativeDocument, ref pdfDoc);
+
+            Assert.AreEqual(ExitCodes.EXIT_SUCCESS, result, "GetPDFDocument returned an error code: " + result.ToString() + "(" + ((int)result).ToString() + ").");
+            Assert.AreNotEqual(IntPtr.Zero, pdfDoc, "The PDF document pointer is null.");
+            Assert.AreEqual(nativeDocument, pdfDoc, "The PDF document pointer for the PDF document is not the same as the document pointer.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, pdfDoc);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+
+            (dataHandle, ms, nativeContext, nativeDocument, nativeStream) = CreateSamplePNGDocument();
+            pdfDoc = IntPtr.Zero;
+
+            result = (ExitCodes)NativeMethods.GetPDFDocument(nativeContext, nativeDocument, ref pdfDoc);
+
+            Assert.AreEqual(ExitCodes.ERR_CANNOT_CONVERT_TO_PDF, result, "GetPDFDocument returned the wrong error code: " + result.ToString() + "(" + ((int)result).ToString() + ").");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void DefaultOCGConfig()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument();
+
+            int nameLength = -1;
+            int creatorLength = -1;
+            NativeMethods.ReadDefaultOCGConfigNameLength(nativeContext, nativeDocument, ref nameLength, ref creatorLength);
+            Assert.AreEqual(0, nameLength, "Reading the default OCG configuration for a document without OCGs did not return 0.");
+            Assert.AreEqual(0, creatorLength, "Reading the default OCG configuration for a document without OCGs did not return 0.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+
+            (dataHandle, ms, nativeContext, nativeDocument, nativeStream) = CreateSampleDocument("Tests.Data.Sample.OCGTree.pdf");
+
+            nameLength = -1;
+            creatorLength = -1;
+            NativeMethods.ReadDefaultOCGConfigNameLength(nativeContext, nativeDocument, ref nameLength, ref creatorLength);
+            Assert.AreEqual("Default".Length, nameLength, "The default OCG configuration name length is wrong.");
+            Assert.AreEqual(Encoding.UTF8.GetBytes("VectSharp.PDF v3.1.0").Length, creatorLength, "The default OCG configuration creator length is wrong.");
+
+            byte[] nameBytes = new byte[nameLength];
+            byte[] creatorBytes = new byte[creatorLength];
+
+            GCHandle nameHandle = GCHandle.Alloc(nameBytes, GCHandleType.Pinned);
+            GCHandle creatorHandle = GCHandle.Alloc(creatorBytes, GCHandleType.Pinned);
+
+            NativeMethods.ReadDefaultOCGConfig(nativeContext, nativeDocument, nameLength, creatorLength, nameHandle.AddrOfPinnedObject(), creatorHandle.AddrOfPinnedObject());
+
+            nameHandle.Free();
+            creatorHandle.Free();
+
+            Assert.AreEqual("Default", Encoding.UTF8.GetString(nameBytes), "The default OCG configuration name is wrong.");
+            Assert.AreEqual("VectSharp.PDF v3.1.0", Encoding.UTF8.GetString(creatorBytes), "The default OCG configuration creator is wrong.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void AlternativeOCGConfigs()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument();
+
+            int count = NativeMethods.CountAlternativeOCGConfigs(nativeContext, nativeDocument);
+            Assert.AreEqual(0, count, "Reading the number of alternative OCG configurations for a document without OCGs did not return 0.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+
+            (dataHandle, ms, nativeContext, nativeDocument, nativeStream) = CreateSampleDocument("Tests.Data.Sample.OCG.pdf");
+
+            count = NativeMethods.CountAlternativeOCGConfigs(nativeContext, nativeDocument);
+            Assert.AreEqual(0, count, "Reading the number of alternative OCG configurations for a document with only a default OCG did not return 0.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+
+            (dataHandle, ms, nativeContext, nativeDocument, nativeStream) = CreateSampleDocument("Tests.Data.Sample.OCGTree.pdf");
+
+            count = NativeMethods.CountAlternativeOCGConfigs(nativeContext, nativeDocument);
+            Assert.AreEqual(3, count, "Reading the number of alternative OCG configurations returned the wrong value.");
+
+            string[] expectedConfigNames = new string[] { "Rando1", "Rand2", "Ran3" };
+            string[] expectedConfigCreators = new string[] { "VectSharp.PDFv3.1.0", "VectSharp.PDF3.1.0", "VectSharp.PDF.1.0" };
+
+            for (int i = 0; i < count; i++)
+            {
+                int nameLength = -1;
+                int creatorLength = -1;
+                NativeMethods.ReadOCGConfigNameLength(nativeContext, nativeDocument, i, ref nameLength, ref creatorLength);
+                Assert.AreEqual(Encoding.UTF8.GetBytes(expectedConfigNames[i]).Length, nameLength, "The OCG configuration name length is wrong.");
+                Assert.AreEqual(Encoding.UTF8.GetBytes(expectedConfigCreators[i]).Length, creatorLength, "The OCG configuration creator length is wrong.");
+
+                byte[] nameBytes = new byte[nameLength];
+                byte[] creatorBytes = new byte[creatorLength];
+
+                GCHandle nameHandle = GCHandle.Alloc(nameBytes, GCHandleType.Pinned);
+                GCHandle creatorHandle = GCHandle.Alloc(creatorBytes, GCHandleType.Pinned);
+
+                NativeMethods.ReadOCGConfig(nativeContext, nativeDocument, i, nameLength, creatorLength, nameHandle.AddrOfPinnedObject(), creatorHandle.AddrOfPinnedObject());
+
+                nameHandle.Free();
+                creatorHandle.Free();
+
+                Assert.AreEqual(expectedConfigNames[i], Encoding.UTF8.GetString(nameBytes), "The OCG configuration name is wrong.");
+                Assert.AreEqual(expectedConfigCreators[i], Encoding.UTF8.GetString(creatorBytes), "The OCG configuration creator is wrong.");
+            }
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void OptionalContentGroups()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument();
+
+            int count = NativeMethods.CountOptionalContentGroups(nativeContext, nativeDocument);
+            Assert.AreEqual(0, count, "Reading the number of OCGs for a document without OCGs did not return 0.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+
+            (dataHandle, ms, nativeContext, nativeDocument, nativeStream) = CreateSampleDocument("Tests.Data.Sample.OCG.pdf");
+
+            count = NativeMethods.CountOptionalContentGroups(nativeContext, nativeDocument);
+            Assert.AreEqual(3, count, "The number of OCGs in the document is wrong.");
+
+            int[] nameLengths = new int[count];
+            GCHandle nameLengthHandle = GCHandle.Alloc(nameLengths, GCHandleType.Pinned);
+            NativeMethods.GetOptionalContentGroupNameLengths(nativeContext, nativeDocument, count, nameLengthHandle.AddrOfPinnedObject());
+            nameLengthHandle.Free();
+            CollectionAssert.AreEqual(new int[] { "Blue".Length, "Green".Length, "Red".Length }, nameLengths, "The OCG name lengths are wrong.");
+
+            byte[][] names = new byte[count][];
+            GCHandle[] nameHandles = new GCHandle[count];
+            IntPtr[] nameAddresses = new IntPtr[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                names[i] = new byte[nameLengths[i]];
+                nameHandles[i] = GCHandle.Alloc(names[i], GCHandleType.Pinned);
+                nameAddresses[i] = nameHandles[i].AddrOfPinnedObject();
+            }
+
+            GCHandle nameAddressesHandle = GCHandle.Alloc(nameAddresses, GCHandleType.Pinned);
+
+            NativeMethods.GetOptionalContentGroups(nativeContext, nativeDocument, count, nameAddressesHandle.AddrOfPinnedObject());
+
+            string[] nameStrings = new string[count];
+            nameAddressesHandle.Free();
+            for (int i = 0; i < count; i++)
+            {
+                nameHandles[i].Free();
+                nameStrings[i] = Encoding.UTF8.GetString(names[i]);
+            }
+
+            CollectionAssert.AreEqual(new string[] { "Blue", "Green", "Red" }, nameStrings, "The OCG names are wrong.");
+
+            int[] ocgStates = new int[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                ocgStates[i] = NativeMethods.GetOptionalContentGroupState(nativeContext, nativeDocument, i);
+            }
+
+            CollectionAssert.AreEqual(new int[] { 0, 1, 1 }, ocgStates, "The OCG states are wrong.");
+
+            for (int i = 0; i < count; i++)
+            {
+                NativeMethods.SetOptionalContentGroupState(nativeContext, nativeDocument, i, 1 - ocgStates[i]);
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                ocgStates[i] = NativeMethods.GetOptionalContentGroupState(nativeContext, nativeDocument, i);
+            }
+
+            CollectionAssert.AreEqual(new int[] { 1, 0, 0 }, ocgStates, "The OCG states are wrong.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void OptionalContentGroupUI()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument();
+
+            int count = NativeMethods.CountOptionalContentGroupConfigUI(nativeContext, nativeDocument);
+            Assert.AreEqual(0, count, "Reading the number of OCG UIs for a document without OCGs did not return 0.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+
+            (dataHandle, ms, nativeContext, nativeDocument, nativeStream) = CreateSampleDocument("Tests.Data.Sample.OCGTree.pdf");
+
+            count = NativeMethods.CountOptionalContentGroupConfigUI(nativeContext, nativeDocument);
+            Assert.AreEqual(14, count, "The number of OCG UIs is wrong.");
+
+            int[] labelLengths = new int[count];
+            GCHandle labelLengthsHandle = GCHandle.Alloc(labelLengths, GCHandleType.Pinned);
+
+            NativeMethods.ReadOptionalContentGroupUILabelLengths(nativeContext, nativeDocument, count, labelLengthsHandle.AddrOfPinnedObject());
+            labelLengthsHandle.Free();
+            CollectionAssert.AreEqual(new int[] { 12, 3, 4, 5, 6, 4, 5, 12, 4, 4, 5, 5, 4, 5 }, labelLengths, "The OCG UI label lengths are wrong.");
+
+            byte[][] labelBytes = new byte[count][];
+            GCHandle[] labelByteHandles = new GCHandle[count];
+            IntPtr[] labelByteAddresses = new IntPtr[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                labelBytes[i] = new byte[labelLengths[i]];
+                labelByteHandles[i] = GCHandle.Alloc(labelBytes[i], GCHandleType.Pinned);
+                labelByteAddresses[i] = labelByteHandles[i].AddrOfPinnedObject();
+            }
+
+            GCHandle labelByteAddressesHandle = GCHandle.Alloc(labelByteAddresses, GCHandleType.Pinned);
+
+            int[] depths = new int[count];
+            int[] types = new int[count];
+            int[] lockeds = new int[count];
+            GCHandle depthsHandle = GCHandle.Alloc(depths, GCHandleType.Pinned);
+            GCHandle typesHandle = GCHandle.Alloc(types, GCHandleType.Pinned);
+            GCHandle lockedsHandle = GCHandle.Alloc(lockeds, GCHandleType.Pinned);
+
+            NativeMethods.ReadOptionalContentGroupUIs(nativeContext, nativeDocument, count, labelByteAddressesHandle.AddrOfPinnedObject(), depthsHandle.AddrOfPinnedObject(), typesHandle.AddrOfPinnedObject(), lockedsHandle.AddrOfPinnedObject());
+
+            lockedsHandle.Free();
+            typesHandle.Free();
+            depthsHandle.Free();
+            labelByteAddressesHandle.Free();
+
+            string[] labels = new string[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                labelByteHandles[i].Free();
+                labels[i] = Encoding.UTF8.GetString(labelBytes[i]);
+            }
+
+            CollectionAssert.AreEqual(new string[] { "Warm colours", "Red", "Dark", "Light", "Orange", "Dark", "Light", "Cold colours", "Blue", "Dark", "Light", "Green", "Dark", "Light" }, labels, "The OCG UI labels are wrong.");
+            CollectionAssert.AreEqual(new int[] { 1, 1, 2, 2, 1, 2, 2, 1, 1, 2, 2, 1, 2, 2 }, depths, "The OCG UI depths are wrong.");
+            CollectionAssert.AreEqual(new int[] { 0, 1, 2, 2, 1, 2, 2, 0, 1, 2, 2, 1, 2, 2 }, types, "The OCG UI types are wrong.");
+            CollectionAssert.AreEqual(new int[] { 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 }, lockeds, "The OCG UI locked states are wrong.");
+
+            int[] states = new int[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                if (lockeds[i] == 0)
+                {
+                    states[i] = NativeMethods.ReadOptionalContentGroupUIState(nativeContext, nativeDocument, i);
+                }
+            }
+
+            CollectionAssert.AreEqual(new int[] { 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1 }, states, "The OCG UI states are wrong.");
+
+            for (int i = 0; i < count; i++)
+            {
+                if (lockeds[i] == 0)
+                {
+                    NativeMethods.SetOptionalContentGroupUIState(nativeContext, nativeDocument, i, 1 - states[i]);
+                }
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                if (lockeds[i] == 0)
+                {
+                    states[i] = NativeMethods.ReadOptionalContentGroupUIState(nativeContext, nativeDocument, i);
+                }
+            }
+
+            CollectionAssert.AreEqual(new int[] { 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 }, states, "The OCG UI states are wrong.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void OCGConfigEnabling()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument("Tests.Data.Sample.OCGTree.pdf");
+
+            int count = 14;
+            int[] states = new int[count];
+
+            NativeMethods.EnableOCGConfig(nativeContext, nativeDocument, 0);
+
+            for (int i = 0; i < count; i++)
+            {
+                if (i != 0 && i != 7)
+                {
+                    states[i] = NativeMethods.ReadOptionalContentGroupUIState(nativeContext, nativeDocument, i);
+                }
+            }
+
+            CollectionAssert.AreEqual(new int[] { 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1 }, states, "The OCG UI states are wrong.");
+
+            NativeMethods.EnableOCGConfig(nativeContext, nativeDocument, 1);
+
+            for (int i = 0; i < count; i++)
+            {
+                if (i != 0 && i != 7)
+                {
+                    states[i] = NativeMethods.ReadOptionalContentGroupUIState(nativeContext, nativeDocument, i);
+                }
+            }
+
+            CollectionAssert.AreEqual(new int[] { 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1 }, states, "The OCG UI states are wrong.");
+
+            NativeMethods.EnableOCGConfig(nativeContext, nativeDocument, 2);
+
+            for (int i = 0; i < count; i++)
+            {
+                if (i != 0 && i != 7)
+                {
+                    states[i] = NativeMethods.ReadOptionalContentGroupUIState(nativeContext, nativeDocument, i);
+                }
+            }
+
+            CollectionAssert.AreEqual(new int[] { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1 }, states, "The OCG UI states are wrong.");
+
+            NativeMethods.EnableDefaultOCGConfig(nativeContext, nativeDocument);
+
+            for (int i = 0; i < count; i++)
+            {
+                if (i != 0 && i != 7)
+                {
+                    states[i] = NativeMethods.ReadOptionalContentGroupUIState(nativeContext, nativeDocument, i);
+                }
+            }
+
+            CollectionAssert.AreEqual(new int[] { 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1 }, states, "The OCG UI states are wrong.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void CountLinks()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x, float y, float w, float h) = CreateSamplePage();
+
+            IntPtr firstLink = IntPtr.Zero;
+            int count = NativeMethods.CountLinks(nativeContext, nativePage, ref firstLink);
+
+            Assert.AreEqual(0, count, "Counting links on a page that does not contain links returned the wrong number.");
+            Assert.AreEqual(IntPtr.Zero, firstLink, "Counting links on a page that does not contain links returned a link pointer.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+
+            (dataHandle, ms, nativePage, nativeDocument, nativeStream, nativeContext, x, y, w, h) = CreateSamplePage("Tests.Data.VectSharp.Markdown.pdf");
+
+            firstLink = IntPtr.Zero;
+            count = NativeMethods.CountLinks(nativeContext, nativePage, ref firstLink);
+            Assert.AreEqual(11, count, "CountLinks returned the wrong value.");
+            Assert.AreNotEqual(IntPtr.Zero, firstLink, "A null link pointer was returned.");
+
+            NativeMethods.DisposeLinks(nativeContext, firstLink);
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void LoadLinks()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x, float y, float w, float h) = CreateSamplePage("Tests.Data.VectSharp.Markdown.pdf");
+
+            IntPtr firstLink = IntPtr.Zero;
+            int count = NativeMethods.CountLinks(nativeContext, nativePage, ref firstLink);
+
+            int[] uriLengths = new int[count];
+            IntPtr[] linksAddresses = new IntPtr[count];
+
+            GCHandle uriLengthsHandle = GCHandle.Alloc(uriLengths, GCHandleType.Pinned);
+            GCHandle linksAddressesHandle = GCHandle.Alloc(linksAddresses, GCHandleType.Pinned);
+
+            NativeMethods.LoadLinks(firstLink, linksAddressesHandle.AddrOfPinnedObject(), uriLengthsHandle.AddrOfPinnedObject());
+
+            linksAddressesHandle.Free();
+            uriLengthsHandle.Free();
+
+            string[] expectedLinkUris = new string[]
+            {
+                "https://commonmark.org/",
+                "https://commonmark.org/",
+                "https://github.com/xoofx/markdig",
+                "https://github.com/xoofx/markdig",
+                "https://github.com/arklumpus/highlight",
+                "https://github.com/arklumpus/highlight",
+                "https://www.nuget.org/packages/VectSharp.Markdown/",
+                "https://www.nuget.org/packages/VectSharp.Markdown/",
+                "https://www.nuget.org/packages/VectSharp.Markdown/",
+                "https://www.nuget.org/packages/VectSharp.MuPDFUtils/",
+                "https://www.nuget.org/packages/VectSharp.MuPDFUtils/"
+            };
+
+            CollectionAssert.AreEqual(expectedLinkUris.Select(x => Encoding.UTF8.GetBytes(x).Length).ToArray(), uriLengths, "The link Uri lengths are wrong.");
+            CollectionAssert.DoesNotContain(linksAddresses, IntPtr.Zero, "A null link pointer was returned.");
+
+            for (int i = 0; i < count; i++)
+            {
+                float x0, y0, x1, y1, destX, destY, destW, destH, destZoom;
+                x0 = y0 = x1 = y1 = destX = destY = destW = destH = destZoom = -1;
+
+                byte[] uriBytes = new byte[uriLengths[i]];
+                int isExternal, isSetOCGState, destType, destPage, destChapter;
+                isExternal = isSetOCGState = destType = destPage = destChapter = -1;
+
+                GCHandle uriBytesHandle = GCHandle.Alloc(uriBytes, GCHandleType.Pinned);
+                NativeMethods.LoadLink(nativeContext, nativeDocument, linksAddresses[i], uriLengths[i], 1, ref x0, ref y0, ref x1, ref y1, uriBytesHandle.AddrOfPinnedObject(), ref isExternal, ref isSetOCGState, ref destType, ref destX, ref destY, ref destW, ref destH, ref destZoom, ref destPage, ref destChapter);
+                uriBytesHandle.Free();
+
+                string uri = Encoding.UTF8.GetString(uriBytes);
+
+                Assert.AreEqual(expectedLinkUris[i], uri, "The link Uri is wrong.");
+                Assert.IsTrue(x0 > 0, "The link x0 is wrong.");
+                Assert.IsTrue(y0 > 0, "The link y0 is wrong.");
+                Assert.IsTrue(x1 > 0, "The link x1 is wrong.");
+                Assert.IsTrue(y1 > 0, "The link y1 is wrong.");
+                Assert.AreEqual(1, isExternal, "The link should be external.");
+                Assert.AreEqual(0, isSetOCGState, "The link should not be a SetOCGState link.");
+            }
+
+            try
+            {
+                NativeMethods.DisposeLinks(nativeContext, firstLink);
+                dataHandle.Free();
+                ms.Dispose();
+
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void LinksOCGs()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float x, float y, float w, float h) = CreateSamplePage("Tests.Data.NoughtsCrosses.pdf");
+
+            IntPtr firstLink = IntPtr.Zero;
+            int count = NativeMethods.CountLinks(nativeContext, nativePage, ref firstLink);
+
+            int[] uriLengths = new int[count];
+            IntPtr[] linksAddresses = new IntPtr[count];
+
+            GCHandle uriLengthsHandle = GCHandle.Alloc(uriLengths, GCHandleType.Pinned);
+            GCHandle linksAddressesHandle = GCHandle.Alloc(linksAddresses, GCHandleType.Pinned);
+
+            NativeMethods.LoadLinks(firstLink, linksAddressesHandle.AddrOfPinnedObject(), uriLengthsHandle.AddrOfPinnedObject());
+
+            linksAddressesHandle.Free();
+            uriLengthsHandle.Free();
+
+            CollectionAssert.AreEqual(Enumerable.Repeat("#SetOCGState".Length, count).ToArray(), uriLengths, "The link Uri lengths are wrong.");
+
+            int[] expectedHiddens = new int[]
+            {
+                1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1
+            };
+
+            for (int i = 0; i < count; i++)
+            {
+                float x0, y0, x1, y1, destX, destY, destW, destH, destZoom;
+                x0 = y0 = x1 = y1 = destX = destY = destW = destH = destZoom = -1;
+
+                byte[] uriBytes = new byte[uriLengths[i]];
+                int isExternal, isSetOCGState, destType, destPage, destChapter;
+                isExternal = isSetOCGState = destType = destPage = destChapter = -1;
+
+                GCHandle uriBytesHandle = GCHandle.Alloc(uriBytes, GCHandleType.Pinned);
+                NativeMethods.LoadLink(nativeContext, nativeDocument, linksAddresses[i], uriLengths[i], 1, ref x0, ref y0, ref x1, ref y1, uriBytesHandle.AddrOfPinnedObject(), ref isExternal, ref isSetOCGState, ref destType, ref destX, ref destY, ref destW, ref destH, ref destZoom, ref destPage, ref destChapter);
+                uriBytesHandle.Free();
+
+                string uri = Encoding.UTF8.GetString(uriBytes);
+
+                Assert.AreEqual("#SetOCGState", uri, "The link Uri is wrong.");
+                Assert.IsTrue(x0 > 0, "The link x0 is wrong.");
+                Assert.IsTrue(y0 > 0, "The link y0 is wrong.");
+                Assert.IsTrue(x1 > 0, "The link x1 is wrong.");
+                Assert.IsTrue(y1 > 0, "The link y1 is wrong.");
+                Assert.AreEqual(0, isExternal, "The link should not be external.");
+                Assert.AreEqual(1, isSetOCGState, "The link should be a SetOCGState link.");
+
+                int isHidden = NativeMethods.IsLinkHidden(nativeContext, "View", linksAddresses[i]);
+                Assert.AreEqual(expectedHiddens[i], isHidden, "The link's visibility is wrong.");
+            }
+
+            NativeMethods.ActivateLinkSetOCGState(nativeContext, nativeDocument, linksAddresses[1]);
+
+            expectedHiddens = new int[]
+            {
+                1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1
+            };
+
+            for (int i = 0; i < count; i++)
+            {
+                int isHidden = NativeMethods.IsLinkHidden(nativeContext, "View", linksAddresses[i]);
+                Assert.AreEqual(expectedHiddens[i], isHidden, "The link's visibility is wrong.");
+            }
+
+            NativeMethods.EnableDefaultOCGConfig(nativeContext, nativeDocument);
+
+            expectedHiddens = new int[]
+            {
+                1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1
+            };
+
+            for (int i = 0; i < count; i++)
+            {
+                int isHidden = NativeMethods.IsLinkHidden(nativeContext, "View", linksAddresses[i]);
+                Assert.AreEqual(expectedHiddens[i], isHidden, "The link's visibility is wrong.");
+            }
+
+            try
+            {
+                NativeMethods.DisposeLinks(nativeContext, firstLink);
+                dataHandle.Free();
+                ms.Dispose();
+
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void GetPageNumber()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument("Tests.Data.mupdf_explored.pdf");
+
+            int pageNum = NativeMethods.GetPageNumber(nativeContext, nativeDocument, 0, 0);
+            Assert.AreEqual(0, pageNum, "The page number is wrong.");
+
+            pageNum = NativeMethods.GetPageNumber(nativeContext, nativeDocument, 0, 2);
+            Assert.AreEqual(2, pageNum, "The page number is wrong.");
+
+            pageNum = NativeMethods.GetPageNumber(nativeContext, nativeDocument, 1, 0);
+            Assert.AreEqual(-1, pageNum, "The page number is wrong.");
+
+            try
+            {
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                dataHandle.Free();
+                ms.Dispose();
+
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
+
+        [TestMethod]
+        public void StructureStructuredTextPage()
+        {
+            IntPtr nativeSTextPage = IntPtr.Zero;
+            int sTextBlockCount = -1;
+
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeDisplayList, IntPtr nativePage, IntPtr nativeDocument, IntPtr nativeStream, IntPtr nativeContext, float _, float _, float _, float _) = CreateSampleDisplayList("Tests.Data.mupdf_explored.pdf");
+
+            _ = NativeMethods.GetStructuredTextPage(nativeContext, nativeDisplayList, (int)(StructuredTextFlags.CollectStructure | StructuredTextFlags.Segment), ref nativeSTextPage, ref sTextBlockCount);
+
+            IntPtr[] blockPointers = new IntPtr[sTextBlockCount];
+            GCHandle blocksHandle = GCHandle.Alloc(blockPointers, GCHandleType.Pinned);
+
+            _ = NativeMethods.GetStructuredTextBlocks(nativeSTextPage, blocksHandle.AddrOfPinnedObject());
+
+            for (int i = 0; i < blockPointers.Length; i++)
+            {
+                int type = -1;
+                float x0 = -1;
+                float y0 = -1;
+                float x1 = -1;
+                float y1 = -1;
+                int lineCount = -1;
+                IntPtr image = IntPtr.Zero;
+                float a = -1;
+                float b = -1;
+                float c = -1;
+                float d = -1;
+                float e = -1;
+                float f = -1;
+
+                byte stroked = 0;
+                byte rgba_r = 0;
+                byte rgba_g = 0;
+                byte rgba_b = 0;
+                byte rgba_a = 0;
+
+                int xs_len = -1;
+                int ys_len = -1;
+                IntPtr down = IntPtr.Zero;
+                int index = -1;
+
+                int result = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+
+                Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextBlock returned the wrong exit code.");
+
+                if (type == 2)
+                {
+                    int children = NativeMethods.CountStructStructuredTextBlockChildren(down);
+
+                    Assert.IsTrue(children > 0, "The structural structured text block does not have any children.");
+
+                    IntPtr[] childBlocks = new IntPtr[children];
+                    GCHandle childBlocksHandle = GCHandle.Alloc(childBlocks, GCHandleType.Pinned);
+
+                    int rawLength = 0;
+                    int standard = -1;
+                    IntPtr parent = IntPtr.Zero;
+                    result = NativeMethods.GetStructStructuredTextBlock(down, ref rawLength, ref standard, ref parent, childBlocksHandle.AddrOfPinnedObject());
+                    childBlocksHandle.Free();
+
+                    Assert.IsTrue(rawLength > 0, "The group's raw type length is zero.");
+                    Assert.AreEqual((int)StructureType.Division, standard, "The group's structure type is wrong.");
+                    CollectionAssert.DoesNotContain(childBlocks, IntPtr.Zero, "The group has a NULL child.");
+
+                    byte[] rawStructureName = new byte[rawLength];
+                    GCHandle rawStructureNameHandle = GCHandle.Alloc(rawStructureName, GCHandleType.Pinned);
+                    NativeMethods.GetStructStructuredTextBlockRawStructure(down, rawLength, rawStructureNameHandle.AddrOfPinnedObject());
+                    rawStructureNameHandle.Free();
+
+                    Assert.AreEqual("Split", Encoding.UTF8.GetString(rawStructureName), "The group's raw structure name is wrong.");
+                }
+            }
+
+            try
+            {
+                blocksHandle.Free();
+                dataHandle.Free();
+                ms.Dispose();
+
+                _ = NativeMethods.DisposePage(nativeContext, nativePage);
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
     }
 }

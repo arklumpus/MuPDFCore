@@ -977,7 +977,7 @@ namespace Tests
 
             string tempFile = Path.GetTempFileName();
 
-            MuPDFDocument.CreateDocument(context, tempFile, DocumentOutputFileTypes.PDF, true, document1.Pages[0], document2.Pages[0]);
+            MuPDFDocument.Create.Document(context, tempFile, DocumentOutputFileTypes.PDF, document1.Pages[0], document2.Pages[0]);
 
             Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
 
@@ -1019,7 +1019,7 @@ namespace Tests
 
             tempFile += "LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢";
 
-            MuPDFDocument.CreateDocument(context, tempFile, DocumentOutputFileTypes.PDF, true, document1.Pages[0], document2.Pages[0]);
+            MuPDFDocument.Create.Document(context, tempFile, DocumentOutputFileTypes.PDF, document1.Pages[0], document2.Pages[0]);
 
             Assert.IsTrue(File.Exists(tempFile), "The output file has not been created.");
 
@@ -1052,7 +1052,7 @@ namespace Tests
 
             string tempFile = Path.GetTempFileName();
 
-            MuPDFDocument.CreateDocument(context, tempFile, DocumentOutputFileTypes.PDF, true, new (MuPDFPage page, Rectangle region, float zoom)[]
+            MuPDFDocument.Create.Document(context, tempFile, DocumentOutputFileTypes.PDF, new (MuPDFPage page, Rectangle region, float zoom)[]
             {
                 (document1.Pages[0], new Rectangle(100, 100, 500, 500), (float)Math.Sqrt(2)),
                 (document2.Pages[0], new Rectangle(0, 0, 500, 500), (float)Math.Sqrt(3)),
@@ -1095,13 +1095,13 @@ namespace Tests
             }
             catch { }
 
-            Assert.ThrowsException<ArgumentException>(() => MuPDFDocument.CreateDocument(context, tempFile, DocumentOutputFileTypes.SVG, true, new (MuPDFPage page, Rectangle region, float zoom)[]
+            Assert.ThrowsException<ArgumentException>(() => MuPDFDocument.Create.Document(context, tempFile, DocumentOutputFileTypes.SVG, new (MuPDFPage page, Rectangle region, float zoom)[]
             {
                 (document1.Pages[0], new Rectangle(100, 100, 500, 500), (float)Math.Sqrt(2)),
                 (document2.Pages[0], new Rectangle(0, 0, 500, 500), (float)Math.Sqrt(3)),
             }), "Creating an SVG document with multiple pages succeeded.");
 
-            MuPDFDocument.CreateDocument(context, tempFile, DocumentOutputFileTypes.SVG, true, new (MuPDFPage page, Rectangle region, float zoom)[]
+            MuPDFDocument.Create.Document(context, tempFile, DocumentOutputFileTypes.SVG, new (MuPDFPage page, Rectangle region, float zoom)[]
             {
                 (document1.Pages[0], new Rectangle(100, 100, 500, 500), (float)Math.Sqrt(2))
             });
@@ -1139,7 +1139,7 @@ namespace Tests
 
             string tempFile = Path.GetTempFileName();
 
-            MuPDFDocument.CreateDocument(context, tempFile, DocumentOutputFileTypes.CBZ, true, new (MuPDFPage page, Rectangle region, float zoom)[]
+            MuPDFDocument.Create.Document(context, tempFile, DocumentOutputFileTypes.CBZ, new (MuPDFPage page, Rectangle region, float zoom)[]
             {
                 (document1.Pages[0], new Rectangle(100, 100, 500, 500), (float)Math.Sqrt(2)),
                 (document2.Pages[0], new Rectangle(0, 0, 500, 500), (float)Math.Sqrt(3)),
@@ -1476,6 +1476,60 @@ namespace Tests
             Assert.AreEqual(EncryptionState.Unlocked, document.EncryptionState, "The document should now be decrypted.");
             Assert.AreEqual(RestrictionState.Unlocked, document.RestrictionState, "The document should still be unlocked.");
             Assert.IsNotNull(document.Pages[0].ToString(), "Accessing a page after the document has been decrypted should work.");
+        }
+
+        [TestMethod]
+        public void MuPDFDocumentNoOCGs()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            Assert.IsNull(document.OptionalContentGroupData, "A MuPDFDocument without OCGs has a non-null OptionalContentGroupData property.");
+        }
+
+        [TestMethod]
+        public void MuPDFDocumentOCGs()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.OCGTree.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            Assert.IsNotNull(document.OptionalContentGroupData, "A MuPDFDocument with OCGs has a null OptionalContentGroupData property.");
+            Assert.IsNotNull(document.OptionalContentGroupData.DefaultConfiguration, "The default OCG configuration is null.");
+            Assert.IsNotNull(document.OptionalContentGroupData.AlternativeConfigurations, "The alternative OCG configuration array is null.");
+            Assert.IsNotNull(document.OptionalContentGroupData.OptionalContentGroups, "The OCG array is null.");
+            Assert.AreEqual(3, document.OptionalContentGroupData.AlternativeConfigurations.Length, "The document does not contain the correct number of alternative OCG configurations.");
+            Assert.AreEqual(12, document.OptionalContentGroupData.OptionalContentGroups.Length, "The document does not contain the correct number of OCGs.");
+        }
+
+        [TestMethod]
+        public void MuPDFDocumentOCGUI()
+        {
+            using Stream pdfDataStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Tests.Data.Sample.OCGTree.pdf");
+            MemoryStream pdfStream = new MemoryStream();
+            pdfDataStream.CopyTo(pdfStream);
+
+            using MuPDFContext context = new MuPDFContext();
+            using MuPDFDocument document = new MuPDFDocument(context, ref pdfStream, InputFileTypes.PDF);
+
+            Assert.AreEqual(2, document.OptionalContentGroupData.DefaultConfiguration.UI.Length, "The OCG UI tree has the wrong length.");
+            Assert.IsInstanceOfType(document.OptionalContentGroupData.DefaultConfiguration.UI[0], typeof(MuPDFOptionalContentGroupLabel), "The OCG UI label element has the wrong type.");
+            Assert.IsInstanceOfType(document.OptionalContentGroupData.DefaultConfiguration.UI[0].Children[0], typeof(MuPDFOptionalContentGroupCheckbox), "The OCG UI check box element has the wrong type.");
+            Assert.IsInstanceOfType(document.OptionalContentGroupData.DefaultConfiguration.UI[0].Children[0].Children[0], typeof(MuPDFOptionalContentGroupRadioButton), "The OCG UI radio button element has the wrong type.");
+            Assert.IsTrue(((MuPDFOptionalContentGroupRadioButton)document.OptionalContentGroupData.DefaultConfiguration.UI[0].Children[0].Children[0]).IsEnabled, "The first OCG UI radio button element has the wrong state.");
+            Assert.IsFalse(((MuPDFOptionalContentGroupRadioButton)document.OptionalContentGroupData.DefaultConfiguration.UI[0].Children[0].Children[1]).IsEnabled, "The second OCG UI radio button element has the wrong state.");
+
+            ((MuPDFOptionalContentGroupRadioButton)document.OptionalContentGroupData.DefaultConfiguration.UI[0].Children[0].Children[1]).Toggle();
+
+            Assert.IsFalse(((MuPDFOptionalContentGroupRadioButton)document.OptionalContentGroupData.DefaultConfiguration.UI[0].Children[0].Children[0]).IsEnabled, "After toggling, the first OCG UI radio button element has the wrong state.");
+            Assert.IsTrue(((MuPDFOptionalContentGroupRadioButton)document.OptionalContentGroupData.DefaultConfiguration.UI[0].Children[0].Children[1]).IsEnabled, "After toggling, the second OCG UI radio button element has the wrong state.");
         }
     }
 }
