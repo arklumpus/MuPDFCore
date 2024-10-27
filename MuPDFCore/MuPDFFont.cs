@@ -98,7 +98,7 @@ namespace MuPDFCore
             this.IsItalic = italic != 0;
             this.IsSerif = serif != 0;
             this.IsMonospaced = monospaced != 0;
-            this.Name = Encoding.ASCII.GetString(fontName);
+            this.Name = Encoding.UTF8.GetString(fontName);
 
             this.OwnerContext = context;
             this.NativePointer = nativePointer;

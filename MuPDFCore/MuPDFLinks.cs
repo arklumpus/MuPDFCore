@@ -166,7 +166,7 @@ namespace MuPDFCore
 
             this.ActiveArea = new Rectangle(x0, y0, x1, y1);
 
-            string uri = Encoding.ASCII.GetString(uriBytes);
+            string uri = Encoding.UTF8.GetString(uriBytes);
 
             this.Uri = uri;
             this.NativeLink = linkPointer;

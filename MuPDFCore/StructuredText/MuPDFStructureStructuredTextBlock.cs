@@ -425,7 +425,7 @@ namespace MuPDFCore.StructuredText
                     NativeMethods.GetStructStructuredTextBlockRawStructure(down, rawLength, (IntPtr)rawBytesPtr);
                 }
 
-                raw = Encoding.ASCII.GetString(rawBytes);
+                raw = Encoding.UTF8.GetString(rawBytes);
             }
 
             this.RawStructure = raw;

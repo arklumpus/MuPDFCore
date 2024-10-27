@@ -99,7 +99,7 @@ namespace MuPDFCore
 
                 for (int i = 0; i < ocgCount; i++)
                 {
-                    this.OptionalContentGroups[i] = new MuPDFOptionalContentGroup(this.OwnerDocument, Encoding.ASCII.GetString(ocgNames[i]), i);
+                    this.OptionalContentGroups[i] = new MuPDFOptionalContentGroup(this.OwnerDocument, Encoding.UTF8.GetString(ocgNames[i]), i);
                 }
             }
         }
@@ -182,7 +182,7 @@ namespace MuPDFCore
                 string[] labels = new string[uiCount];
                 for (int i = 0; i < uiCount; i++)
                 {
-                    labels[i] = Encoding.ASCII.GetString(labelBytes[i]);
+                    labels[i] = Encoding.UTF8.GetString(labelBytes[i]);
                 }
 
                 TemporaryUIItem superRootItem = new TemporaryUIItem(null, -1, -1, -1, -1, null);
@@ -302,7 +302,7 @@ namespace MuPDFCore
                     NativeMethods.ReadDefaultOCGConfig(ownerDocument.OwnerContext.NativeContext, ownerDocument.NativePDFDocument, nameLength, creatorLength, (IntPtr)configNamePtr, (IntPtr)configCreatorPtr);
                 }
 
-                return new MuPDFOptionalContentGroupConfiguration(Encoding.ASCII.GetString(configName), Encoding.ASCII.GetString(configCreator), -1, ownerDocument);
+                return new MuPDFOptionalContentGroupConfiguration(Encoding.UTF8.GetString(configName), Encoding.UTF8.GetString(configCreator), -1, ownerDocument);
             }
             else
             {
@@ -328,7 +328,7 @@ namespace MuPDFCore
                     NativeMethods.ReadOCGConfig(ownerDocument.OwnerContext.NativeContext, ownerDocument.NativePDFDocument, index, nameLength, creatorLength, (IntPtr)configNamePtr, (IntPtr)configCreatorPtr);
                 }
 
-                return new MuPDFOptionalContentGroupConfiguration(Encoding.ASCII.GetString(configName), Encoding.ASCII.GetString(configCreator), index, ownerDocument);
+                return new MuPDFOptionalContentGroupConfiguration(Encoding.UTF8.GetString(configName), Encoding.UTF8.GetString(configCreator), index, ownerDocument);
             }
             else
             {

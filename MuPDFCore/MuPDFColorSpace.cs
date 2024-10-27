@@ -151,7 +151,7 @@ namespace MuPDFCore
                     throw new MuPDFException("Unknown error!", result);
             }
 
-            string name = Encoding.ASCII.GetString(nameArray);
+            string name = Encoding.UTF8.GetString(nameArray);
 
             ColorSpaceType type = (ColorSpaceType)csType;
 
@@ -217,7 +217,7 @@ namespace MuPDFCore
                                     throw new MuPDFException("Unknown error!", result);
                             }
 
-                            colorantNames[i] = Encoding.ASCII.GetString(colorantNameArray);
+                            colorantNames[i] = Encoding.UTF8.GetString(colorantNameArray);
                         }
 
                         MuPDFColorSpace alternateColorSpace = MuPDFColorSpace.Create(nativeContext, baseColorSpace);
