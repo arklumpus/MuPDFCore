@@ -220,7 +220,7 @@ namespace Tests
             MuPDFStructuredTextAddress address4 = new MuPDFStructuredTextAddress(sTextPage.Count - 1, sTextPage[^1].Count - 1, sTextPage[^1][^1].Count - 1);
 
             MuPDFStructuredTextAddress address1Iexp = new MuPDFStructuredTextAddress(1, 0, 4);
-            MuPDFStructuredTextAddress address2Iexp = new MuPDFStructuredTextAddress(20, 1, 0);
+            MuPDFStructuredTextAddress address2Iexp = new MuPDFStructuredTextAddress(21, 0, 0);
             MuPDFStructuredTextAddress address3Iexp = new MuPDFStructuredTextAddress(5, 0, 0);
 
             MuPDFStructuredTextAddress? address1I = address1.Increment(sTextPage);
@@ -353,14 +353,14 @@ namespace Tests
 
             using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            IEnumerable<Quad> quads = sTextPage.GetHighlightQuads(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(1, 0, 9)), true);
-            Assert.AreEqual(8, quads.Count(), "The highlight quads are in the wrong number.");
+            IEnumerable<Quad> quads = sTextPage.GetHighlightQuads(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(1, 0, 8)), true);
+            Assert.AreEqual(7, quads.Count(), "The highlight quads are in the wrong number.");
 
             quads = sTextPage.GetHighlightQuads(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(3, 0, 2)), true);
-            Assert.AreEqual(12, quads.Count(), "The highlight quads are in the wrong number.");
+            Assert.AreEqual(11, quads.Count(), "The highlight quads are in the wrong number.");
 
             quads = sTextPage.GetHighlightQuads(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(4, 0, 2)), true);
-            Assert.AreEqual(13, quads.Count(), "The highlight quads are in the wrong number.");
+            Assert.AreEqual(12, quads.Count(), "The highlight quads are in the wrong number.");
         }
 
         [TestMethod]
@@ -375,14 +375,14 @@ namespace Tests
 
             using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            string text = sTextPage.GetText(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(1, 0, 9)));
-            Assert.AreEqual("mes-Bold", text, "The extracted text is wrong.");
+            string text = sTextPage.GetText(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(1, 0, 8)));
+            Assert.AreEqual("lvetica", text, "The extracted text is wrong.");
 
             text = sTextPage.GetText(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(3, 0, 2)));
-            Assert.AreEqual("mes-Bold\nTimes-Italic\nTim".Replace("\n", Environment.NewLine), text, "The extracted text is wrong.");
+            Assert.AreEqual("lvetica\nHelvetica-Bold\nHelvetica-Oblique\nHel".Replace("\n", Environment.NewLine), text, "The extracted text is wrong.");
 
             text = sTextPage.GetText(new MuPDFStructuredTextAddressSpan(new MuPDFStructuredTextAddress(1, 0, 2), new MuPDFStructuredTextAddress(8, 0, 2)));
-            Assert.AreEqual("mes-Bold\nTimes-Italic\nTimes-BoldItalic\nHelvetica\nHelvetica-Bold\nHelvetica-Oblique\nHelvetica-BoldOblique\nCou".Replace("\n", Environment.NewLine), text, "The extracted text is wrong.");
+            Assert.AreEqual("lvetica\nHelvetica-Bold\nHelvetica-Oblique\nHelvetica-BoldOblique\nCourier\nCourier-Bold\nCourier-Oblique\nCourier-BoldOblique\nΣψμβολ\n✺❁❐❆✤❉■❇❂❁▼▲\nVec".Replace("\n", Environment.NewLine), text, "The extracted text is wrong.");
         }
 
         [TestMethod]
@@ -424,7 +424,7 @@ namespace Tests
             Assert.IsTrue(block.BoundingBox.Y0 >= 0, "The block's top coordinate is out of range.");
             Assert.IsTrue(block.BoundingBox.X1 >= block.BoundingBox.X0, "The block's right coordinate is out of range.");
             Assert.IsTrue(block.BoundingBox.Y1 >= block.BoundingBox.Y0, "The block's bottom coordinate is out of range.");
-            Assert.AreEqual(2, block.Count, "The number of lines in the block is wrong.");
+            Assert.AreEqual(1, block.Count, "The number of lines in the block is wrong.");
 
             for (int i = 0; i < block.Count; i++)
             {
@@ -440,7 +440,7 @@ namespace Tests
                 index++;
             }
 
-            Assert.AreEqual(2, index, "The number of lines enumerated in the block is wrong.");
+            Assert.AreEqual(1, index, "The number of lines enumerated in the block is wrong.");
         }
 
         [TestMethod]
@@ -459,7 +459,7 @@ namespace Tests
 
             Assert.IsNotNull(block.Lines, "The block's lines are null.");
             Assert.AreEqual(block.Count, block.Lines.Length, "The number of lines in the block does not correspond to the Count of the block.");
-            Assert.IsTrue((block.ToString() == "Left-side bearing\nRight-side bearing\n".Replace("\n", Environment.NewLine) || block.ToString() == "VectSharp\nBaseline\n".Replace("\n", Environment.NewLine)), "Expected: <" + "Left-side bearing\nRight-side bearing\n".Replace("\n", Environment.NewLine) + "> or <" + "VectSharp\nBaseline\n".Replace("\n", Environment.NewLine) + ">, Actual: <" + block.ToString() + ">. The block text is wrong.");
+            Assert.IsTrue((block.ToString() == "5π/6\n".Replace("\n", Environment.NewLine)), "Expected: <" + "5π/6\n".Replace("\n", Environment.NewLine) + ">, Actual: <" + block.ToString() + ">. The block text is wrong.");
         }
 
         [TestMethod]
@@ -486,7 +486,7 @@ namespace Tests
             Assert.IsFalse(float.IsNaN(line.Direction.Y), "The y component of the directionof the line is NaN.");
             Assert.AreEqual(1, Math.Sqrt(line.Direction.X * line.Direction.X + line.Direction.Y * line.Direction.Y), 0.01, "The modulus of the direction of the line is not 1.");
 
-            Assert.AreEqual(17, line.Count, "The number of characters in the line is wrong.");
+            Assert.AreEqual(19, line.Count, "The number of characters in the line is wrong.");
 
             for (int i = 0; i < line.Count; i++)
             {
@@ -502,7 +502,7 @@ namespace Tests
                 index++;
             }
 
-            Assert.AreEqual(17, index, "The number of characters enumerated in the line is wrong.");
+            Assert.AreEqual(19, index, "The number of characters enumerated in the line is wrong.");
         }
 
         [TestMethod]
@@ -521,8 +521,8 @@ namespace Tests
 
             Assert.IsNotNull(line.Characters, "The line's characters are null.");
             Assert.AreEqual(line.Count, line.Characters.Length, "The number of characters in the line does not correspond to the Count of the line.");
-            Assert.AreEqual("Helvetica-Oblique", line.Text, "The line text is wrong.");
-            Assert.AreEqual("Helvetica-Oblique", line.ToString(), "The line text is wrong.");
+            Assert.AreEqual("Courier-BoldOblique", line.Text, "The line text is wrong.");
+            Assert.AreEqual("Courier-BoldOblique", line.ToString(), "The line text is wrong.");
         }
 
         [TestMethod]
@@ -537,14 +537,14 @@ namespace Tests
 
             using MuPDFStructuredTextPage sTextPage = document.GetStructuredTextPage(0);
 
-            using MuPDFStructuredTextCharacter chr = sTextPage[5][0][8];
+            using MuPDFStructuredTextCharacter chr = sTextPage[3][0][8];
 
             Assert.IsNotNull(chr, "The character is null.");
 
             Assert.AreEqual(97, chr.CodePoint, "The character's code point is wrong.");
             Assert.AreEqual("a", chr.Character, "The character's string representation is wrong.");
             Assert.AreEqual("a", chr.ToString(), "The character's string representation is wrong.");
-            Assert.AreEqual(16744231, chr.Color, "The character's color is wrong.");
+            Assert.AreEqual((uint)4290111005, chr.Color, "The character's color is wrong.");
             Assert.IsTrue(chr.Origin.X >= 0, "The left coordinate of the character's origin is out of range.");
             Assert.IsTrue(chr.Origin.Y >= 0, "The top coordinate of the character's origin is out of range.");
 

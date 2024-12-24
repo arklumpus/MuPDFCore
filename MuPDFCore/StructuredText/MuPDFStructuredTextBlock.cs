@@ -119,10 +119,7 @@ namespace MuPDFCore.StructuredText
             float f = 0;
 
             byte stroked = 0;
-            byte rgba_r = 0;
-            byte rgba_g = 0;
-            byte rgba_b = 0;
-            byte rgba_a = 0;
+            uint argb = 0;
 
             int xs_len = 0;
             int ys_len = 0;
@@ -130,7 +127,7 @@ namespace MuPDFCore.StructuredText
             IntPtr down = IntPtr.Zero;
             int index = 0;
 
-            ExitCodes result = (ExitCodes)NativeMethods.GetStructuredTextBlock(context.NativeContext, blockPointer, ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref imagePointer, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+            ExitCodes result = (ExitCodes)NativeMethods.GetStructuredTextBlock(context.NativeContext, blockPointer, ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref imagePointer, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref argb, ref xs_len, ref ys_len, ref down, ref index);
 
             switch (result)
             {
@@ -149,7 +146,7 @@ namespace MuPDFCore.StructuredText
                 case Types.Text:
                     return new MuPDFTextStructuredTextBlock(context, parentPage, bBox, blockPointer, lineCount);
                 case Types.Vector:
-                    return new MuPDFVectorStructuredTextBlock(parentPage, bBox, stroked != 0, rgba_r, rgba_g, rgba_b, rgba_a);
+                    return new MuPDFVectorStructuredTextBlock(parentPage, bBox, stroked != 0, argb);
                 case Types.Grid:
                     return new MuPDFGridStructuredTextBlock(context, parentPage, bBox, blockPointer, xs_len, ys_len);
                 case Types.Structure:

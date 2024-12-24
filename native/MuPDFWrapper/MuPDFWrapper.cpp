@@ -967,11 +967,11 @@ extern "C"
 	}
 
 
-	DLL_PUBLIC int GetStructuredTextChar(fz_context* ctx, fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y, int* out_bidi, fz_font** out_font)
+	DLL_PUBLIC int GetStructuredTextChar(fz_context* ctx, fz_stext_char* character, int* out_c, uint32_t* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y, int* out_bidi, fz_font** out_font)
 	{
 		*out_c = character->c;
 
-		*out_color = character->color;
+		*out_color = character->argb;
 
 		*out_origin_x = character->origin.x;
 		*out_origin_y = character->origin.y;
@@ -1116,7 +1116,7 @@ extern "C"
 		return EXIT_SUCCESS;
 	}
 
-	DLL_PUBLIC int GetStructuredTextBlock(fz_context* ctx, fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* out_a, float* out_b, float* out_c, float* out_d, float* out_e, float* out_f, uint8_t* out_stroked, uint8_t* out_rgba_r, uint8_t* out_rgba_g, uint8_t* out_rgba_b, uint8_t* out_rgba_a, int* out_xs_len, int* out_ys_len, fz_stext_struct** out_down, int* out_index)
+	DLL_PUBLIC int GetStructuredTextBlock(fz_context* ctx, fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* out_a, float* out_b, float* out_c, float* out_d, float* out_e, float* out_f, uint8_t* out_stroked, uint32_t* out_argb, int* out_xs_len, int* out_ys_len, fz_stext_struct** out_down, int* out_index)
 	{
 		*out_type = block->type;
 
@@ -1155,10 +1155,7 @@ extern "C"
 		{
 			*out_line_count = 0;
 			*out_stroked = block->u.v.stroked;
-			*out_rgba_r = block->u.v.rgba[0];
-			*out_rgba_g = block->u.v.rgba[1];
-			*out_rgba_b = block->u.v.rgba[2];
-			*out_rgba_a = block->u.v.rgba[3];
+			*out_argb = block->u.v.argb;
 		}
 		else if (block->type == FZ_STEXT_BLOCK_GRID)
 		{

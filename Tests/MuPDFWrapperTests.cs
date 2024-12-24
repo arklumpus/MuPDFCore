@@ -1700,17 +1700,14 @@ namespace Tests
                 float f = -1;
 
                 byte stroked = 0;
-                byte rgba_r = 0;
-                byte rgba_g = 0;
-                byte rgba_b = 0;
-                byte rgba_a = 0;
+                uint argb = 0;
 
                 int xs_len = -1;
                 int ys_len = -1;
                 IntPtr down = IntPtr.Zero;
                 int index = -1;
 
-                int result = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+                int result = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref argb, ref xs_len, ref ys_len, ref down, ref index);
 
                 Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextBlock returned the wrong exit code.");
                 Assert.IsTrue(x0 >= 0, "The " + i.ToString() + "th block's left coordinate is out of range.");
@@ -1768,17 +1765,14 @@ namespace Tests
                 float f = -1;
 
                 byte stroked = 0;
-                byte rgba_r = 0;
-                byte rgba_g = 0;
-                byte rgba_b = 0;
-                byte rgba_a = 0;
+                uint argb = 0;
 
                 int xs_len = -1;
                 int ys_len = -1;
                 IntPtr down = IntPtr.Zero;
                 int index = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref argb, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -1835,17 +1829,14 @@ namespace Tests
                 float f = -1;
 
                 byte stroked = 0;
-                byte rgba_r = 0;
-                byte rgba_g = 0;
-                byte rgba_b = 0;
-                byte rgba_a = 0;
+                uint argb = 0;
 
                 int xs_len = -1;
                 int ys_len = -1;
                 IntPtr down = IntPtr.Zero;
                 int index = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref argb, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -1926,17 +1917,14 @@ namespace Tests
                 float f = -1;
 
                 byte stroked = 0;
-                byte rgba_r = 0;
-                byte rgba_g = 0;
-                byte rgba_b = 0;
-                byte rgba_a = 0;
+                uint argb = 0;
 
                 int xs_len = -1;
                 int ys_len = -1;
                 IntPtr down = IntPtr.Zero;
                 int index = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref argb, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -2020,17 +2008,14 @@ namespace Tests
                 float f = -1;
 
                 byte stroked = 0;
-                byte rgba_r = 0;
-                byte rgba_g = 0;
-                byte rgba_b = 0;
-                byte rgba_a = 0;
+                uint argb = 0;
 
                 int xs_len = -1;
                 int ys_len = -1;
                 IntPtr down = IntPtr.Zero;
                 int index = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref argb, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -2086,7 +2071,7 @@ namespace Tests
                         for (int k = 0; k < charCount; k++)
                         {
                             int codePoint = -1;
-                            int color = -1;
+                            uint color = 0;
                             float originX = -1;
                             float originY = -1;
                             float size = -1;
@@ -2288,17 +2273,14 @@ namespace Tests
                 float f = -1;
 
                 byte stroked = 0;
-                byte rgba_r = 0;
-                byte rgba_g = 0;
-                byte rgba_b = 0;
-                byte rgba_a = 0;
+                uint argb = 0;
 
                 int xs_len = -1;
                 int ys_len = -1;
                 IntPtr down = IntPtr.Zero;
                 int index = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref argb, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 1)
                 {
@@ -2709,17 +2691,14 @@ namespace Tests
                 float f = -1;
 
                 byte stroked = 0;
-                byte rgba_r = 0;
-                byte rgba_g = 0;
-                byte rgba_b = 0;
-                byte rgba_a = 0;
+                uint argb = 0;
 
                 int xs_len = -1;
                 int ys_len = -1;
                 IntPtr down = IntPtr.Zero;
                 int index = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref argb, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -2751,7 +2730,7 @@ namespace Tests
                         for (int k = 0; k < charCount; k++)
                         {
                             int codePoint = -1;
-                            int color = -1;
+                            uint color = 0;
                             float originX = -1;
                             float originY = -1;
                             float size = -1;
@@ -2838,17 +2817,14 @@ namespace Tests
                 float f = -1;
 
                 byte stroked = 0;
-                byte rgba_r = 0;
-                byte rgba_g = 0;
-                byte rgba_b = 0;
-                byte rgba_a = 0;
+                uint argb = 0;
 
                 int xs_len = -1;
                 int ys_len = -1;
                 IntPtr down = IntPtr.Zero;
                 int index = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref argb, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -2880,7 +2856,7 @@ namespace Tests
                         for (int k = 0; k < charCount; k++)
                         {
                             int codePoint = -1;
-                            int color = -1;
+                            uint color = 0;
                             float originX = -1;
                             float originY = -1;
                             float size = -1;
@@ -2970,17 +2946,14 @@ namespace Tests
                 float f = -1;
 
                 byte stroked = 0;
-                byte rgba_r = 0;
-                byte rgba_g = 0;
-                byte rgba_b = 0;
-                byte rgba_a = 0;
+                uint argb = 0;
 
                 int xs_len = -1;
                 int ys_len = -1;
                 IntPtr down = IntPtr.Zero;
                 int index = -1;
 
-                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+                _ = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref argb, ref xs_len, ref ys_len, ref down, ref index);
 
                 if (type == 0)
                 {
@@ -3012,7 +2985,7 @@ namespace Tests
                         for (int k = 0; k < charCount; k++)
                         {
                             int codePoint = -1;
-                            int color = -1;
+                            uint color = 0;
                             float originX = -1;
                             float originY = -1;
                             float size = -1;
@@ -3835,17 +3808,14 @@ namespace Tests
                 float f = -1;
 
                 byte stroked = 0;
-                byte rgba_r = 0;
-                byte rgba_g = 0;
-                byte rgba_b = 0;
-                byte rgba_a = 0;
+                uint argb = 0;
 
                 int xs_len = -1;
                 int ys_len = -1;
                 IntPtr down = IntPtr.Zero;
                 int index = -1;
 
-                int result = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref rgba_r, ref rgba_g, ref rgba_b, ref rgba_a, ref xs_len, ref ys_len, ref down, ref index);
+                int result = NativeMethods.GetStructuredTextBlock(nativeContext, blockPointers[i], ref type, ref x0, ref y0, ref x1, ref y1, ref lineCount, ref image, ref a, ref b, ref c, ref d, ref e, ref f, ref stroked, ref argb, ref xs_len, ref ys_len, ref down, ref index);
 
                 Assert.AreEqual((int)ExitCodes.EXIT_SUCCESS, result, "GetStructuredTextBlock returned the wrong exit code.");
 

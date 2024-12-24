@@ -219,7 +219,7 @@ namespace MuPDFCore.StructuredText
             this.ParentBlock = parentBlock;
             this.Characters = new MuPDFStructuredTextCharacter[]
             {
-                new MuPDFStructuredTextCharacter(this, 0, -1, new PointF(boundingBox.X0, boundingBox.Y1), new Quad(new PointF(boundingBox.X0, boundingBox.Y1), new PointF(boundingBox.X0, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y1)), 9, MuPDFStructuredTextCharacter.TextDirection.LeftToRight, null)
+                new MuPDFStructuredTextCharacter(this, 0, 0, new PointF(boundingBox.X0, boundingBox.Y1), new Quad(new PointF(boundingBox.X0, boundingBox.Y1), new PointF(boundingBox.X0, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y0), new PointF(boundingBox.X1, boundingBox.Y1)), 9, MuPDFStructuredTextCharacter.TextDirection.LeftToRight, null)
             };
         }
 
@@ -252,7 +252,7 @@ namespace MuPDFCore.StructuredText
                 for (int i = 0; i < charCount; i++)
                 {
                     int c = -1;
-                    int color = -1;
+                    uint color = 0;
                     float originX = -1;
                     float originY = -1;
                     float size = -1;
@@ -376,9 +376,9 @@ namespace MuPDFCore.StructuredText
         public string Character { get; }
 
         /// <summary>
-        /// An sRGB hex representation of the colour of the character.
+        /// An sARGB hex representation of the colour of the character.
         /// </summary>
-        public int Color { get; }
+        public uint Color { get; }
 
         /// <summary>
         /// The baseline origin of the character.
@@ -410,7 +410,7 @@ namespace MuPDFCore.StructuredText
         /// </summary>
         public MuPDFStructuredTextLine ParentLine { get; }
 
-        internal MuPDFStructuredTextCharacter(MuPDFStructuredTextLine parentLine, int codePoint, int color, PointF origin, Quad boundingQuad, float size, TextDirection direction, MuPDFFont font)
+        internal MuPDFStructuredTextCharacter(MuPDFStructuredTextLine parentLine, int codePoint, uint color, PointF origin, Quad boundingQuad, float size, TextDirection direction, MuPDFFont font)
         {
             this.ParentLine = parentLine;
             this.CodePoint = codePoint;

@@ -641,7 +641,7 @@ extern "C"
 	/// </summary>
 	/// <param name="character">The address of the character.</param>
 	/// <param name="out_c">Unicode code point of the character.</param>
-	/// <param name="out_color">An sRGB hex representation of the colour of the character.</param>
+	/// <param name="out_color">An AsRGB hex representation of the colour of the character.</param>
 	/// <param name="out_origin_x">The x coordinate of the baseline origin of the character.</param>
 	/// <param name="out_origin_y">The y coordinate of the baseline origin of the character.</param>
 	/// <param name="out_size">The size in points of the character.</param>
@@ -656,7 +656,7 @@ extern "C"
 	/// <param name="out_bidi">Even for LTR, odd for RTL.</param>
 	/// <param name="out_font">Font used to draw the character.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextChar(fz_context* ctx, fz_stext_char* character, int* out_c, int* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y, int* out_bidi, fz_font** out_font);
+	DLL_PUBLIC int GetStructuredTextChar(fz_context* ctx, fz_stext_char* character, int* out_c, uint32_t* out_color, float* out_origin_x, float* out_origin_y, float* out_size, float* out_ll_x, float* out_ll_y, float* out_ul_x, float* out_ul_y, float* out_ur_x, float* out_ur_y, float* out_lr_x, float* out_lr_y, int* out_bidi, fz_font** out_font);
 
 	/// <summary>
 	/// Get an array of structured text characters from a structured text line.
@@ -749,16 +749,13 @@ extern "C"
 	/// <param name="out_e">If the block contains an image, the fifth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
 	/// <param name="out_f">If the block contains an image, the sixth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
 	/// <param name="out_stroked">If the block contains vector graphics, whether the graphics is stroked.</param>
-	/// <param name="out_rgba_r">If the block contains stroked vector graphics, the R component of the stroke colour.</param>
-	/// <param name="out_rgba_g">If the block contains stroked vector graphics, the G component of the stroke colour.</param>
-	/// <param name="out_rgba_b">If the block contains stroked vector graphics, the B component of the stroke colour.</param>
-	/// <param name="out_rgba_a">If the block contains stroked vector graphics, the A component of the stroke colour.</param>
+	/// <param name="out_argb">If the block contains stroked vector graphics, the stroke colour in sARGB hex representation.</param>
 	/// <param name="out_xs_len">If the block contains "grid" lines, the number of X grid lines.</param>
 	/// <param name="out_ys_len">If the block contains "grid" lines, the number of Y grid lines.</param>
 	/// <param name="out_down">If the block is a structural element block, a pointer to the structural block contents.</param>
 	/// <param name="out_index">If the block is a structural element block, the index of the block within the current level of the tree.</param>
 	/// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
-	DLL_PUBLIC int GetStructuredTextBlock(fz_context* ctx, fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* out_a, float* out_b, float* out_c, float* out_d, float* out_e, float* out_f, uint8_t* out_stroked, uint8_t* out_rgba_r, uint8_t* out_rgba_g, uint8_t* out_rgba_b, uint8_t* out_rgba_a, int* out_xs_len, int* out_ys_len, fz_stext_struct** out_down, int* out_index);
+	DLL_PUBLIC int GetStructuredTextBlock(fz_context* ctx, fz_stext_block* block, int* out_type, float* out_x0, float* out_y0, float* out_x1, float* out_y1, int* out_line_count, fz_image** out_image, float* out_a, float* out_b, float* out_c, float* out_d, float* out_e, float* out_f, uint8_t* out_stroked, uint32_t* out_argb, int* out_xs_len, int* out_ys_len, fz_stext_struct** out_down, int* out_index);
 
 	/// <summary>
 	/// Get an array of structured text blocks from a structured text page.

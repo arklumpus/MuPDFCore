@@ -1522,7 +1522,7 @@ namespace MuPDFCore
         /// <param name="out_font">Font used to draw the character.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextChar(IntPtr ctx, IntPtr character, ref int out_c, ref int out_color, ref float out_origin_x, ref float out_origin_y, ref float out_size, ref float out_ll_x, ref float out_ll_y, ref float out_ul_x, ref float out_ul_y, ref float out_ur_x, ref float out_ur_y, ref float out_lr_x, ref float out_lr_y, ref int out_bidi, ref IntPtr out_font);
+        internal static extern int GetStructuredTextChar(IntPtr ctx, IntPtr character, ref int out_c, ref uint out_color, ref float out_origin_x, ref float out_origin_y, ref float out_size, ref float out_ll_x, ref float out_ll_y, ref float out_ul_x, ref float out_ul_y, ref float out_ur_x, ref float out_ur_y, ref float out_lr_x, ref float out_lr_y, ref int out_bidi, ref IntPtr out_font);
 
         /// <summary>
         /// Get an array of structured text characters from a structured text line.
@@ -1622,17 +1622,14 @@ namespace MuPDFCore
         /// <param name="out_e">If the block contains an image, the fifth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
         /// <param name="out_f">If the block contains an image, the sixth element of the image's transformation matrix [ [ a b 0 ] [ c d 0 ] [ e f 1 ] ].</param>
         /// <param name="out_stroked">If the block contains vector graphics, whether the graphics is stroked.</param>
-        /// <param name="out_rgba_r">If the block contains stroked vector graphics, the R component of the stroke colour.</param>
-        /// <param name="out_rgba_g">If the block contains stroked vector graphics, the G component of the stroke colour.</param>
-        /// <param name="out_rgba_b">If the block contains stroked vector graphics, the B component of the stroke colour.</param>
-        /// <param name="out_rgba_a">If the block contains stroked vector graphics, the A component of the stroke colour.</param>
+        /// <param name="out_argb">If the block contains stroked vector graphics, the R component of the stroke colour.</param>
         /// <param name="out_xs_len">If the block contains "grid" lines, the number of X grid lines.</param>
         /// <param name="out_ys_len">If the block contains "grid" lines, the number of Y grid lines.</param>
         /// <param name="out_down">If the block is a structural element block, a pointer to the structural block contents.</param>
         /// <param name="out_index">If the block is a structural element block, the index of the block within the current level of the tree.</param>
         /// <returns>An integer equivalent to <see cref="ExitCodes"/> detailing whether any errors occurred.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int GetStructuredTextBlock(IntPtr ctx, IntPtr block, ref int out_type, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1, ref int out_line_count, ref IntPtr out_image, ref float out_a, ref float out_b, ref float out_c, ref float out_d, ref float out_e, ref float out_f, ref byte out_stroked, ref byte out_rgba_r, ref byte out_rgba_g, ref byte out_rgba_b, ref byte out_rgba_a, ref int out_xs_len, ref int out_ys_len, ref IntPtr out_down, ref int out_index);
+        internal static extern int GetStructuredTextBlock(IntPtr ctx, IntPtr block, ref int out_type, ref float out_x0, ref float out_y0, ref float out_x1, ref float out_y1, ref int out_line_count, ref IntPtr out_image, ref float out_a, ref float out_b, ref float out_c, ref float out_d, ref float out_e, ref float out_f, ref byte out_stroked, ref uint out_argb, ref int out_xs_len, ref int out_ys_len, ref IntPtr out_down, ref int out_index);
 
         /// <summary>
         /// Get an array of structured text blocks from a structured text page.

@@ -59,11 +59,11 @@ namespace MuPDFCore.StructuredText
             }
         }
 
-        internal MuPDFVectorStructuredTextBlock(MuPDFStructuredTextPage parentPage, Rectangle boundingBox, bool stroked, byte r, byte g, byte b, byte a) : base(boundingBox, parentPage)
+        internal MuPDFVectorStructuredTextBlock(MuPDFStructuredTextPage parentPage, Rectangle boundingBox, bool stroked, uint argb) : base(boundingBox, parentPage)
         {
             this.Line = new MuPDFStructuredTextLine(this.BoundingBox, this);
             Stroked = stroked;
-            Color = new byte[] { r, g, b, a };
+            Color = new byte[] { (byte)((argb >> 16) & 0xFF), (byte)((argb >> 8) & 0xFF), (byte)(argb & 0xFF), (byte)((argb >> 24) & 0xFF) };
         }
 
         /// <inheritdoc/>
