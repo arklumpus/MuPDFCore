@@ -640,12 +640,16 @@ namespace MuPDFCore.StructuredText
                     }
                 }
 
-                if (OwnerContext.disposedValue)
+                if ((OwnerContext == null && this.NativePointer != IntPtr.Zero) || OwnerContext?.disposedValue == true)
                 {
                     throw new LifetimeManagementException<MuPDFStructuredTextPage, MuPDFContext>(this, OwnerContext, this.NativePointer, OwnerContext.NativeContext);
                 }
 
-                NativeMethods.DisposeStructuredTextPage(this.OwnerContext.NativeContext, this.NativePointer);
+                if (OwnerContext != null && this.NativePointer != IntPtr.Zero)
+                {
+                    NativeMethods.DisposeStructuredTextPage(this.OwnerContext.NativeContext, this.NativePointer);
+                }
+
                 disposedValue = true;
             }
         }
