@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['pdfrenderer_0',['PDFRenderer',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a404edbc2007a610faa0c860325e716eb',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['pointf_1',['PointF',['../struct_mu_p_d_f_core_1_1_point_f.html#abec3e1a6f96acfebb440b7e77d882298',1,'MuPDFCore::PointF']]]
+  ['pdfdocument_0',['PDFDocument',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document_1_1_create.html#ae978d83169e4b8c76ea739a2871ba5be',1,'MuPDFCore.MuPDFDocument.Create.PDFDocument(MuPDFContext context, string fileName, IEnumerable&lt;(MuPDFPage page, Rectangle region, float zoom)&gt; pages, PDFCreationOptions options=default)'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_document_1_1_create.html#a9412a5fe0f8ebe18a773073291e5432d',1,'MuPDFCore.MuPDFDocument.Create.PDFDocument(MuPDFContext context, string fileName, params(MuPDFPage page, Rectangle region, float zoom)[] pages)'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_document_1_1_create.html#abb4315ac06e0446bd16034de3eb8941a',1,'MuPDFCore.MuPDFDocument.Create.PDFDocument(MuPDFContext context, string fileName, IEnumerable&lt; MuPDFPage &gt; pages, PDFCreationOptions options=default)'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_document_1_1_create.html#a25c85e9addfeab403444cccbb09d7f91',1,'MuPDFCore.MuPDFDocument.Create.PDFDocument(MuPDFContext context, string fileName, params MuPDFPage[] pages)']]],
+  ['pdfrenderer_1',['PDFRenderer',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a404edbc2007a610faa0c860325e716eb',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['pointf_2',['PointF',['../struct_mu_p_d_f_core_1_1_point_f.html#abec3e1a6f96acfebb440b7e77d882298',1,'MuPDFCore::PointF']]]
 ];

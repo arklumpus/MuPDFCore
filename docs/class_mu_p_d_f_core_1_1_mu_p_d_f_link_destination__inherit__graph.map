@@ -1,0 +1,6 @@
+<map id="MuPDFCore.MuPDFLinkDestination" name="MuPDFCore.MuPDFLinkDestination">
+<area shape="rect" id="node1" title="Represents a generic link destination." alt="" coords="5,80,235,107"/>
+<area shape="rect" id="node2" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_external_link_destination.html" title="A link destination to an external resource (e.g., a website)." alt="" coords="287,5,499,48"/>
+<area shape="rect" id="node3" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_internal_link_destination.html" title="An internal link destination." alt="" coords="290,72,496,115"/>
+<area shape="rect" id="node4" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_set_o_c_g_state_link_destination.html" title="A destination for a link whose effect is to change the visibility state of some optional content grou..." alt="" coords="283,139,503,181"/>
+</map>

@@ -23,7 +23,7 @@ The MuPDFCore library targets .NET Standard 2.0, thus it can be used in projects
     * musl-based `linux-musl-x64`
 * Linux arm64/aarch64 (ARM 64 bit)
     * glibc-based `linux-arm64`
-    * musl-based `linux-musl-arm64` (see [note](muslNote))
+    * musl-based `linux-musl-arm64` (see [note](#muslNote))
 * macOS Intel x86_64 (64 bit) `osx-x64`
 * macOS Apple silicon (ARM 64 bit) `osx-arm64`
 
@@ -86,7 +86,9 @@ Steps 1 and 2 need to be performed on all of Windows, macOS and Linux, and on th
 
 ### 1. Building libmupdf
 
-You can download the open-source (GNU AGPL) MuPDF source code from [here](https://mupdf.com/downloads/index.html). You will need to uncompress the source file and compile the library on Windows, macOS and Linux. You need the following files:
+Starting from version 2.0.0, MuPDFCore is based on a fork of [MuPDF](https://mupdf.com), providing some bugfixes/new features and simplifying the build process.
+
+You can access this fork (currently based on MuPDF 1.25.2) from [arklumpus/mupdf](https://github.com/arklumpus/mupdf). You will need to follow the instructions in that repository to compile the library on Windows, macOS and Linux. You need the following files:
 
 * From Windows (x86, x64, arm64):
     * libmupdf.lib
@@ -101,191 +103,7 @@ You can download the open-source (GNU AGPL) MuPDF source code from [here](https:
 
 Note that the files from macOS and Linux are different, despite sharing the same name.
 
-For convenience, these compiled files for MuPDF 1.24.0 are included in the [`native/MuPDFWrapper/lib` folder](https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib) of this repository.
-
-<details>
-<summary>
-<strong>Tips for compiling MuPDF 1.24.3</strong>
-</summary>
-
-* On all platforms:
-	* Delete or comment line 316 in `source/fitz/output.c` (the `fz_throw` invocation within the `buffer_seek` method - this should leave the `buffer_seek` method empty). This line throws an exception when a seek operation on a buffer is attempted. The problem is that this makes it impossible to render a document as a PSD image in memory, because the `fz_write_pixmap_as_psd` method performs a few seek operations. By removing this line, we turn buffer seeks into no-ops; this doesn't seem to have catastrophic side-effects and the PSD documents produced in this way appear to be fine.
-
-* On Windows (x64):
-    * Open the `platform/win32/mupdf.sln` solution in Visual Studio 2022. You should get a prompt to retarget your projects. Accept the default settings (latest Windows SDK and v143 of the tools).
-    * Select the `ReleaseExtra` configuration and `x64` architecture. Select every project in the solution except `javaviewer` and `javaviewerlib` and right-click to open the project properties. Go to `C/C++` > `Code Generation` and set the `Runtime Library` to `Multi-threaded DLL (/MD)`.
-    * Open the properties for the `libpkcs7` project, go to `C/C++` > `Preprocessor` and remove `HAVE_LIBCRYPTO` from the `Preprocessor Definitions`. Then go to `Librarian` > `General` and remove `libcrypto.lib` from the `Additional Dependencies`. Now, go to `Custom Build Step` and clear the `Command Line` and the `Output`.
-    * Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
-    * Download the `win64-binary` release of [libarchive](https://www.libarchive.org/) - I used version 3.7.4. Extract the zip file and copy the `libarchive` folder to the `thirdparty` folder in the MuPDF source tree.
-        * Open the `thirdparty\libarchive\include` folder and create a new subfolder called `libarchive`. Move the `archive.h` and `archive_entry.h` from `thirdparty\libarchive\include` to `thirdparty\libarchive\include\libarchive`. 
-        * Open the `thirdparty\libarchive\lib` folder and create a new subfolder called `x64`. Move the `archive.lib` and `archive_static.lib` files from `thirdparty\libarchive\lib` to `thirdparty\libarchive\lib\x64`.
-    * Download the [bzip2](https://gitlab.com/bzip2/bzip2/) library (I used version 1.0.8) and extract the source code.
-        * Open the `x64 Native Tools Command Prompt for VS`, move to the bzip2 source code folder, and run the following commands:
-        ```
-        cl -Zi -EHsc -c bzlib.c blocksort.c compress.c crctable.c decompress.c huffman.c randtable.c
-        lib bzlib.obj blocksort.obj compress.obj crctable.obj decompress.obj huffman.obj randtable.obj
-        ```
-        * This will create some files, including one called `bzlib.lib`. Copy this file into the `thirdparty\libarchive\lib\x64` folder, renaming it to `libbz2-static.lib`.
-    * Download the [XZ Utils](https://github.com/tukaani-project/xz) (I used v5.6.2) and extract the source code.
-        * Open the `x64 Native Tools Command Prompt for VS`, move to the `windows` subfolder of the XZ Utils source code folder, and run the following commands:
-        ```
-        cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_NLS=OFF -DBUILD_SHARED_LIBS=OFF ..
-        msbuild xz.sln /p:Configuration=Release
-        ```
-        * Now go to the `Release` folder and copy `liblzma.lib` to the `thirdparty\libarchive\lib\x64` in the MuPDF source tree.
-    * Download the [Zstandard](https://github.com/facebook/zstd/releases) source code (I used v1.5.6) and extract it. Note that the precompiled version will not work because it was not compiled against the MSVCRT.
-        * Open the `zstd.sln` file located in the `build\VS2010` folder in Visual Studio. You should get a prompt prompt to retarget your projects. Accept the default settings (latest Windows SDK and v143 of the tools).
-        * Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
-        * Open the `x64 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it with `msbuild zstd.sln /p:Configuration=Release`.
-        * Copy the `libzstd_static.lib` file from the `bin\x64_Release` folder to the `thirdparty\libarchive\lib\x64` folder in the MuPDF source tree.
-    * Now, open the `x64 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it using `msbuild mupdf.sln`
-    * Then, build again using `msbuild mupdf.sln /p:Configuration=Release`.
-    * Finally, build again using `msbuild mupdf.sln /p:Configuration=ReleaseExtra`.
-    * This may still show some errors, but should produce the `libmupdf.lib` file that is required in the `x64/ReleaseExtra` folder (the file should be ~524MB in size).
-
-* On Windows (x86):
-    * You will have to use Visual Studio 2019, as Visual Studio 2022 is not supported on x86 platforms.
-    * Open the `platform/win32/mupdf.sln` solution in Visual Studio and select the `ReleaseExtra` configuration and `Win32` architecture. Select every project in the solution except `javaviewer` and `javaviewerlib` and right-click to open the project properties. Go to `C/C++` > `Code Generation` and set the `Runtime Library` to `Multi-threaded DLL (/MD)`.
-    * Open the properties for the `libpkcs7` project, go to `C/C++` > `Preprocessor` and remove `HAVE_LIBCRYPTO` from the `Preprocessor Definitions`. Then go to `Librarian` > `General` and remove `libcrypto.lib` from the `Additional Dependencies`. Now, go to `Custom compilation instructions` and clear the `Command line` and the `Output`.
-    * Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
-    * Download the source code release of [libarchive](https://www.libarchive.org/) (I used version 3.7.4) and extract it.
-        * Open the `x86 Native Tools Command Prompt for VS`, move to the source code folder, and run the following commands:
-        ```
-        cmake .
-        msbuild libarchive/archive_static.vcxproj /p:Configuration=Release /p:Platform="Win32"
-        ```
-        * This will create a file called `archive_static.lib` in the `libarchive/Release` folder.
-        * Now, go to the MuPDF source directory and open the `thirdparty` folder.
-            * Create a new folder called `libarchive`; within this folder, create two subfolders: `include` and `lib`.
-            * In the `thirdparty\libarchive\include` folder, create another subfolder, called `libarchive`. Copy `archive.h` and `archive_entry.h` from the `libarchive` folder in the libarchive source tree, to the `thirdparty\libarchive\include\libarchive` folder within the MuPDF source code.
-            * Copy the `archive_static.lib` file from the `libarchive/Release` folder in the libarchive source to `thirdparty\libarchive\lib`.
-    * Download the [bzip2](https://gitlab.com/bzip2/bzip2/) library (I used version 1.0.8) and extract the source code.
-        * Open the `x86 Native Tools Command Prompt for VS`, move to the bzip2 source code folder, and run the following commands:
-        ```
-        cl -Zi -EHsc -c bzlib.c blocksort.c compress.c crctable.c decompress.c huffman.c randtable.c
-        lib bzlib.obj blocksort.obj compress.obj crctable.obj decompress.obj huffman.obj randtable.obj
-        ```
-        * This will create some files, including one called `bzlib.lib`. Copy this file into the `thirdparty\libarchive\lib` folder, renaming it to `libbz2-static.lib`.
-    * Download the [XZ Utils](https://github.com/tukaani-project/xz) (I used v5.6.2) and extract the source code.
-        * Open the `x86 Native Tools Command Prompt for VS`, move to the `windows` subfolder of the XZ Utils source code folder, and run the following commands:
-        ```
-        cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_NLS=OFF -DBUILD_SHARED_LIBS=OFF ..
-        msbuild xz.sln /p:Configuration=Release /p:Platform=Win32
-        ```
-        * Now go to the `Release` folder and copy `liblzma.lib` to the `thirdparty\libarchive\lib\x64` in the MuPDF source tree.
-    * Download the [Zstandard](https://github.com/facebook/zstd/releases) source code (I used v1.5.6) and extract it. Note that the precompiled version will not work because it was not compiled against the MSVCRT.
-        * Open the `zstd.sln` file located in the `build\VS2010` folder in Visual Studio. You should get a prompt prompt to retarget your projects. Accept the default settings (latest Windows SDK and v142 of the tools).
-        * Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
-        * Open the `x86 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it with `msbuild zstd.sln /p:Configuration=Release /p:Platform=Win32`.
-        * Copy the `libzstd_static.lib` file from the `bin\Win32_Release` folder to the `thirdparty\libarchive\lib` folder in the MuPDF source tree.
-    * Now, open the `x86 Native Tools Command Prompt for VS`, move to the folder with the solution file, and build it using `msbuild mupdf.sln /p:Platform=Win32`
-    * Then, build again using `msbuild mupdf.sln /p:Configuration=Release /p:Platform=Win32`.
-    * Finally, build again using `msbuild mupdf.sln /p:Configuration=ReleaseExtra /p:Platform=Win32`.
-    * This should produce the `libmupdf.lib` file that is required in the `ReleaseExtra` folder (the file should be ~475MB in size).
-
-* On Windows (arm64)
-    
-    This is going to be a bit more complicated, because it appears that MuPDF is not meant to be built on ARM. These instructions will assume that you are building MuPDF on an ARM machine.
-    
-    First of all, make sure that you have installed Visual Studio 2022 and have selected the C++ ARM64 build tools component of the "Desktop development with C++" workload.
-    
-    * Download and extract the MuPDF source code and follow the instructions for all platforms above.
-    * Add ` || defined(_M_ARM64)` at the end of line 16 in `scripts/tesseract/endianness.h`.
-    * Open the file `thirdparty/openjpeg/src/lib/openjp2/ht_dec.c` and add the following after line 57 ([source](https://github.com/ngtcp2/ngtcp2/commit/576f2d470cdf3da7b15348f4f609e4c7a0070499)):
-        ```C
-        unsigned int __popcnt(unsigned int x) {
-            unsigned int c = 0;
-            for (; x; ++c) {
-                x &= x - 1;
-            }
-            return c;
-        }
-        ```
-    * Now we need to edit a few files in the `thirdparty/tesseract/src/arch` folder.
-        * Comment or delete lines 183-212 (inclusive) in `simddetect.cpp`. You should now have an empty block between `#  elif defined(_WIN32)` and `#else`. Also comment or delete lines 235-262 (inclusive) and 286-319 (inclusive).
-        * Comment or delete lines 18-26 (inclusive) in `dotproductsse.cpp`. Delete everything from line 31 to line 142 (inclusive) and replace with:
-        ```C
-        double DotProductSSE(const double* u, const double* v, int n) {
-            return DotProductNative(u, v, n);
-        }
-        ```
-        * Comment or delete lines 24-25 (inclusive) in `dotproductavx.cpp`. Delete everything from line 30 to line 82 (inclusive) and replace with:
-        ```C
-        double DotProductAVX(const double* u, const double* v, int n) {
-            return DotProductNative(u, v, n);
-        }
-        ```
-        * Comment or delete lines 24-25 (inclusive) in `dotproductfma.cpp`. Delete everything from line 30 to line 86 (inclusive) and replace with:
-        ```C
-        double DotProductFMA(const double* u, const double* v, int n) {
-            return DotProductNative(u, v, n);
-        }
-        ```
-        * Delete the contents of `thirdparty/tesseract/src/arch/intsimdmatrixavx2.cpp` and `thirdparty/tesseract/src/arch/intsimdmatrixsse.cpp` (do not delete the files, just their contents).
-        * Comment or delete lines 119-120 (inclusive) in `intsimdmatrix.h`
-    
-    * Download the source code release of [libarchive](https://www.libarchive.org/) (I used version 3.7.4) and extract it.
-        * Open the `Developer Command Prompt for VS`, move to the source code folder, and run the following commands:
-        ```
-        cmake .
-        msbuild libarchive/archive_static.vcxproj /p:Configuration=Release
-        ```
-        * This will create a file called `archive_static.lib` in the `libarchive/Release` folder.
-        * Now, go to the MuPDF source directory and open the `thirdparty` folder.
-            * Create a new folder called `libarchive`; within this folder, create two subfolders: `include` and `lib`.
-            * In the `thirdparty\libarchive\include` folder, create another subfolder, called `libarchive`. Copy `archive.h` and `archive_entry.h` from the `libarchive` folder in the libarchive source tree, to the `thirdparty\libarchive\include\libarchive` folder within the MuPDF source code.
-            * In the `thirdparty\libarchive\include` folder, create a new subfolder called `x64` and copy the `archive_static.lib` file from the `libarchive/Release` folder in the libarchive source to `thirdparty\libarchive\lib\x64`.
-
-    * Download the [bzip2](https://gitlab.com/bzip2/bzip2/) library (I used version 1.0.8) and extract the source code.
-        * Open the `Developer Command Prompt for VS`, move to the bzip2 source code folder, and run the following commands:
-        ```
-        cl -Zi -EHsc -c bzlib.c blocksort.c compress.c crctable.c decompress.c huffman.c randtable.c
-        lib bzlib.obj blocksort.obj compress.obj crctable.obj decompress.obj huffman.obj randtable.obj
-        ```
-        * This will create some files, including one called `bzlib.lib`. Copy this file into the `thirdparty\libarchive\lib\x64` folder, renaming it to `libbz2-static.lib`.
-
-    * Download the [XZ Utils](https://github.com/tukaani-project/xz) (I used v5.6.2) and extract the source code.
-        * Open the `Developer Command Prompt for VS`, move to the `windows` subfolder of the XZ Utils source code folder, and run the following commands:
-        ```
-        cmake -DENABLE_NLS=OFF -DBUILD_SHARED_LIBS=OFF ..
-        msbuild xz.sln /p:Configuration=Release
-        ```
-        * Now go to the `Release` folder and copy `liblzma.lib` to the `thirdparty\libarchive\lib\x64` in the MuPDF source tree.
-    * Download the [Zstandard](https://github.com/facebook/zstd/releases) source code (I used v1.5.6) and extract it. Note that the precompiled version will not work because it was not compiled against the MSVCRT.
-        * Open the `zstd.sln` file located in the `build\VS2010` folder in Visual Studio. You should get a prompt prompt to retarget your projects. Accept the default settings (latest Windows SDK and v142 of the tools).
-        * In Visual Studio, click on the "Configuration Manager" item from the "Build" menu. In the new window, click on the drop down menu for the "Active solution platform" and select `<New...>`. In this new dialog, select the `ARM64` platform and choose to copy the settings from `x64`. Leave the `Create new project platforms` option enabled and click on `OK` (this may take some time).
-        * Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
-        * Open the `Developer Command Prompt for VS`, move to the folder with the solution file, and build it with `msbuild zstd.sln /p:Configuration=Release /p:Platform=ARM64`.
-        * Copy the `libzstd_static.lib` file from the `bin/ARM64_Release` folder to the `thirdparty\libarchive\lib\x64` folder in the MuPDF source tree.
-
-    * Back in the MuPDF source code folder, open the `platform/win32/mupdf.sln` solution in Visual Studio. You should get a prompt to retarget your projects. Accept the default settings (latest Windows SDK and v143 of the tools).
-    * In Visual Studio, click on the "Configuration Manager" item from the "Build" menu. In the new window, click on the drop down menu for the "Active solution platform" and select `<New...>`. In this new dialog, select the `ARM64` platform and choose to copy the settings from `x64`. Leave the `Create new project platforms` option enabled and click on `OK` (this may take some time).
-    * Close the Configuration Manager and select the `ReleaseExtra` configuration and `ARM64` architecture. Select every project in the solution except `javaviewer` and `javaviewerlib` and right-click to open the project properties. Go to `C/C++` > `Code Generation` and set the `Runtime Library` to `Multi-threaded DLL (/MD)`.
-    * Open the properties for the `libpkcs7` project, go to `C/C++` > `Preprocessor` and remove `HAVE_LIBCRYPTO` from the `Preprocessor Definitions`. Then go to `Librarian` > `General` and remove `libcrypto.lib` from the `Additional Dependencies`. Now, go to `Custom Build Step` and clear the `Command Line` and the `Output`.
-    * Save everything (`CTRL+SHIFT+S`) and close Visual Studio.
-    * Create a new folder `platform/win32/Release`. Now, the problem is that the `bin2coff` script included with MuPDF cannot create `obj` files for ARM64 (only for x86 and x64). Since I could not find a version that can do this, I [translated the source code of bin2coff to C# and added this option myself](https://github.com/arklumpus/bin2coff). You can download an ARM64 `bin2coff.exe` from [here](https://github.com/arklumpus/bin2coff/releases/latest/download/win-arm64.zip); place it in the `Release` folder that you have just created.
-    * Open the `Developer Command Prompt for VS`, move to the folder with the solution file (`platform/win32`), and build it using `msbuild mupdf.sln /p:Configuration=ReleaseExtra`. Some compilation errors may occur towards the end, but they should not matter.
-    * After a while, this should produce `libmupdf.lib` in the `ARM64/ReleaseExtra` folder (the file should be ~521MB in size).
-
-* On Linux (x64, for both `glibc`- and `musl`- based distros):
-    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 25 (which specifies the `CFLAGS`).
-    * Comment line 218 in `include/mupdf/fitz/config.h` (for some reason, this seems to disable OCR even when using `USE_TESSERACT=yes` to build).
-    * Make sure that you are using a recent enough version of GCC (version 7.3.1 seems to be enough).
-    * Compile by running `USE_TESSERACT=yes make HAVE_X11=no HAVE_GLUT=no` (this builds just the command-line libraries and tools, and enables OCR through the included Tesseract library).
-
-* On Linux (arm64, for both `glibc`- and `musl`- based distros):
-    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 25 (which specifies the `CFLAGS`).
-    * Make sure that you are using a recent enough version of GCC (version 7.3.1 seems to be enough).
-    * Compile by running `USE_TESSERACT=yes make HAVE_X11=no HAVE_GLUT=no` (this builds just the command-line libraries and tools, and enables OCR through the included Tesseract library).
-
-* On macOS (Intel - x64):
-    * Edit the `Makefile`, adding the `-fPIC` compiler option at the end of line 25 (which specifies the `CFLAGS`). Also add the `-std=c++11` option at the end of line 58 (which specifies the `CXX_CMD`).
-    * Compile by running `USE_TESSERACT=yes make` (this enables OCR through the included Tesseract library).
-
-* On macOS (Apple silicon - arm64)
-    * Edit the `Makefile`, adding the `-fPIC` compiler options at the end of line 25 (which specifies the `CFLAGS`). Also add the `-std=c++11` option at the end of line 58 (which specifies the `CXX_CMD`).
-    * Compile by running `USE_TESSERACT=yes make` (this enables OCR through the included Tesseract library).
-</details>
+For convenience, these compiled files are included in the [`native/MuPDFWrapper/lib` folder](https://github.com/arklumpus/MuPDFCore/tree/master/native/MuPDFWrapper/lib) of this repository.
 
 ### 2. Building MuPDFWrapper
 
@@ -362,14 +180,14 @@ This will create a NuGet package in `MuPDFCore/bin/Release`. You can install thi
 
 ### 5. Running tests
 
-To verify that everything is working correctly, you should build the MuPDFCore test suite and run it on all platforms. To build the test suite, you will need the [.NET 7 SDK or higher](https://dotnet.microsoft.com/download/dotnet/current). You will also need to have enabled the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install).
+To verify that everything is working correctly, you should build the MuPDFCore test suite and run it on all platforms. To build the test suite, you will need the [.NET 7 SDK or higher](https://dotnet.microsoft.com/download/dotnet/current). You will also need to have enabled the [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/install).
 
 To build the test suite:
 
 1. Make sure that you have changed the version of the MuPDFCore NuGet package so that it is higher than the latest version of MuPDFCore in the NuGet repository (you should use a pre-release suffix, e.g. `1.4.0-a1` to avoid future headaches with new versions of MuPDFCore). This is set in line 9 of the `MuPDFCore/MuPDFCore.csproj` file.
 2. Add the `MuPDFCore/bin/Release` folder to your local NuGet repositories (you can do this e.g. in Visual Studio).
 3. If you have not done so already, create the MuPDFCore NuGet package following step 4 above.
-4. Update line 56 of the `Tests/Tests.csproj` project file so that it refers to the version of the MuPDFCore package you have just created.
+4. Update line 76 of the `Tests/Tests.csproj` project file so that it refers to the version of the MuPDFCore package you have just created.
 
 These steps ensure that you are testing the right version of MuPDFCore (i.e. your freshly built copy) and not something else that may have been cached.
 
@@ -385,7 +203,7 @@ Now, open a Windows command line in the folder where you have downloaded the MuP
 * `MuPDFCoreTests-win-x86.tar.gz` contains the tests for Windows environments on x86 processors.
 * `MuPDFCoreTests-win-arm64.tar.gz` contains the tests for Windows environments on arm64 processors.
 
-To run the tests, copy each archive to a machine running the corresponding operating system, and extract it (note: on Windows, the default zip file manager may struggle when extracting the text file with non-latin characters; you may need to manually extract this file). Then:
+To run the tests, copy each archive to a machine running the corresponding operating system, and extract it (note: on Windows, the default zip file manager may struggle when extracting the text file with non-latin characters; you may need to manually extract this file, use [7-Zip](https://www.7-zip.org/), or use the `unzip` command from within the WSL). Then:
 
 #### Windows
 * Open a command prompt and `CD` into the folder where you have extracted the contents of the test archive.
@@ -427,43 +245,43 @@ Make sure you copy the appropriate file to the same folder as the executable!
         <tr>
             <td rowspan=3>Windows</td>
             <td colspan=2>x86</td>
-            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Win-x86/1.10.0">win-x86</a></td>
+            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Win-x86/">win-x86</a></td>
         </tr>
         <tr>
             <td colspan=2>x64</td>
-            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Win-x64/1.10.0">win-x64</a></td>
+            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Win-x64/">win-x64</a></td>
         </tr>
         <tr>
             <td colspan=2>arm64</td>
-            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Win-arm64/1.10.0">win-arm64</a></td>
+            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Win-arm64/">win-arm64</a></td>
         </tr>
         <tr>
             <td rowspan=4>Linux</td>
             <td rowspan=2>x64</td>
             <td>glibc</td>
-            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Linux-x64/1.10.0">linux-x64</a></td>
+            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Linux-x64/">linux-x64</a></td>
         </tr>
         <tr>
             <td>musl</td>
-            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Linux-musl-x64/1.10.0">linux-musl-x64</a></td>
+            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Linux-musl-x64/">linux-musl-x64</a></td>
         </tr>
         <tr>
             <td rowspan=2>arm64</td>
             <td>glibc</td>
-            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Linux-arm64/1.10.0">linux-arm64</a></td>
+            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Linux-arm64/">linux-arm64</a></td>
         </tr>
         <tr>
             <td>musl</td>
-            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Linux-musl-arm64/1.10.0">linux-musl-arm64</a></td>
+            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Linux-musl-arm64/">linux-musl-arm64</a></td>
         </tr>
         <tr>
             <td rowspan=2>macOS</td>
             <td colspan=2>x64 (Intel)</td>
-            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Mac-x64/1.10.0">osx-x64</a></td>
+            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Mac-x64/">osx-x64</a></td>
         </tr>
         <tr>
             <td colspan=2>arm64 (Apple Silicon)</td>
-            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Mac-arm64/1.10.0">osx-arm64</a></td>
+            <td><a href="https://www.nuget.org/api/v2/package/MuPDFCore.NativeAssets.Mac-arm64/">osx-arm64</a></td>
         </tr>
     </tbody>
 </table>

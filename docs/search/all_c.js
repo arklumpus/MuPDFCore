@@ -1,19 +1,9 @@
 var searchData=
 [
-  ['pagebackground_0',['PageBackground',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a32ecef50b26aa7c99dab390b49298b4e',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['pagebackgroundproperty_1',['PageBackgroundProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#ac8172e8a4e5e29d88332cf61f372066d',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['pagenumber_2',['PageNumber',['../class_mu_p_d_f_core_1_1_mu_p_d_f_page.html#a620f0fac0d2db6973eddf87f2e2a291c',1,'MuPDFCore.MuPDFPage.PageNumber()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a10cc5f8912f189d0263b5765b3800510',1,'MuPDFCore.MuPDFRenderer.PDFRenderer.PageNumber()']]],
-  ['pagenumberproperty_3',['PageNumberProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a9e88d356e41917de25fc70bbae17f947',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['pages_4',['Pages',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ac691043a7c74ff979a4f80279a8e9f79',1,'MuPDFCore::MuPDFDocument']]],
-  ['pagesize_5',['PageSize',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#ad286c093a68049c0b1ba8e33e1c44103',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['pagesizeproperty_6',['PageSizeProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a48615bc55eaf679f0eee3f89df834604',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['passwordtypes_7',['PasswordTypes',['../namespace_mu_p_d_f_core.html#ae9af8906676327d741663484e282c9a9',1,'MuPDFCore']]],
-  ['pdfrenderer_8',['PDFRenderer',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html',1,'MuPDFCore.MuPDFRenderer.PDFRenderer'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a404edbc2007a610faa0c860325e716eb',1,'MuPDFCore.MuPDFRenderer.PDFRenderer.PDFRenderer()']]],
-  ['pixelformats_9',['PixelFormats',['../namespace_mu_p_d_f_core.html#ade1eb4d4f9c9c8a66bde9152ea9e41bb',1,'MuPDFCore']]],
-  ['pointereventhandlers_10',['PointerEventHandlers',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a0ccf2a6b6375010f521af4993d5a51ff',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['pointereventhandlerstype_11',['PointerEventHandlersType',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a508408b971d2c433c8184442a5f5f439',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['pointereventhandlertypeproperty_12',['PointerEventHandlerTypeProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#ae5ce0fd9fd28fca3632fdce38dae182b',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
-  ['pointf_13',['PointF',['../struct_mu_p_d_f_core_1_1_point_f.html',1,'MuPDFCore.PointF'],['../struct_mu_p_d_f_core_1_1_point_f.html#abec3e1a6f96acfebb440b7e77d882298',1,'MuPDFCore.PointF.PointF()']]],
-  ['prefix_14',['Prefix',['../class_mu_p_d_f_core_1_1_tesseract_language.html#a825c4fb8b8c02fe144e63de2ad52daca',1,'MuPDFCore::TesseractLanguage']]],
-  ['progress_15',['Progress',['../struct_mu_p_d_f_core_1_1_render_progress_1_1_thread_render_progress.html#a99d8a959dd4b9a4d7ed2cbce64564c1c',1,'MuPDFCore.RenderProgress.ThreadRenderProgress.Progress()'],['../class_mu_p_d_f_core_1_1_o_c_r_progress_info.html#abf2eeecc2dfa45d7ce652567aca41932',1,'MuPDFCore.OCRProgressInfo.Progress()']]]
+  ['optionalcontentgroupdata_0',['OptionalContentGroupData',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a46f0847eff85015677da75e4524eceb5',1,'MuPDFCore::MuPDFDocument']]],
+  ['optionalcontentgroups_1',['OptionalContentGroups',['../class_mu_p_d_f_core_1_1_mu_p_d_f_optional_content_group_data.html#afa027e9558c6104edf5654148f9c2001',1,'MuPDFCore::MuPDFOptionalContentGroupData']]],
+  ['orientation_2',['Orientation',['../class_mu_p_d_f_core_1_1_mu_p_d_f_image.html#a53612a6a0a0239c4171cf4bd6a3af79f',1,'MuPDFCore::MuPDFImage']]],
+  ['outline_3',['Outline',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a53fbbbc4904ab5b17c3b814df9072223',1,'MuPDFCore::MuPDFDocument']]],
+  ['owner_4',['Owner',['../class_mu_p_d_f_core_1_1_lifetime_management_exception.html#a7fbf24bdceb7635a66d2e50f5e6446e2',1,'MuPDFCore::LifetimeManagementException']]],
+  ['ownerpassword_5',['OwnerPassword',['../class_mu_p_d_f_core_1_1_p_d_f_creation_options.html#ad9896411d6ad69403f29bb8704bb319f',1,'MuPDFCore::PDFCreationOptions']]]
 ];

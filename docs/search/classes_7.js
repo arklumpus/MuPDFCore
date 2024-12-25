@@ -1,5 +1,31 @@
 var searchData=
 [
-  ['tesseractlanguage_0',['TesseractLanguage',['../class_mu_p_d_f_core_1_1_tesseract_language.html',1,'MuPDFCore']]],
-  ['threadrenderprogress_1',['ThreadRenderProgress',['../struct_mu_p_d_f_core_1_1_render_progress_1_1_thread_render_progress.html',1,'MuPDFCore::RenderProgress']]]
+  ['messageeventargs_0',['MessageEventArgs',['../class_mu_p_d_f_core_1_1_message_event_args.html',1,'MuPDFCore']]],
+  ['mupdf_1',['MuPDF',['../class_mu_p_d_f_core_1_1_mu_p_d_f.html',1,'MuPDFCore']]],
+  ['mupdfcolorspace_2',['MuPDFColorSpace',['../class_mu_p_d_f_core_1_1_mu_p_d_f_color_space.html',1,'MuPDFCore']]],
+  ['mupdfcontext_3',['MuPDFContext',['../class_mu_p_d_f_core_1_1_mu_p_d_f_context.html',1,'MuPDFCore']]],
+  ['mupdfdocument_4',['MuPDFDocument',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html',1,'MuPDFCore']]],
+  ['mupdfexception_5',['MuPDFException',['../class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html',1,'MuPDFCore']]],
+  ['mupdfexternallinkdestination_6',['MuPDFExternalLinkDestination',['../class_mu_p_d_f_core_1_1_mu_p_d_f_external_link_destination.html',1,'MuPDFCore']]],
+  ['mupdffont_7',['MuPDFFont',['../class_mu_p_d_f_core_1_1_mu_p_d_f_font.html',1,'MuPDFCore']]],
+  ['mupdfimage_8',['MuPDFImage',['../class_mu_p_d_f_core_1_1_mu_p_d_f_image.html',1,'MuPDFCore']]],
+  ['mupdfinternallinkdestination_9',['MuPDFInternalLinkDestination',['../class_mu_p_d_f_core_1_1_mu_p_d_f_internal_link_destination.html',1,'MuPDFCore']]],
+  ['mupdflink_10',['MuPDFLink',['../class_mu_p_d_f_core_1_1_mu_p_d_f_link.html',1,'MuPDFCore']]],
+  ['mupdflinkclickedeventargs_11',['MupdfLinkClickedEventArgs',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_mupdf_link_clicked_event_args.html',1,'MuPDFCore::MuPDFRenderer']]],
+  ['mupdflinkdestination_12',['MuPDFLinkDestination',['../class_mu_p_d_f_core_1_1_mu_p_d_f_link_destination.html',1,'MuPDFCore']]],
+  ['mupdflinks_13',['MuPDFLinks',['../class_mu_p_d_f_core_1_1_mu_p_d_f_links.html',1,'MuPDFCore']]],
+  ['mupdfmultithreadedpagerenderer_14',['MuPDFMultiThreadedPageRenderer',['../class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html',1,'MuPDFCore']]],
+  ['mupdfoptionalcontentgroup_15',['MuPDFOptionalContentGroup',['../class_mu_p_d_f_core_1_1_mu_p_d_f_optional_content_group.html',1,'MuPDFCore']]],
+  ['mupdfoptionalcontentgroupcheckbox_16',['MuPDFOptionalContentGroupCheckbox',['../class_mu_p_d_f_core_1_1_mu_p_d_f_optional_content_group_checkbox.html',1,'MuPDFCore']]],
+  ['mupdfoptionalcontentgroupconfiguration_17',['MuPDFOptionalContentGroupConfiguration',['../class_mu_p_d_f_core_1_1_mu_p_d_f_optional_content_group_configuration.html',1,'MuPDFCore']]],
+  ['mupdfoptionalcontentgroupdata_18',['MuPDFOptionalContentGroupData',['../class_mu_p_d_f_core_1_1_mu_p_d_f_optional_content_group_data.html',1,'MuPDFCore']]],
+  ['mupdfoptionalcontentgrouplabel_19',['MuPDFOptionalContentGroupLabel',['../class_mu_p_d_f_core_1_1_mu_p_d_f_optional_content_group_label.html',1,'MuPDFCore']]],
+  ['mupdfoptionalcontentgroupradiobutton_20',['MuPDFOptionalContentGroupRadioButton',['../class_mu_p_d_f_core_1_1_mu_p_d_f_optional_content_group_radio_button.html',1,'MuPDFCore']]],
+  ['mupdfoptionalcontentgroupselectableuiitem_21',['MuPDFOptionalContentGroupSelectableUIItem',['../class_mu_p_d_f_core_1_1_mu_p_d_f_optional_content_group_selectable_u_i_item.html',1,'MuPDFCore']]],
+  ['mupdfoptionalcontentgroupuiitem_22',['MuPDFOptionalContentGroupUIItem',['../class_mu_p_d_f_core_1_1_mu_p_d_f_optional_content_group_u_i_item.html',1,'MuPDFCore']]],
+  ['mupdfoutline_23',['MuPDFOutline',['../class_mu_p_d_f_core_1_1_mu_p_d_f_outline.html',1,'MuPDFCore']]],
+  ['mupdfoutlineitem_24',['MuPDFOutlineItem',['../class_mu_p_d_f_core_1_1_mu_p_d_f_outline_item.html',1,'MuPDFCore']]],
+  ['mupdfpage_25',['MuPDFPage',['../class_mu_p_d_f_core_1_1_mu_p_d_f_page.html',1,'MuPDFCore']]],
+  ['mupdfpagecollection_26',['MuPDFPageCollection',['../class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html',1,'MuPDFCore']]],
+  ['mupdfsetocgstatelinkdestination_27',['MuPDFSetOCGStateLinkDestination',['../class_mu_p_d_f_core_1_1_mu_p_d_f_set_o_c_g_state_link_destination.html',1,'MuPDFCore']]]
 ];

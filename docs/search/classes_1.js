@@ -1,19 +1,6 @@
 var searchData=
 [
-  ['messageeventargs_0',['MessageEventArgs',['../class_mu_p_d_f_core_1_1_message_event_args.html',1,'MuPDFCore']]],
-  ['mupdf_1',['MuPDF',['../class_mu_p_d_f_core_1_1_mu_p_d_f.html',1,'MuPDFCore']]],
-  ['mupdfcontext_2',['MuPDFContext',['../class_mu_p_d_f_core_1_1_mu_p_d_f_context.html',1,'MuPDFCore']]],
-  ['mupdfdocument_3',['MuPDFDocument',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html',1,'MuPDFCore']]],
-  ['mupdfexception_4',['MuPDFException',['../class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html',1,'MuPDFCore']]],
-  ['mupdfimagestructuredtextblock_5',['MuPDFImageStructuredTextBlock',['../class_mu_p_d_f_core_1_1_mu_p_d_f_image_structured_text_block.html',1,'MuPDFCore']]],
-  ['mupdfmultithreadedpagerenderer_6',['MuPDFMultiThreadedPageRenderer',['../class_mu_p_d_f_core_1_1_mu_p_d_f_multi_threaded_page_renderer.html',1,'MuPDFCore']]],
-  ['mupdfpage_7',['MuPDFPage',['../class_mu_p_d_f_core_1_1_mu_p_d_f_page.html',1,'MuPDFCore']]],
-  ['mupdfpagecollection_8',['MuPDFPageCollection',['../class_mu_p_d_f_core_1_1_mu_p_d_f_page_collection.html',1,'MuPDFCore']]],
-  ['mupdfstructuredtextaddress_9',['MuPDFStructuredTextAddress',['../struct_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address.html',1,'MuPDFCore']]],
-  ['mupdfstructuredtextaddressspan_10',['MuPDFStructuredTextAddressSpan',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_address_span.html',1,'MuPDFCore']]],
-  ['mupdfstructuredtextblock_11',['MuPDFStructuredTextBlock',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_block.html',1,'MuPDFCore']]],
-  ['mupdfstructuredtextcharacter_12',['MuPDFStructuredTextCharacter',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html',1,'MuPDFCore']]],
-  ['mupdfstructuredtextline_13',['MuPDFStructuredTextLine',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html',1,'MuPDFCore']]],
-  ['mupdfstructuredtextpage_14',['MuPDFStructuredTextPage',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_page.html',1,'MuPDFCore']]],
-  ['mupdftextstructuredtextblock_15',['MuPDFTextStructuredTextBlock',['../class_mu_p_d_f_core_1_1_mu_p_d_f_text_structured_text_block.html',1,'MuPDFCore']]]
+  ['cbzcreationoptions_0',['CBZCreationOptions',['../class_mu_p_d_f_core_1_1_c_b_z_creation_options.html',1,'MuPDFCore']]],
+  ['cmykmupdfcolorspace_1',['CMYKMuPDFColorSpace',['../class_mu_p_d_f_core_1_1_c_m_y_k_mu_p_d_f_color_space.html',1,'MuPDFCore']]],
+  ['create_2',['Create',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document_1_1_create.html',1,'MuPDFCore::MuPDFDocument']]]
 ];

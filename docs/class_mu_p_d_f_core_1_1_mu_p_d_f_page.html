@@ -27,7 +27,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">MuPDFCore<span id="projectnumber">&#160;1.8.0</span>
+   <div id="projectname">MuPDFCore<span id="projectnumber">&#160;2.0.0</span>
    </div>
    <div id="projectbrief">Multiplatform .NET bindings for MuPDF</div>
   </td>
@@ -114,6 +114,9 @@ Inheritance diagram for MuPDFCore.MuPDFPage:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a6c7cc3c2ac0654cd446d73215ca0c57d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html">Rectangle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_page.html#a6c7cc3c2ac0654cd446d73215ca0c57d">GetBoundingBox</a> (<a class="el" href="namespace_mu_p_d_f_core.html#a7a22567bda40d421e11347516e5a0bdb">BoxType</a> boxType, bool rescale=true)</td></tr>
+<tr class="memdesc:a6c7cc3c2ac0654cd446d73215ca0c57d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the specified bounding box from the page.   <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_page.html#a6c7cc3c2ac0654cd446d73215ca0c57d">More...</a><br /></td></tr>
+<tr class="separator:a6c7cc3c2ac0654cd446d73215ca0c57d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c125744e149fadea46f38d167d3acfd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_page.html#a3c125744e149fadea46f38d167d3acfd">Dispose</a> ()</td></tr>
 <tr class="separator:a3c125744e149fadea46f38d167d3acfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -125,11 +128,14 @@ Properties</h2></td></tr>
 <tr class="memitem:a620f0fac0d2db6973eddf87f2e2a291c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_page.html#a620f0fac0d2db6973eddf87f2e2a291c">PageNumber</a><code> [get]</code></td></tr>
 <tr class="memdesc:a620f0fac0d2db6973eddf87f2e2a291c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of this page in the original document.   <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_page.html#a620f0fac0d2db6973eddf87f2e2a291c">More...</a><br /></td></tr>
 <tr class="separator:a620f0fac0d2db6973eddf87f2e2a291c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67ab245d2ca9938a372c47cbc83f83f2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_links.html">MuPDFLinks</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_page.html#a67ab245d2ca9938a372c47cbc83f83f2">Links</a><code> [get]</code></td></tr>
+<tr class="memdesc:a67ab245d2ca9938a372c47cbc83f83f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The links contained within the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_page.html" title="A wrapper over a MuPDF page object, which contains information about the page&#39;s boundaries.">MuPDFPage</a>. This collection is populated on first access.   <a href="class_mu_p_d_f_core_1_1_mu_p_d_f_page.html#a67ab245d2ca9938a372c47cbc83f83f2">More...</a><br /></td></tr>
+<tr class="separator:a67ab245d2ca9938a372c47cbc83f83f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >A wrapper over a <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f.html" title="Contains static methods to perform setup operations.">MuPDF</a> page object, which contains information about the page's boundaries.  </p>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_page_8cs_source.html#l00027">27</a> of file <a class="el" href="_mu_p_d_f_page_8cs_source.html">MuPDFPage.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_page_8cs_source.html#l00028">28</a> of file <a class="el" href="_mu_p_d_f_page_8cs_source.html">MuPDFPage.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a3c125744e149fadea46f38d167d3acfd" name="a3c125744e149fadea46f38d167d3acfd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3c125744e149fadea46f38d167d3acfd">&#9670;&#160;</a></span>Dispose()</h2>
@@ -146,7 +152,53 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_page_8cs_source.html#l00121">121</a> of file <a class="el" href="_mu_p_d_f_page_8cs_source.html">MuPDFPage.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_page_8cs_source.html#l00194">194</a> of file <a class="el" href="_mu_p_d_f_page_8cs_source.html">MuPDFPage.cs</a>.</p>
+
+</div>
+</div>
+<a id="a6c7cc3c2ac0654cd446d73215ca0c57d" name="a6c7cc3c2ac0654cd446d73215ca0c57d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c7cc3c2ac0654cd446d73215ca0c57d">&#9670;&#160;</a></span>GetBoundingBox()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html">Rectangle</a> MuPDFCore.MuPDFPage.GetBoundingBox </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespace_mu_p_d_f_core.html#a7a22567bda40d421e11347516e5a0bdb">BoxType</a>&#160;</td>
+          <td class="paramname"><em>boxType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>rescale</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the specified bounding box from the page.  </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">boxType</td><td>The type of bounding box to get.</td></tr>
+    <tr><td class="paramname">rescale</td><td>If this is <code>true</code>, the bounding box is rescaled so that it is expressed in the same resolution units as the underlying document. If this is <code>false</code>, the raw value is returned (at 72 dpi).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="struct_mu_p_d_f_core_1_1_rectangle.html" title="Represents a rectangle.">Rectangle</a> corresponding to the specified bounding box.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html" title="The exception that is thrown when a MuPDF operation fails.">MuPDFException</a></td><td>Thrown if the bounding box cannot be computed or if another error occurs.</td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_page_8cs_source.html#l00130">130</a> of file <a class="el" href="_mu_p_d_f_page_8cs_source.html">MuPDFPage.cs</a>.</p>
 
 </div>
 </div>
@@ -173,7 +225,33 @@ Properties</h2></td></tr>
 
 <p>The page's bounds at 72 DPI. Read-only.  </p>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_page_8cs_source.html#l00032">32</a> of file <a class="el" href="_mu_p_d_f_page_8cs_source.html">MuPDFPage.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_page_8cs_source.html#l00033">33</a> of file <a class="el" href="_mu_p_d_f_page_8cs_source.html">MuPDFPage.cs</a>.</p>
+
+</div>
+</div>
+<a id="a67ab245d2ca9938a372c47cbc83f83f2" name="a67ab245d2ca9938a372c47cbc83f83f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67ab245d2ca9938a372c47cbc83f83f2">&#9670;&#160;</a></span>Links</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_links.html">MuPDFLinks</a> MuPDFCore.MuPDFPage.Links</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The links contained within the <a class="el" href="class_mu_p_d_f_core_1_1_mu_p_d_f_page.html" title="A wrapper over a MuPDF page object, which contains information about the page&#39;s boundaries.">MuPDFPage</a>. This collection is populated on first access.  </p>
+
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_page_8cs_source.html#l00045">45</a> of file <a class="el" href="_mu_p_d_f_page_8cs_source.html">MuPDFPage.cs</a>.</p>
 
 </div>
 </div>
@@ -199,7 +277,7 @@ Properties</h2></td></tr>
 
 <p>The number of this page in the original document.  </p>
 
-<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_page_8cs_source.html#l00037">37</a> of file <a class="el" href="_mu_p_d_f_page_8cs_source.html">MuPDFPage.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_mu_p_d_f_page_8cs_source.html#l00038">38</a> of file <a class="el" href="_mu_p_d_f_page_8cs_source.html">MuPDFPage.cs</a>.</p>
 
 </div>
 </div>

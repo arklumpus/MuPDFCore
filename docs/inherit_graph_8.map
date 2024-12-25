@@ -1,3 +1,10 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_character.html" title="Represents a single text character." alt="" coords="5,5,207,45"/>
+<area shape="rect" id="node1" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_color_space.html" title="Represents a colour space." alt="" coords="5,197,213,224"/>
+<area shape="rect" id="node2" href="$class_mu_p_d_f_core_1_1_b_g_r_mu_p_d_f_color_space.html" title="Represents a colour space where each pixel is stored as three bytes encoding the B,..." alt="" coords="261,5,496,32"/>
+<area shape="rect" id="node3" href="$class_mu_p_d_f_core_1_1_c_m_y_k_mu_p_d_f_color_space.html" title="Represents a colour space where each pixel is stored as four bytes encoding the C,..." alt="" coords="274,56,483,99"/>
+<area shape="rect" id="node4" href="$class_mu_p_d_f_core_1_1_grayscale_mu_p_d_f_color_space.html" title="Represents a colour space where each pixel is stored as a single byte." alt="" coords="264,123,493,165"/>
+<area shape="rect" id="node5" href="$class_mu_p_d_f_core_1_1_indexed_mu_p_d_f_color_space.html" title="Represents a colour space where each pixel is stored as a single byte mapping the pixel to a colour i..." alt="" coords="271,189,486,232"/>
+<area shape="rect" id="node6" href="$class_mu_p_d_f_core_1_1_lab_mu_p_d_f_color_space.html" title="Represents a colour space where each pixel is stored as three bytes encoding the L*,..." alt="" coords="264,256,493,283"/>
+<area shape="rect" id="node7" href="$class_mu_p_d_f_core_1_1_r_g_b_mu_p_d_f_color_space.html" title="Represents a colour space where each pixel is stored as three bytes encoding the R,..." alt="" coords="261,307,496,333"/>
+<area shape="rect" id="node8" href="$class_mu_p_d_f_core_1_1_separation_color_space.html" title="Represents a separation colour space." alt="" coords="284,357,473,400"/>
 </map>

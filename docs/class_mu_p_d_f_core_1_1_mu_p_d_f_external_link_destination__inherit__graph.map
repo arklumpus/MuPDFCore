@@ -1,0 +1,4 @@
+<map id="MuPDFCore.MuPDFExternalLinkDestination" name="MuPDFCore.MuPDFExternalLinkDestination">
+<area shape="rect" id="node1" title="A link destination to an external resource (e.g., a website)." alt="" coords="5,80,218,123"/>
+<area shape="rect" id="node2" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_link_destination.html" title="Represents a generic link destination." alt="" coords="34,5,189,32"/>
+</map>

@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['documentoutputfiletypes_0',['DocumentOutputFileTypes',['../namespace_mu_p_d_f_core.html#a4cb9694810eeb8c98f699eac7bebeca6',1,'MuPDFCore']]],
-  ['documentrestrictions_1',['DocumentRestrictions',['../namespace_mu_p_d_f_core.html#abff8cbdf3a6dcdbcd7b52a8696ac2595',1,'MuPDFCore']]]
+  ['colorspace_0',['ColorSpace',['../class_mu_p_d_f_core_1_1_c_b_z_creation_options.html#ae420bb6fbca12f7796cfb1eeb914c518',1,'MuPDFCore::CBZCreationOptions']]],
+  ['colorspacetype_1',['ColorSpaceType',['../namespace_mu_p_d_f_core.html#a3a5e4a1578a94ab4c5a717dcbb437f51',1,'MuPDFCore']]],
+  ['compressionoptions_2',['CompressionOptions',['../class_mu_p_d_f_core_1_1_p_d_f_creation_options.html#a5a15ecfd33c1bcc262c14296a393084d',1,'MuPDFCore::PDFCreationOptions']]]
 ];

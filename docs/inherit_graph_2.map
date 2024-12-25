@@ -1,5 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,42,85,67"/>
-<area shape="rect" id="node2" href="$class_mu_p_d_f_core_1_1_document_locked_exception.html" title="The exception that is thrown when an attempt is made to render an encrypted document without supplyin..." alt="" coords="133,5,332,45"/>
-<area shape="rect" id="node3" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html" title="The exception that is thrown when a MuPDF operation fails." alt="" coords="133,70,332,95"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,80,85,107"/>
+<area shape="rect" id="node2" href="$class_mu_p_d_f_core_1_1_document_locked_exception.html" title="The exception that is thrown when an attempt is made to render an encrypted document without supplyin..." alt="" coords="142,5,340,48"/>
+<area shape="rect" id="node3" href="$class_mu_p_d_f_core_1_1_lifetime_management_exception.html" title="The exception that is thrown when the lifetime of disposable objects is not managed properly." alt="" coords="133,72,349,115"/>
+<area shape="rect" id="node4" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_exception.html" title="The exception that is thrown when a MuPDF operation fails." alt="" coords="142,139,340,165"/>
 </map>

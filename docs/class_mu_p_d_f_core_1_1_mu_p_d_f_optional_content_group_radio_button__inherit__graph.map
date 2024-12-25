@@ -1,0 +1,5 @@
+<map id="MuPDFCore.MuPDFOptionalContentGroupRadioButton" name="MuPDFCore.MuPDFOptionalContentGroupRadioButton">
+<area shape="rect" id="node1" title="An optional content group UI element that should be represented as a radio button." alt="" coords="5,187,239,229"/>
+<area shape="rect" id="node2" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_optional_content_group_selectable_u_i_item.html" title="An optional content group UI element that can be enabled or disabled." alt="" coords="25,96,219,139"/>
+<area shape="rect" id="node3" href="$class_mu_p_d_f_core_1_1_mu_p_d_f_optional_content_group_u_i_item.html" title="An optional content group UI element." alt="" coords="25,5,219,48"/>
+</map>

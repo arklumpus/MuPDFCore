@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['writingmodes_0',['WritingModes',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a7c1d4154530c9ec4e6e1189d9f2a58bd',1,'MuPDFCore::MuPDFStructuredTextLine']]]
+  ['rasterizeroption_0',['RasterizerOption',['../class_mu_p_d_f_core_1_1_c_b_z_creation_options.html#a2e3f4a474f12439cd8d13b57a521b371',1,'MuPDFCore::CBZCreationOptions']]],
+  ['rasteroutputfiletypes_1',['RasterOutputFileTypes',['../namespace_mu_p_d_f_core.html#afb84d65324afe9d4edaf5b15c128bc7e',1,'MuPDFCore']]],
+  ['restrictionstate_2',['RestrictionState',['../namespace_mu_p_d_f_core.html#a8508181e09f4f3d05dfd9555e9519331',1,'MuPDFCore']]]
 ];

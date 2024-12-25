@@ -1,5 +1,6 @@
 var class_mu_p_d_f_core_1_1_mu_p_d_f_document =
 [
+    [ "Create", "class_mu_p_d_f_core_1_1_mu_p_d_f_document_1_1_create.html", "class_mu_p_d_f_core_1_1_mu_p_d_f_document_1_1_create" ],
     [ "MuPDFDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ac3366ccae6a79335ba7ac73fdf4507d4", null ],
     [ "MuPDFDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#aac27de3027a4fd44bbae7f5d5ebb44ac", null ],
     [ "MuPDFDocument", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#aaa26de08c78c1abd6af2593533e92eab", null ],
@@ -14,9 +15,9 @@ var class_mu_p_d_f_core_1_1_mu_p_d_f_document =
     [ "GetMultiThreadedRenderer", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a5ea3701940cdfa3ca26676516a70bede", null ],
     [ "GetRenderedSize", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a0cb4925508720a17b373ff69979d07cc", null ],
     [ "GetRenderedSize", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a0956211d754de68c12a772b6f33cf43b", null ],
-    [ "GetStructuredTextPage", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a6a55fe2639c8e092f26fb2139e878754", null ],
-    [ "GetStructuredTextPage", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a2256e773c3781a8c787af014f807d496", null ],
-    [ "GetStructuredTextPageAsync", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ab74eca1ade08acd6c1c6a02f86b4129e", null ],
+    [ "GetStructuredTextPage", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a42917e693cfce76ff50f1dd745db88bb", null ],
+    [ "GetStructuredTextPage", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a9b631d9599aab40e77a0977da33c6b22", null ],
+    [ "GetStructuredTextPageAsync", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a518d0bc506e67c8bd7fc197b77f404ea", null ],
     [ "Layout", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a0b91561043d7cee7e7f83bd26f0ee960", null ],
     [ "LayoutSinglePage", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a8970df982576902a92f672a3bff587b4", null ],
     [ "Render", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a9eeca1ba2ab6d8ec59e0eb62aa7b0632", null ],
@@ -37,6 +38,8 @@ var class_mu_p_d_f_core_1_1_mu_p_d_f_document =
     [ "WriteImageAsJPEG", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a189c3300d32338bb05c271a99ac554f8", null ],
     [ "ClipToPageBounds", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a4e7f89e98170b4cb9e88e6bf63f2da57", null ],
     [ "EncryptionState", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a769f52a2b222998676d6028264175988", null ],
+    [ "OptionalContentGroupData", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a46f0847eff85015677da75e4524eceb5", null ],
+    [ "Outline", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a53fbbbc4904ab5b17c3b814df9072223", null ],
     [ "Pages", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ac691043a7c74ff979a4f80279a8e9f79", null ],
     [ "Restrictions", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#af93dd2bd9576b2b2612e159e647eae33", null ],
     [ "RestrictionState", "class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#a31849c65b21c7a5e2999078a0ac9c4cf", null ]

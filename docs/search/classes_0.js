@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['disposableintptr_0',['DisposableIntPtr',['../class_mu_p_d_f_core_1_1_disposable_int_ptr.html',1,'MuPDFCore']]],
-  ['documentlockedexception_1',['DocumentLockedException',['../class_mu_p_d_f_core_1_1_document_locked_exception.html',1,'MuPDFCore']]]
+  ['bgrmupdfcolorspace_0',['BGRMuPDFColorSpace',['../class_mu_p_d_f_core_1_1_b_g_r_mu_p_d_f_color_space.html',1,'MuPDFCore']]]
 ];

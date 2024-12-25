@@ -1,7 +1,10 @@
 var searchData=
 [
-  ['width_0',['Width',['../struct_mu_p_d_f_core_1_1_size.html#a48e452c3dd0663d71508b7b2bee69a51',1,'MuPDFCore.Size.Width()'],['../struct_mu_p_d_f_core_1_1_rounded_size.html#a5e5954ae76c12cb8a36572be2354aa4b',1,'MuPDFCore.RoundedSize.Width()'],['../struct_mu_p_d_f_core_1_1_rectangle.html#a4ea4052094e051b974b7ca1bc9346655',1,'MuPDFCore.Rectangle.Width()'],['../struct_mu_p_d_f_core_1_1_rounded_rectangle.html#a29904ab0820872c48e43631ece9f1fff',1,'MuPDFCore.RoundedRectangle.Width()']]],
-  ['writeimage_1',['WriteImage',['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ac0264349fe3b2ccc319f0978c448ff11',1,'MuPDFCore.MuPDFDocument.WriteImage(int pageNumber, Rectangle region, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations=true)'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_document.html#ab42e60e523a9a3fefc665c6b800cb3ec',1,'MuPDFCore.MuPDFDocument.WriteImage(int pageNumber, double zoom, PixelFormats pixelFormat, Stream outputStream, RasterOutputFileTypes fileType, bool includeAnnotations=true)']]],
-  ['writingmode_2',['WritingMode',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a2f3bc0d1d174cf148916593ad8ec0efe',1,'MuPDFCore::MuPDFStructuredTextLine']]],
-  ['writingmodes_3',['WritingModes',['../class_mu_p_d_f_core_1_1_mu_p_d_f_structured_text_line.html#a7c1d4154530c9ec4e6e1189d9f2a58bd',1,'MuPDFCore::MuPDFStructuredTextLine']]]
+  ['zoom_0',['Zoom',['../class_mu_p_d_f_core_1_1_mu_p_d_f_internal_link_destination.html#ac9cc034fbf9c937a12dafc81cee6174e',1,'MuPDFCore.MuPDFInternalLinkDestination.Zoom()'],['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#ad2964abec1ae1dde10f1145c851adbf1',1,'MuPDFCore.MuPDFRenderer.PDFRenderer.Zoom()']]],
+  ['zoomenabled_1',['ZoomEnabled',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a2ff0f7ce05dac392726917aa52d7f3e0',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['zoomenabledproperty_2',['ZoomEnabledProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a9058818acd9f085c35f672c79262162b',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['zoomincrement_3',['ZoomIncrement',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a5a2fdaa31f4bf7ae8b3912d620a83759',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['zoomincrementproperty_4',['ZoomIncrementProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a7cef637c2ca16aba3ffae0be352ae002',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['zoomproperty_5',['ZoomProperty',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#aa80851bc316f16e126c48da9edd18ef0',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]],
+  ['zoomstep_6',['ZoomStep',['../class_mu_p_d_f_core_1_1_mu_p_d_f_renderer_1_1_p_d_f_renderer.html#a831d88219b6638d7d2192d32b9119270',1,'MuPDFCore::MuPDFRenderer::PDFRenderer']]]
 ];
