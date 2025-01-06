@@ -2218,5 +2218,18 @@ namespace MuPDFCore
         /// <returns>The number of links contained in the page.</returns>
         [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int CountLinks(IntPtr ctx, IntPtr page, ref IntPtr out_firstLink);
+
+        /// <summary>
+        /// Resolve an internal link URI.
+        /// </summary>
+        /// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+        /// <param name="doc">The document that contains the link.</param>
+        /// <param name="uri">The link.</param>
+        /// <param name="out_chapter">When this method returns, this variable will contain the chapter number for the link destination.</param>
+        /// <param name="out_page">When this method returns, this variable will contain the page number for the link destination.</param>
+        /// <param name="out_x">When this method returns, this variable will contain the x coordinate of the link destination on the target page.</param>
+        /// <param name="out_y">When this method returns, this variable will contain the y coordinate of the link destination on the target page.</param>
+        [DllImport("MuPDFWrapper", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void GetLocationFromUri(IntPtr ctx, IntPtr doc, IntPtr uri, ref int out_chapter, ref int out_page, ref float out_x, ref float out_y);
     }
 }

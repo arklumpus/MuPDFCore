@@ -164,6 +164,16 @@ void unlock_mutex(void* user, int lock)
 
 extern "C"
 {
+	DLL_PUBLIC void GetLocationFromUri(fz_context* ctx, fz_document* doc, const char* uri, int* out_chapter, int* out_page, float* out_x, float* out_y)
+	{
+		fz_location loc;
+
+		loc = fz_resolve_link(ctx, doc, uri, out_x, out_y);
+
+		*out_chapter = loc.chapter;
+		*out_page = loc.page;
+	}
+
 	DLL_PUBLIC int GetPageNumber(fz_context *ctx, fz_document *doc, int chapter, int page)
 	{
 		return fz_page_number_from_location(ctx, doc, fz_make_location(chapter, page));

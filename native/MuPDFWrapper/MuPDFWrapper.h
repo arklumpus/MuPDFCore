@@ -155,6 +155,19 @@ struct pdf_ocg_descriptor
 //Exported methods
 extern "C"
 {
+
+	/// <summary>
+	/// Resolve an internal link URI.
+	/// </summary>
+	/// <param name="ctx">A context to hold the exception stack and the cached resources.</param>
+	/// <param name="doc">The document that contains the link.</param>
+	/// <param name="uri">The link.</param>
+	/// <param name="out_chapter">When this method returns, this variable will contain the chapter number for the link destination.</param>
+	/// <param name="out_page">When this method returns, this variable will contain the page number for the link destination.</param>
+	/// <param name="out_x">When this method returns, this variable will contain the x coordinate of the link destination on the target page.</param>
+	/// <param name="out_y">When this method returns, this variable will contain the y coordinate of the link destination on the target page.</param>
+	DLL_PUBLIC void GetLocationFromUri(fz_context* ctx, fz_document* doc, const char* uri, int* out_chapter, int* out_page, float* out_x, float* out_y);
+
 	/// <summary>
 	/// Activate a SetOCGState link, thus hiding/showing some optional content groups.
 	/// </summary>

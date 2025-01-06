@@ -3860,5 +3860,41 @@ namespace Tests
             }
             catch { }
         }
+
+        [TestMethod]
+        public void GetLocationFromUri()
+        {
+            (GCHandle dataHandle, MemoryStream ms, IntPtr nativeContext, IntPtr nativeDocument, IntPtr nativeStream) = CreateSampleDocument("Tests.Data.basic-v3plus2.epub");
+
+            int chapter = -1;
+            int page = -1;
+            float x = float.NaN;
+            float y = float.NaN;
+
+            string uri = "EPUB/xhtml/section0002.xhtml";
+
+            byte[] uriBytes = Encoding.UTF8.GetBytes(uri);
+            GCHandle uriHandle = GCHandle.Alloc(uriBytes, GCHandleType.Pinned);
+
+            NativeMethods.GetLocationFromUri(nativeContext, nativeDocument, uriHandle.AddrOfPinnedObject(), ref chapter, ref page, ref x, ref y);
+
+            uriHandle.Free();
+
+            Assert.AreEqual(2, chapter, "The chapter number is wrong.");
+            Assert.AreEqual(0, page, "The page number is wrong.");
+            Assert.AreEqual(0, x, "The x coordinate is wrong.");
+            Assert.AreEqual(0, y, "The y coordinate is wrong.");
+
+            try
+            {
+                dataHandle.Free();
+                ms.Dispose();
+
+                _ = NativeMethods.DisposeDocument(nativeContext, nativeDocument);
+                _ = NativeMethods.DisposeStream(nativeContext, nativeStream);
+                _ = NativeMethods.DisposeContext(nativeContext);
+            }
+            catch { }
+        }
     }
 }

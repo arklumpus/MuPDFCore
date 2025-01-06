@@ -41,7 +41,7 @@ namespace MuPDFCore
         /// </summary>
         /// <param name="context">A <see cref="MuPDFContext"/> to store resources and the exception stack.</param>
         /// <param name="document">The document whose outline should be loaded.</param>
-        internal MuPDFOutline(MuPDFContext context, MuPDFDocument document) 
+        internal MuPDFOutline(MuPDFContext context, MuPDFDocument document)
         {
             this.OwnerDocument = document;
             IntPtr outline = NativeMethods.LoadOutline(context.NativeContext, document.NativeDocument);
@@ -55,7 +55,7 @@ namespace MuPDFCore
             {
                 this.Items = new MuPDFOutlineItem[0];
             }
-            
+
         }
 
         /// <inheritdoc />
@@ -95,12 +95,12 @@ namespace MuPDFCore
         /// <summary>
         /// Locations within the document are referred to in terms of chapter and page, rather than just a page number. For some documents (such as epub documents with large numbers of pages broken into many chapters) this can make navigation much faster as only the required chapter needs to be decoded at a time.
         /// </summary>
-        public int Chapter { get; }
+        public int Chapter { get; private set; }
 
         /// <summary>
         /// The page number of an internal link, relative to the specified <see cref="Chapter"/>, or -1 for external links or links with no destination.
         /// </summary>
-        public int Page { get; }
+        public int Page { get; private set; }
 
         private int? CachedPageNumber = null;
 
@@ -123,7 +123,7 @@ namespace MuPDFCore
         /// <summary>
         /// The location on the page of the item pointed to by this outline item.
         /// </summary>
-        public PointF Location { get; }
+        public PointF Location { get; private set; }
 
         /// <summary>
         /// The sub items of this outline item (may be empty, but will not be null).
@@ -186,9 +186,29 @@ namespace MuPDFCore
 
             this.Title = title;
             this.Uri = uri;
-            this.Chapter = nativeItem.chapter;
-            this.Page = nativeItem.page;
-            this.Location = new PointF(nativeItem.x, nativeItem.y);
+
+            if (nativeItem.chapter < 0 && nativeItem.page < 0 && !string.IsNullOrEmpty(uri))
+            {
+                int chapter = nativeItem.chapter;
+                int page = nativeItem.page;
+                float x = nativeItem.x;
+                float y = nativeItem.y;
+
+                NativeMethods.GetLocationFromUri(ownerOutline.OwnerDocument.OwnerContext.NativeContext, ownerOutline.OwnerDocument.NativeDocument, nativeItem.uri, ref chapter, ref page, ref x, ref y);
+
+                this.Chapter = chapter;
+                this.Page = page;
+                this.Location = new PointF(x, y);
+
+                ownerOutline.OwnerDocument.LayoutChanged += (s, e) => this.ReloadLocation();
+            }
+            else
+            {
+                this.Chapter = nativeItem.chapter;
+                this.Page = nativeItem.page;
+                this.Location = new PointF(nativeItem.x, nativeItem.y);
+            }
+
             this.OwnerOutline = ownerOutline;
 
             next = nativeItem.next;
@@ -201,6 +221,29 @@ namespace MuPDFCore
             {
                 this.Children = new MuPDFOutlineItem[0];
             }
+        }
+
+        /// <summary>
+        /// Reload the outline link destination from an internal link URI.
+        /// </summary>
+        private unsafe void ReloadLocation()
+        {
+            int chapter = -1;
+            int page = -1;
+            float x = float.NaN;
+            float y = float.NaN;
+
+            byte[] uriBytes = Encoding.UTF8.GetBytes(this.Uri);
+
+            fixed (byte* uriPtr = uriBytes)
+            {
+                NativeMethods.GetLocationFromUri(OwnerOutline.OwnerDocument.OwnerContext.NativeContext, OwnerOutline.OwnerDocument.NativeDocument, (IntPtr)uriPtr, ref chapter, ref page, ref x, ref y);
+            }
+
+            this.Chapter = chapter;
+            this.Page = page;
+            this.Location = new PointF(x, y);
+            this.CachedPageNumber = null;
         }
 
         /// <summary>
