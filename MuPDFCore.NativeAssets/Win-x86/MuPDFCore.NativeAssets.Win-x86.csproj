@@ -7,7 +7,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Description>This package provides Win-x86 native assets for MuPDFCore, a set of multiplatform .NET Core bindings for MuPDF.</Description>
-	<Version>2.0.0</Version>
+	<Version>2.0.1</Version>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Giorgio Bianchini</Authors>
     <Company>University of Bristol</Company>
