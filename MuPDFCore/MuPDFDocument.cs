@@ -42,6 +42,11 @@ namespace MuPDFCore
         internal double ImageYRes = double.NaN;
 
         /// <summary>
+        /// Event invoked when the document layout is changed.
+        /// </summary>
+        internal event EventHandler LayoutChanged;
+
+        /// <summary>
         /// File extensions corresponding to the supported input formats.
         /// </summary>
         private static readonly string[] FileTypeMagics = new[]
@@ -730,6 +735,8 @@ namespace MuPDFCore
             this.PageCount = pageCount;
             this.Pages = new MuPDFPageCollection(this.OwnerContext, this, PageCount);
             this.DisplayLists = new MuPDFDisplayList[PageCount];
+
+            this.LayoutChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -753,6 +760,8 @@ namespace MuPDFCore
             this.PageCount = pageCount;
             this.Pages = new MuPDFPageCollection(this.OwnerContext, this, PageCount);
             this.DisplayLists = new MuPDFDisplayList[PageCount];
+
+            this.LayoutChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
