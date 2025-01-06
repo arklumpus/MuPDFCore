@@ -4,6 +4,7 @@
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Version](https://img.shields.io/nuget/v/MuPDFCore)](https://nuget.org/packages/MuPDFCore)
+[![Downloads](https://img.shields.io/nuget/dt/MuPDFCore)](https://nuget.org/packages/MuPDFCore)
 
 __MuPDFCore__ is a set of multiplatform .NET bindings for [MuPDF](https://mupdf.com/). It can render PDF, XPS, EPUB and other formats to raster images returned either as raw bytes, or as image files in multiple formats (including PNG, JPEG, and PSD). It also supports multithreading.
 
