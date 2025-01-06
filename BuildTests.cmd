@@ -14,8 +14,12 @@ xcopy Resources\* Release\MuPDFCoreTests\ /s /y /h >nul
 echo.
 echo Building with target [94mwin-x64[0m
 
+dotnet clean MuPDFCoreTestHost /nowarn:NETSDK1138
+dotnet clean Tests /nowarn:NETSDK1138
+rmdir /s /q Tests\bin Tests\obj MuPDFCoreTestHost\bin MuPDFCoreTestHost\obj
+
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\win-x64.pubxml
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\win-x64.pubxml /nowarn:NETSDK1138
 cd ..
 
 echo.
@@ -35,8 +39,12 @@ cd ..\..
 echo.
 echo Building with target [94mwin-x86[0m
 
+dotnet clean MuPDFCoreTestHost /nowarn:NETSDK1138
+dotnet clean Tests /nowarn:NETSDK1138
+rmdir /s /q Tests\bin Tests\obj MuPDFCoreTestHost\bin MuPDFCoreTestHost\obj
+
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\win-x86.pubxml /p:PlatformTarget=x86
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\win-x86.pubxml /p:PlatformTarget=x86 /nowarn:NETSDK1138
 cd ..
 
 echo.
@@ -56,8 +64,12 @@ cd ..\..
 echo.
 echo Building with target [94mwin-arm64[0m
 
+dotnet clean MuPDFCoreTestHost /nowarn:NETSDK1138
+dotnet clean Tests /nowarn:NETSDK1138
+rmdir /s /q Tests\bin Tests\obj MuPDFCoreTestHost\bin MuPDFCoreTestHost\obj
+
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\win-arm64.pubxml /p:PlatformTarget=arm64
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\win-arm64.pubxml /p:PlatformTarget=arm64 /nowarn:NETSDK1138
 cd ..
 
 echo.
@@ -77,8 +89,12 @@ cd ..\..
 echo.
 echo Building with target [94mlinux-x64[0m
 
+dotnet clean MuPDFCoreTestHost /nowarn:NETSDK1138
+dotnet clean Tests /nowarn:NETSDK1138
+rmdir /s /q Tests\bin Tests\obj MuPDFCoreTestHost\bin MuPDFCoreTestHost\obj
+
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-x64.pubxml
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-x64.pubxml /nowarn:NETSDK1138
 cd ..
 
 echo.
@@ -98,8 +114,12 @@ cd ..\..
 echo.
 echo Building with target [94mlinux-musl-x64[0m
 
+dotnet clean MuPDFCoreTestHost /nowarn:NETSDK1138
+dotnet clean Tests /nowarn:NETSDK1138
+rmdir /s /q Tests\bin Tests\obj MuPDFCoreTestHost\bin MuPDFCoreTestHost\obj
+
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-musl-x64.pubxml
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-musl-x64.pubxml /nowarn:NETSDK1138
 cd ..
 
 echo.
@@ -119,8 +139,12 @@ cd ..\..
 echo.
 echo Building with target [94mlinux-arm64[0m
 
+dotnet clean MuPDFCoreTestHost /nowarn:NETSDK1138
+dotnet clean Tests /nowarn:NETSDK1138
+rmdir /s /q Tests\bin Tests\obj MuPDFCoreTestHost\bin MuPDFCoreTestHost\obj
+
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-arm64.pubxml /p:PlatformTarget=arm64
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-arm64.pubxml /p:PlatformTarget=arm64 /nowarn:NETSDK1138
 cd ..
 
 echo.
@@ -140,8 +164,12 @@ cd ..\..
 echo.
 echo Building with target [94mlinux-musl-arm64[0m
 
+dotnet clean MuPDFCoreTestHost /nowarn:NETSDK1138
+dotnet clean Tests /nowarn:NETSDK1138
+rmdir /s /q Tests\bin Tests\obj MuPDFCoreTestHost\bin MuPDFCoreTestHost\obj
+
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-musl-arm64.pubxml
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\linux-musl-arm64.pubxml /nowarn:NETSDK1138
 cd ..
 
 echo.
@@ -161,8 +189,12 @@ cd ..\..
 echo.
 echo Building with target [94mmac-x64[0m
 
+dotnet clean MuPDFCoreTestHost /nowarn:NETSDK1138
+dotnet clean Tests /nowarn:NETSDK1138
+rmdir /s /q Tests\bin Tests\obj MuPDFCoreTestHost\bin MuPDFCoreTestHost\obj
+
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\mac-x64.pubxml
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\mac-x64.pubxml /nowarn:NETSDK1138
 cd ..
 
 echo.
@@ -182,8 +214,12 @@ cd ..\..
 echo.
 echo Building with target [94mmac-arm64[0m
 
+dotnet clean MuPDFCoreTestHost /nowarn:NETSDK1138
+dotnet clean Tests /nowarn:NETSDK1138
+rmdir /s /q Tests\bin Tests\obj MuPDFCoreTestHost\bin MuPDFCoreTestHost\obj
+
 cd MuPDFCoreTestHost
-dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\mac-arm64.pubxml /p:PlatformTarget=arm64
+dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\mac-arm64.pubxml /p:PlatformTarget=arm64 /nowarn:NETSDK1138
 cd ..
 
 echo.
