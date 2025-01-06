@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <None Remove="Data\Annotation.pdf" />
+    <None Remove="Data\basic-v3plus2.epub" />
     <None Remove="Data\eng.traineddata" />
     <None Remove="Data\LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢.pdf" />
     <None Remove="Data\mupdf_explored.pdf" />
@@ -36,6 +37,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Data\Annotation.pdf" />
+    <EmbeddedResource Include="Data\basic-v3plus2.epub" />
     <EmbeddedResource Include="Data\LλиՀქカかעاދदবਗગଓதతಕമසไမᠮབລខᑐᑯᒐᖃግ조한汉漢.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
