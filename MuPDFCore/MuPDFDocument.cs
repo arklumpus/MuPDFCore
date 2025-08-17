@@ -237,12 +237,16 @@ namespace MuPDFCore
                 case ExitCodes.EXIT_SUCCESS:
                     break;
                 case ExitCodes.ERR_CANNOT_OPEN_STREAM:
+                    this.Dispose();
                     throw new MuPDFException("Cannot open data stream", result);
                 case ExitCodes.ERR_CANNOT_OPEN_FILE:
+                    this.Dispose();
                     throw new MuPDFException("Cannot open document", result);
                 case ExitCodes.ERR_CANNOT_COUNT_PAGES:
+                    this.Dispose();
                     throw new MuPDFException("Cannot count pages", result);
                 default:
+                    this.Dispose();
                     throw new MuPDFException("Unknown error", result);
             }
 
@@ -305,6 +309,7 @@ namespace MuPDFCore
                     this.NativePDFDocument = IntPtr.Zero;
                     break;
                 default:
+                    this.Dispose();
                     throw new MuPDFException("Unknown error", result);
             }
         }
@@ -354,12 +359,16 @@ namespace MuPDFCore
                 case ExitCodes.EXIT_SUCCESS:
                     break;
                 case ExitCodes.ERR_CANNOT_OPEN_STREAM:
+                    this.Dispose();
                     throw new MuPDFException("Cannot open data stream", result);
                 case ExitCodes.ERR_CANNOT_OPEN_FILE:
+                    this.Dispose();
                     throw new MuPDFException("Cannot open document", result);
                 case ExitCodes.ERR_CANNOT_COUNT_PAGES:
+                    this.Dispose();
                     throw new MuPDFException("Cannot count pages", result);
                 default:
+                    this.Dispose();
                     throw new MuPDFException("Unknown error", result);
             }
 
@@ -422,6 +431,7 @@ namespace MuPDFCore
                     this.NativePDFDocument = IntPtr.Zero;
                     break;
                 default:
+                    this.Dispose();
                     throw new MuPDFException("Unknown error", result);
             }
         }
@@ -477,12 +487,16 @@ namespace MuPDFCore
                 case ExitCodes.EXIT_SUCCESS:
                     break;
                 case ExitCodes.ERR_CANNOT_OPEN_STREAM:
+                    this.Dispose();
                     throw new MuPDFException("Cannot open data stream", result);
                 case ExitCodes.ERR_CANNOT_OPEN_FILE:
+                    this.Dispose();
                     throw new MuPDFException("Cannot open document", result);
                 case ExitCodes.ERR_CANNOT_COUNT_PAGES:
+                    this.Dispose();
                     throw new MuPDFException("Cannot count pages", result);
                 default:
+                    this.Dispose();
                     throw new MuPDFException("Unknown error", result);
             }
 
@@ -545,6 +559,7 @@ namespace MuPDFCore
                     this.NativePDFDocument = IntPtr.Zero;
                     break;
                 default:
+                    this.Dispose();
                     throw new MuPDFException("Unknown error", result);
             }
         }
@@ -627,10 +642,13 @@ namespace MuPDFCore
                 case ExitCodes.EXIT_SUCCESS:
                     break;
                 case ExitCodes.ERR_CANNOT_OPEN_FILE:
+                    this.Dispose();
                     throw new MuPDFException("Cannot open document", result);
                 case ExitCodes.ERR_CANNOT_COUNT_PAGES:
+                    this.Dispose();
                     throw new MuPDFException("Cannot count pages", result);
                 default:
+                    this.Dispose();
                     throw new MuPDFException("Unknown error", result);
             }
 
@@ -693,6 +711,7 @@ namespace MuPDFCore
                     this.NativePDFDocument = IntPtr.Zero;
                     break;
                 default:
+                    this.Dispose();
                     throw new MuPDFException("Unknown error", result);
             }
         }
@@ -1707,30 +1726,39 @@ namespace MuPDFCore
             {
                 if (disposing)
                 {
-                    Pages.Dispose();
-                    foreach (MuPDFDisplayList list in DisplayLists)
+                    Pages?.Dispose();
+                    if (DisplayLists != null)
                     {
-                        list?.Dispose();
+                        foreach (MuPDFDisplayList list in DisplayLists)
+                        {
+                            list?.Dispose();
+                        }
                     }
                     DataHandle?.Free();
                     DataHolder?.Dispose();
                 }
 
-                if (OwnerContext.disposedValue)
+                if (NativeDocument != IntPtr.Zero || NativePDFDocument != IntPtr.Zero || NativeStream != IntPtr.Zero)
                 {
-                    throw new LifetimeManagementException<MuPDFDocument, MuPDFContext>(this, OwnerContext, this.NativeDocument, OwnerContext.NativeContext);
-                }
+                    if (OwnerContext.disposedValue)
+                    {
+                        throw new LifetimeManagementException<MuPDFDocument, MuPDFContext>(this, OwnerContext, this.NativeDocument, OwnerContext.NativeContext);
+                    }
 
-                if (NativePDFDocument != IntPtr.Zero)
-                {
-                    NativeMethods.DisposeDocument(OwnerContext.NativeContext, NativePDFDocument);
-                }
+                    if (NativePDFDocument != IntPtr.Zero)
+                    {
+                        NativeMethods.DisposeDocument(OwnerContext.NativeContext, NativePDFDocument);
+                    }
 
-                NativeMethods.DisposeDocument(OwnerContext.NativeContext, NativeDocument);
+                    if (NativeDocument != IntPtr.Zero)
+                    {
+                        NativeMethods.DisposeDocument(OwnerContext.NativeContext, NativeDocument);
+                    }
 
-                if (NativeStream != IntPtr.Zero)
-                {
-                    NativeMethods.DisposeStream(OwnerContext.NativeContext, NativeStream);
+                    if (NativeStream != IntPtr.Zero)
+                    {
+                        NativeMethods.DisposeStream(OwnerContext.NativeContext, NativeStream);
+                    }
                 }
 
                 disposedValue = true;
