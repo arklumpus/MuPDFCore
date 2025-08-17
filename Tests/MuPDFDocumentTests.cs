@@ -1531,5 +1531,37 @@ namespace Tests
             Assert.IsFalse(((MuPDFOptionalContentGroupRadioButton)document.OptionalContentGroupData.DefaultConfiguration.UI[0].Children[0].Children[0]).IsEnabled, "After toggling, the first OCG UI radio button element has the wrong state.");
             Assert.IsTrue(((MuPDFOptionalContentGroupRadioButton)document.OptionalContentGroupData.DefaultConfiguration.UI[0].Children[0].Children[1]).IsEnabled, "After toggling, the second OCG UI radio button element has the wrong state.");
         }
+
+        [TestMethod]
+        public void MuPDFDocumentFailedInitialisation()
+        {
+            static void FailedInitialization()
+            {
+                try
+                {
+                    using MuPDFContext context = new MuPDFContext();
+                    using MuPDFDocument doc = new MuPDFDocument(context, "non_existent_file.pdf");
+                }
+                catch { }
+
+                GC.Collect();
+
+                return;
+            }
+
+            int[] buffer = new int[102400000];
+            FailedInitialization();
+            int[] buffer2 = new int[102400000];
+            FailedInitialization();
+            int[] buffer3 = new int[102400000];
+
+            for (int j = 0; j < 100000; j++)
+            {
+                buffer[j] = j * j;
+                buffer2[j] = buffer[j] * j;
+                buffer3[j] = buffer2[j] * buffer[j];
+            }
+        }
+
     }
 }
