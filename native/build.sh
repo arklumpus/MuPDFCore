@@ -21,6 +21,14 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		cd out/build/linux-arm64 ;
 		cmake -DLIBC="GLIBC" ../../../ ;
 		make ;
+	elif [[ "$architecture" == "loongarch64" ]]; then
+		echo "Building linux-loongarch64 native library..." ;
+		echo ;
+		rm -rf out/build/linux-loongarch64 ;
+		mkdir -p out/build/linux-loongarch64 ;
+		cd out/build/linux-loongarch64 ;
+		cmake -DLIBC="GLIBC" -D ENABLE_PIC=ON -D BUILD_SHARED_LIBS=ON ../../../ ;
+		make ;
 	fi
 elif [[ "$OSTYPE" == "linux-musl"* ]]; then
 	architecture=$(uname -m);
@@ -39,6 +47,14 @@ elif [[ "$OSTYPE" == "linux-musl"* ]]; then
 		rm -rf out/build/linux-musl-arm64 ;
 		mkdir -p out/build/linux-musl-arm64 ;
 		cd out/build/linux-musl-arm64 ;
+		cmake -DLIBC="MUSL" ../../../ ;
+		make ;
+	elif [[ "$architecture" == "loongarch64" ]]; then
+		echo "Building linux--musl-loongarch64 native library..." ;
+		echo ;
+		rm -rf out/build/linux-musl-loongarch64 ;
+		mkdir -p out/build/linux-musl-loongarch64 ;
+		cd out/build/linux-musl-loongarch64 ;
 		cmake -DLIBC="MUSL" ../../../ ;
 		make ;
 	fi
